@@ -1,0 +1,16 @@
+# IDE / build
+.idea/
+*.iml
+
+# Java/Spring build
+target/
+build/
+*.class
+
+# Node/React
+node_modules/
+dist/
+build/
+
+# Config
+.env
