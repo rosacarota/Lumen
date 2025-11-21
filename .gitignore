@@ -1,12 +1,19 @@
 # IDEs
+# IDEs
 .idea/
 *.iml
 .vscode/
 !.vscode/extensions.json
 .DS_Store
+.vscode/
+!.vscode/extensions.json
+.DS_Store
 
 # Java/Spring
+# Java/Spring
 target/
+.mvn/
+out/
 .mvn/
 out/
 *.class
@@ -15,7 +22,9 @@ out/
 node_modules/
 dist/
 dist-ssr/
+dist-ssr/
 build/
+*.local
 *.local
 
 # Config
