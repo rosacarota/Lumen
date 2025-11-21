@@ -25,8 +25,11 @@ public class RaccoltaFondi {
 
     @NotNull(message = "Deve essere inserito un obiettivo")
     @Positive(message = "L'obiettivo da raggiungere deve essere maggiore di zero")
+    @Column(name = "obiettivo", nullable = false, precision = 10, scale = 2)
+    private BigDecimal obiettivo;
+
     @Column(name = "totaleraccolto", nullable = false, precision = 10, scale = 2)
-    private BigDecimal raccoltaFondi;
+    private BigDecimal totaleraccolto;
 
     @NotNull(message = "Deve essere specificata la data di apertura")
     @Column(name = "dataapertura", nullable = false)
