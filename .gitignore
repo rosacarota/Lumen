@@ -1,16 +1,37 @@
-# IDE / build
+# IDEs
 .idea/
 *.iml
+.vscode/
+!.vscode/extensions.json
+.DS_Store
 
-# Java/Spring build
+# Java/Spring
 target/
-build/
+.mvn/
+out/
 *.class
 
 # Node/React
 node_modules/
 dist/
+dist-ssr/
 build/
+*.local
 
 # Config
 .env
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Editor/Project files
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
