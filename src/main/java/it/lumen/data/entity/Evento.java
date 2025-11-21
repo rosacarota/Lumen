@@ -35,7 +35,7 @@ public class Evento {
     @Column(name="immagine", nullable= true, length=255)
     private String immagine;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Ente")
     private Utente utente;
 

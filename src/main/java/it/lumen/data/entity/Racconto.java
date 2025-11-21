@@ -27,7 +27,7 @@ public class Racconto {
     @NotNull(message = "La data di creazione non può essere nulla")
     private Date dataPubblicazione;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "utente")
     private Utente utente;
 
