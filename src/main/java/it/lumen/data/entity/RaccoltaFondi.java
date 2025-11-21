@@ -26,19 +26,18 @@ public class RaccoltaFondi {
     @NotNull(message = "Deve essere inserito un obiettivo")
     @Positive(message = "L'obiettivo da raggiungere deve essere maggiore di zero")
     @Column(name = "totaleraccolto", nullable = false, precision = 10, scale = 2)
-    private BigDecimal RaccoltaFondi;
+    private BigDecimal raccoltaFondi;
 
+    @NotNull(message = "Deve essere specificata la data di apertura")
     @Column(name = "dataapertura", nullable = false)
     private Date dataApertura;
 
+    @NotNull(message = "Deve essere specificata la data di chiusura")
     @Column(name = "datachiusura", nullable = false)
     private Date dataChiusura;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @NotNull(message = "Non è stato specificato l'Ente")
     @JoinColumn(name = "ente")
     private Utente ente;
-
-
-
 }

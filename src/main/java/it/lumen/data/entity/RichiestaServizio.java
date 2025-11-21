@@ -1,0 +1,46 @@
+package it.lumen.data.entity;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+
+import java.sql.Date;
+
+
+@Entity
+@Table(name="RichiestaServizio")
+public class RichiestaServizio {
+
+    public enum StatoRichiestaServizio {
+        Accettata,
+        InAttesa
+    }
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "idrichiestaservizio")
+    private Integer IDrichiestaServizio;
+
+    @NotNull(message = "Specificare la richiesta") //---TOCHECK
+    @Column(name = "testo", nullable = false)
+    private String testo;
+
+    @NotNull(message = "Deve essere specificata la data di creazione della richiesta")
+    @Column(name = "Data")
+    private Date data;
+
+    @NotNull(message = "Specificare lo stato della richiesta di servizio")
+    @Column(name = "stato")
+    StatoRichiestaServizio stato;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull(message = "Specificare il mittente della richiesta")
+    @JoinColumn(name = "beneficiario")
+    Utente beneficiario;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull(message = "Specificare il destinatario della richiesta")
+    @JoinColumn(name = "entevolontraio")
+    Utente entevolontraio;
+
+
+}
