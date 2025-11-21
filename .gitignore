@@ -1,6 +1,10 @@
 # IDE / build
 .idea/
+.mvn/
 *.iml
+*.iws
+*.ipr
+
 
 # Java/Spring build
 target/
@@ -14,3 +18,10 @@ build/
 
 # Config
 .env
+
+### VS Code ###
+.vscode/
+
+#Maven
+mvnw
+mvnw.cmd
