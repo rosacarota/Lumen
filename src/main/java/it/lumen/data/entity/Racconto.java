@@ -27,11 +27,10 @@ public class Racconto {
     @NotNull(message = "La data di creazione non può essere nulla")
     private Date dataPubblicazione;
 
-    @Column(name = "utente", nullable = false, length = 255)
-    @NotBlank(message = "L'email dell'utente non può essere vuota")
-    @Email(message = "Email non valida")
-    @Pattern(regexp = "^[A-Za-z0-9+_.-]+@(.+)$", message = "Formato email non valido")
-    private String utente;
+    @ManyToOne
+    @JoinColumn(name = "utente")
+    private Utente utente;
+
 
     @Column(name = "immagine", length = 255)
     @Pattern(regexp = "^[a-zA-Z0-9\\s._/\\\\:-]*\\.(jpg|jpeg|png|gif|webp)$",
