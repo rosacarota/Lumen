@@ -1,6 +1,8 @@
 package it.lumen.data.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+
 import javax.validation.constraints.Pattern;
 
 @Entity
@@ -10,6 +12,7 @@ public class Utente {
 
     @Id
     @Column(name="email", nullable=false, length=255)
+    @Email(message = "Email non valida")
     private String email;
 
     @Column(name="nome", nullable= false, length=100)
