@@ -16,7 +16,7 @@ public class Racconto {
     @Column(name = "titolo", nullable = false, length = 255)
     @NotBlank(message = "Il titolo non può essere vuoto")
     @Size(max = 255, message = "Il titolo deve massimo di 255 caratteri")
-    @Pattern(regexp = "^[a-zA-Z0-9\\s,.!?'-]{10,255}$", message = "Il titolo contiene caratteri non validi")
+    @Pattern(regexp = "^[a-zA-Z0-9\\s,.!?'-]{0,255}$", message = "Il titolo contiene caratteri non validi")
     private String titolo;
 
     @Column(name = "descrizione", nullable = false, columnDefinition = "TEXT")
