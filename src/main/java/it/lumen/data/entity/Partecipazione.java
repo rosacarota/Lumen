@@ -2,7 +2,9 @@ package it.lumen.data.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Date;
@@ -11,6 +13,8 @@ import java.sql.Date;
 @Table(name = "Partecipazione", uniqueConstraints = @UniqueConstraint(columnNames = {"Evento", "Volontario"}))
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Partecipazione {
 
     @Id

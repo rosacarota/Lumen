@@ -2,7 +2,9 @@ package it.lumen.data.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Date;
@@ -11,6 +13,7 @@ import java.sql.Date;
 @Table(name = "Racconto")
 @Getter
 @Setter
+@NoArgsConstructor
 public class Racconto {
 
     @Id

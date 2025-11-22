@@ -2,6 +2,7 @@ package it.lumen.data.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.Pattern;
@@ -10,6 +11,7 @@ import javax.validation.constraints.Pattern;
 @Table(name="Indirizzo")
 @Getter
 @Setter
+@NoArgsConstructor
 public class Indirizzo {
 
     @Id
@@ -42,7 +44,4 @@ public class Indirizzo {
         this.NCivico = NCivico;
     }
 
-    public Indirizzo() {
-
-    }
 }

@@ -3,7 +3,9 @@ package it.lumen.data.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.Pattern;
@@ -12,6 +14,7 @@ import javax.validation.constraints.Pattern;
 @Table(name="Utente")
 @Getter
 @Setter
+@NoArgsConstructor
 public class Utente {
 
     public enum Ruolo{
@@ -56,19 +59,4 @@ public class Utente {
     @Column(name="immagine", nullable=true, length=255)
     private String immagine;
 
-    public Utente(String email, String nome, String cognome, Indirizzo indirizzo, String password, String descrizione, String recapitoTelefonico, String ambito, String immagine) {
-        this.email = email;
-        this.nome = nome;
-        this.cognome = cognome;
-        this.indirizzo = indirizzo;
-        this.password = password;
-        this.descrizione = descrizione;
-        this.recapitoTelefonico = recapitoTelefonico;
-        this.ambito = ambito;
-        this.immagine = immagine;
-    }
-
-    public Utente() {
-
-    }
 }

@@ -3,6 +3,7 @@ package it.lumen.data.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Date;
@@ -11,6 +12,7 @@ import java.sql.Date;
 @Table(name = "Affiliazione")
 @Getter
 @Setter
+@NoArgsConstructor
 public class Affiliazione {
 
     public enum StatoAffiliazione {
