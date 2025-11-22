@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.sql.Date;
@@ -20,7 +21,7 @@ public class RichiestaServizioDTO {
     private String testo;
 
     @NotBlank(message = "Deve essere specificata la data di creazione della richiesta")
-    @FutureOrPresent(message = "La data di creazione della richiesta non può essere nel passato")
+    //@FutureOrPresent(message = "La data di creazione della richiesta non può essere nel passato")
     @JsonFormat(pattern = "dd-MM-yyyy")
     private Date dataRichiesta;
 
