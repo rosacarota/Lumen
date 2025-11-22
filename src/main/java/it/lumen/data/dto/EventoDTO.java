@@ -16,7 +16,7 @@ public class EventoDTO {
 
 
     @NotNull(message = "Un id è obbligatorio")
-    private Integer IDEvento;
+    private Integer idEvento;
 
 	@NotBlank(message = "Titolo obbligatorio")
 	@Size(max = 255)

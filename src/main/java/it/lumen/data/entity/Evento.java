@@ -17,7 +17,7 @@ public class Evento {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="IDEvento")
-    private Integer IDEvento;
+    private Integer idEvento;
 
     @Column(name="titolo", nullable= false, length=255)
     private String titolo;

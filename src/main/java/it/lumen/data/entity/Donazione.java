@@ -22,7 +22,7 @@ public class Donazione {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "iddonazione")
-    private Integer IDDonazione;
+    private Integer idDonazione;
 
     @NotNull(message = "Deve essere inserito un importo")
     @Positive(message = "L'importo deve essere positivo")

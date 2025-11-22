@@ -13,7 +13,7 @@ import java.sql.Date;
 @NoArgsConstructor
 public class DonazioneDTO {
     @NotNull(message = "Un id è obbligatorio")
-    private Integer IDDonazione;
+    private Integer idDonazione;
 
     @NotBlank(message = "L'email dell'utente è obbligatoria")
     @Email(message = "Formato email dell'ente non valido")

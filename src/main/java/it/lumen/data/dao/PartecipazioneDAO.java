@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface PartecipazioneDAO extends JpaRepository<Partecipazione, Integer> {
 
-    List<Partecipazione> findAllByEvento_IDEvento(Integer idEvento);
+    List<Partecipazione> findAllByEvento_IdEvento(Integer idEvento);
 }
