@@ -1,19 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 const Navbar = () => {
-    const [isLoggedIn, setIsLoggedIn] = useState(true); 
-    const [userRole, setUserRole] = useState('user');
-}
-
-function Navbar{
-    return(
-        <header>
-            <div>
-                <a href="">Lumen</a>
-            </div>
-
-        </header>
-    );
+    return (
+        <div>
+            <h1>Navbar</h1>
+        </div>
+    )
 }
 
 export default Navbar
