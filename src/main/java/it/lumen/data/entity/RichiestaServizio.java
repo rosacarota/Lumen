@@ -32,21 +32,21 @@ public class RichiestaServizio {
     @Column(name = "testo", nullable = false)
     private String testo;
 
-    @NotNull(message = "Deve essere specificata la data di creazione della richiesta")
+    @NotNull(message = "La data di creazione della richiesta è obbligatoria")
     @Column(name = "data")
     private Date dataRichiesta;
 
-    @NotNull(message = "Specificare lo stato della richiesta di servizio")
+    @NotNull(message = "Lo stato della richiesta è obbligatorio")
     @Column(name = "stato")
     StatoRichiestaServizio stato;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @NotNull(message = "Specificare il mittente della richiesta")
+    @NotNull(message = "Il mittente della ricerca è obbligatorio")
     @JoinColumn(name = "beneficiario")
     Utente beneficiario;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @NotNull(message = "Specificare il destinatario della richiesta")
+    @NotNull(message = "Il destinatario della richiesta è sbagliato")
     @JoinColumn(name = "entevolontario")
     Utente enteVolontraio;
 
