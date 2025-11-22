@@ -4,12 +4,21 @@
 .vscode/
 !.vscode/extensions.json
 .DS_Store
+*iws
+*ipr
+org.eclipse.*
+.factorypath
+.classpath
+.project
+
 
 # Java/Spring
 target/
 .mvn/
 out/
 *.class
+mvnw
+mvnw.cmd
 
 # Node/React
 node_modules/
