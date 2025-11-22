@@ -1,12 +1,15 @@
 package it.lumen.data.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.Pattern;
 
 @Entity
 @Table(name="Indirizzo")
-
+@Getter
+@Setter
 public class Indirizzo {
 
     @Id

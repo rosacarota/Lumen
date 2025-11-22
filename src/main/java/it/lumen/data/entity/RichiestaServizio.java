@@ -7,7 +7,7 @@ import java.sql.Date;
 
 
 @Entity
-@Table(name="RichiestaServizio")
+@Table(name="richiestaservizio")
 public class RichiestaServizio {
 
     public enum StatoRichiestaServizio {
@@ -20,12 +20,12 @@ public class RichiestaServizio {
     @Column(name = "idrichiestaservizio")
     private Integer IDrichiestaServizio;
 
-    @NotNull(message = "Specificare la richiesta") //---TOCHECK
+    @NotNull(message = "Specificare la richiesta")
     @Column(name = "testo", nullable = false)
     private String testo;
 
     @NotNull(message = "Deve essere specificata la data di creazione della richiesta")
-    @Column(name = "Data")
+    @Column(name = "data")
     private Date data;
 
     @NotNull(message = "Specificare lo stato della richiesta di servizio")
@@ -39,7 +39,7 @@ public class RichiestaServizio {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull(message = "Specificare il destinatario della richiesta")
-    @JoinColumn(name = "entevolontraio")
+    @JoinColumn(name = "entevolontario")
     Utente entevolontraio;
 
 

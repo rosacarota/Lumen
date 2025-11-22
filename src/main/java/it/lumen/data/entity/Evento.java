@@ -1,11 +1,15 @@
 package it.lumen.data.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.sql.Date;
 
 @Entity
 @Table(name="Evento")
+@Getter
+@Setter
 public class Evento {
 
     @Id

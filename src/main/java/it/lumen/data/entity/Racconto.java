@@ -2,16 +2,21 @@ package it.lumen.data.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.sql.Date;
 
 @Entity
 @Table(name = "Racconto")
+@Getter
+@Setter
 public class Racconto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "IDRacconto")
-    private int IDRacconto;
+    private Integer IDRacconto;
 
     @Column(name = "titolo", nullable = false, length = 255)
     @NotBlank(message = "Il titolo non può essere vuoto")

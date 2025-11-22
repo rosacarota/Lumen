@@ -3,12 +3,15 @@ package it.lumen.data.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.Pattern;
 
 @Entity
 @Table(name="Utente")
-
+@Getter
+@Setter
 public class Utente {
 
     public enum Ruolo{

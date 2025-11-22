@@ -2,10 +2,15 @@ package it.lumen.data.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.sql.Date;
 
 @Entity
 @Table(name = "Affiliazione")
+@Getter
+@Setter
 public class Affiliazione {
 
     public enum StatoAffiliazione {
@@ -16,12 +21,12 @@ public class Affiliazione {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "IDAffiliazione")
-    private int idAffiliazione;
+    private Integer idAffiliazione;
 
     @Column(name = "descrizione", columnDefinition = "TEXT")
     private String descrizione;
 
-    @Column(name = "dataInizio", nullable = false)
+    @Column(name = "datainizio", nullable = false)
     @NotNull(message = "La data di inizio non può essere nulla")
     private Date dataInizio;
 
