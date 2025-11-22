@@ -4,11 +4,13 @@ import it.lumen.data.entity.RaccoltaFondi;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.sql.Date;
 
 @Data
+@NoArgsConstructor
 public class RaccoltaFondiDTO {
 
     @NotBlank(message = "Un id è obbligatorio")
