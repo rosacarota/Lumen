@@ -2,12 +2,10 @@ package it.lumen.data.mapper;
 
 import it.lumen.data.dto.RaccontoDTO;
 import it.lumen.data.entity.Racconto;
-import it.lumen.data.mapper.UtenteMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
-import java.util.List;
 
 @Mapper(
         componentModel = "spring",
@@ -16,10 +14,10 @@ import java.util.List;
 )
 public interface RaccontoMapper {
 
-    @Mapping(target = "utente", source = "utente")
+    @Mapping(source = "utente.email", target = "emailUtente")
     RaccontoDTO toDto(Racconto entity);
 
-    @Mapping(target = "utente", source = "utente")
+    @Mapping(source = "emailUtente", target = "utente", qualifiedByName = "emailToUtente")
     Racconto toEntity(RaccontoDTO dto);
 
 }

@@ -17,7 +17,7 @@ public interface RaccoltaFondiMapper {
     @Mapping(source = "IDRaccolta", target = "idRaccoltaFondi")
     @Mapping(source = "totaleraccolto", target = "totaleRaccolto")
     @Mapping(source = "ente", target = "ente")
-    RaccoltaFondiDTO toDto(RaccoltaFondi entity);
+    RaccoltaFondiDTO toDo(RaccoltaFondi entity);
 
     @Mapping(source = "idRaccoltaFondi", target = "IDRaccolta")
     @Mapping(source = "totaleRaccolto", target = "totaleraccolto")

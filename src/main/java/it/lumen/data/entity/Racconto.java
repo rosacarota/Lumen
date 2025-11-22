@@ -18,7 +18,7 @@ public class Racconto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "IDRacconto")
-    private Integer IDRacconto;
+    private Integer idRacconto;
 
     @Column(name = "titolo", nullable = false, length = 255)
     @NotBlank(message = "Il titolo non può essere vuoto")

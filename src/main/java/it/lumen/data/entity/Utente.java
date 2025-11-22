@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.validation.constraints.Pattern;
 
@@ -14,6 +15,7 @@ import javax.validation.constraints.Pattern;
 @Getter
 @Setter
 @NoArgsConstructor
+@ToString
 public class Utente {
 
     public enum Ruolo{
@@ -33,7 +35,7 @@ public class Utente {
     @Column(name="cognome", nullable= false, length=100)
     private String cognome;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne  (fetch = FetchType.LAZY)
     @JoinColumn(name = "Indirizzo")
     private Indirizzo indirizzo;
 
