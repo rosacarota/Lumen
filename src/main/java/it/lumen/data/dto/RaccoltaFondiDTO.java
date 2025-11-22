@@ -20,6 +20,8 @@ public class RaccoltaFondiDTO {
     @Size(max = 255)
     private String titolo;
 
+    private String descrizione;
+
     @NotBlank(message = "È necessario definire un obiettivo")
     @Positive(message = "L'obiettivo deve essere maggiore di zero")
     @Digits(integer = 8, fraction = 2, message = "Formato non valido")

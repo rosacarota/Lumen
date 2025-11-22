@@ -26,7 +26,7 @@ public class RichiestaServizio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idrichiestaservizio")
-    private Integer IDrichiestaServizio;
+    private Integer idRichiestaServizio;
 
     @NotNull(message = "Specificare la richiesta")
     @Column(name = "testo", nullable = false)
@@ -34,7 +34,7 @@ public class RichiestaServizio {
 
     @NotNull(message = "Deve essere specificata la data di creazione della richiesta")
     @Column(name = "data")
-    private Date data;
+    private Date dataRichiesta;
 
     @NotNull(message = "Specificare lo stato della richiesta di servizio")
     @Column(name = "stato")
@@ -48,7 +48,7 @@ public class RichiestaServizio {
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull(message = "Specificare il destinatario della richiesta")
     @JoinColumn(name = "entevolontario")
-    Utente entevolontraio;
+    Utente enteVolontraio;
 
 
 }

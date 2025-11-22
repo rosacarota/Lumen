@@ -29,7 +29,7 @@ public class RichiestaServizioDTO {
     private RichiestaServizio.StatoRichiestaServizio stato;
 
     @Email(message = "Email del beneficiario non valida")
-    private String email;
+    private String beneficiario;
 
     @Email(message = "Email del destinatario non valida")
     private String enteVolontario;
