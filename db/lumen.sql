@@ -9,7 +9,7 @@ CREATE TABLE Indirizzo (
     Provincia VARCHAR(50) NOT NULL,
     CAP CHAR(5) NOT NULL,
     Strada VARCHAR(255) NOT NULL,
-    NCivico VARCHAR(10)
+    NCivico INTEGER
 );
 
 -- Tabella Utente

@@ -33,10 +33,10 @@ public class Indirizzo {
     private String strada;
 
     @Column(name="ncivico", nullable=true, length=10)
-    private String NCivico;
+    private Integer NCivico;
 
 
-    public Indirizzo(Integer IDIndirizzo, String citta, String provincia, String strada, String NCivico) {
+    public Indirizzo(Integer IDIndirizzo, String citta, String provincia, String strada, Integer NCivico) {
         this.IDIndirizzo = IDIndirizzo;
         this.citta = citta;
         this.provincia = provincia;
