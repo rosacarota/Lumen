@@ -4,6 +4,10 @@
 *.iml
 *.iws
 *.ipr
+org.eclipse.*
+.factorypath
+.classpath
+.project
 
 
 # Java/Spring build
