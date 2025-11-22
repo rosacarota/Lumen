@@ -28,14 +28,14 @@ public class RaccoltaFondiDTO {
     @Digits(integer = 8, fraction = 2, message = "Formato non valido")
     private BigDecimal totaleRaccolto;
 
-    @NotNull(message = "La data di apertura è obbligatoria")
+    @NotBlank(message = "La data di apertura è obbligatoria")
     @FutureOrPresent(message = "La data di apertura non può essere nel passato")
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "dd-MM-yyy")
     private Date dataApertura;
 
     @NotNull(message = "La data di chiusura è obbligatoria")
     @Future(message = "La data di chiusura deve essere nel futuro")
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "dd-MM-yyyy")
     private Date dataChiusura;
 
     @Email(message = "Email dell'ente non valida")
