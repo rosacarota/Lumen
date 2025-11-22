@@ -13,14 +13,14 @@ import java.sql.Date;
 @NoArgsConstructor
 public class DonazioneDTO {
     @NotNull(message = "Un id è obbligatorio")
-    private Integer idDonazione;
+    private Integer IDDonazione;
 
     @NotBlank(message = "L'email dell'utente è obbligatoria")
     @Email(message = "Formato email dell'ente non valido")
-    private String emailEnte;
+    private String ente;
 
     @NotBlank(message = "L'id della raccolta fondi è obbligatorio")
-    private Integer idRaccoltaFondi;
+    private Integer raccoltaFondi;
 
     @NotNull(message = "Deve essere inserito un importo")
     private BigDecimal importo;

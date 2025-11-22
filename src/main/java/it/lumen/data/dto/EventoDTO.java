@@ -5,6 +5,7 @@ import java.sql.Date;
 import it.lumen.data.entity.Indirizzo;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class EventoDTO {
 
+
+    @NotNull(message = "Un id è obbligatorio")
+    private Integer IDEvento;
 
 	@NotBlank(message = "Titolo obbligatorio")
 	@Size(max = 255)
@@ -32,7 +36,7 @@ public class EventoDTO {
 
     @NotBlank(message = "L'email dell'utente è obbligatoria")
     @Email(message = "L'email è in un formato non valido")
-    String emailEnte;
+    private String utente;
 
     private int maxPartecipanti;
 
