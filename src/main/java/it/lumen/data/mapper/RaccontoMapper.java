@@ -22,6 +22,4 @@ public interface RaccontoMapper {
     @Mapping(target = "utente", source = "utente")
     Racconto toEntity(RaccontoDTO dto);
 
-    List<RaccontoDTO> toDtoList(List<Racconto> entities);
-    List<Racconto> toEntityList(List<RaccontoDTO> dtos);
 }
