@@ -26,9 +26,9 @@ public class AffiliazioneDTO {
 
     @NotBlank(message = "L'email dell'ente è obbligatoria")
     @Email(message = "Formato email dell'ente non valido")
-    private String emailEnte;
+    private String ente;
 
     @NotBlank(message = "L'email del volontario è obbligatoria")
     @Email(message = "Formato email del volontario non valido")
-    private String emailVolontario;
+    private String volontario;
 }
