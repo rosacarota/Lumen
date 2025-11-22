@@ -18,7 +18,7 @@ public class AffiliazioneDTO {
 
     @NotNull(message = "La data di inizio è obbligatoria")
     @Future(message = "La data di inizio non può essere nel futuro")
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "dd-MM-yyyy")
     private Date dataInizio;
 
     @NotNull(message = "Lo stato dell'affiliazione è obbligatorio")
