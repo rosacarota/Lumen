@@ -20,7 +20,7 @@ public class RaccoltaFondi {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idraccolta")
-    private Integer IDRaccolta;
+    private Integer idRaccoltaFondi;
 
     @NotNull(message = "Deve essere inserito un titolo")
     @Column(name = "titolo", nullable = false, length=255)
@@ -35,7 +35,7 @@ public class RaccoltaFondi {
     private BigDecimal obiettivo;
 
     @Column(name = "totaleraccolto", nullable = false, precision = 10, scale = 2)
-    private BigDecimal totaleraccolto;
+    private BigDecimal totaleRaccolto;
 
     @NotNull(message = "Deve essere specificata la data di apertura")
     @Column(name = "dataapertura", nullable = false)
