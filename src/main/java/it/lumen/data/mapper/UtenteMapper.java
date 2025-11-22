@@ -14,10 +14,7 @@ import it.lumen.data.mapper.IndirizzoMapper;
 )
 public interface UtenteMapper {
 
-    @Mapping(target = "indirizzo", source = "indirizzo")
+    @Mapping(source = "indirizzo.idIndirizzo", target = "indirizzo")
     UtenteDTO toDto(Utente entity);
-
-    @Mapping(target = "indirizzo", source = "indirizzo")
-    Utente toEntity(UtenteDTO dto);
 
 }

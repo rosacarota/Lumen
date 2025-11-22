@@ -17,7 +17,4 @@ public interface RaccontoMapper {
     @Mapping(source = "utente.email", target = "emailUtente")
     RaccontoDTO toDto(Racconto entity);
 
-    @Mapping(source = "emailUtente", target = "utente", qualifiedByName = "emailToUtente")
-    Racconto toEntity(RaccontoDTO dto);
-
 }

@@ -15,6 +15,7 @@ import org.mapstruct.ReportingPolicy;
 
 public interface RaccoltaFondiMapper {
 
+    @Mapping(source = "ente.email", target = "ente")
     RaccoltaFondiDTO toDto(RaccoltaFondi entity);
-    RaccoltaFondi toEntity(RaccoltaFondiDTO dto);
+
 }

@@ -11,6 +11,4 @@ public interface IndirizzoMapper {
 
     IndirizzoDTO toDto(Indirizzo entity);
 
-    Indirizzo toEntity(IndirizzoDTO dto);
-
 }

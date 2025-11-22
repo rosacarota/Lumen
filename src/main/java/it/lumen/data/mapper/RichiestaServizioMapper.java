@@ -14,6 +14,8 @@ import org.mapstruct.ReportingPolicy;
 
 public interface RichiestaServizioMapper {
 
+    @Mapping(source = "beneficiario.email", target = "beneficiario")
+    @Mapping(source = "enteVolontario.email", target = "enteVolontario")
     RichiestaServizioDTO toDto(RichiestaServizio entity);
-    RichiestaServizio toEntity(RichiestaServizioDTO dto);
+
 }
