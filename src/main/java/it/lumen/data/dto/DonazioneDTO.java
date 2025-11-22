@@ -15,7 +15,7 @@ public class DonazioneDTO {
     @NotNull(message = "Un id è obbligatorio")
     private Integer idDonazione;
 
-    @NotBlank(message = "Non è stato specificata l'email Dell'utente")
+    @NotBlank(message = "L'email dell'utente è obbligatoria")
     @Email(message = "Formato email dell'ente non valido")
     private String emailEnte;
 
