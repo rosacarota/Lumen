@@ -13,7 +13,7 @@ import java.sql.Date;
 @Data
 public class RichiestaServizioDTO {
 
-    @NotBlank(message = "Va specificato un ID")
+    @NotNull(message = "Va specificato un ID")
     private Integer idRichiestaServizio;
 
     @NotBlank(message = "Il messaggio della richiesta è obbligatorio")

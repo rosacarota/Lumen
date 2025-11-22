@@ -13,7 +13,7 @@ import java.sql.Date;
 @NoArgsConstructor
 public class RaccoltaFondiDTO {
 
-    @NotBlank(message = "Un id è obbligatorio")
+    @NotNull(message = "Un id è obbligatorio")
     private Integer idRaccoltaFondi;
 
     @NotBlank(message = "È necessario un titolo per la raccolta fondi")

@@ -9,7 +9,7 @@ import java.sql.Date;
 @NoArgsConstructor
 public class RaccontoDTO {
 
-    @NotBlank(message = "Un id è obbligatorio")
+    @NotNull(message = "Un id è obbligatorio")
     private Integer idRacconto;
 
     @NotBlank(message = "il titolo è obbligatorio")

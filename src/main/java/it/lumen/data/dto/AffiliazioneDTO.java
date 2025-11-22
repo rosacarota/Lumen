@@ -11,7 +11,7 @@ import java.sql.Date;
 @NoArgsConstructor
 public class AffiliazioneDTO {
 
-    @NotBlank(message = "Un id è obbligatorio")
+    @NotNull(message = "Un id è obbligatorio")
     private Integer idAffiliazione;
 
     private String descrizione;
