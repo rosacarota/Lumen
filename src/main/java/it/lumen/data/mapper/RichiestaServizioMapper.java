@@ -1,8 +1,7 @@
 package it.lumen.data.mapper;
 
-import it.lumen.data.dto.RaccoltaFondiDTO;
-import it.lumen.data.entity.RaccoltaFondi;
-
+import it.lumen.data.dto.RichiestaServizioDTO;
+import it.lumen.data.entity.RichiestaServizio;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
@@ -13,8 +12,8 @@ import org.mapstruct.ReportingPolicy;
         unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
 
-public interface RaccoltaFondiMapper {
+public interface RichiestaServizioMapper {
 
-    RaccoltaFondiDTO toDto(RaccoltaFondi entity);
-    RaccoltaFondi toEntity(RaccoltaFondiDTO dto);
+    RichiestaServizioDTO toDto(RichiestaServizio entity);
+    RichiestaServizio toEntity(RichiestaServizioDTO dto);
 }
