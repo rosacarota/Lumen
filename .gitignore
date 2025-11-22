@@ -1,31 +1,46 @@
-# IDE / build
+# IDEs
 .idea/
-.mvn/
 *.iml
-*.iws
-*.ipr
+.vscode/
+!.vscode/extensions.json
+.DS_Store
+*iws
+*ipr
 org.eclipse.*
 .factorypath
 .classpath
 .project
 
 
-# Java/Spring build
+# Java/Spring
 target/
-build/
+.mvn/
+out/
 *.class
+mvnw
+mvnw.cmd
 
 # Node/React
 node_modules/
 dist/
+dist-ssr/
 build/
+*.local
 
 # Config
 .env
 
-### VS Code ###
-.vscode/
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-#Maven
-mvnw
-mvnw.cmd
+# Editor/Project files
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
