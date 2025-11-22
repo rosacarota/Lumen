@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface  DonazioneDAO extends JpaRepository<Donazione, Integer> {
-    List<Donazione> findAllByRaccoltaFondi_IDRaccolta(int idRaccolta);
+
+    List<Donazione> findAllByRaccoltaFondi_IdRaccoltaFondi(int idRaccoltaFondi);
     List<Donazione> findAllByEnte_Email(String enteEmail);
 }
