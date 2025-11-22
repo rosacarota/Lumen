@@ -9,7 +9,7 @@ import org.mapstruct.ReportingPolicy;
 
 
 @Mapper(componentModel = "spring",
-        uses = {UtenteMapper.class, UtenteMapper.class, RaccoltaFondiMapper.class,},
+        uses = {UtenteMapper.class,RaccoltaFondiMapper.class,},
         unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface DonazioneMapper {
 
