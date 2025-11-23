@@ -4,25 +4,35 @@ import it.lumen.data.dao.EventoDAO;
 import it.lumen.data.entity.Evento;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.transaction.Transactional;
+
 @Service
 public class EventoServiceImpl implements EventoService{
 
 
-    private EventoDAO eventoDAO;
+    private final EventoDAO eventoDAO;
 
+    @Autowired
+    public EventoServiceImpl(EventoDAO eventoDAO) {
+        this.eventoDAO = eventoDAO;
+    }
 
     @Override
+    @Transactional
     public void aggiungiEvento(Evento evento){
 
         eventoDAO.save(evento);
     }
 
     @Override
+    @Transactional
     public void modificaEvento(Evento evento){
         eventoDAO.save(evento);
     }
 
     @Override
+    @Transactional
     public void eliminaEvento(Integer idEvento){
         eventoDAO.removeEventoByIdEvento(idEvento);
     }
