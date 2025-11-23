@@ -8,4 +8,6 @@ import java.util.List;
 public interface RaccontoDAO extends JpaRepository<Racconto, Integer> {
 
     List<Racconto> findAllByUtente_Email(String email);
+
+    void removeByIdRacconto(Integer idRacconto);
 }
