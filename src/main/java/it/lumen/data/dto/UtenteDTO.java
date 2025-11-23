@@ -20,7 +20,6 @@ public class UtenteDTO {
     @Size(max = 100)
     private String nome;
 
-    @NotBlank(message = "Cognome obbligatorio")
     @Size(max = 100)
     private String cognome;
 

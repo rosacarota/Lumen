@@ -16,7 +16,7 @@ CREATE TABLE Indirizzo (
 CREATE TABLE Utente (
     Email VARCHAR(255) PRIMARY KEY,
     Nome VARCHAR(100) NOT NULL,
-    Cognome VARCHAR(100) NOT NULL,
+    Cognome VARCHAR(100),
     Indirizzo INTEGER,
     Password VARCHAR(255) NOT NULL,
     Descrizione TEXT,

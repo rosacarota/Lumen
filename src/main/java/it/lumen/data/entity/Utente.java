@@ -2,6 +2,7 @@ package it.lumen.data.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,13 +30,15 @@ public class Utente {
     @Email(message = "Email non valida")
     private String email;
 
+    @NotBlank(message = "Un nome è obbligatorio")
     @Column(name="nome", nullable= false, length=100)
     private String nome;
 
     @Column(name="cognome", nullable= false, length=100)
     private String cognome;
 
-    @ManyToOne  (fetch = FetchType.LAZY)
+    @ManyToOne // (fetch = FetchType.LAZY)
+    @NotNull(message = "Un indirizzo è obbligatorio")
     @JoinColumn(name = "Indirizzo")
     private Indirizzo indirizzo;
 
