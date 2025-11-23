@@ -20,16 +20,14 @@ public class GestioneRaccontoServiceImpl implements GestioneRaccontoService {
     @Transactional
     public Racconto aggiungiRacconto(Racconto racconto) {
 
-        Racconto raccontoSalvato = raccontoDAO.save(racconto);
-        return raccontoSalvato;
+        return raccontoDAO.save(racconto);
     }
 
     @Override
     @Transactional
     public Racconto modificaRacconto(Racconto nuovoRacconto) {
 
-        Racconto raccontoModificato=raccontoDAO.save(nuovoRacconto);
-        return raccontoModificato;
+        return raccontoDAO.save(nuovoRacconto);
     }
 
     @Override
