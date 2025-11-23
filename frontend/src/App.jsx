@@ -1,10 +1,11 @@
 import React from 'react';
-import  EnteProfile from './components/EnteProfile';
+import Navbar from './components/Navbar';
+import EventCard from './components/EventCard';
 
 const App = () => {
   return (
     <div>
-      <EnteProfile/>
+      <EventCard />
     </div>
   )
 }
