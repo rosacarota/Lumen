@@ -6,5 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UtenteDAO extends JpaRepository<Utente,String>{
 
+    Utente findUtenteByEmailAndPassword(String email, String password);
+
     Utente findByEmail(String email);
+
+    boolean existsByEmail(String email);
 }
