@@ -1,10 +1,10 @@
 import React from 'react';
-import Navbar from './components/Navbar';
+import  EnteProfile from './components/EnteProfile';
 
 const App = () => {
   return (
     <div>
-      <Navbar />
+      <EnteProfile/>
     </div>
   )
 }
