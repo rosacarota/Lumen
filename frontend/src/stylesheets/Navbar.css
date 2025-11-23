@@ -1,0 +1,285 @@
+:root {
+  /* -- Sfondi -- */
+  --bg-main: #F7FBFB; 
+  --bg-soft: #E9FBE7; 
+
+  /* -- Colori Principali -- */
+  --first-color: #087886; /* Turchese */
+  --second-color: #4AAFB8; /* Azzurro */
+  --third-color: #7CCE6B;  /* Verde */
+
+  /* -- Colori Testo & Utility -- */
+  --text-main: #333333;
+  --text-sub: #666666;
+  --danger: #e74c3c;
+
+  /* -- Ombre -- */
+  --shadow-nav: 0 4px 20px rgba(0, 0, 0, 0.06); /* Ombra leggermente più morbida */
+  --shadow-drop: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', 'Roboto', sans-serif; /* Font moderno */
+  background-color: var(--bg-main);
+}
+
+.navbar-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding-top: 25px;
+}
+
+.navbar {
+  width: 95%;
+  max-width: 1280px; /* Leggermente più larga per dare respiro */
+  height: 80px;
+  background-color: #ffffff;
+  border-radius: 24px; /* Raggio leggermente ridotto per un look più 'tech' */
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--shadow-nav);
+  position: relative;
+}
+
+/* --- SEZIONE SINISTRA (Logo + Divider + Links) --- */
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 25px; /* Spazio tra gli elementi del blocco sinistro */
+}
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.logo-circle {
+  width: 54px; /* Ottimizzato */
+  height: 54px;
+  background-color: var(--bg-main);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.08); /* Bordo sottile elegante */
+}
+
+.logo-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Separatore Verticale tra Logo e Menu */
+.nav-divider {
+  width: 1px;
+  height: 32px;
+  background-color: #e0e0e0;
+  margin: 0 5px;
+}
+
+/* Links Navigazione (Ora a Sinistra) */
+.navbar-links {
+  display: flex;
+  gap: 32px; /* Spazio tra i link */
+}
+
+.nav-item {
+  text-decoration: none;
+  color: var(--text-main);
+  font-weight: 600;
+  font-size: 1.05rem;
+  letter-spacing: 0.3px; /* Leggero spazio tra lettere */
+  position: relative;
+  padding-bottom: 6px;
+  transition: color 0.3s ease;
+}
+
+.nav-item:hover {
+  color: var(--first-color);
+}
+
+/* Animazione Sottolineatura */
+.nav-item::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2.5px; /* Leggermente più spessa */
+  bottom: 0;
+  left: 0;
+  background-color: var(--first-color);
+  transition: width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Animazione più elastica */
+  border-radius: 2px;
+}
+
+.nav-item:hover::after {
+  width: 100%;
+}
+
+/* --- SEZIONE DESTRA (Utility + Profilo) --- */
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.icon-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px; /* Icone squadrate arrotondate (moderno) invece che cerchi perfetti */
+  background-color: transparent; /* Pulito di default */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-sub);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.icon-btn:hover {
+  background-color: var(--bg-soft);
+  color: var(--first-color);
+  border-color: rgba(8, 120, 134, 0.1);
+}
+
+/* Profilo */
+.profile-container {
+  position: relative;
+  margin-left: 8px; /* Un po' di distacco dalle icone */
+}
+
+.profile-pill {
+  display: flex;
+  align-items: center;
+  background-color: var(--bg-main);
+  padding: 6px 14px 6px 6px;
+  border-radius: 40px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.profile-pill:hover, .profile-pill.active {
+  background-color: #fff;
+  border-color: #e0e0e0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.profile-avatar {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #e0e0e0, #cfcfcf); /* Gradiente sottile default */
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-right: 12px;
+}
+
+.profile-pill:has(.user-name:empty) .profile-avatar,
+.profile-pill:not(:has(.user-name)) .profile-avatar {
+    margin-right: 0;
+}
+
+.profile-details {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+  margin-right: 8px;
+}
+
+.user-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.user-role {
+  font-size: 0.75rem;
+  color: var(--first-color);
+  text-transform: capitalize;
+  font-weight: 600;
+}
+
+.arrow-icon {
+  color: var(--text-sub);
+  transition: transform 0.3s;
+}
+
+.arrow-icon.rotated {
+  transform: rotate(180deg);
+}
+
+/* --- DROPDOWN --- */
+.dropdown-box {
+  position: absolute;
+  top: calc(100% + 15px); /* Spazio dinamico */
+  right: 0;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: var(--shadow-drop);
+  width: 240px;
+  padding: 10px;
+  z-index: 100;
+  animation: slideIn 0.2s ease-out;
+  border: 1px solid #f0f0f0;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dropdown-row {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: var(--text-main);
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  margin-bottom: 4px;
+}
+
+.dropdown-row:hover {
+  background-color: var(--bg-soft);
+  color: var(--first-color);
+  transform: translateX(4px); /* Leggero movimento a destra all'hover */
+}
+
+.row-icon {
+  display: flex;
+  align-items: center;
+  margin-right: 14px;
+  color: var(--second-color);
+}
+
+.dropdown-row.danger {
+  margin-top: 8px;
+  border-top: 1px solid #f5f5f5;
+  padding-top: 14px; /* Più spazio sopra logout */
+  color: var(--danger);
+  border-radius: 0 0 12px 12px;
+}
+
+.dropdown-row.danger:hover {
+  background-color: #fff0f0;
+  color: var(--danger);
+}
+
+.dropdown-row.danger .row-icon {
+  color: var(--danger);
+}
