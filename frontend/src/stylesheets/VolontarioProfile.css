@@ -1,0 +1,249 @@
+:root {
+  /* -- Palette Colori -- */
+  --bg-main: #F7FBFB;  /* Bianco freddo (Pannelli) */
+  --bg-soft: #E9FBE7;  /* Verde chiaro (Sfondo Pagina) */
+  --first-color: #087886; /* Turchese Scuro */
+  --second-color: #4AAFB8; /* Azzurro */
+  --third-color: #7CCE6B;  /* Verde */
+  
+  --shadow-soft: 0 10px 25px rgba(8, 120, 134, 0.1);
+  --shadow-card: 0 8px 20px rgba(8, 120, 134, 0.25);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--bg-soft);
+  color: var(--first-color);
+  overflow-x: hidden;
+}
+
+/* --- LAYOUT GENERALE --- */
+.Container {
+  background-color: var(--bg-soft);
+  min-height: 100vh;
+  padding: 30px 18%; /* Spaziatura ampia desktop */
+  max-width: 1800px; 
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-grid {
+  display: grid;
+  /* Sidebar Sx (Profilo/Enti) | Centrale (Storie) | Sidebar Dx (Eventi) */
+  grid-template-columns: 280px 1fr 320px;
+  gap: 2rem;
+  width: 100%;
+  align-items: start;
+}
+
+/* --- PANNELLI BIANCHI --- */
+.profile-panel, .main-panel, .action-panel {
+  background-color: var(--bg-main);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: var(--shadow-soft);
+  height: fit-content;
+}
+
+/* --- SIDEBAR SINISTRA (Profilo & Enti) --- */
+.profile-panel {
+  position: sticky;
+  top: 30px;
+  /* Se il contenuto è lungo, permetti lo scroll interno alla sidebar */
+  max-height: 90vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(8, 120, 134, 0.1);
+}
+
+.avatar {
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  margin-right: 15px;
+  border: 2px solid var(--third-color);
+  object-fit: cover;
+}
+
+.user-info h2 { font-size: 1.3rem; color: var(--first-color); margin: 0; word-break: break-word;}
+.user-info span { color: var(--second-color); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; }
+.user-bio { color: #555; line-height: 1.5; margin-bottom: 1.5rem; font-size: 0.9rem; }
+
+.stats-group { margin-top: 1rem; }
+.stat-item { margin-bottom: 1rem; }
+.stat-item h4 { color: var(--second-color); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px;}
+.stat-item p { font-size: 1.1rem; font-weight: 700; color: var(--first-color); }
+
+.divider { border: 0; border-top: 1px solid rgba(8, 120, 134, 0.1); margin: 1.5rem 0; }
+.section-title-small { font-size: 1.1rem; color: var(--first-color); margin-bottom: 1rem; text-transform: uppercase;}
+
+/* STILE ENTI AFFILIATI (Mini Card) */
+.entity-mini-card {
+  background: var(--first-color);
+  color: white;
+  border-radius: 12px;
+  padding: 10px;
+  margin-bottom: 10px;
+  box-shadow: var(--shadow-card);
+}
+
+.entity-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.entity-avatar-placeholder {
+  width: 35px; height: 35px;
+  background-color: white;
+  border-radius: 50%;
+  margin-right: 10px;
+  border: 2px solid var(--third-color);
+}
+
+.entity-name { font-size: 0.9rem; margin: 0; font-weight: 700; }
+.entity-type { font-size: 0.7rem; color: var(--third-color); text-transform: uppercase; }
+
+.small-button {
+  width: 100%;
+  padding: 5px;
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.5);
+  color: white;
+  border-radius: 15px;
+  font-size: 0.7rem;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: 0.2s;
+}
+.small-button:hover { background: white; color: var(--first-color); }
+
+/* --- PANNELLI CENTRALE E DESTRO --- */
+.main-panel, .action-panel {
+  max-height: 85vh; 
+  overflow-y: auto; 
+  padding-right: 1rem; 
+  scrollbar-width: thin;
+  scrollbar-color: var(--second-color) var(--bg-main);
+}
+
+.panel-title {
+  color: var(--first-color);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 1.4rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-weight: 800;
+  position: sticky;
+  top: -2rem;
+  background-color: var(--bg-main);
+  padding: 1rem 0;
+  margin-top: -1rem;
+  z-index: 10;
+}
+
+/* --- CARD GENERICA (Stile Turchese) --- */
+.card-component {
+  background: linear-gradient(135deg, #087886 0%, #06606b 100%);
+  color: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding-bottom: 10px;
+}
+
+.card-avatar {
+  width: 45px; height: 45px;
+  border-radius: 50%;
+  margin-right: 12px;
+  object-fit: cover;
+  border: 2px solid white;
+}
+
+.card-author-name { color: white; font-weight: 700; font-size: 1rem; margin: 0; }
+.card-role { color: var(--third-color); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+
+.card-body-title { color: white; font-size: 1.2rem; font-weight: 700; text-align: center; }
+.card-body-text { color: rgba(255, 255, 255, 0.9); font-size: 0.9rem; line-height: 1.5; text-align: center; }
+
+/* STILI SPECIFICI EVENT CARD */
+.event-title {
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+  padding-bottom: 10px;
+  margin-bottom: 5px;
+}
+
+.event-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: rgba(0,0,0,0.1);
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.event-row {
+  display: flex;
+  align-items: center;
+  font-size: 0.85rem;
+  color: white;
+}
+
+.event-row .icon {
+  margin-right: 10px;
+  font-size: 1.1rem;
+}
+
+/* --- BOTTONE PRINCIPALE --- */
+.submit-button {
+  width: 100%;
+  padding: 10px;
+  background: linear-gradient(135deg, #087886 0%, #7CCE6B 120%);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.4);
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-transform: uppercase;
+  margin-top: auto;
+  transition: 0.3s;
+}
+
+.submit-button:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 1024px) {
+  .dashboard-grid { grid-template-columns: 1fr; }
+  .profile-panel { position: static; max-height: none; }
+  .main-panel, .action-panel { max-height: 500px; }
+  .Container { padding: 30px 5%; }
+}
