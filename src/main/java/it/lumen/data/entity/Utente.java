@@ -38,7 +38,6 @@ public class Utente {
     private String cognome;
 
     @ManyToOne // (fetch = FetchType.LAZY)
-    @NotNull(message = "Un indirizzo è obbligatorio")
     @JoinColumn(name = "Indirizzo")
     private Indirizzo indirizzo;
 
