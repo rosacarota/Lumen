@@ -16,7 +16,6 @@ public class UtenteDTO {
     @NotBlank(message = "Email obbligatoria")
     private String email;
 
-    @NotBlank(message = "Nome obbligatorio")
     @Size(max = 100)
     private String nome;
 
@@ -25,7 +24,6 @@ public class UtenteDTO {
 
     private Integer indirizzo;
 
-    @NotBlank(message = "Password obbligatoria")
     private String password;
 
     private String descrizione;
@@ -36,7 +34,6 @@ public class UtenteDTO {
     @Size(max = 100)
     private String ambito;
 
-    @NotBlank(message = "Ruolo obbligatorio")
     private Utente.Ruolo ruolo;
 
     @Size(max = 255)

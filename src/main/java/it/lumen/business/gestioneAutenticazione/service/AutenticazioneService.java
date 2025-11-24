@@ -6,5 +6,4 @@ public interface AutenticazioneService {
 
     Utente login(String email, String password);
 
-    public boolean checkEmail(String email);
 }

@@ -19,16 +19,13 @@ public class AutenticazioneServiceImpl implements AutenticazioneService {
     @Override
     public Utente login(String email, String password) {
         Encrypter encrypter = new Encrypter();
-        Utente utente= utenteDAO.findUtenteByEmailAndPassword(email, password);
-        if(encrypter.checkPassword(password, utente.getPassword())){
+        Utente utente = utenteDAO.findByEmail(email);
+        if (utente == null) return null;
+
+        if (encrypter.checkPassword(password, utente.getPassword())) {
             return utente;
         }
         return null;
-    }
-
-    @Override
-    public boolean checkEmail(String email) {
-        return utenteDAO.existsByEmail(email);
     }
 
 }

@@ -37,7 +37,7 @@ public class Utente {
     @Column(name="cognome", nullable= false, length=100)
     private String cognome;
 
-    @ManyToOne // (fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL , fetch = FetchType.LAZY)
     @JoinColumn(name = "Indirizzo")
     private Indirizzo indirizzo;
 

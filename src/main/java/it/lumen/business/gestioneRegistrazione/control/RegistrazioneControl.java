@@ -3,6 +3,7 @@ package it.lumen.business.gestioneRegistrazione.control;
 import it.lumen.business.gestioneRegistrazione.service.RegistrazioneService;
 import it.lumen.data.entity.Utente;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.BindingResult;
@@ -28,8 +29,12 @@ public class RegistrazioneControl {
             return ResponseEntity.badRequest().body(errorMsg.toString());
         }
 
-        registrazioneService.RegistraUtente(utente);
+        try {
+            registrazioneService.registraUtente(utente);
+            return ResponseEntity.ok("Utente registrato con successo");
+        } catch (IllegalArgumentException ex) {
 
-        return ResponseEntity.ok("Utente registrato con successo");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+        }
     }
 }

@@ -20,13 +20,22 @@ public class RegistrazioneServiceImpl implements RegistrazioneService {
 
     @Transactional
     @Override
-    public void RegistraUtente(Utente utente) {
+    public void registraUtente(Utente utente) {
+        if (checkEmail(utente.getEmail())) {
+            throw new IllegalArgumentException("Email già registrata");
+        }
 
         Encrypter encrypter = new Encrypter();
         String passwordCriptata = encrypter.encrypt(utente.getPassword());
 
         utente.setPassword(passwordCriptata);
         utenteDAO.save(utente);
+    }
+
+
+    @Override
+    public boolean checkEmail(String email) {
+        return utenteDAO.existsByEmail(email);
     }
 
 }
