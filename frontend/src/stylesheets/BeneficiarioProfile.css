@@ -23,27 +23,20 @@ body {
   overflow-x: hidden;
 }
 
-/* --- CONTAINER (MODIFICATO PER SPAZIATURA LATERALE) --- */
 .Container {
   background-color: var(--bg-soft);
   min-height: 100vh;
   
-  /* 1. Larghezza Percentuale: Lascia sempre spazio ai lati (7.5% per lato) */
-  width: 85%; 
+  /* Spaziatura laterale aumentata */
+  padding: 30px 10%; 
   
-  /* 2. Larghezza Massima: Rende il contenuto "più piccolo" e compatto su schermi grandi */
-  max-width: 1100px; 
-  
-  /* 3. Centratura: Mette il blocco al centro dello schermo */
-  margin: 0 auto; 
-  
-  /* 4. Spaziatura Verticale: Distanza dall'alto e dal basso */
-  padding-top: 40px;
-  padding-bottom: 40px;
+  /* Limite larghezza per schermi giganti */
+  max-width: 1600px; 
+  margin: 0 auto;
   
   display: flex;
   flex-direction: column;
-  gap: 30px; 
+  gap: 30px;
 }
 
 

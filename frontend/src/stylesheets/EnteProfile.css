@@ -26,33 +26,9 @@
   margin: 0;
   padding: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 1600px;
 }
 
-/* --- LAYOUT GENERALE --- */
-.Container {
-  background-color: var(--bg-soft);
-  min-height: 100vh;
-  
-  /* MODIFICA QUI: Aumento spaziatura laterale */
-  padding: 30px 7%; /* 30px sopra/sotto, 10% a destra/sinistra */
-  
-  /* Opzionale: impedisce che su schermi giganti diventi troppo largo */
-  max-width: 1600px; 
-  margin: 0 auto; /* Centra il container se supera il max-width */
-  
-  display: flex;
-  flex-direction: column;
-  gap: 30px; /* Aumentato anche lo spazio verticale tra le sezioni */
-}
-
-/* --- RESPONSIVE --- */
-/* Aggiungi o aggiorna questa media query alla fine del file */
-@media (max-width: 768px) {
-  .Container {
-    /* Su cellulare riduciamo la spaziatura laterale per non sprecare spazio */
-    padding: 20px 15px; 
-  }
-}
 
 
 

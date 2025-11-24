@@ -24,14 +24,21 @@ body {
 }
 
 /* --- LAYOUT GENERALE --- */
+
 .Container {
   background-color: var(--bg-soft);
   min-height: 100vh;
-  padding: 30px 18%; /* Spaziatura ampia desktop */
-  max-width: 1800px; 
+  
+  /* Spaziatura laterale aumentata */
+  padding: 30px 10%; 
+  
+  /* Limite larghezza per schermi giganti */
+  max-width: 1600px; 
   margin: 0 auto;
+  
   display: flex;
   flex-direction: column;
+  gap: 30px;
 }
 
 .dashboard-grid {

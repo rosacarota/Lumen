@@ -30,8 +30,10 @@ const EnteProfile = () => {
     };
 
     return (
+        <>
+        <header><Navbar></Navbar></header>
         <div className='Container'>
-           <Navbar></Navbar>
+           
             
 
             {/* --- HERO SECTION (Profilo Ente) --- */}
@@ -147,6 +149,7 @@ const EnteProfile = () => {
                 </div>
             </section>
         </div>
+        </>
     )
 }
 
