@@ -7,7 +7,8 @@ import it.lumen.data.entity.Partecipazione;
 import it.lumen.data.entity.Utente;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.sql.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,34 +23,34 @@ import jakarta.validation.Valid;
 public class gestionePartecipazioneEventoControl {
 
 	@Autowired
-    private PartecipazioneEventoService partecipazioneEventoService;
+	private PartecipazioneEventoService partecipazioneEventoService;
 
 
 	@PostMapping("/aggiungi")
-	public ResponseEntity<String> aggiungiPartecipazione(@RequestBody Partecipazione partecipazione){
+	public ResponseEntity<String> aggiungiPartecipazione(@RequestBody Partecipazione partecipazione) {
 
 		Evento evento = partecipazione.getEvento();
 		Utente volontario = partecipazione.getVolontario();
 
-		try{
+		try {
 
-			if(evento == null){
+			if (evento == null) {
 
-                return new ResponseEntity<>("Evento non può essere vuoto", HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<>("Evento non può essere vuoto", HttpStatus.BAD_REQUEST);
 			}
-			if(volontario == null){
+			if (volontario == null) {
 
-                return new ResponseEntity<>("Volontario non può essere vuoto", HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<>("Volontario non può essere vuoto", HttpStatus.BAD_REQUEST);
 			}
 
-			ArrayList<Partecipazione> listaPartecipazioniEvento = partecipazioneEventoService.listaPartecipazioni(evento.getIdEvento());
+			List<Partecipazione> listaPartecipazioniEvento = partecipazioneEventoService.listaPartecipazioni(evento.getIdEvento());
 
-			if(listaPartecipazioniEvento.contains(volontario)){
+			if (listaPartecipazioniEvento.contains(volontario)) {
 
 				return new ResponseEntity<>("Volontario gia' partecipa all'evento", HttpStatus.BAD_REQUEST);
 			}
 
-			if(listaPartecipazioniEvento.size() >= evento.getMaxPartecipanti()){
+			if (listaPartecipazioniEvento.size() >= evento.getMaxPartecipanti()) {
 
 				return new ResponseEntity<>("Numero di partecipanti al completo", HttpStatus.BAD_REQUEST);
 			}
@@ -57,11 +58,12 @@ public class gestionePartecipazioneEventoControl {
 			partecipazione.setData(new Date(System.currentTimeMillis()));
 			partecipazioneEventoService.aggiungiPartecipazione(partecipazione);
 
-		}catch(Exception e){
+		} catch (Exception e) {
 
-            return new ResponseEntity<>("Errore interno del server " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>("Errore interno del server " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+		return null;
 	}
-
-	// TODO: modifica and rimuovi
 }
+	// TODO: modifica and rimuovi
+

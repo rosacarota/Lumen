@@ -20,7 +20,6 @@ public class RegistrazioneControl {
         this.registrazioneService = registrazioneService;
     }
 
-    @GetMapping
     @PostMapping
     public ResponseEntity<String> registraUtente(@Valid @RequestBody Utente utente, BindingResult result) {
         if (result.hasErrors()) {
