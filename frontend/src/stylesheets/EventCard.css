@@ -1,0 +1,54 @@
+.mini-card {
+  background-color: #6b7280; /* Grigio scuro */
+  color: white;
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centra tutto orizzontalmente */
+  flex: 1; /* Prende metà spazio nel contenitore genitore */
+  min-width: 250px;
+}
+
+.mini-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.mini-avatar {
+  width: 40px;
+  height: 40px;
+  background-color: white;
+  border-radius: 50%;
+}
+
+.mini-user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.mini-brand { font-weight: bold; font-size: 14px; }
+.mini-role { font-size: 11px; opacity: 0.8; }
+
+.mini-title {
+  margin: 0 0 15px 0;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.mini-pills {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.mini-pill {
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 8px 12px;
+  border-radius: 99px;
+  font-size: 11px;
+  text-align: center;
+}
