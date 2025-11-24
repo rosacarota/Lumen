@@ -54,22 +54,7 @@
   }
 }
 
-/* --- 1. HEADER PAGINA --- */
-.page-header {
-  background-color: var(--bg-main);
-  text-align: center;
-  padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-}
 
-.page-header h1 {
-  color: var(--first-color);
-  font-size: 1.8rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
 
 /* --- 2. SEZIONE SOCIAL (HERO) --- */
 .social-section {

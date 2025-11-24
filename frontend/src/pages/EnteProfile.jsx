@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import '../stylesheets/EnteProfile.css';
-
+import Navbar from '../components/Navbar';
 const EnteProfile = () => {
     // 1. STATO TAB: Gestisce quale scheda è attiva
     const [activeTab, setActiveTab] = useState('futuri');
@@ -31,10 +31,8 @@ const EnteProfile = () => {
 
     return (
         <div className='Container'>
-            {/* --- HEADER --- */}
-            <header className='page-header'>
-                <h1>PROFILO</h1>
-            </header>
+           <Navbar></Navbar>
+            
 
             {/* --- HERO SECTION (Profilo Ente) --- */}
             <section className='social-section'>
@@ -143,9 +141,6 @@ const EnteProfile = () => {
 
                     {/* GRIGLIA EVENTI (Contenitore Bianco) */}
                     <div className='event-grid'>
-                        <p>
-                            Visualizzazione eventi: <strong>{activeTab.toUpperCase()}</strong>
-                        </p>
                         {/* Qui verranno mappate le Card in futuro */}
                     </div>
 
