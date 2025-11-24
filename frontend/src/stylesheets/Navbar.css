@@ -4,9 +4,9 @@
   --bg-soft: #E9FBE7; 
 
   /* -- Colori Principali -- */
-  --first-color: #087886; /* Turchese */
-  --second-color: #4AAFB8; /* Azzurro */
-  --third-color: #7CCE6B;  /* Verde */
+  --first-color: #087886; 
+  --second-color: #4AAFB8; 
+  --third-color: #7CCE6B; 
 
   /* -- Colori Testo & Utility -- */
   --text-main: #333333;
@@ -14,42 +14,53 @@
   --danger: #e74c3c;
 
   /* -- Ombre -- */
-  --shadow-nav: 0 4px 20px rgba(0, 0, 0, 0.06); /* Ombra leggermente più morbida */
+  --shadow-nav: 0 2px 15px rgba(0, 0, 0, 0.05); /* Ombra piÃ¹ adatta a un header full-width */
   --shadow-drop: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
 body {
   margin: 0;
-  font-family: 'Segoe UI', 'Roboto', sans-serif; /* Font moderno */
+  font-family: 'Segoe UI', 'Roboto', sans-serif;
   background-color: var(--bg-main);
+  padding-top: 80px; /* Aggiunto per evitare che il contenuto finisca sotto l'header fisso (opzionale) */
 }
 
+/* --- HEADER WRAPPER (Full Width) --- */
 .navbar-wrapper {
   width: 100%;
+  height: 80px;
+  background-color: #ffffff; /* Il bianco ora Ã¨ qui */
+  box-shadow: var(--shadow-nav); /* L'ombra ora Ã¨ qui */
   display: flex;
   justify-content: center;
-  padding-top: 25px;
+  align-items: center;
+  
+  /* Opzionale: rende l'header fisso in alto mentre scrolli */
+  position: fixed; 
+  top: 0;
+  left: 0;
+  z-index: 1000; 
 }
 
+/* --- NAVBAR CONTAINER (Contenuto centrato) --- */
 .navbar {
-  width: 95%;
-  max-width: 1280px; /* Leggermente più larga per dare respiro */
-  height: 80px;
-  background-color: #ffffff;
-  border-radius: 24px; /* Raggio leggermente ridotto per un look più 'tech' */
-  padding: 0 32px;
+  width: 100%;
+  max-width: 1280px; /* Mantiene il contenuto allineato al centro */
+  height: 100%;      /* Occupa tutta l'altezza del wrapper */
+  padding: 0 32px;   /* Spaziatura laterale */
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: var(--shadow-nav);
-  position: relative;
+  
+  /* Rimossi rispetto a prima: background-color, border-radius, margin, shadow */
+  background-color: transparent; 
 }
 
 /* --- SEZIONE SINISTRA (Logo + Divider + Links) --- */
 .navbar-left {
   display: flex;
   align-items: center;
-  gap: 25px; /* Spazio tra gli elementi del blocco sinistro */
+  gap: 25px;
 }
 
 .navbar-logo {
@@ -60,15 +71,15 @@ body {
 }
 
 .logo-circle {
-  width: 54px; /* Ottimizzato */
-  height: 54px;
-  background-color: var(--bg-main);
+  width: 48px; /* Leggermente ridotto per header classico */
+  height: 48px;
+  background-color: var(--bg-main); /* Contrasto grigio su header bianco */
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  border: 1px solid rgba(0,0,0,0.08); /* Bordo sottile elegante */
+  border: 1px solid rgba(0,0,0,0.08);
 }
 
 .logo-circle img {
@@ -77,29 +88,30 @@ body {
   object-fit: cover;
 }
 
-/* Separatore Verticale tra Logo e Menu */
 .nav-divider {
   width: 1px;
-  height: 32px;
+  height: 24px; /* Adattato */
   background-color: #e0e0e0;
   margin: 0 5px;
 }
 
-/* Links Navigazione (Ora a Sinistra) */
+/* Links Navigazione */
 .navbar-links {
   display: flex;
-  gap: 32px; /* Spazio tra i link */
+  gap: 32px;
 }
 
 .nav-item {
   text-decoration: none;
   color: var(--text-main);
   font-weight: 600;
-  font-size: 1.05rem;
-  letter-spacing: 0.3px; /* Leggero spazio tra lettere */
+  font-size: 1rem;
+  letter-spacing: 0.3px;
   position: relative;
-  padding-bottom: 6px;
+  padding: 26px 0; /* Padding verticale per estendere l'area cliccabile all'altezza header */
   transition: color 0.3s ease;
+  display: flex;
+  align-items: center;
 }
 
 .nav-item:hover {
@@ -111,12 +123,12 @@ body {
   content: '';
   position: absolute;
   width: 0;
-  height: 2.5px; /* Leggermente più spessa */
-  bottom: 0;
+  height: 3px; 
+  bottom: 0; /* Attaccato al fondo dell'header */
   left: 0;
   background-color: var(--first-color);
-  transition: width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Animazione più elastica */
-  border-radius: 2px;
+  transition: width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  border-radius: 3px 3px 0 0;
 }
 
 .nav-item:hover::after {
@@ -130,11 +142,51 @@ body {
   gap: 16px;
 }
 
+.search-box {
+  display: flex;
+  align-items: center;
+  background-color: var(--bg-main); /* Grigio chiaro per fondersi */
+  border: 1px solid transparent;
+  border-radius: 20px; /* Arrotondata a pillola */
+  padding: 8px 16px;
+  width: 220px; /* Larghezza fissa per ordine */
+  transition: all 0.3s ease;
+  margin-right: 8px; /* Spazio dalle altre icone */
+}
+
+/* Effetto Focus: quando clicchi l'input, il contenitore cambia */
+.search-box:focus-within {
+  background-color: #ffffff;
+  border-color: var(--first-color); /* Bordo turchese */
+  box-shadow: 0 0 0 3px rgba(8, 120, 134, 0.1); /* Alone leggero */
+}
+
+.search-icon {
+  color: var(--text-sub);
+  min-width: 18px; /* Evita che si schiacci */
+}
+
+.search-input {
+  border: none;
+  background: transparent;
+  outline: none;
+  margin-left: 10px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--text-main);
+  width: 100%;
+}
+
+.search-input::placeholder {
+  color: #999;
+  font-weight: 400;
+}
+
 .icon-btn {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px; /* Icone squadrate arrotondate (moderno) invece che cerchi perfetti */
-  background-color: transparent; /* Pulito di default */
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background-color: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -145,48 +197,47 @@ body {
 }
 
 .icon-btn:hover {
-  background-color: var(--bg-soft);
+  background-color: var(--bg-main); /* Usa bg-main invece di soft per contrasto su bianco */
   color: var(--first-color);
-  border-color: rgba(8, 120, 134, 0.1);
 }
 
 /* Profilo */
 .profile-container {
   position: relative;
-  margin-left: 8px; /* Un po' di distacco dalle icone */
+  margin-left: 8px;
 }
 
 .profile-pill {
   display: flex;
   align-items: center;
-  background-color: var(--bg-main);
-  padding: 6px 14px 6px 6px;
+  padding: 4px 12px 4px 4px; /* Padding ottimizzato */
   border-radius: 40px;
   cursor: pointer;
   transition: all 0.2s ease;
   border: 1px solid transparent;
+  background-color: var(--bg-main); /* Sfondo grigio chiaro per staccare dall'header bianco */
 }
 
 .profile-pill:hover, .profile-pill.active {
   background-color: #fff;
   border-color: #e0e0e0;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
 .profile-avatar {
-  width: 40px;
-  height: 40px;
-  background: linear-gradient(135deg, #e0e0e0, #cfcfcf); /* Gradiente sottile default */
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #e0e0e0, #cfcfcf);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
   font-weight: bold;
-  font-size: 1.1rem;
-  margin-right: 12px;
+  font-size: 1rem;
+  margin-right: 10px;
 }
-
+/* Nascondi margin se non c'Ã¨ nome (mobile/guest compact) */
 .profile-pill:has(.user-name:empty) .profile-avatar,
 .profile-pill:not(:has(.user-name)) .profile-avatar {
     margin-right: 0;
@@ -195,18 +246,18 @@ body {
 .profile-details {
   display: flex;
   flex-direction: column;
-  line-height: 1.3;
+  line-height: 1.2;
   margin-right: 8px;
 }
 
 .user-name {
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 700;
   color: var(--text-main);
 }
 
 .user-role {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: var(--first-color);
   text-transform: capitalize;
   font-weight: 600;
@@ -224,14 +275,14 @@ body {
 /* --- DROPDOWN --- */
 .dropdown-box {
   position: absolute;
-  top: calc(100% + 15px); /* Spazio dinamico */
+  top: calc(100% + 10px); /* Distanza dal profilo */
   right: 0;
   background-color: #ffffff;
-  border-radius: 16px;
+  border-radius: 12px;
   box-shadow: var(--shadow-drop);
   width: 240px;
-  padding: 10px;
-  z-index: 100;
+  padding: 8px;
+  z-index: 1001;
   animation: slideIn 0.2s ease-out;
   border: 1px solid #f0f0f0;
 }
@@ -244,35 +295,34 @@ body {
 .dropdown-row {
   display: flex;
   align-items: center;
-  padding: 12px 16px;
-  border-radius: 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
   text-decoration: none;
   color: var(--text-main);
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 500;
   transition: all 0.2s;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .dropdown-row:hover {
-  background-color: var(--bg-soft);
+  background-color: var(--bg-main);
   color: var(--first-color);
-  transform: translateX(4px); /* Leggero movimento a destra all'hover */
+  transform: translateX(4px);
 }
 
 .row-icon {
   display: flex;
   align-items: center;
-  margin-right: 14px;
+  margin-right: 12px;
   color: var(--second-color);
 }
 
 .dropdown-row.danger {
-  margin-top: 8px;
+  margin-top: 6px;
   border-top: 1px solid #f5f5f5;
-  padding-top: 14px; /* Più spazio sopra logout */
+  padding-top: 12px;
   color: var(--danger);
-  border-radius: 0 0 12px 12px;
 }
 
 .dropdown-row.danger:hover {
