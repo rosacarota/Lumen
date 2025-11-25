@@ -1,58 +1,75 @@
-:root {
-  /* -- Sfondi -- */
-  --bg-main: #F7FBFB;  /* Bianco freddo */
-  --bg-soft: #f0f5f5;  /* Sfondo pagina */
-
-  /* -- Colori Principali -- */
-  --first-color: #087886; /* Turchese */
-  --second-color: #4AAFB8; /* Azzurro */
-  --third-color: #7CCE6B;  /* Verde */
+/* --- ANIMAZIONI (Da aggiungere se non presenti) --- */
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
 }
 
-
-
-body {
-  background-color: var(--bg-soft);
-  color: var(--first-color);
-}
-
-
-.nav-links { list-style: none; display: flex; gap: 30px; }
-.nav-links li { font-weight: 600; cursor: pointer; color: var(--first-color); }
-
-/* --- HERO SECTION SPECIALE (Con Immagine McLaren) --- */
+/* --- HERO SECTION MODIFICATA (Stile Lumen) --- */
 .hero-wrapper {
     width: 100%;
     margin-bottom: 40px;
-    background-image: url('https://images.unsplash.com/photo-1621135802920-133df287f89c?q=80&w=2070&auto=format&fit=crop');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
     position: relative;
     
-    /* MODIFICA 1: Ridotto a 35% dell'altezza schermo (era 40vh) */
-    min-height: 35vh; 
+    /* MODIFICA 2: Gradiente esplicito dall'angolo in alto a Sx a quello in basso a Dx */
+    background: linear-gradient(to bottom right, var(--first-color) 0%, var(--second-color) 40%, var(--third-color) 100%);
+    
+    overflow: hidden; 
+    
+    /* MODIFICA 1: Altezza minima ridotta (era 35vh) */
+    min-height: 25vh; 
+    
     display: flex;
     flex-direction: column;
     justify-content: flex-end; 
+    z-index: 1;
+}
+
+
+/* SFERA SFOCATA 1 (Verde Chiaro - Alto Sinistra) */
+.hero-wrapper::before {
+    content: '';
+    position: absolute;
+    width: 300px; height: 300px;
+    background: var(--third-color);
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.6;
+    top: -50px; left: 10%;
+    animation: pulse 4s ease-in-out infinite;
+    z-index: -1; /* Sta dietro al contenuto */
+}
+
+/* SFERA SFOCATA 2 (Azzurro - Basso Destra) */
+.hero-wrapper::after {
+    content: '';
+    position: absolute;
+    width: 400px; height: 400px;
+    background: var(--second-color);
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.5;
+    bottom: -50px; right: 10%;
+    animation: pulse 5s ease-in-out infinite;
+    z-index: -1; /* Sta dietro al contenuto */
 }
 
 .hero-cover {
-    /* MODIFICA 2: Ridotto a 280px (era 350px) */
-    height: 280px;
+    
+    height: 150px;
     width: 100%;
     background-color: transparent;
     flex-grow: 1; 
 }
-
 .hero-info-bar {
-    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 50%, transparent 100%);
+    /* MODIFICA: Gradiente meno aggressivo del nero, più integrato */
+    background: linear-gradient(to top, rgba(8, 120, 134, 0.8) 0%, rgba(8, 120, 134, 0) 100%);
     padding-bottom: 30px;
     padding-top: 30px; 
     display: flex;
     justify-content: center;
     position: relative;
     width: 100%;
+    z-index: 2; /* Assicura che stia sopra le sfere */
 }
 
 .hero-content-inner {
@@ -76,14 +93,20 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     z-index: 10;
+    
+    /* MODIFICA: Testo logo colorato invece che grigio */
+    color: var(--first-color);
+    font-weight: bold;
+    font-size: 1.2rem;
 }
 
 .ente-text {
     color: white;
     margin-top: 10px;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+    /* Ombra testo più leggera per design pulito */
+    text-shadow: 0 2px 10px rgba(0,0,0,0.2);
 }
 
 .ente-text h1 { font-size: 3rem; font-weight: bold; margin-bottom: 5px; }
@@ -98,14 +121,14 @@ body {
 
 /* --- CLASSI PERSONALIZZATE --- */
 .pill {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.25); /* Più luminoso */
   backdrop-filter: blur(5px);
   padding: 8px 20px;
   border-radius: 20px;
   font-size: 0.9rem;
   font-weight: 700;
   color: white;
-  border: 1px solid rgba(255,255,255,0.3);
+  border: 1px solid rgba(255,255,255,0.4);
 }
 
 .follow-btn {
@@ -117,8 +140,19 @@ body {
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
   text-transform: uppercase;
 }
-.follow-btn.following { background: rgba(0,0,0,0.6); color: white; border: 1px solid white; box-shadow: none; }
+
+.follow-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+}
+
+.follow-btn.following { 
+    background: rgba(0,0,0,0.4); 
+    color: white; 
+    border: 1px solid white; 
+    box-shadow: none; 
+}
