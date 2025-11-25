@@ -19,7 +19,7 @@
   border: 1px solid rgba(8, 120, 134, 0.1);
   border-radius: 16px;
   padding: 24px;
-  min-width: 280px;
+  min-width: 320px;
   max-width: 350px;
   display: flex;
   flex-direction: column;
@@ -131,49 +131,34 @@
 
 /* --- Footer: Contenitore dei bottoni --- */
 .event-footer {
-  margin-top: auto; /* Spinge i bottoni in fondo alla card */
+  margin-top: auto;
   display: flex;
-  gap: 12px; /* Spazio tra i due bottoni */
+  gap: 12px;
   width: 100%;
 }
 
 /* Stile Base per TUTTI i bottoni */
 .event-btn {
-  flex: 1; /* Fa sì che i bottoni abbiano la stessa larghezza */
-  padding: 10px;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 13px;
-  cursor: pointer;
+  /* STABILITÀ: flex: 1 costringe i bottoni a dividersi lo spazio 50/50 sempre */
+  flex: 1; 
+  
+  /* DIMENSIONI: Aumentiamo il padding verticale per renderli più "alti" */
+  padding: 12px 8px; 
+  
+  /* TESTO: Leggermente più grande e centrato */
+  font-size: 14px; 
+  font-weight: 700; /* Più cicciotto */
   text-align: center;
+  
+  /* IMPEDISCE AI CAMBI DI TESTO DI ROMPERE IL LAYOUT */
+  white-space: nowrap; /* Obbliga il testo a stare su una riga */
+  overflow: hidden;    /* Taglia se dovesse essere lunghissimo (sicurezza) */
+  text-overflow: ellipsis; 
+
+  /* Stili estetici base */
+  border-radius: 10px; /* Arrotondamento un po' più morbido */
+  cursor: pointer;
   transition: all 0.2s ease;
-  border: 1px solid transparent; /* Per evitare salti di pixel */
-}
-
-/* Variante 1: Tasto Dettagli (Secondario) */
-/* Manteniamo lo stile "Outline" che avevi prima */
-.btn-secondary {
-  background-color: transparent;
-  color: var(--first-color);
-  border: 1px solid var(--first-color);
-}
-
-.btn-secondary:hover {
-  background-color: var(--bg-soft); /* Diventa chiaro invece che pieno */
-}
-
-/* Variante 2: Tasto Partecipa (Primario) */
-/* Stile "Pieno" per dargli importanza */
-.btn-primary {
-  background-color: var(--first-color);
-  color: white;
-  border: 1px solid var(--first-color);
-  box-shadow: 0 4px 6px rgba(8, 120, 134, 0.2);
-}
-
-.btn-primary:hover {
-  background-color: #06606b; /* Un po' più scuro del turchese base */
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(8, 120, 134, 0.3);
+  border: 1px solid transparent;
 }
 

@@ -1,8 +1,7 @@
 /* --- LAYOUT GENERALE --- */
 .page-wrapper {
   min-height: 100vh;
-  /* Sfondo "Menta" come nello screenshot */
-  background-color: #ecfdf5; 
+  background-color: #F0F5F5;
   padding-bottom: 60px;
   font-family: 'Inter', sans-serif;
 }

@@ -13,7 +13,8 @@ export default function EventCard({
   immagine, 
   ente,
   // NUOVA PROP: Se true, mostra il tasto partecipa. Default è false.
-  showParticipate = true 
+  showParticipate = true,
+  isParticipating = false, // Indica se l'utente sta già partecipando all'evento 
 }) {
 
   const formatDateRange = (start, end) => {
@@ -33,8 +34,13 @@ export default function EventCard({
 
   // Gestione del click su Partecipa
   const handleParticipate = (e) => {
-    e.stopPropagation(); // Evita che si apra anche il dettaglio se clicchi il bottone
-    alert(`Ti sei iscritto all'evento: ${titolo}`);
+    e.stopPropagation(); // Evita che il click "passi sotto" alla card (se la card è cliccabile)
+
+    if (isParticipating) {
+        alert("Partecipazione annullata.");
+    } else {
+        alert("Partecipazione confermata!");
+    }
     // Qui in futuro metterai la chiamata API al backend
   };
 
@@ -95,8 +101,12 @@ export default function EventCard({
 
         {/* Tasto Partecipa (c'è solo se richiesto) */}
         {showParticipate && (
-          <button className="event-btn btn-primary" onClick={handleParticipate}>
-            Partecipa
+          <button 
+            className="event-btn btn-primary" /* Uso SEMPRE la classe primaria (verde) */
+            onClick={handleParticipate}
+          >
+            {/* Cambio SOLO il testo in base alla variabile */}
+            {isParticipating ? "Non partecipare" : "Partecipa"}
           </button>
         )}
       </div>
