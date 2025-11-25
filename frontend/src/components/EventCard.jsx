@@ -1,5 +1,5 @@
 import React from 'react';
-import { CalendarDays, MapPin, Users, Clock } from 'lucide-react';
+import { CalendarDays, MapPin, Users, Clock, Info, UserPlus, UserCheck } from 'lucide-react';
 import '../stylesheets/EventCard.css';
 
 export default function EventCard({ 
@@ -12,9 +12,8 @@ export default function EventCard({
   maxpartecipanti, 
   immagine, 
   ente,
-  // NUOVA PROP: Se true, mostra il tasto partecipa. Default è false.
   showParticipate = true,
-  isParticipating = false, // Indica se l'utente sta già partecipando all'evento 
+  isParticipating = false, 
 }) {
 
   const formatDateRange = (start, end) => {
@@ -34,14 +33,12 @@ export default function EventCard({
 
   // Gestione del click su Partecipa
   const handleParticipate = (e) => {
-    e.stopPropagation(); // Evita che il click "passi sotto" alla card (se la card è cliccabile)
-
+    e.stopPropagation(); 
     if (isParticipating) {
         alert("Partecipazione annullata.");
     } else {
         alert("Partecipazione confermata!");
     }
-    // Qui in futuro metterai la chiamata API al backend
   };
 
   return (
@@ -94,19 +91,31 @@ export default function EventCard({
         )}
       </div>
       
-      {/* FOOTER - Qui c'è la logica del doppio tasto */}
+      {/* FOOTER - Bottoni stile "Fundraiser" */}
       <div className="event-footer">
-        {/* Tasto Dettagli (c'è sempre) */}
-        <button className="event-btn btn-secondary">Dettagli</button>
+        {/* Tasto Dettagli (Secondario) */}
+        <button className="event-btn btn-secondary">
+            <Info size={18} />
+            Dettagli
+        </button>
 
-        {/* Tasto Partecipa (c'è solo se richiesto) */}
+        {/* Tasto Partecipa */}
         {showParticipate && (
           <button 
-            className="event-btn btn-primary" /* Uso SEMPRE la classe primaria (verde) */
+            className={`event-btn btn-primary ${isParticipating ? 'btn-active' : ''}`}
             onClick={handleParticipate}
           >
-            {/* Cambio SOLO il testo in base alla variabile */}
-            {isParticipating ? "Non partecipare" : "Partecipa"}
+            {isParticipating ? (
+                <>
+                    <UserCheck size={18} />
+                    Iscritto
+                </>
+            ) : (
+                <>
+                    <UserPlus size={18} />
+                    Partecipa
+                </>
+            )}
           </button>
         )}
       </div>

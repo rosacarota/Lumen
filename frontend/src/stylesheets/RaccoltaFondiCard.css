@@ -1,0 +1,182 @@
+:root {
+  /* -- Sfondi -- */
+  --bg-main: #F7FBFB; 
+  --bg-soft: #F0F5F5;
+
+  /* -- Colori Principali -- */
+  --first-color: #087886; /* Turchese */
+  --second-color: #4AAFB8; /* Azzurro */
+  --third-color: #7CCE6B;  /* Verde (Ottimo per i soldi/successo) */
+  --accent-color: #e11d48; /* Un rosso/rosa opzionale per il cuore, o usiamo il first-color */
+  
+  /* -- Colori Testo -- */
+  --text-dark: #1e293b;    
+  --text-light: #64748b;   
+}
+
+.fund-card {
+  background-color: white;
+  border: 1px solid rgba(8, 120, 134, 0.1);
+  border-radius: 16px;
+  padding: 24px;
+  min-width: 280px;
+  max-width: 350px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 10px 30px -10px rgba(8, 120, 134, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden; /* Per contenere eventuali effetti */
+}
+
+.fund-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px -10px rgba(8, 120, 134, 0.25);
+}
+
+/* --- Header e Avatar (Identico a EventCard) --- */
+.fund-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.fund-avatar {
+  width: 40px;
+  height: 40px;
+  background-color: var(--bg-soft);
+  color: var(--first-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.fund-meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.fund-brand {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--first-color);
+}
+
+.fund-role {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--text-light);
+  letter-spacing: 0.5px;
+}
+
+/* --- Body --- */
+.fund-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-dark);
+  margin: 0 0 6px 0;
+  line-height: 1.2;
+}
+
+.fund-description {
+  font-size: 13px;
+  color: var(--text-light);
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* --- PROGRESS BAR SECTION --- */
+.fund-progress-section {
+  padding: 12px 0;
+}
+
+.fund-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+}
+
+.current-amount {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--first-color);
+}
+
+.goal-amount {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.progress-bar-container {
+  width: 100%;
+  height: 8px;
+  background-color: var(--bg-soft);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background-color: var(--second-color); 
+  border-radius: 99px;
+  transition: width 1s ease-out;
+}
+
+.progress-percentage {
+  text-align: right;
+  font-size: 11px;
+  color: var(--text-light);
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+/* --- Details --- */
+.fund-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fund-detail-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.fund-icon {
+  color: var(--second-color);
+}
+
+.donate-btn {
+  margin-top: auto;
+  background-color: var(--first-color); 
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 6px -1px rgba(8, 120, 134, 0.2);
+}
+
+.donate-btn:hover {
+  background-color: var(--second-color);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 10px -2px rgba(8, 120, 134, 0.3);
+}
+
+.btn-icon {
+  fill: white; 
+}

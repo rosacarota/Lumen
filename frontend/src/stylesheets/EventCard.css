@@ -7,11 +7,12 @@
   --first-color: #087886; /* Turchese */
   --second-color: #4AAFB8; /* Azzurro */
   --third-color: #7CCE6B;  /* Verde */
+  --danger-color: #ef4444; /* Rosso per annullare iscrizione */
   
   /* -- Colori Testo -- */
   --text-dark: #1e293b;    
   --text-light: #64748b;   
-  --text-lighter: #94a3b8; /* Per la descrizione */
+  --text-lighter: #94a3b8;
 }
 
 .event-card {
@@ -46,7 +47,7 @@
   background-color: var(--bg-soft);
   color: var(--first-color);
   border-radius: 50%;
-  overflow: hidden; /* Importante per l'immagine rettangolare */
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -55,7 +56,6 @@
   flex-shrink: 0;
 }
 
-/* Gestione immagine reale dentro l'avatar */
 .event-avatar-img {
   width: 100%;
   height: 100%;
@@ -129,7 +129,7 @@
   align-items: center;
 }
 
-/* --- Footer: Contenitore dei bottoni --- */
+/* --- Footer: Pulsanti --- */
 .event-footer {
   margin-top: auto;
   display: flex;
@@ -137,28 +137,54 @@
   width: 100%;
 }
 
-/* Stile Base per TUTTI i bottoni */
 .event-btn {
-  /* STABILITÀ: flex: 1 costringe i bottoni a dividersi lo spazio 50/50 sempre */
   flex: 1; 
-  
-  /* DIMENSIONI: Aumentiamo il padding verticale per renderli più "alti" */
-  padding: 12px 8px; 
-  
-  /* TESTO: Leggermente più grande e centrato */
-  font-size: 14px; 
-  font-weight: 700; /* Più cicciotto */
-  text-align: center;
-  
-  /* IMPEDISCE AI CAMBI DI TESTO DI ROMPERE IL LAYOUT */
-  white-space: nowrap; /* Obbliga il testo a stare su una riga */
-  overflow: hidden;    /* Taglia se dovesse essere lunghissimo (sicurezza) */
-  text-overflow: ellipsis; 
-
-  /* Stili estetici base */
-  border-radius: 10px; /* Arrotondamento un po' più morbido */
+  padding: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
-  border: 1px solid transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px; /* Spazio tra icona e testo */
 }
 
+/* 1. Stile "Partecipa"  */
+.btn-primary {
+  background-color: var(--first-color);
+  color: white;
+  border: 1px solid transparent;
+  box-shadow: 0 4px 6px -1px rgba(8, 120, 134, 0.2);
+}
+
+.btn-primary:hover {
+  background-color: var(--second-color);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 10px -2px rgba(8, 120, 134, 0.3);
+}
+
+/* Variante se l'utente è già iscritto */
+.btn-primary.btn-active {
+  background-color: white;
+  color: var(--first-color);
+  border: 1px solid var(--first-color);
+  box-shadow: none;
+}
+.btn-primary.btn-active:hover {
+  background-color: #fef2f2; 
+  color: var(--danger-color);
+  border-color: var(--danger-color);
+}
+
+/* 2. Stile "Dettagli"  */
+.btn-secondary {
+  background-color: transparent;
+  color: var(--first-color);
+  border: 1px solid var(--first-color);
+}
+
+.btn-secondary:hover {
+  background-color: var(--bg-soft); 
+}
