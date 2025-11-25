@@ -36,6 +36,7 @@ public class RichiestaServizio {
     @Column(name = "data")
     private Date dataRichiesta;
 
+    @Enumerated(EnumType.STRING)
     @NotNull(message = "Lo stato della richiesta è obbligatorio")
     @Column(name = "stato")
     StatoRichiestaServizio stato;
