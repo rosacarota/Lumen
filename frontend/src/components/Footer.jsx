@@ -1,11 +1,11 @@
 import React from 'react';
+import { Facebook, Instagram, Linkedin, Twitter } from 'lucide-react';
 import '../stylesheets/Footer.css';
-import LogoLumen from '../assets/logo-lumen.png';
 
 const Footer = () => {
   return (
     <footer className="footer-minimal">
-      <div className="container footer-content">
+      <div className="footer-content">
         
         <div className="footer-brand">
           <div className="brand-group">
