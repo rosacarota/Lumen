@@ -10,7 +10,7 @@ export default function LoginPage() {
   const [step, setStep] = useState(1);
   const fileInputRef = useRef(null);
 
-  // STATO COMPLETO
+  // STATO COMPLETO (Aggiunto 'ruolo')
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -27,7 +27,8 @@ export default function LoginPage() {
     provincia: '',
     cap: '',
     strada: '',
-    nCivico: ''
+    nCivico: '',
+    ruolo: '' // <--- Aggiunto qui
   });
 
   const handleChange = (e) => {
@@ -44,6 +45,14 @@ export default function LoginPage() {
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  // Funzione helper per gestire la selezione del tipo utente e salvare il ruolo
+  const handleUserTypeSelection = (type) => {
+    setUserType(type); // Gestisce la UI
+    // Salva il ruolo nel formato corretto (prima lettera maiuscola) nel formData
+    const formattedRole = type.charAt(0).toUpperCase() + type.slice(1);
+    setFormData(prev => ({ ...prev, ruolo: formattedRole }));
   };
 
   const handleSubmit = async () => {
@@ -84,7 +93,6 @@ export default function LoginPage() {
           finalCognome = null; 
       }
 
-      // Se non è ente o volontario, l'ambito deve essere null (sicurezza in più)
       let finalAmbito = formData.ambito;
       if (userType === 'beneficiario') {
           finalAmbito = null;
@@ -97,7 +105,7 @@ export default function LoginPage() {
           password: formData.password,
           descrizione: formData.descrizione || null,
           recapitoTelefonico: formData.telefono, 
-          ruolo: userType.charAt(0).toUpperCase() + userType.slice(1), 
+          ruolo: formData.ruolo, // <--- Ora prende direttamente dallo stato salvato
           ambito: finalAmbito || null,
           immagine: formData.immagineBase64 || null,
           indirizzo: indirizzoObj
@@ -110,6 +118,7 @@ export default function LoginPage() {
         setIsLogin(true);
         setStep(1);
         setUserType(null);
+        // Reset opzionale formData qui se necessario
       } catch (error) {
         alert("Errore registrazione: " + error.message);
       }
@@ -232,7 +241,10 @@ export default function LoginPage() {
                 <div style={styles.userTypeSelection}>
                   <h2 style={styles.formTitle}>Che tipo di utente sei?</h2>
                   {['ente', 'volontario', 'beneficiario'].map((type) => (
-                      <button key={type} onClick={() => setUserType(type)} style={styles.userTypeCard}
+                      <button key={type} 
+                        // MODIFICATO QUI: Salva sia userType che il ruolo nel formData
+                        onClick={() => handleUserTypeSelection(type)} 
+                        style={styles.userTypeCard}
                         onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#4AAFB8'; e.currentTarget.style.background = '#E9FBE7'; e.currentTarget.querySelector('.icon-wrapper').style.background = '#7CCE6B'; }}
                         onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E5E7EB'; e.currentTarget.style.background = 'white'; e.currentTarget.querySelector('.icon-wrapper').style.background = '#E9FBE7'; }}>
                         <div className="icon-wrapper" style={styles.userTypeIconWrapper}>
@@ -258,7 +270,7 @@ export default function LoginPage() {
               // CASO 3: STEP 2 (CONOSCIAMOCI MEGLIO)
               ) : !isLogin && userType && step === 2 ? (
                 <div style={styles.registrationForm}>
-                  <h2 style={styles.formTitle}>Personalizzazione del profilo</h2>
+                  <h2 style={styles.formTitle}>Conosciamoci meglio</h2>
                   
                   {/* UPLOAD */}
                   <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px', position: 'relative' }}>
@@ -277,15 +289,15 @@ export default function LoginPage() {
 
                   <div style={styles.fieldsContainer}>
                      
-                     {/* MODIFICATO QUI: AMBITO MOSTRATO SOLO SE ENTE O VOLONTARIO */}
+                     {/* AMBITO SOLO SE ENTE O VOLONTARIO */}
                      {(userType === 'ente' || userType === 'volontario') && (
                         <div style={styles.inputGroup}>
-                           <input type="text" name="ambito" value={formData.ambito} onChange={handleChange} placeholder="Di cosa ti occupi? (es. Sociale)" style={styles.inputFieldNoIcon} />
+                           <input type="text" name="ambito" value={formData.ambito} onChange={handleChange} placeholder="Ambito (es. Sociale)" style={styles.inputFieldNoIcon} />
                         </div>
                      )}
 
                      <div style={styles.inputGroup}>
-                        <textarea name="descrizione" value={formData.descrizione} onChange={handleChange} placeholder="Parlaci di te / Bio" style={styles.textareaField} rows="3" />
+                        <textarea name="descrizione" value={formData.descrizione} onChange={handleChange} placeholder="Descrizione / Bio" style={styles.textareaField} rows="3" />
                      </div>
                      
                      <div style={{ fontSize: '14px', fontWeight: '600', color: '#087886', marginTop: '10px' }}>Indirizzo (Opzionale)</div>
