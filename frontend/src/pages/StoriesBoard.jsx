@@ -1,8 +1,10 @@
 import { useState } from "react";
 import AddStory from "./AddStory";
 import EditStory from "./EditStory";
-import Navbar from "../components/Navbar";
+import DeleteStory from "./DeleteStory";  
 import "../stylesheets/StoriesBoard.css";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 const StoriesBoard = () => {
   const [stories, setStories] = useState([
@@ -44,6 +46,9 @@ const StoriesBoard = () => {
   // popup "modifica racconto"
   const [editingStory, setEditingStory] = useState(null);
 
+  // popup "elimina racconto"
+  const [storyToDelete, setStoryToDelete] = useState(null);
+
   const openAddStory = () => setIsAddStoryOpen(true);
   const closeAddStory = () => setIsAddStoryOpen(false);
 
@@ -73,9 +78,28 @@ const StoriesBoard = () => {
   // salva modifiche
   const handleSaveEditedStory = (updatedStory) => {
     setStories((prev) =>
-      prev.map((s) => (s.id === updatedStory.id ? { ...s, ...updatedStory } : s))
+      prev.map((s) =>
+        s.id === updatedStory.id ? { ...s, ...updatedStory } : s
+      )
     );
     setEditingStory(null);
+  };
+
+  // apri popup elimina
+  const openDeleteStory = (story) => {
+    setStoryToDelete(story);
+  };
+
+  // chiudi popup elimina (Annulla)
+  const closeDeleteStory = () => {
+    setStoryToDelete(null);
+  };
+
+  // conferma eliminazione
+  const handleDeleteConfirm = () => {
+    if (!storyToDelete) return;
+    setStories((prev) => prev.filter((s) => s.id !== storyToDelete.id));
+    setStoryToDelete(null);
   };
 
   const formatDate = (iso) =>
@@ -148,12 +172,27 @@ const StoriesBoard = () => {
                       {formatDate(story.createdAt)}
                     </span>
 
+                    {/* bottone Modifica */}
                     <button
                       type="button"
                       className="story-edit-button"
                       onClick={() => openEditStory(story)}
                     >
                       Modifica
+                    </button>
+
+                    {/* bottone Elimina */}
+                    <button
+                      type="button"
+                      className="story-edit-button"
+                      onClick={() => openDeleteStory(story)}
+                      style={{
+                        marginLeft: "8px",
+                        borderColor: "#dc2626",
+                        color: "#dc2626",
+                      }}
+                    >
+                      Elimina
                     </button>
                   </div>
                 </article>
@@ -223,6 +262,16 @@ const StoriesBoard = () => {
           onSave={handleSaveEditedStory}
         />
       )}
+
+      {/* POPUP ELIMINA RACCONTO */}
+      {storyToDelete && (
+        <DeleteStory
+          story={storyToDelete}
+          onCancel={closeDeleteStory}
+          onConfirm={handleDeleteConfirm}
+        />
+      )}
+      <Footer/>
     </>
   );
 };
