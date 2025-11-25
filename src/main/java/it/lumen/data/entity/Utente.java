@@ -59,7 +59,7 @@ public class Utente {
     @Column(name="ambito", nullable=true, length=100)
     private String ambito;
 
-    @Column(name="immagine", nullable=true, length=255)
+    @Column(name="immagine", nullable=true)
     private String immagine;
 
 }

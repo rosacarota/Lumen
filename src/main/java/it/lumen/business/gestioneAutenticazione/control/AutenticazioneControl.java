@@ -41,6 +41,10 @@ public class AutenticazioneControl {
 
         session.setAttribute("utente", utente);
 
+        String token = (String) session.getAttribute("token");
+
+        System.out.println(token);
+
         return ResponseEntity.ok("Accesso con successo");
     }
 }
