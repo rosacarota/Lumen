@@ -129,20 +129,51 @@
   align-items: center;
 }
 
-/* --- Footer --- */
+/* --- Footer: Contenitore dei bottoni --- */
+.event-footer {
+  margin-top: auto; /* Spinge i bottoni in fondo alla card */
+  display: flex;
+  gap: 12px; /* Spazio tra i due bottoni */
+  width: 100%;
+}
+
+/* Stile Base per TUTTI i bottoni */
 .event-btn {
-  margin-top: auto;
-  background-color: transparent;
-  color: var(--first-color);
-  border: 1px solid var(--first-color);
+  flex: 1; /* Fa sì che i bottoni abbiano la stessa larghezza */
   padding: 10px;
   border-radius: 8px;
   font-weight: 600;
+  font-size: 13px;
   cursor: pointer;
+  text-align: center;
   transition: all 0.2s ease;
+  border: 1px solid transparent; /* Per evitare salti di pixel */
 }
 
-.event-btn:hover {
+/* Variante 1: Tasto Dettagli (Secondario) */
+/* Manteniamo lo stile "Outline" che avevi prima */
+.btn-secondary {
+  background-color: transparent;
+  color: var(--first-color);
+  border: 1px solid var(--first-color);
+}
+
+.btn-secondary:hover {
+  background-color: var(--bg-soft); /* Diventa chiaro invece che pieno */
+}
+
+/* Variante 2: Tasto Partecipa (Primario) */
+/* Stile "Pieno" per dargli importanza */
+.btn-primary {
   background-color: var(--first-color);
   color: white;
+  border: 1px solid var(--first-color);
+  box-shadow: 0 4px 6px rgba(8, 120, 134, 0.2);
 }
+
+.btn-primary:hover {
+  background-color: #06606b; /* Un po' più scuro del turchese base */
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(8, 120, 134, 0.3);
+}
+
