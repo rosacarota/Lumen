@@ -20,7 +20,7 @@ const Footer = () => {
         </div>
 
         <nav className="footer-nav">
-          <a href="#chi-siamo">Chi Siamo</a>
+          <a href="#chi-siamo">Chi siamo</a>
           <a href="#storie">Storie</a>
           <a href="#eventi">Eventi</a>
         </nav>

@@ -10,7 +10,7 @@ const currentUser = {
 
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const navItems = ['Chi Siamo', 'Storie', 'Eventi'];
+  const navItems = ['Chi siamo', 'Storie', 'Eventi'];
 
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
