@@ -84,6 +84,7 @@ const EnteProfile = () => {
                                 <input type="time" name="orario" className="custom-input" onChange={handleFilterChange} />
                             </div>
                             <div className="input-group">
+                                {/* tipologia */}
                                 <label>TIPOLOGIA</label>
                                 <select name="tipologia" className="custom-input" onChange={handleFilterChange}>
                                     <option value="">Tutti</option>
