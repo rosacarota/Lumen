@@ -1,0 +1,321 @@
+/* Pagina bacheca */
+.stories-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f7fbfb 0%, #e9fbe7 100%);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+  
+  .stories-container {
+    width: 100%;
+    max-width: 1100px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 28px;
+    box-shadow: 0 18px 50px rgba(8, 120, 134, 0.18);
+    padding: 28px 32px 32px;
+  }
+  
+  /* Header */
+  
+  .stories-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  
+  .stories-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: #087886;
+    margin: 0 0 4px;
+  }
+  
+  .stories-subtitle {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0;
+  }
+  
+  .stories-add-button {
+    padding: 10px 20px;
+    border-radius: 999px;
+    border: none;
+    background: linear-gradient(135deg, #087886 0%, #7cce6b 120%);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(8, 120, 134, 0.3);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  
+  .stories-add-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(8, 120, 134, 0.4);
+  }
+  
+  /* Layout 2 colonne */
+  
+  .stories-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1.1fr);
+    gap: 24px;
+  }
+  
+  /* Colonna sinistra: feed */
+  
+  .stories-main {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .story-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 18px 20px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.04);
+  }
+  
+  .story-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  
+  .story-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #087886 0%, #4aafb8 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 18px;
+  }
+  
+  .story-author-info {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .story-author-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+  }
+  
+  .story-author-role {
+    font-size: 12px;
+    color: #6b7280;
+  }
+  
+  .story-type-pill {
+    margin-left: auto;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  
+  .type-text {
+    background: #e0f2fe;
+    color: #0369a1;
+  }
+  
+  .type-photo {
+    background: #dcfce7;
+    color: #15803d;
+  }
+  
+  .type-video {
+    background: #fef9c3;
+    color: #a16207;
+  }
+  
+  .story-card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #111827;
+    margin: 4px 0 6px;
+  }
+  
+  .story-card-content {
+    font-size: 14px;
+    color: #4b5563;
+    margin: 0 0 10px;
+  }
+  
+  .story-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 8px;
+  }
+  
+  .story-date {
+    font-size: 11px;
+    color: #9ca3af;
+  }
+  /* stile pulsante Modifica */
+
+.story-edit-button {
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid #d1d5db;
+    background: #ffffff;
+    font-size: 12px;
+    font-weight: 600;
+    color: #087886;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 2px 4px rgba(15, 23, 42, 0.04);
+    transition: background 0.15s ease, border-color 0.15s ease,
+      box-shadow 0.15s ease, transform 0.1s ease;
+  }
+  .story-edit-button:hover {
+    background: #e9fbe7;
+    border-color: #4aafb8;
+    box-shadow: 0 4px 10px rgba(8, 120, 134, 0.15);
+    transform: translateY(-1px);
+  }
+  /* Colonna destra: ultime storie */
+  
+  .stories-sidebar {
+    background: #f9fafb;
+    border-radius: 20px;
+    padding: 16px 16px 18px;
+    border: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .sidebar-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #087886;
+    margin: 0 0 4px;
+  }
+  
+  .sidebar-story-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 12px 14px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 6px 14px rgba(15, 23, 42, 0.03);
+  }
+  
+  .sidebar-story-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  
+  .sidebar-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #087886 0%, #4aafb8 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  
+  .sidebar-author-info {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .sidebar-author-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #111827;
+  }
+  
+  .sidebar-author-role {
+    font-size: 11px;
+    color: #6b7280;
+  }
+  
+  .sidebar-story-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+    margin: 0 0 4px;
+  }
+  
+  .sidebar-story-snippet {
+    font-size: 12px;
+    color: #4b5563;
+    margin: 0 0 8px;
+  }
+  
+  .sidebar-story-button {
+    width: 100%;
+    padding: 6px 0;
+    border-radius: 999px;
+    border: none;
+    background: #087886;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.1s ease;
+  }
+  
+  .sidebar-story-button:hover {
+    background: #06606a;
+    transform: translateY(-1px);
+  }
+  
+  /* Stato vuoto */
+  
+  .stories-empty {
+    font-size: 13px;
+    color: #6b7280;
+  }
+  
+  /* Responsive */
+  
+  @media (max-width: 960px) {
+    .stories-layout {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  
+    .stories-sidebar {
+      order: -1;
+    }
+  }
+  
+  @media (max-width: 640px) {
+    .stories-container {
+      padding: 20px 16px 24px;
+    }
+  
+    .stories-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .stories-add-button {
+      width: 100%;
+      text-align: center;
+      justify-content: center;
+    }
+  }
