@@ -45,7 +45,7 @@ body {
 /* --- NAVBAR CONTAINER (Contenuto centrato) --- */
 .navbar {
   width: 100%;
-  max-width: 1280px; /* Mantiene il contenuto allineato al centro */
+  max-width: 1500px; /* Mantiene il contenuto allineato al centro */
   height: 100%;      /* Occupa tutta l'altezza del wrapper */
   padding: 0 32px;   /* Spaziatura laterale */
   display: flex;

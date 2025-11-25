@@ -2,10 +2,11 @@
 .footer-minimal {
   width: 100%;
   background-color: var(--first-color); 
-  padding: 20px 0; 
+  padding: 20px 20px; 
   margin-top: auto;
   font-size: 0.9rem;
   color: #ffffff;
+  box-sizing: border-box;
 }
 
 .footer-content {
@@ -14,6 +15,9 @@
   justify-content: space-between; 
   flex-wrap: wrap; 
   gap: 20px;
+  max-width: 1500px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .footer-brand {
