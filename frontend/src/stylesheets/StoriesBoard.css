@@ -7,10 +7,10 @@
     justify-content: center;
     padding: 40px 20px;
   }
-  
+  /*larghezza bacheca*/
   .stories-container {
     width: 100%;
-    max-width: 1100px;
+    max-width: 1500px;
     background: rgba(255, 255, 255, 0.95);
     border-radius: 28px;
     box-shadow: 0 18px 50px rgba(8, 120, 134, 0.18);

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import AddStory from "./AddStory";
+import EditStory from "./EditStory";
 import Navbar from "../components/Navbar";
 import "../stylesheets/StoriesBoard.css";
 
@@ -29,7 +30,7 @@ const StoriesBoard = () => {
       id: 3,
       authorName: "UniClock",
       authorRole: "ente",
-      type: "video",
+      type: "text",
       title: "Giornata di raccolta vestiti",
       content:
         "Abbiamo organizzato una raccolta di indumenti invernali per le famiglie del quartiere.",
@@ -37,7 +38,11 @@ const StoriesBoard = () => {
     },
   ]);
 
+  // popup "nuovo racconto"
   const [isAddStoryOpen, setIsAddStoryOpen] = useState(false);
+
+  // popup "modifica racconto"
+  const [editingStory, setEditingStory] = useState(null);
 
   const openAddStory = () => setIsAddStoryOpen(true);
   const closeAddStory = () => setIsAddStoryOpen(false);
@@ -55,6 +60,24 @@ const StoriesBoard = () => {
     setIsAddStoryOpen(false);
   };
 
+  // apri popup modifica
+  const openEditStory = (story) => {
+    setEditingStory(story);
+  };
+
+  // chiudi popup modifica
+  const closeEditStory = () => {
+    setEditingStory(null);
+  };
+
+  // salva modifiche
+  const handleSaveEditedStory = (updatedStory) => {
+    setStories((prev) =>
+      prev.map((s) => (s.id === updatedStory.id ? { ...s, ...updatedStory } : s))
+    );
+    setEditingStory(null);
+  };
+
   const formatDate = (iso) =>
     new Date(iso).toLocaleString("it-IT", {
       day: "2-digit",
@@ -66,7 +89,6 @@ const StoriesBoard = () => {
 
   const typeLabel = (type) => {
     if (type === "photo") return "Foto";
-    if (type === "video") return "Video";
     return "Testo";
   };
 
@@ -129,9 +151,7 @@ const StoriesBoard = () => {
                     <button
                       type="button"
                       className="story-edit-button"
-                      onClick={() =>
-                        console.log("TODO: apri EditStory per id:", story.id)
-                      }
+                      onClick={() => openEditStory(story)}
                     >
                       Modifica
                     </button>
@@ -186,12 +206,21 @@ const StoriesBoard = () => {
         </div>
       </div>
 
-      {/*AddStory come pop-up (modal) sopra la bacheca */}
+      {/* POPUP NUOVO RACCONTO */}
       {isAddStoryOpen && (
         <AddStory
           onSubmit={handleSubmitStory}
           onBack={closeAddStory}
           isModal={true}
+        />
+      )}
+
+      {/* POPUP MODIFICA RACCONTO */}
+      {editingStory && (
+        <EditStory
+          story={editingStory}
+          onCancel={closeEditStory}
+          onSave={handleSaveEditedStory}
         />
       )}
     </>
