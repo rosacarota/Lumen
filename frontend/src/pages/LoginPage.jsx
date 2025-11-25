@@ -1,4 +1,6 @@
 import { useState, useRef } from 'react';
+// Aggiungi useNavigate per il reindirizzamento
+import { useNavigate } from 'react-router-dom'; 
 import { User, Lock, Mail, Building2, Heart, Users, HeartHandshake, Pencil, Camera } from 'lucide-react';
 import { registerUser, loginUser } from '../services/loginService';
 import { validateRegistration } from '../utils/loginValidation';
@@ -9,8 +11,11 @@ export default function LoginPage() {
   const [rememberMe, setRememberMe] = useState(false);
   const [step, setStep] = useState(1);
   const fileInputRef = useRef(null);
+  
+  // Hook per la navigazione
+  const navigate = useNavigate();
 
-  // STATO COMPLETO (Aggiunto 'ruolo')
+  // STATO COMPLETO
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -28,7 +33,7 @@ export default function LoginPage() {
     cap: '',
     strada: '',
     nCivico: '',
-    ruolo: '' // <--- Aggiunto qui
+    ruolo: '' 
   });
 
   const handleChange = (e) => {
@@ -47,25 +52,30 @@ export default function LoginPage() {
     }
   };
 
-  // Funzione helper per gestire la selezione del tipo utente e salvare il ruolo
   const handleUserTypeSelection = (type) => {
-    setUserType(type); // Gestisce la UI
-    // Salva il ruolo nel formato corretto (prima lettera maiuscola) nel formData
+    setUserType(type);
     const formattedRole = type.charAt(0).toUpperCase() + type.slice(1);
     setFormData(prev => ({ ...prev, ruolo: formattedRole }));
   };
 
   const handleSubmit = async () => {
     if (isLogin) {
-      // LOGIN
+      // --- LOGICA LOGIN ---
       try {
-        await loginUser({ email: formData.email, password: formData.password });
-        alert("Login effettuato!");
+        // loginUser ora supporta la risposta testuale del tuo controller
+        const resultMessage = await loginUser({ email: formData.email, password: formData.password });
+        
+        // Opzionale: Mostra messaggio o logga
+        console.log(resultMessage); // "Accesso con successo"
+        
+        // Reindirizza alla Home Page
+        navigate('/home'); 
+        
       } catch (error) {
-        alert("Errore: " + error.message);
+        alert("Errore Login: " + error.message);
       }
     } else {
-      // REGISTRAZIONE
+      // --- REGISTRAZIONE (Invariata) ---
       const validation = validateRegistration(formData);
       if (!validation.isValid) {
         alert(Object.values(validation.errors)[0]);
@@ -105,20 +115,20 @@ export default function LoginPage() {
           password: formData.password,
           descrizione: formData.descrizione || null,
           recapitoTelefonico: formData.telefono, 
-          ruolo: formData.ruolo, // <--- Ora prende direttamente dallo stato salvato
+          ruolo: formData.ruolo,
           ambito: finalAmbito || null,
           immagine: formData.immagineBase64 || null,
           indirizzo: indirizzoObj
       };
 
       try {
-        console.log("Payload:", payload);
         await registerUser(payload);
-        alert("Registrazione completata!");
+        alert("Registrazione completata! Effettua il login.");
         setIsLogin(true);
         setStep(1);
         setUserType(null);
-        // Reset opzionale formData qui se necessario
+        // Resetto form o almeno la password
+        setFormData(prev => ({...prev, password: '', confirmPassword: ''}));
       } catch (error) {
         alert("Errore registrazione: " + error.message);
       }

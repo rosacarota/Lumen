@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Image, FileText, X } from "lucide-react";
+import { Image, FileText, X, ArrowLeft } from "lucide-react";
 import "../stylesheets/EditStory.css";
 
 const EditStory = ({ story, onCancel, onSave }) => {
@@ -73,14 +73,14 @@ const EditStory = ({ story, onCancel, onSave }) => {
   return (
     <div className="edit-story-overlay">
       <div className="edit-story-modal">
-        {/* Pulsante chiudi in alto a destra */}
+        {/* Pulsante chiudi in alto a sinistra */}
         <button
           type="button"
           className="edit-close-button"
           onClick={onCancel}
           title="Chiudi"
         >
-          <X size={18} />
+          <ArrowLeft size={18} />
         </button>
 
         {/* Colonna sinistra: testo informativo */}

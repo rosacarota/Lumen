@@ -220,7 +220,7 @@
 
 .input-field-no-icon,
 .text-area {
-  width: 100%;
+  width: 200%;
   padding: 12px 16px;
   border: 2px solid #e5e7eb;
   border-radius: 25px;
@@ -424,22 +424,21 @@
   }
 }
 
-/* Modal: AddStory come pop-up sopra la bacheca */
+/* Modal: AddStory come pop-up */
 .story-page-modal {
   position: fixed;
   inset: 0;
-  z-index: 60; /* sopra navbar e bacheca */
-  background: rgba(15, 23, 42, 0.55); /* sfondo scuro trasparente */
+  z-index: 60;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(3px);
+  
+  /* Flexbox per centrare */
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  backdrop-filter: blur(3px);
-  align-items: flex-start;  
-  padding: 90px 20px 20px; 
-
-  backdrop-filter: blur(3px);
-  overflow-y: auto;        
+  align-items: center;     /* Centra verticalmente */
+  justify-content: center; /* Centra orizzontalmente */
+  
+  padding: 20px; /* Padding uniforme su tutti i lati */
+  overflow-y: auto; /* Permette lo scroll se lo schermo è troppo basso */
 }
 
 
