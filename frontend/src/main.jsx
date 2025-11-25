@@ -13,7 +13,7 @@ import VolontarioProfile from './pages/VolontarioProfile.jsx'
 createRoot(document.getElementById('root')).render(
   <StrictMode> 
     <BrowserRouter>
-      <LoginPage/>
+      <App/>
     </BrowserRouter>
   </StrictMode>,
 )
