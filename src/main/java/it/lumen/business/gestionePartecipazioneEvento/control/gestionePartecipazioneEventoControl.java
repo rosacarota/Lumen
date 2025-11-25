@@ -64,14 +64,13 @@ public class gestionePartecipazioneEventoControl {
 
 			return new ResponseEntity<>("Errore interno del server " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		return null;
-	}
+    }
 
 	@PostMapping("/modifica")
 	public ResponseEntity<String> modificaPartecipazione(@RequestBody Partecipazione nuovaPartecipazione) {
 
-		Evento evento = partecipazione.getEvento();
-		Utente volontario = partecipazione.getVolontario();
+		Evento evento = nuovaPartecipazione.getEvento();
+		Utente volontario = nuovaPartecipazione.getVolontario();
 
 		try {
 

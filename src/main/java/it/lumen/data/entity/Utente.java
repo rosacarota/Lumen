@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.validation.constraints.Pattern;
+import java.io.Serializable;
 
 @Entity
 @Table(name="Utente")
@@ -17,7 +18,7 @@ import javax.validation.constraints.Pattern;
 @Setter
 @NoArgsConstructor
 @ToString
-public class Utente {
+public class Utente implements Serializable {
 
     public enum Ruolo{
         Volontario,
