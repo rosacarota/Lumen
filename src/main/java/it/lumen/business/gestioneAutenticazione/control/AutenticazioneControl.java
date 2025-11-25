@@ -15,7 +15,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/login")
 public class AutenticazioneControl {
-
     private final AutenticazioneService autenticazioneService;
     private final JwtUtil jwtUtil;
 

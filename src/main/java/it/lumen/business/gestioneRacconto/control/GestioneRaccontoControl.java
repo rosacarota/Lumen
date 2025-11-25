@@ -1,18 +1,12 @@
 package it.lumen.business.gestioneRacconto.control;
 
+import it.lumen.business.gestioneAutenticazione.service.AutenticazioneService;
 import it.lumen.business.gestioneRacconto.service.GestioneRaccontoService;
-import it.lumen.data.dao.RaccontoDAO;
-import it.lumen.data.dao.UtenteDAO;
-import it.lumen.data.dto.RaccontoDTO;
 import it.lumen.data.entity.Racconto;
-import it.lumen.data.entity.Utente;
-import org.springframework.beans.factory.annotation.Autowired;
+import it.lumen.security.JwtUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 import java.sql.Date;
 import java.util.List;
 import java.util.Map;
@@ -21,22 +15,28 @@ import java.util.Map;
 @RequestMapping("/racconto")
 public class GestioneRaccontoControl {
 
+    private final GestioneRaccontoService gestioneRaccontoService;
+    private final JwtUtil util;
+    private final AutenticazioneService autenticazioneService;
 
-    @Autowired
-    private GestioneRaccontoService gestioneRaccontoService;
+    public GestioneRaccontoControl(GestioneRaccontoService gestioneRaccontoService, JwtUtil util, AutenticazioneService autenticazioneService) {
+            this.gestioneRaccontoService = gestioneRaccontoService;
+            this.util = util;
+            this.autenticazioneService = autenticazioneService;
+    }
 
-    @PostMapping("/aggiungi")
-    public ResponseEntity<String> aggiuntaRacconto(@RequestBody Racconto racconto) {
+
+        @PostMapping("/aggiungi")
+    public ResponseEntity<String> aggiuntaRacconto(@RequestBody Racconto racconto, @RequestParam String token) {
 
         try {
 
-            /*
-            if (result.hasErrors()) {
-                StringBuilder errorMsg = new StringBuilder("Errori di validazione:");
-                result.getAllErrors().forEach(e -> errorMsg.append(" ").append(e.getDefaultMessage()));
-                return ResponseEntity.badRequest().body(errorMsg.toString());
+           String email= util.extractEmail(token);
+
+            if (email == null) {
+
+                return new ResponseEntity<>("Email dell'utente non può essere vuota", HttpStatus.BAD_REQUEST);
             }
-            */
 
             if (racconto.getTitolo() == null) {
 
@@ -49,13 +49,7 @@ public class GestioneRaccontoControl {
             }
 
 
-            if (racconto.getUtente() == null) {
-
-                return new ResponseEntity<>("Email dell'utente non può essere vuota", HttpStatus.BAD_REQUEST);
-            }
-
-            // dovrei controllare anche che l'utente esista o lo prendo dalla sessione?
-
+            racconto.setUtente(autenticazioneService.getUtente(email));
             racconto.setDataPubblicazione(new Date(System.currentTimeMillis()));
             Racconto raccontoAggiunto = gestioneRaccontoService.aggiungiRacconto(racconto);
             if (raccontoAggiunto != null) {
@@ -73,9 +67,16 @@ public class GestioneRaccontoControl {
 
 
     @PostMapping("/modifica")
-    public ResponseEntity<String> modificaRacconto(@RequestBody Racconto nuovoRacconto) {
+    public ResponseEntity<String> modificaRacconto(@RequestBody Racconto nuovoRacconto, @RequestParam String token) {
 
         try {
+            String email= util.extractEmail(token);
+
+            if (email == null) {
+
+                return new ResponseEntity<>("Email dell'utente non può essere vuota", HttpStatus.BAD_REQUEST);
+            }
+
             Integer idRacconto=nuovoRacconto.getIdRacconto();
             if (idRacconto == null) {
                 return new ResponseEntity<>("IdRacconto non può essere vuoto", HttpStatus.BAD_REQUEST);
@@ -92,12 +93,6 @@ public class GestioneRaccontoControl {
                 return new ResponseEntity<>("Descrizione non può essere vuota", HttpStatus.BAD_REQUEST);
             }
 
-
-            if (nuovoRacconto.getUtente() == null) {
-
-                return new ResponseEntity<>("Email dell'utente non può essere vuota", HttpStatus.BAD_REQUEST);
-            }
-
             if(nuovoRacconto.getDataPubblicazione()==null) {
 
                 return new ResponseEntity<>("Data di pubblicazione del racconto non può essere vuota", HttpStatus.BAD_REQUEST);
@@ -111,15 +106,14 @@ public class GestioneRaccontoControl {
                 !nuovoRacconto.getUtente().getEmail().equals(raccontoDaModificare.getUtente().getEmail())) {
             return new ResponseEntity<>("Non è possibile modificare l'utente del racconto.", HttpStatus.FORBIDDEN);
         }
-
-
-
-        raccontoDaModificare.setTitolo(nuovoRacconto.getTitolo());
-        raccontoDaModificare.setDescrizione(nuovoRacconto.getDescrizione());
-        raccontoDaModificare.setImmagine(nuovoRacconto.getImmagine());
 */
 
-// check per vedere se email del racconto corrisponde ad email in sessione
+            if(!gestioneRaccontoService.getByIdRacconto(idRacconto).getUtente().getEmail().equals(email)) {
+
+                return new ResponseEntity<>("Non puoi modificare il racconto.", HttpStatus.FORBIDDEN);
+            }
+
+            nuovoRacconto.setUtente(autenticazioneService.getUtente(email));
             Racconto raccontoModificato = gestioneRaccontoService.modificaRacconto(nuovoRacconto);
             if (raccontoModificato != null) {
                 return new ResponseEntity<>("Modifica del racconto avvenuta con successo.", HttpStatus.CREATED);
@@ -137,10 +131,18 @@ public class GestioneRaccontoControl {
 
 
     @PostMapping("/rimuovi")
-    public ResponseEntity<String> rimuoviRacconto(@RequestBody Map<String, Integer> body) {
+    public ResponseEntity<String> rimuoviRacconto(@RequestBody Map<String, Integer> body, @RequestParam String token) {
 
 
 try {
+
+    String email= util.extractEmail(token);
+
+    if (email == null) {
+
+        return new ResponseEntity<>("Email dell'utente non può essere vuota", HttpStatus.BAD_REQUEST);
+    }
+
     Integer idRacconto=body.get("idRacconto");
     if (idRacconto == null) {
         return new ResponseEntity<>("IdRacconto non può essere vuoto", HttpStatus.BAD_REQUEST);
@@ -151,7 +153,11 @@ try {
         return new ResponseEntity<>("Racconto da eliminare non trovato", HttpStatus.NOT_FOUND);
     }
 
-    // check per vedere se email del racconto corrisponde ad email in sessione
+    if(!gestioneRaccontoService.getByIdRacconto(idRacconto).getUtente().getEmail().equals(email)) {
+
+        return new ResponseEntity<>("Non puoi eliminare il racconto.", HttpStatus.FORBIDDEN);
+
+    }
 
         gestioneRaccontoService.eliminaRacconto(idRacconto);
         return new ResponseEntity<>("Racconto eliminato con successo.", HttpStatus.OK);
@@ -162,9 +168,15 @@ try {
 
 
     @PostMapping("/visualizza")
-    public ResponseEntity<List<Racconto>> visualizzaRaccontiUtente(@RequestBody Map<String, String> body) {
+    public ResponseEntity<List<Racconto>> visualizzaRaccontiUtente(@RequestParam String token) {
 
-        String email=body.get("email");
+        String email= util.extractEmail(token);
+
+        if (email == null) {
+
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
         List<Racconto> lista = gestioneRaccontoService.listaRaccontiUtente(email);
 
         return ResponseEntity.ok(lista);
