@@ -8,13 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import jakarta.transaction.Transactional;
 
 @Service
-public class EventoServiceImpl implements EventoService{
+public class GestioneEventoServiceImpl implements GestioneEventoService {
 
 
     private final EventoDAO eventoDAO;
 
     @Autowired
-    public EventoServiceImpl(EventoDAO eventoDAO) {
+    public GestioneEventoServiceImpl(EventoDAO eventoDAO) {
         this.eventoDAO = eventoDAO;
     }
 

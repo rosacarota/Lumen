@@ -5,7 +5,7 @@ import it.lumen.data.entity.Evento;
 import java.util.List;
 
 
-public interface EventoService {
+public interface GestioneEventoService {
 
     public Evento aggiungiEvento(Evento evento);
     public Evento modificaEvento(Evento evento);

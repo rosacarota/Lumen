@@ -1,7 +1,7 @@
 package it.lumen.business.gestioneEvento.control;
 
 
-import it.lumen.business.gestioneEvento.service.EventoService;
+import it.lumen.business.gestioneEvento.service.GestioneEventoService;
 import it.lumen.data.entity.Evento;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,12 +13,12 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/evento")
-public class EventoControl {
+public class GestioneEventoControl {
 
 
 
     @Autowired
-    private EventoService gestioneEventoService;
+    private GestioneEventoService gestioneEventoService;
 
 
 
