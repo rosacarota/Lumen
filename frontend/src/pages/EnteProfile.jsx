@@ -1,156 +1,108 @@
 import React, { useState } from 'react';
 import '../stylesheets/EnteProfile.css';
-import Navbar from '../components/Navbar';
+import Navbar from '../components/Navbar.jsx';
+
 const EnteProfile = () => {
-    // 1. STATO TAB: Gestisce quale scheda è attiva
+    // STATI
     const [activeTab, setActiveTab] = useState('futuri');
-
-    // 2. STATO FILTRI: Gestisce i valori degli input di ricerca
-    const [filters, setFilters] = useState({
-        data: '',
-        orario: '',
-        tipologia: ''
-    });
-
-    // 3. STATO FOLLOW: Gestisce il bottone "Segui" / "Seguito"
     const [isFollowing, setIsFollowing] = useState(false);
+    const [filters, setFilters] = useState({ data: '', orario: '', tipologia: '' });
 
-    // Funzione per aggiornare gli input
     const handleFilterChange = (e) => {
-        const { name, value } = e.target;
-        setFilters(prev => ({
-            ...prev,
-            [name]: value
-        }));
-    };
-
-    // Funzione per il toggle del "Segui"
-    const toggleFollow = () => {
-        setIsFollowing(!isFollowing);
+        setFilters({ ...filters, [e.target.name]: e.target.value });
     };
 
     return (
         <>
-        <header><Navbar></Navbar></header>
-        <div className='Container'>
-           
+            <Navbar />
             
-
-            {/* --- HERO SECTION (Profilo Ente) --- */}
-            <section className='social-section'>
-                <div className='profile-container'>
-                    <div className='avatar-wrapper'>
-                        <img src="" alt="UniCiock Logo" />
-                    </div>
+            <div className="main-container">
+                
+                {/* --- 1. HERO SECTION (Layout a 2 Colori + Avatar Sovrapposto) --- */}
+                <div className="hero-wrapper">
                     
-                    <h2>Uniciock</h2>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                    {/* Parte Superiore Scura */}
+                    <div className="hero-cover"></div>
 
-                    <div className='profile-stats'>
-                        {/* Simulazione cambio numero follower */}
-                        <span className='pill'>
-                            {isFollowing ? 46 : 45} Followers
-                        </span>
-                        <span className='pill'>20 Eventi</span>
-                        
-                        {/* Bottone Segui con logica e classi dinamiche */}
-                        <button 
-                            className={`pill follow-btn ${isFollowing ? 'following' : ''}`} 
-                            onClick={toggleFollow}
-                        >
-                            {isFollowing ? 'Seguito' : 'Segui'}
-                        </button>
+                    {/* Parte Inferiore Verde Chiaro */}
+                    <div className="hero-info-bar">
+                        <div className="hero-content-inner">
+                            
+                            {/* Avatar che "esce" grazie al margine negativo nel CSS */}
+                            <div className="avatar-container">
+                                <span style={{color:'#ccc'}}>LOGO</span>
+                            </div>
+
+                            {/* Testo e Bottoni */}
+                            <div className="ente-text">
+                                <h1>UniCiock</h1>
+                                <h3>ENTE</h3>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                                
+                                <div className="stats-row">
+                                    <span className="pill">4k followers</span>
+                                    <span className="pill">20 eventi</span>
+                                    <button 
+                                        className={`follow-btn ${isFollowing ? 'following' : ''}`}
+                                        onClick={() => setIsFollowing(!isFollowing)}
+                                    >
+                                        {isFollowing ? 'Seguito' : 'Segui'}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </section>
 
-            {/* --- SEZIONE EVENTI --- */}
-            <section className='event-section'>
-                <div className='grid'>
+
+                {/* --- 2. SEZIONE EVENTI --- */}
+                <section className="event-section">
                     
-                    {/* NAVIGAZIONE E BOTTONI AZIONE */}
-                    <div className='controll'>
-                        <div className='tabs-left'>
-                            <button 
-                                className={activeTab === 'corso' ? 'active' : ''} 
-                                onClick={() => setActiveTab('corso')}
-                            >
-                                EVENTI IN CORSO
-                            </button>
-                            <button 
-                                className={activeTab === 'futuri' ? 'active' : ''} 
-                                onClick={() => setActiveTab('futuri')}
-                            >
-                                EVENTI FUTURI
-                            </button>
-                            <button 
-                                className={activeTab === 'svolti' ? 'active' : ''} 
-                                onClick={() => setActiveTab('svolti')}
-                            >
-                                EVENTI SVOLTI
-                            </button>
+                    {/* TAB E BOTTONI */}
+                    <div className="controll">
+                        <div className="tabs-left">
+                            <button className={activeTab === 'corso' ? 'active' : ''} onClick={() => setActiveTab('corso')}>EVENTI IN CORSO</button>
+                            <button className={activeTab === 'futuri' ? 'active' : ''} onClick={() => setActiveTab('futuri')}>EVENTI FUTURI</button>
+                            <button className={activeTab === 'svolti' ? 'active' : ''} onClick={() => setActiveTab('svolti')}>EVENTI SVOLTI</button>
                         </div>
-                        
-                        <div className='actions-right'>
-                            <button className='btn-action'>AFFILIATI</button>
-                            <button className='btn-action'>DONA</button>
+                        <div className="actions-right">
+                            <button className="btn-action">AFFILIATI</button>
+                            <button className="btn-action">DONA</button>
                         </div>
                     </div>
 
-                    {/* BARRA DI RICERCA */}
-                    <div className='event-search'>
-                        <h3 className='search-title'>CERCA EVENTI</h3>
-                        
-                        <div className='search-inputs'>
-                            <div className='input-group'>
+                    {/* SEARCH BAR */}
+                    <div className="event-search">
+                        <h3 className="search-title">CERCA EVENTI</h3>
+                        <div className="search-inputs">
+                            <div className="input-group">
                                 <label>DATA</label>
-                                <input 
-                                    type="date" 
-                                    name="data"
-                                    className='custom-input'
-                                    value={filters.data}
-                                    onChange={handleFilterChange}
-                                />
+                                <input type="date" name="data" className="custom-input" onChange={handleFilterChange} />
                             </div>
-                            
-                            <div className='input-group'>
+                            <div className="input-group">
                                 <label>ORARIO</label>
-                                <input 
-                                    type="time" 
-                                    name="orario"
-                                    className='custom-input' 
-                                    value={filters.orario}
-                                    onChange={handleFilterChange}
-                                />
+                                <input type="time" name="orario" className="custom-input" onChange={handleFilterChange} />
                             </div>
-                            
-                            <div className='input-group'>
+                            <div className="input-group">
                                 <label>TIPOLOGIA</label>
-                                <select 
-                                    name="tipologia"
-                                    className='custom-input'
-                                    value={filters.tipologia}
-                                    onChange={handleFilterChange}
-                                >
+                                <select name="tipologia" className="custom-input" onChange={handleFilterChange}>
                                     <option value="">Tutti</option>
-                                    <option value="conferenza">Conferenza</option>
+                                    <option value="conf">Conferenza</option>
                                     <option value="party">Festa</option>
-                                    <option value="seminario">Seminario</option>
                                 </select>
                             </div>
                         </div>
                     </div>
 
-                    {/* GRIGLIA EVENTI (Contenitore Bianco) */}
-                    <div className='event-grid'>
-                        {/* Qui verranno mappate le Card in futuro */}
+                    {/* GRIGLIA */}
+                    <div className="event-grid">
+                        <p>Nessun evento {activeTab} trovato.</p>
                     </div>
 
-                </div>
-            </section>
-        </div>
+                </section>
+            </div>
         </>
-    )
-}
+    );
+};
 
 export default EnteProfile;

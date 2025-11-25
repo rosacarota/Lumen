@@ -1,308 +1,214 @@
 :root {
   /* -- Sfondi -- */
-  --bg-main: #F7FBFB; /* Bianco freddo */
-  --bg-soft: #E9FBE7; /* Verde chiaro */
-
-  /* -- Colori Principali -- */
-  --first-color: #087886; /* Turchese: Testi, Bottoni */
-  --second-color: #4AAFB8; /* Azzurro: Link, Icone */
-  --third-color: #7CCE6B;  /* Verde: Hover, Successo */
-}
-
-:root {
-  /* -- Sfondi -- */
   --bg-main: #F7FBFB;  /* Bianco freddo */
-  --bg-soft: #E9FBE7;  /* Verde chiaro (sfondo pagina) */
+  --bg-soft: #f0f5f5;  /* Sfondo pagina */
 
   /* -- Colori Principali -- */
-  --first-color: #087886; /* Turchese: Testi, Bottoni, Sfondo Hero */
-  --second-color: #4AAFB8; /* Azzurro: Link, Icone, Input Sfondo */
-  --third-color: #7CCE6B;  /* Verde: Hover, Successo */
-}
-
-/* Reset di base */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  max-width: 1600px;
+  --first-color: #087886; /* Turchese */
+  --second-color: #4AAFB8; /* Azzurro */
+  --third-color: #7CCE6B;  /* Verde */
 }
 
 
 
-
-/* --- 2. SEZIONE SOCIAL (HERO) --- */
-.social-section {
-  background-color: var(--first-color); /* Sfondo scuro dell'ente */
-  color: white;
-  border-radius: 15px;
-  padding: 40px 20px;
-  text-align: center;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+body {
+  background-color: var(--bg-soft);
+  color: var(--first-color);
 }
 
-.profile-container {
-  max-width: 600px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 15px;
+/* --- NAVBAR --- */
+.navbar {
+    background-color: var(--bg-main);
+    padding: 15px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    position: relative; 
+    z-index: 20;
+}
+.nav-links { list-style: none; display: flex; gap: 30px; }
+.nav-links li { font-weight: 600; cursor: pointer; color: var(--first-color); }
+
+/* --- HERO SECTION SPECIALE (Con Immagine McLaren) --- */
+.hero-wrapper {
+    width: 100%;
+    margin-bottom: 40px;
+    background-image: url('https://images.unsplash.com/photo-1621135802920-133df287f89c?q=80&w=2070&auto=format&fit=crop');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    
+    /* MODIFICA 1: Ridotto a 35% dell'altezza schermo (era 40vh) */
+    min-height: 35vh; 
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; 
 }
 
-.avatar-wrapper img {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  border: 4px solid white;
-  object-fit: cover;
-  background-color: var(--bg-main); /* Placeholder se img manca */
+.hero-cover {
+    /* MODIFICA 2: Ridotto a 280px (era 350px) */
+    height: 280px;
+    width: 100%;
+    background-color: transparent;
+    flex-grow: 1; 
 }
 
-.social-section h2 {
-  font-size: 2rem;
-  font-weight: 700;
+.hero-info-bar {
+    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 50%, transparent 100%);
+    padding-bottom: 30px;
+    padding-top: 30px; 
+    display: flex;
+    justify-content: center;
+    position: relative;
+    width: 100%;
 }
 
-.social-section p {
-  font-size: 0.9rem;
-  opacity: 0.9;
-  line-height: 1.4;
+.hero-content-inner {
+    max-width: 1200px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    gap: 30px;
 }
 
-/* Statistiche e Tasto Segui */
-.profile-stats {
-  display: flex;
-  gap: 15px;
-  margin-top: 10px;
-  align-items: center;
+/* L'Avatar */
+.avatar-container {
+    width: 160px;
+    height: 160px;
+    background-color: white;
+    border-radius: 50%;
+    border: 5px solid #ffffff; 
+    margin-top: 9px; 
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    z-index: 10;
 }
 
+.ente-text {
+    color: white;
+    margin-top: 10px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+}
+
+.ente-text h1 { font-size: 3rem; font-weight: bold; margin-bottom: 5px; }
+.ente-text p { font-size: 1.1rem; opacity: 0.95; max-width: 600px; }
+
+.stats-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 9px;
+    align-items: center;
+}
+
+/* --- CLASSI PERSONALIZZATE --- */
 .pill {
   background-color: rgba(255, 255, 255, 0.2);
-  padding: 8px 16px;
+  backdrop-filter: blur(5px);
+  padding: 8px 20px;
   border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 600;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: white;
+  border: 1px solid rgba(255,255,255,0.3);
 }
 
-/* Applicazione stile bottone custom al tasto Segui */
 .follow-btn {
-  /* Riprendo il tuo stile, adattando width e padding */
-  background: linear-gradient(135deg, var(--second-color) 0%);
-  color: white;
+  background: white;
+  color: var(--first-color);
   border: none;
   border-radius: 25px;
-  padding: 8px 24px;
+  padding: 8px 28px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   transition: all 0.3s ease;
+  text-transform: uppercase;
 }
+.follow-btn.following { background: rgba(0,0,0,0.6); color: white; border: 1px solid white; box-shadow: none; }
 
-.follow-btn:hover {
-  transform: scale(1.05);
-}
-/* --- STILE PER IL TASTO QUANDO SEGUI GIÀ --- */
-.follow-btn.following {
-  /* Cambiamo lo sfondo da gradiente a trasparente o colore solido */
-  background: rgba(255, 255, 255, 0.2); 
-  border: 2px solid white; /* Aggiungiamo un bordo */
-  box-shadow: none; /* Rimuoviamo l'ombra per renderlo "piatto" */
-}
-
-.follow-btn.following:hover {
-  background-color: rgba(255, 255, 255, 0.3);
-  transform: none; /* Rimuoviamo l'effetto "salto" */
-}
-
-/* Opzionale: Aggiunge una spunta (check) prima del testo via CSS */
-.follow-btn.following::before {
-  content: '✓ ';
-  font-weight: bold;
-}
-/* --- 3. CONTROLLI E TAB --- */
-.event-section {
-  width: 100%;
-}
+/* --- CONTROLLI E TAB --- */
+.event-section { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
 
 .controll {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  flex-wrap: wrap; /* Per responsive */
-  gap: 15px;
-  padding: 0 10px;
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 15px; flex-wrap: wrap; gap: 15px; border-bottom: 1px solid #ccc; padding-bottom: 10px;
 }
 
-.tabs-left {
-  display: flex;
-  gap: 20px;
-}
-
+.tabs-left { display: flex; gap: 20px; }
 .tabs-left button {
-  background: none;
-  border: none;
-  color: var(--first-color);
-  font-size: 1rem;
-  font-weight: 700;
-  cursor: pointer;
-  padding-bottom: 5px;
-  text-transform: uppercase;
-  transition: color 0.3s;
+  background: none; border: none; color: #999;
+  font-size: 1rem; font-weight: 700; cursor: pointer;
+  padding-bottom: 10px; text-transform: uppercase;
+  border-bottom: 4px solid transparent;
 }
+.tabs-left button.active { border-bottom-color: var(--first-color); color: var(--first-color); }
 
-.tabs-left button:hover {
-  color: var(--second-color);
-}
-
-.tabs-left button.active {
-  border-bottom: 3px solid var(--first-color);
-  color: var(--first-color);
-}
-
-.actions-right {
-  display: flex;
-  gap: 10px;
-}
-
-/* STILE BOTTONE PRINCIPALE (Richiesto da te) */
 .btn-action {
-  /* width: 100%; Removed strict 100% width to fit in navbar */
-  padding: 10px 24px; /* Adjusted padding slightly for desktop */
-  background: linear-gradient(135deg, var(--first-color) 0%);
-  color: white;
-  border: none;
-  border-radius: 25px;
-  font-size: 14px; /* Slightly smaller than 16px for buttons next to each other */
-  font-weight: 600;
-  cursor: pointer;
+  padding: 9px 23px;
+  background: var(--second-color);
+  color: white; border: none; border-radius: 25px;
+  font-size: 12px; font-weight: 700; cursor: pointer;
   box-shadow: 0 4px 12px rgba(8, 120, 134, 0.3);
-  transition: all 0.3s ease;
   text-transform: uppercase;
+  margin-left:10px;
 }
 
-.btn-action:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(8, 120, 134, 0.4);
-  background: linear-gradient(135deg, #4AAFB8  0%);
-}
-
-/* --- 4. SEARCH BAR --- */
+/* --- SEARCH BAR SLIM --- */
 .event-search {
-  background-color: var(--bg-main); /* Sfondo chiaro per la barra */
-  padding: 20px 30px;
-  border-radius: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between; /* Distribuisce titolo e input */
-  flex-wrap: wrap;
-  gap: 20px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  background-color: var(--second-color);
+  /* MODIFICA: Padding ridotto drasticamente per renderla sottile */
+  padding: 12px 25px; 
+  /* MODIFICA: Bordi molto arrotondati per effetto "pillola" */
+  border-radius: 20px; 
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 15px; margin-bottom: 20px;
 }
 
-.search-title {
-  color: var(--first-color);
-  font-weight: 700;
-  text-transform: uppercase;
-  margin-right: auto; /* Spinge il titolo a sinistra */
+.search-title { 
+    color: var(--bg-main); 
+    font-weight: 700; 
+    text-transform: uppercase; 
+    margin-right: auto; 
+    font-size: 0.95rem; /* Font leggermente più piccolo */
 }
 
-.search-inputs {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
+.search-inputs { display: flex; gap: 15px; flex-wrap: wrap; align-items: center; }
+
+.input-group { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 2px; /* Ridotto spazio tra label e input */
 }
 
-.input-group {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.input-group label {
-  color: var(--first-color);
-  font-weight: 600;
-  font-size: 0.9rem;
+.input-group label { 
+    color: var(--bg-main); 
+    font-weight: 700; 
+    font-size: 0.65rem; /* Label più piccola e discreta */
+    margin-left: 8px; /* Allineamento visivo col bordo arrotondato dell'input */
 }
 
 .custom-input {
-  background-color: var(--second-color); /* Input colorati come nell'immagine */
-  border: none;
-  border-radius: 5px;
-  padding: 8px 12px;
-  color: white;
-  font-weight: 500;
-  outline: none;
-  min-width: 120px;
-}
-
-/* Cambia colore icona calendario/orologio nei browser webkit */
-.custom-input::-webkit-calendar-picker-indicator {
-  filter: invert(1); 
-  cursor: pointer;
-}
-
-.custom-input::placeholder {
-  color: rgba(255,255,255,0.8);
+  background-color: rgba(255,255,255,0.7);
+  border: none; 
+  /* MODIFICA: Input arrotondati e padding ridotto */
+  border-radius: 20px; 
+  padding: 6px 14px;
+  color: var(--first-color); 
+  font-weight: 600; 
+  font-size: 0.9rem;
+  outline: none; 
+  min-width: 130px;
 }
 
 .event-grid {
-  background-color: var(--bg-main);
-  padding: 30px;              /* Spaziatura interna */
-  border-radius: 15px;        /* Angoli arrotondati */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* Ombra leggera per staccarlo dallo sfondo */
-  min-height: 300px;          /* Altezza minima (così il box si vede anche se vuoto) */
-  margin-top: 20px;        /* Spazio sotto prima della fine pagina */
-
-  /* --- IMPOSTAZIONI GRIGLIA (Per le future card) --- */
-  display: grid;
-  /* Crea colonne automatiche: larghe minimo 280px, altrimenti si adattano */
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
-  gap: 25px; /* Spazio tra le card */
-}
-
-/* Stile opzionale per il testo "Visualizzazione eventi..." */
-.event-grid p {
-  grid-column: 1 / -1; /* Occupa tutta la larghezza della griglia */
-  text-align: center;
-  color: var(--first-color);
-  font-weight: 500;
-  margin-top: 20px;
-}
-
-/* Responsive per schermi piccoli */
-@media (max-width: 768px) {
-  .controll {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .tabs-left {
-    font-size: 0.8rem;
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .event-search {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .search-inputs {
-    flex-direction: column;
-    width: 100%;
-  }
-
-  .input-group {
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .custom-input {
-    width: 70%;
-  }
+  background-color: rgba(255,255,255,0.5); border: 1px solid white;
+  padding: 30px; border-radius: 20px; min-height: 300px;
+  display: flex; justify-content: center; align-items: center; color: #999;
 }
