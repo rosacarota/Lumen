@@ -33,13 +33,13 @@
 .container {
   position: relative;
   width: 100%;
-  max-width: 980px; /* leggermente più piccolo */
+  max-width: 980px;
   display: flex;
   border-radius: 24px;
   overflow: hidden;
   box-shadow: 0 20px 60px rgba(8, 120, 134, 0.25);
   background: white;
-  min-height: 480px; /* meno alto di prima */
+  min-height: 480px; 
 }
 
 /* Bottone freccia indietro */
@@ -435,11 +435,11 @@
   justify-content: center;
   padding: 20px;
   backdrop-filter: blur(3px);
-  align-items: flex-start;  /* non più centrato verticalmente */
-  padding: 90px 20px 20px;  /* top più grande (80px) così non tocca la navbar */
+  align-items: flex-start;  
+  padding: 90px 20px 20px; 
 
   backdrop-filter: blur(3px);
-  overflow-y: auto;         /* se lo schermo è basso, il contenuto scorre */
+  overflow-y: auto;        
 }
 
 

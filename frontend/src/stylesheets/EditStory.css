@@ -6,10 +6,10 @@
     background: rgba(15, 23, 42, 0.55);
     display: flex;
     justify-content: center;
-    align-items: flex-start;     /* popup “attaccato” un po’ sotto la navbar */
+    align-items: flex-start;    
     padding: 90px 20px 20px;     /* spazio sopra per la navbar */
     backdrop-filter: blur(3px);
-    overflow-y: auto;            /* SCROLL che muove il popup */
+    overflow-y: auto;            /* scroll che muove il popup */
   }
   
   /* Card principale (equivalente a .container di AddStory) */
@@ -25,7 +25,7 @@
     overflow: hidden;
   }
   
-  /* bottone X chiusura, stile come freccia di AddStory */
+  /* bottone per chiusura, stile come freccia di AddStory */
   .edit-close-button {
     position: absolute;
     top: 18px;
@@ -49,9 +49,8 @@
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
   }
   
-  /* ===================== */
+  
   /*  COLONNA SINISTRA     */
-  /* ===================== */
   
   .edit-left-panel {
     flex: 1;
@@ -65,7 +64,7 @@
     color: #ffffff;
   }
   
-  /* overlay morbido */
+  /* overlay  */
   .edit-left-panel::before {
     content: "";
     position: absolute;
@@ -140,9 +139,9 @@
     font-weight: 600;
   }
   
-  /* ===================== */
+ 
   /*  COLONNA DESTRA       */
-  /* ===================== */
+  
   
   .edit-right-panel {
     flex: 1;
