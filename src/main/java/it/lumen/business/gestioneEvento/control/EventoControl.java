@@ -161,7 +161,7 @@ public class EventoControl {
 
     }
 
-    @GetMapping("/cronologiaEventi")
+    @PostMapping("/cronologiaEventi")
     public ResponseEntity<List<Evento>> cronologiaEvento(@RequestBody Map<String, String> body) {
 
 
