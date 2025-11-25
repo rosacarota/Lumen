@@ -4,18 +4,24 @@
   50% { transform: scale(1.05); }
 }
 
-/* --- HERO SECTION MODIFICATA (Stile Lumen) --- */
 .hero-wrapper {
     width: 100%;
     margin-bottom: 40px;
+    
+    /* MODIFICA: Rimuove margini superiori per attaccarsi alla nav */
+    margin-top: -50px; 
+    /* Opzionale: Se vuoi angoli dritti in alto per combaciare con la nav */
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+
     position: relative;
     
-    /* MODIFICA 2: Gradiente esplicito dall'angolo in alto a Sx a quello in basso a Dx */
+    /* Gradiente esplicito */
     background: linear-gradient(to bottom right, var(--first-color) 0%, var(--second-color) 40%, var(--third-color) 100%);
     
     overflow: hidden; 
     
-    /* MODIFICA 1: Altezza minima ridotta (era 35vh) */
+    /* Altezza minima ridotta */
     min-height: 25vh; 
     
     display: flex;
@@ -23,7 +29,6 @@
     justify-content: flex-end; 
     z-index: 1;
 }
-
 
 /* SFERA SFOCATA 1 (Verde Chiaro - Alto Sinistra) */
 .hero-wrapper::before {
