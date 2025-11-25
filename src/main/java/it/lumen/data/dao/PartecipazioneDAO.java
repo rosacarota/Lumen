@@ -10,4 +10,6 @@ public interface PartecipazioneDAO extends JpaRepository<Partecipazione, Integer
     List<Partecipazione> findAllByEvento_IdEvento(Integer idEvento);
 
     void removePartecipazioneByIdPartecipazione(Integer idPartecipazione);
+
+	Partecipazione getPartecipazioneByIdPartecipazione(Integer idPartecipazione);
 }

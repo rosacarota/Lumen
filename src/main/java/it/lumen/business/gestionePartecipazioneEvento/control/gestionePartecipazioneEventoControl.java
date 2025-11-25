@@ -2,6 +2,7 @@ package it.lumen.business.gestionePartecipazioneEvento.control;
 
 import it.lumen.business.gestioneAccount.service.GestioneAccountService;
 import it.lumen.business.gestionePartecipazioneEvento.service.PartecipazioneEventoService;
+import it.lumen.data.dao.PartecipazioneDAO;
 import it.lumen.data.entity.Evento;
 import it.lumen.data.entity.Partecipazione;
 import it.lumen.data.entity.Utente;
@@ -57,6 +58,7 @@ public class gestionePartecipazioneEventoControl {
 
 			partecipazione.setData(new Date(System.currentTimeMillis()));
 			partecipazioneEventoService.aggiungiPartecipazione(partecipazione);
+			return new ResponseEntity<>("Aggiunta partecipazione avvenuta con successo", HttpStatus.OK);
 
 		} catch (Exception e) {
 
@@ -64,6 +66,57 @@ public class gestionePartecipazioneEventoControl {
 		}
 		return null;
 	}
-}
-	// TODO: modifica and rimuovi
 
+	@PostMapping("/modifica")
+	public ResponseEntity<String> modificaPartecipazione(@RequestBody Partecipazione nuovaPartecipazione) {
+
+		Evento evento = partecipazione.getEvento();
+		Utente volontario = partecipazione.getVolontario();
+
+		try {
+
+			if (evento == null) {
+
+				return new ResponseEntity<>("Evento non può essere vuoto", HttpStatus.BAD_REQUEST);
+			}
+			if (volontario == null) {
+
+				return new ResponseEntity<>("Volontario non può essere vuoto", HttpStatus.BAD_REQUEST);
+			}
+
+			partecipazioneEventoService.modificaPartecipazione(nuovaPartecipazione);
+			return new ResponseEntity<>("Modifica avvenuta con successo", HttpStatus.OK);
+
+
+		}catch(Exception e ){
+
+			return new ResponseEntity<>("Errore interno del server " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+	}
+	@PostMapping("/rimuovi")
+	public ResponseEntity<String> eliminaPartecipazione(@RequestBody Partecipazione partecipazione){
+
+		Evento evento = partecipazione.getEvento();
+		Utente volontario = partecipazione.getVolontario();
+
+		try{
+
+			if (evento == null) {
+
+				return new ResponseEntity<>("Evento non può essere vuoto", HttpStatus.BAD_REQUEST);
+			}
+			if (volontario == null) {
+
+				return new ResponseEntity<>("Volontario non può essere vuoto", HttpStatus.BAD_REQUEST);
+			}
+
+			partecipazioneEventoService.eliminaPartecipazione(partecipazione.getIdPartecipazione());
+			return new ResponseEntity<>("Eliminazione partecipazione avvenuta con successo", HttpStatus.OK);
+
+		}catch(Exception e){
+
+			return new ResponseEntity<>("Errore interno del server " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+}
