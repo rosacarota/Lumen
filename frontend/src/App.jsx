@@ -1,13 +1,10 @@
 import React from 'react';
-import Navbar from './components/Navbar';
-import BeneficiarioProfile from './pages/BeneficiarioProfile';
-import EnteProfile from './pages/EnteProfile';
-import VolontarioProfile from './pages/VolontarioProfile'
+import AccessoProfiloVolontario from './pages/AccessoProfiloVolontario';
 
 const App = () => {
   return (
     <div>
-      
+      <AccessoProfiloVolontario />
     </div>
   )
 }
