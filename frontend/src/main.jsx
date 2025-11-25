@@ -8,7 +8,8 @@ import LoginPage from './pages/LoginPage.jsx'
 createRoot(document.getElementById('root')).render(
   <StrictMode> 
     <BrowserRouter>
-      <App/>
+      
+      <LoginPage />
     </BrowserRouter>
   </StrictMode>,
 )

@@ -16,16 +16,13 @@ body {
   color: var(--first-color);
 }
 
-/* --- NAVBAR --- */
-.navbar {
-    background-color: var(--bg-main);
-    padding: 15px 40px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    position: relative; 
-    z-index: 20;
+/* Reset di base */
+{
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 1600px;
 }
 .nav-links { list-style: none; display: flex; gap: 30px; }
 .nav-links li { font-weight: 600; cursor: pointer; color: var(--first-color); }

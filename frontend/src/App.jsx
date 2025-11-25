@@ -7,7 +7,7 @@ import VolontarioProfile from './pages/VolontarioProfile'
 const App = () => {
   return (
     <div>
-      <EnteProfile />
+      
     </div>
   )
 }
