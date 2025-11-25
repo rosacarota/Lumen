@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import '../stylesheets/EnteProfile.css';
+import '../stylesheets/AccessoEnteProfile.css';
 import Navbar from '../components/Navbar.jsx';
 import ProfileInfo from '../components/ProfileInfo.jsx';
 
-const EnteProfile = () => {
+const AccessoEnteProfile = () => {
     // --- STATI ---
     const [isFollowing, setIsFollowing] = useState(false);
     const [activeTab, setActiveTab] = useState('futuri');
@@ -91,4 +91,4 @@ const EnteProfile = () => {
     );
 };
 
-export default EnteProfile;
+export default AccessoEnteProfile;
