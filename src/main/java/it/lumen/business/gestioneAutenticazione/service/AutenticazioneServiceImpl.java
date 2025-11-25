@@ -28,4 +28,9 @@ public class AutenticazioneServiceImpl implements AutenticazioneService {
         return null;
     }
 
+    @Override
+    public Utente getUtente(String email) {
+        return utenteDAO.findByEmail(email);
+    }
+
 }

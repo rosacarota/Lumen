@@ -6,4 +6,5 @@ public interface AutenticazioneService {
 
     Utente login(String email, String password);
 
+    Utente getUtente(String email);
 }
