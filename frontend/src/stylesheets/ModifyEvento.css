@@ -1,0 +1,191 @@
+/* =========================================
+   MODIFY EVENTO STYLESHEET (me-)
+   Layout: Form Sinistra (40%) | Decor Destra (60%)
+   ========================================= */
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.me-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f7fbfb 0%, #e9fbe7 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  font-family: 'Inter', sans-serif;
+}
+
+.me-container {
+  position: relative;
+  width: 100%;
+  max-width: 1100px; /* Largo */
+  min-height: 620px;
+  display: flex;
+  /* Flex direction è row di default: Primo div a sx, Secondo div a dx */
+  flex-direction: row; 
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 25px 80px rgba(8, 120, 134, 0.2);
+  background: white;
+}
+
+/* Bottone Indietro (Posizionato a sinistra sopra il form bianco) */
+.me-close-back-button {
+  position: absolute;
+  top: 20px; left: 20px; z-index: 50;
+  width: 36px; height: 36px;
+  border-radius: 50%; border: none;
+  background: #f3f4f6;
+  color: #374151;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.me-close-back-button:hover { background: #e5e7eb; transform: translateX(-2px); }
+
+/* =========================================
+   LATO SINISTRO (FORM)
+   ========================================= */
+.me-left-panel-form {
+  /* Più piccolo del lato decorativo */
+  flex: 1; 
+  background: white;
+  padding: 40px 50px;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+  z-index: 20;
+}
+
+.me-form-wrapper { width: 100%; max-width: 400px; margin-top: 20px; }
+
+/* Header Form */
+.me-header-section { margin-bottom: 24px; }
+.me-header-title-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+.me-header-icon { color: #087886; width: 24px; height: 24px; }
+.me-header-text { font-size: 24px; font-weight: 800; color: #111827; }
+.me-header-subtitle { font-size: 14px; color: #6b7280; }
+
+/* Campi */
+.me-story-form { display: flex; flex-direction: column; gap: 20px; }
+.me-fields-scrollable { display: flex; flex-direction: column; gap: 14px; }
+
+.me-label {
+  display: block; font-size: 11px; font-weight: 700; 
+  color: #4b5563; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;
+}
+
+.me-input-field, .me-text-area {
+  width: 100%;
+  padding: 10px 14px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px; /* Un po' più squadrato per l'editing */
+  font-size: 14px; outline: none;
+  transition: border-color 0.2s;
+  background: #fff;
+  color: #1f2937;
+}
+
+.me-input-field:focus, .me-text-area:focus {
+  border-color: #087886;
+}
+
+.me-row-split { display: flex; gap: 12px; }
+
+/* Image Upload Edit Style */
+.me-image-upload-box {
+  position: relative;
+  width: 100%; height: 140px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #f3f4f6;
+  border: 2px dashed #d1d5db;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+.me-image-preview { width: 100%; height: 100%; object-fit: cover; }
+.me-image-placeholder { display: flex; flex-direction: column; align-items: center; gap: 5px; color: #6b7280; font-size: 12px; }
+.me-upload-icon { width: 24px; height: 24px; }
+
+/* Overlay "Cambia" sull'immagine */
+.me-image-overlay {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.4);
+  color: white; font-weight: bold;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.2s;
+}
+.me-image-upload-box:hover .me-image-overlay { opacity: 1; }
+
+/* Bottone Salva */
+.me-footer { margin-top: 10px; display: flex; justify-content: flex-end; }
+.me-submit-button {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 30px;
+  border: none; border-radius: 99px;
+  background: #087886; color: white;
+  font-weight: 700; cursor: pointer;
+  box-shadow: 0 4px 15px rgba(8, 120, 134, 0.3);
+  transition: all 0.2s;
+}
+.me-submit-button:hover { background: #06606b; transform: translateY(-2px); }
+
+/* =========================================
+   LATO DESTRO (DECORATIVO - GRANDE)
+   ========================================= */
+.me-right-panel-decor {
+  /* Lato destro più grande (60%) */
+  flex: 1.5; 
+  background: linear-gradient(135deg, #2c3e50 0%, #087886 100%); /* Gradiente leggermente più serio/dark per l'edit */
+  position: relative;
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  padding: 60px;
+}
+
+.me-gradient-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top right, rgba(0,0,0,0.2), transparent);
+}
+
+.me-blur-circle {
+  position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.4;
+  animation: pulse 8s infinite;
+}
+.me-circle-1 { width: 400px; height: 400px; background: #4aafb8; top: -50px; right: -50px; }
+.me-circle-2 { width: 500px; height: 500px; background: #7cce6b; bottom: -50px; left: -50px; animation-delay: 2s; }
+
+.me-welcome-content {
+  position: relative; z-index: 10; color: white; text-align: right; /* Allineato a destra per estetica */
+  max-width: 500px;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.me-welcome-title { font-size: 42px; font-weight: 800; margin-bottom: 20px; line-height: 1.1; }
+.me-welcome-subtitle { font-size: 16px; line-height: 1.6; opacity: 0.9; margin-bottom: 30px; font-style: italic; }
+.me-welcome-footer { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7; }
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+@media (max-width: 960px) {
+  .me-right-panel-decor { display: none; } /* Nascondi la parte decorativa */
+  .me-container { max-width: 550px; min-height: auto; }
+  .me-left-panel-form { width: 100%; padding: 40px 20px; }
+  .me-welcome-content { text-align: center; }
+}
+
+/* Modale */
+.me-page-modal {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+  padding: 20px;
+}

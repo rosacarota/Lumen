@@ -53,7 +53,8 @@ const AccessoEnteProfile = () => {
                             <button className={activeTab === 'svolti' ? 'active' : ''} onClick={() => setActiveTab('svolti')}>EVENTI SVOLTI</button>
                         </div>
                         <div className="actions-right">
-                            <button className="btn-action">AFFILIATI</button>
+                            <button className="btn-action">CREA EVENTO</button>
+                            <button className="btn-action">CREA RACCOLTA FONDI</button>
                         </div>
                     </div>
 
