@@ -20,15 +20,15 @@ public class EventoServiceImpl implements EventoService{
 
     @Override
     @Transactional
-    public void aggiungiEvento(Evento evento){
+    public Evento aggiungiEvento(Evento evento){
 
-        eventoDAO.save(evento);
+       return eventoDAO.save(evento);
     }
 
     @Override
     @Transactional
-    public void modificaEvento(Evento evento){
-        eventoDAO.save(evento);
+    public Evento modificaEvento(Evento evento){
+        return eventoDAO.save(evento);
     }
 
     @Override
@@ -36,6 +36,14 @@ public class EventoServiceImpl implements EventoService{
     public void eliminaEvento(Integer idEvento){
         eventoDAO.removeEventoByIdEvento(idEvento);
     }
+    @Override
+    public boolean checkId(int idEvento) {
+
+        return eventoDAO.existsById(idEvento);
+
+    }
+
+
     @Override
     public List <Evento> cronologiaEventi(String email){
         return eventoDAO.findAllByUtente_Email(email);

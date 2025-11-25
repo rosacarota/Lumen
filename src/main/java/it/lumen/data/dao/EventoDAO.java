@@ -11,4 +11,5 @@ public interface EventoDAO extends JpaRepository<Evento, Integer> {
 
     void removeEventoByIdEvento(Integer idEvento);
 
+    Evento getEventoByIdEvento(Integer idEvento);
 }
