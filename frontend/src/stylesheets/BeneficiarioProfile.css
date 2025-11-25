@@ -1,0 +1,220 @@
+:root {
+  /* -- Palette Colori -- */
+  --bg-main: #F7FBFB;  
+  --bg-soft: #E9FBE7;  
+  --first-color: #087886; 
+  --second-color: #4AAFB8; 
+  --third-color: #7CCE6B;  
+  
+  --shadow-soft: 0 10px 25px rgba(8, 120, 134, 0.1);
+  --shadow-card: 0 8px 20px rgba(8, 120, 134, 0.25);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--bg-soft);
+  color: var(--first-color);
+  overflow-x: hidden;
+}
+
+.Container {
+  background-color: var(--bg-soft);
+  min-height: 100vh;
+  
+  /* Spaziatura laterale aumentata */
+  padding: 30px 10%; 
+  
+  /* Limite larghezza per schermi giganti */
+  max-width: 1600px; 
+  margin: 0 auto;
+  
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+
+
+
+
+/* --- GRIGLIA DASHBOARD --- */
+.dashboard-grid {
+  display: grid;
+  /* Colonne leggermente ridotte per adattarsi al contenitore più piccolo */
+  grid-template-columns: 250px 1fr 280px;
+  gap: 1.5rem; 
+  width: 100%;
+  align-items: start;
+}
+
+/* --- STILE PANNELLI BIANCHI --- */
+.profile-panel, .main-panel, .action-panel {
+  background-color: var(--bg-main);
+  border-radius: 20px;
+  padding: 1.8rem; 
+  box-shadow: var(--shadow-soft);
+  height: fit-content;
+}
+
+/* --- SIDEBAR SINISTRA (Profilo) --- */
+.profile-panel {
+  position: sticky;
+  top: 30px;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(8, 120, 134, 0.1);
+}
+
+.avatar {
+  width: 60px; 
+  height: 60px;
+  border-radius: 50%;
+  margin-right: 12px;
+  border: 2px solid var(--third-color);
+  object-fit: cover;
+}
+
+.user-info h2 { font-size: 1.3rem; color: var(--first-color); margin: 0; }
+.user-info span { color: var(--second-color); font-weight: 700; text-transform: uppercase; font-size: 0.75rem; }
+
+.stats-group { margin-top: 1.5rem; }
+.stat-item { margin-bottom: 1rem; }
+.stat-item h4 { color: var(--second-color); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px;}
+.stat-item p { font-size: 1.1rem; font-weight: 700; color: var(--first-color); }
+
+/* --- PANNELLI SCORRIBILI (Centrale e Destro) --- */
+.main-panel, .action-panel {
+  max-height: 80vh; 
+  overflow-y: auto; 
+  padding-right: 0.8rem;
+  
+  scrollbar-width: thin;
+  scrollbar-color: var(--second-color) var(--bg-main);
+}
+
+.main-panel::-webkit-scrollbar, .action-panel::-webkit-scrollbar { width: 6px; }
+.main-panel::-webkit-scrollbar-track, .action-panel::-webkit-scrollbar-track { background: transparent; }
+.main-panel::-webkit-scrollbar-thumb, .action-panel::-webkit-scrollbar-thumb {
+  background-color: var(--second-color);
+  border-radius: 20px;
+  border: 2px solid var(--bg-main);
+}
+
+.panel-title {
+  color: var(--first-color);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 1.3rem; 
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-weight: 800;
+  
+  position: sticky;
+  top: -1.8rem; 
+  background-color: var(--bg-main);
+  padding: 1rem 0;
+  margin-top: -1rem;
+  z-index: 10;
+}
+
+/* --- CARD COMPONENT --- */
+.card-component {
+  background-color: var(--first-color);
+  background: linear-gradient(135deg, #087886 0%, #06606b 100%);
+  color: white !important;
+  
+  border-radius: 16px;
+  padding: 1.5rem; 
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.card-component:last-child { margin-bottom: 0; }
+
+.card-header {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding-bottom: 8px;
+  margin-bottom: 5px;
+}
+
+.card-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+  object-fit: cover;
+  border: 2px solid white;
+}
+
+.card-author-name { color: white; font-weight: 700; font-size: 1rem; margin: 0; }
+.card-role { color: var(--third-color); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+
+.card-body-title { 
+  color: white !important; 
+  font-size: 1.15rem; 
+  font-weight: 700; 
+  text-align: center; 
+}
+
+.card-body-text {
+  color: rgba(255, 255, 255, 0.95) !important;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+/* --- BOTTONE --- */
+.submit-button {
+  width: 100%;
+  padding: 10px;
+  background: linear-gradient(135deg, #087886);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.4);
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  margin-top: auto;
+}
+
+.submit-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, var(--third-color));
+
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 1024px) {
+  .Container {
+    width: 95%; /* Su tablet stringiamo un po' meno */
+    max-width: none;
+  }
+  
+  .dashboard-grid { 
+    grid-template-columns: 1fr; 
+    gap: 1.5rem; 
+  }
+  
+  .profile-panel { position: static; } 
+  .main-panel, .action-panel { max-height: 500px; }
+}
