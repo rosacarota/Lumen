@@ -1,9 +1,10 @@
 package it.lumen.business.gestioneEvento.control;
 
 
+import it.lumen.business.gestioneAutenticazione.service.AutenticazioneService;
 import it.lumen.business.gestioneEvento.service.GestioneEventoService;
 import it.lumen.data.entity.Evento;
-import org.springframework.beans.factory.annotation.Autowired;
+import it.lumen.security.JwtUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,45 +17,33 @@ import java.util.Map;
 public class GestioneEventoControl {
 
 
-    @Autowired
-    private GestioneEventoService gestioneEventoService;
+
+    private final GestioneEventoService gestioneEventoService;
+    private final JwtUtil util;
+    private final AutenticazioneService autenticazioneService;
+    public GestioneEventoControl(GestioneEventoService gestioneEventoService, JwtUtil util, AutenticazioneService autenticazioneService) {
+        this.gestioneEventoService = gestioneEventoService;
+        this.util = util;
+        this.autenticazioneService = autenticazioneService;
+    }
 
 
     @PostMapping("/aggiungiEvento")
-    public ResponseEntity<String> aggiuntaEvento(@RequestBody Evento evento) {
+    public ResponseEntity<String> aggiuntaEvento(@RequestBody Evento evento, @RequestParam String token) {
 
         try {
+            String email = util.extractEmail(token);
 
-            if (evento.getTitolo() == null) {
 
-                return new ResponseEntity<>("Titolo non può essere vuoto", HttpStatus.BAD_REQUEST);
+            if (email == null) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
 
-            if (evento.getDescrizione() == null) {
+            if (evento.getTitolo() == null || evento.getDescrizione()==null || evento.getIndirizzo()==null || evento.getDataFine()==null || evento.getDataInizio()==null) {
 
-                return new ResponseEntity<>("Descrizione non può essere vuota", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
-
-            if (evento.getIndirizzo() == null) {
-
-                return new ResponseEntity<>("Luogo non può essere vuoto", HttpStatus.BAD_REQUEST);
-            }
-
-            if (evento.getDataFine() == null) {
-
-                return new ResponseEntity<>("Data di fine non può essere vuota", HttpStatus.BAD_REQUEST);
-            }
-
-            if (evento.getUtente() == null) {
-
-                return new ResponseEntity<>("Email dell'utente non può essere vuota", HttpStatus.BAD_REQUEST);
-            }
-
-
-            if (evento.getDataInizio() == null) {
-
-                return new ResponseEntity<>("Data di inizio non può essere vuota", HttpStatus.BAD_REQUEST);
-            }
+            evento.setUtente(autenticazioneService.getUtente(email));
             Evento eventoSalvato = gestioneEventoService.aggiungiEvento(evento);
             if (eventoSalvato != null) {
 
