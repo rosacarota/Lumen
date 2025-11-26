@@ -26,108 +26,81 @@ public class GestioneRaccontoControl {
     }
 
 
-        @PostMapping("/aggiungi")
-    public ResponseEntity<String> aggiuntaRacconto(@RequestBody Racconto racconto, @RequestParam String token) {
-
+    @PostMapping("/aggiungi")
+    public ResponseEntity<Racconto> aggiuntaRacconto(@RequestBody Racconto racconto, @RequestParam String token) {
         try {
-
-           String email= util.extractEmail(token);
+            String email = util.extractEmail(token);
 
             if (email == null) {
-
-                return new ResponseEntity<>("Email dell'utente non può essere vuota", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
-
-            if (racconto.getTitolo() == null) {
-
-                return new ResponseEntity<>("Titolo non può essere vuoto", HttpStatus.BAD_REQUEST);
+            if (racconto.getTitolo() == null || racconto.getDescrizione() == null) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
-
-            if (racconto.getDescrizione() == null) {
-
-                return new ResponseEntity<>("Descrizione non può essere vuota", HttpStatus.BAD_REQUEST);
-            }
-
 
             racconto.setUtente(autenticazioneService.getUtente(email));
             racconto.setDataPubblicazione(new Date(System.currentTimeMillis()));
             Racconto raccontoAggiunto = gestioneRaccontoService.aggiungiRacconto(racconto);
+
             if (raccontoAggiunto != null) {
-                return new ResponseEntity<>("Aggiunta del racconto avvenuta con successo.", HttpStatus.CREATED);
-
+                return new ResponseEntity<>(raccontoAggiunto, HttpStatus.CREATED);
             } else {
-
-                return new ResponseEntity<>("Si è verificato un errore nell'aggiunta del racconto.", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
-
         } catch (Exception e) {
-            return new ResponseEntity<>("Errore interno del server " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
 
-    @PostMapping("/modifica")
-    public ResponseEntity<String> modificaRacconto(@RequestBody Racconto nuovoRacconto, @RequestParam String token) {
 
+    @PostMapping("/modifica")
+    public ResponseEntity<Racconto> modificaRacconto(@RequestBody Racconto nuovoRacconto, @RequestParam String token) {
         try {
-            String email= util.extractEmail(token);
+            String email = util.extractEmail(token);
 
             if (email == null) {
-
-                return new ResponseEntity<>("Email dell'utente non può essere vuota", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
 
-            Integer idRacconto=nuovoRacconto.getIdRacconto();
+            Integer idRacconto = nuovoRacconto.getIdRacconto();
             if (idRacconto == null) {
-                return new ResponseEntity<>("IdRacconto non può essere vuoto", HttpStatus.BAD_REQUEST);
-
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
 
             if (nuovoRacconto.getTitolo() == null) {
-
-                return new ResponseEntity<>("Titolo non può essere vuoto", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
 
             if (nuovoRacconto.getDescrizione() == null) {
-
-                return new ResponseEntity<>("Descrizione non può essere vuota", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
 
-            if(nuovoRacconto.getDataPubblicazione()==null) {
-
-                return new ResponseEntity<>("Data di pubblicazione del racconto non può essere vuota", HttpStatus.BAD_REQUEST);
+            if (nuovoRacconto.getDataPubblicazione() == null) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
 
             if (!gestioneRaccontoService.checkId(idRacconto)) {
-                return new ResponseEntity<>("Racconto da modificare non trovato", HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
-/*
-        if (nuovoRacconto.getUtente() != null &&
-                !nuovoRacconto.getUtente().getEmail().equals(raccontoDaModificare.getUtente().getEmail())) {
-            return new ResponseEntity<>("Non è possibile modificare l'utente del racconto.", HttpStatus.FORBIDDEN);
-        }
-*/
 
-            if(!gestioneRaccontoService.getByIdRacconto(idRacconto).getUtente().getEmail().equals(email)) {
-
-                return new ResponseEntity<>("Non puoi modificare il racconto.", HttpStatus.FORBIDDEN);
+            if (!gestioneRaccontoService.getByIdRacconto(idRacconto).getUtente().getEmail().equals(email)) {
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
             }
 
             nuovoRacconto.setUtente(autenticazioneService.getUtente(email));
             Racconto raccontoModificato = gestioneRaccontoService.modificaRacconto(nuovoRacconto);
+
             if (raccontoModificato != null) {
-                return new ResponseEntity<>("Modifica del racconto avvenuta con successo.", HttpStatus.CREATED);
-
+                return new ResponseEntity<>(raccontoModificato, HttpStatus.OK);
             } else {
-
-                return new ResponseEntity<>("Si è verificato un errore nella modifica del racconto.", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
         } catch (Exception e) {
-
-            return new ResponseEntity<>("Errore interno del server " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
+
 
 
     @PostMapping("/rimuovi")
