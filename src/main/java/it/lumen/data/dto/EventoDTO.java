@@ -25,13 +25,13 @@ public class EventoDTO {
 	@NotBlank(message = "Descrizione obbligatoria")
 	private String descrizione;
 
-	@NotBlank(message = "Luogo obbligatorio")
+	@NotNull(message = "Luogo obbligatorio")
 	private Indirizzo indirizzo;
 
-	@NotBlank(message = "Data inizio obbligatoria")
+	@NotNull(message = "Data inizio obbligatoria")
 	private Date dataInizio;
 
-	@NotBlank(message = "Data fine obbligatoria")
+	@NotNull(message = "Data fine obbligatoria")
     private Date dataFine;
 
     @NotBlank(message = "L'email dell'utente è obbligatoria")

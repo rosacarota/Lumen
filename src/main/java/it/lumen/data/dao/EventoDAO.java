@@ -8,4 +8,8 @@ import java.util.List;
 public interface EventoDAO extends JpaRepository<Evento, Integer> {
 
     List<Evento> findAllByUtente_Email(String email);
+
+    void removeEventoByIdEvento(Integer idEvento);
+
+    Evento getEventoByIdEvento(Integer idEvento);
 }

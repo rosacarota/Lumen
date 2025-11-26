@@ -1,5 +1,6 @@
 package it.lumen.data.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -31,11 +32,12 @@ public class Racconto {
     private String descrizione;
 
     @Column(name = "datapubblicazione", nullable = false)
-    @NotNull(message = "La data di creazione non può essere nulla")
+   // @NotNull(message = "La data di creazione non può essere nulla")
     private Date dataPubblicazione;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "utente")
+    @JsonIgnoreProperties({"nome", "cognome", "password", "ambito", "descrizione", "indirizzo", "recapitoTelefonico", "immagine", "ruolo", "hibernateLazyInitializer"})
     private Utente utente;
 
 
