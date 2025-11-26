@@ -6,6 +6,7 @@ import it.lumen.data.dao.PartecipazioneDAO;
 import it.lumen.data.entity.Evento;
 import it.lumen.data.entity.Partecipazione;
 import it.lumen.data.entity.Utente;
+import it.lumen.security.JwtUtil;
 
 import java.util.ArrayList;
 import java.sql.Date;
@@ -26,15 +27,24 @@ public class gestionePartecipazioneEventoControl {
 	@Autowired
 	private PartecipazioneEventoService partecipazioneEventoService;
 
+	private JwtUtil util;
 
 	@PostMapping("/aggiungi")
-	public ResponseEntity<String> aggiungiPartecipazione(@RequestBody Partecipazione partecipazione) {
+	public ResponseEntity<String> aggiungiPartecipazione(@RequestBody Partecipazione partecipazione, @RequestParam String token) {
 
 		Evento evento = partecipazione.getEvento();
 		Utente volontario = partecipazione.getVolontario();
 
+		String ruolo = util.extractRuolo(token);
+		String email = util.extractEmail(token);
+
 		try {
 
+
+			if (email == null) {
+
+				return new ResponseEntity<>("Email dell'utente non può essere vuota", HttpStatus.BAD_REQUEST);
+			}
 			if (evento == null) {
 
 				return new ResponseEntity<>("Evento non può essere vuoto", HttpStatus.BAD_REQUEST);
@@ -42,6 +52,10 @@ public class gestionePartecipazioneEventoControl {
 			if (volontario == null) {
 
 				return new ResponseEntity<>("Volontario non può essere vuoto", HttpStatus.BAD_REQUEST);
+			}
+			if(!ruolo.equals("volontario")){
+
+				return new ResponseEntity<>("Utente deve essere volontario per partecipare", HttpStatus.BAD_REQUEST);
 			}
 
 			List<Partecipazione> listaPartecipazioniEvento = partecipazioneEventoService.listaPartecipazioni(evento.getIdEvento());
@@ -58,7 +72,7 @@ public class gestionePartecipazioneEventoControl {
 
 			partecipazione.setData(new Date(System.currentTimeMillis()));
 			partecipazioneEventoService.aggiungiPartecipazione(partecipazione);
-			return new ResponseEntity<>("Aggiunta partecipazione avvenuta con successo", HttpStatus.OK);
+			return new ResponseEntity<>("Aggiunta partecipazione avvenuta con successo", HttpStatus.CREATED);
 
 		} catch (Exception e) {
 
@@ -67,13 +81,20 @@ public class gestionePartecipazioneEventoControl {
     }
 
 	@PostMapping("/modifica")
-	public ResponseEntity<String> modificaPartecipazione(@RequestBody Partecipazione nuovaPartecipazione) {
+	public ResponseEntity<String> modificaPartecipazione(@RequestBody Partecipazione nuovaPartecipazione, @RequestParam String token) {
 
 		Evento evento = nuovaPartecipazione.getEvento();
 		Utente volontario = nuovaPartecipazione.getVolontario();
 
+		String ruolo = util.extractRuolo(token);
+		String email = util.extractEmail(token);
+
 		try {
 
+			if (email == null) {
+
+				return new ResponseEntity<>("Email dell'utente non può essere vuota", HttpStatus.BAD_REQUEST);
+			}
 			if (evento == null) {
 
 				return new ResponseEntity<>("Evento non può essere vuoto", HttpStatus.BAD_REQUEST);
@@ -81,6 +102,10 @@ public class gestionePartecipazioneEventoControl {
 			if (volontario == null) {
 
 				return new ResponseEntity<>("Volontario non può essere vuoto", HttpStatus.BAD_REQUEST);
+			}
+			if(!ruolo.equals("volontario")){
+
+				return new ResponseEntity<>("Utente deve essere volontario per modificare la partecipazione", HttpStatus.BAD_REQUEST);
 			}
 
 			partecipazioneEventoService.modificaPartecipazione(nuovaPartecipazione);
@@ -94,13 +119,21 @@ public class gestionePartecipazioneEventoControl {
 
 	}
 	@PostMapping("/rimuovi")
-	public ResponseEntity<String> eliminaPartecipazione(@RequestBody Partecipazione partecipazione){
+	public ResponseEntity<String> eliminaPartecipazione(@RequestBody Partecipazione partecipazione, @RequestParam String token){
 
 		Evento evento = partecipazione.getEvento();
 		Utente volontario = partecipazione.getVolontario();
 
+		String ruolo = util.extractRuolo(token);
+		String email = util.extractEmail(token);
+
+
 		try{
 
+			if (email == null) {
+
+				return new ResponseEntity<>("Email dell'utente non può essere vuota", HttpStatus.BAD_REQUEST);
+			}
 			if (evento == null) {
 
 				return new ResponseEntity<>("Evento non può essere vuoto", HttpStatus.BAD_REQUEST);
@@ -108,6 +141,10 @@ public class gestionePartecipazioneEventoControl {
 			if (volontario == null) {
 
 				return new ResponseEntity<>("Volontario non può essere vuoto", HttpStatus.BAD_REQUEST);
+			}
+			if(!ruolo.equals("volontario")){
+
+				return new ResponseEntity<>("Utente deve essere volontario per eliminare la partecipazione", HttpStatus.BAD_REQUEST);
 			}
 
 			partecipazioneEventoService.eliminaPartecipazione(partecipazione.getIdPartecipazione());
@@ -117,5 +154,19 @@ public class gestionePartecipazioneEventoControl {
 
 			return new ResponseEntity<>("Errore interno del server " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+	}
+	@PostMapping("/visualizzaPartecipazioniEvento")
+	public ResponseEntity<List<Partecipazione>> visualizzaPartecipazioniEvento(@RequestBody Evento evento, @RequestParam String token){
+
+		String email = util.extractEmail(token);
+
+		if (email == null) {
+
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+
+		List<Partecipazione> lista = partecipazioneEventoService.listaPartecipazioni(evento.getIdEvento());
+
+		return ResponseEntity.ok(lista);
 	}
 }
