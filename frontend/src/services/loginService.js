@@ -1,14 +1,8 @@
-// src/services/loginService.js
-
-// ATTENZIONE: Se il tuo controller è su "localhost:8080/login", 
-// l'API_URL deve essere la radice, senza "/api" se non l'hai configurato in Spring.
-// Modificalo se necessario.
-const API_URL = "http://localhost:8080"; 
+const API_URL = "http://localhost:8080";
 
 export const registerUser = async (userPayload) => {
   try {
-    // La registrazione di solito non richiede sessione, ma possiamo lasciarla standard
-    const response = await fetch(`${API_URL}/registrazione`, { // Adatta questo path al tuo RegisterControl
+    const response = await fetch(`${API_URL}/registrazione`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(userPayload),
@@ -27,26 +21,53 @@ export const registerUser = async (userPayload) => {
 
 export const loginUser = async (credentials) => {
   try {
-    // NOTA: L'endpoint nel tuo controller è "/login"
+    // Endpoint del nuovo controller di autenticazione
     const response = await fetch(`${API_URL}/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(credentials),
-      credentials: 'include', // <--- FONDAMENTALE: Abilita i cookie per HttpSession
     });
 
     if (!response.ok) {
-        // Il backend restituisce stringhe in caso di errore (es. "Utente non trovato")
-        // o JSON in caso di validazione. Proviamo a leggere come testo prima.
-        const errorText = await response.text();
-        throw new Error(errorText || 'Credenziali non valide');
+      // In caso di errore, il backend restituisce un JSON con "message"
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || 'Credenziali non valide');
     }
 
-    // Il tuo controller restituisce una stringa: "Accesso con successo"
-    // NON usare response.json() qui perché spacca tutto se non è un oggetto JSON.
-    return await response.text(); 
+    // Il controller restituisce SessionUser: { token, ruolo }
+    const sessionUser = await response.json();
+    
+    // Salva token e ruolo nel localStorage
+    localStorage.setItem('token', sessionUser.token);
+    localStorage.setItem('ruolo', sessionUser.ruolo);
+    
+    console.log('Login effettuato con successo');
+    console.log('Token salvato:', sessionUser.token ? 'SI' : 'NO');
+    console.log('Ruolo:', sessionUser.ruolo);
+    
+    // Restituisce l'oggetto completo per eventuali utilizzi
+    return sessionUser;
+    
   } catch (error) {
     console.error("Errore API Login:", error);
     throw error;
   }
+};
+
+// Funzione opzionale per fare il logout
+export const logoutUser = () => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('ruolo');
+  console.log('Logout effettuato');
+};
+
+// Funzione opzionale per verificare se l'utente Ã¨ loggato
+export const isUserLoggedIn = () => {
+  const token = localStorage.getItem('token');
+  return token !== null;
+};
+
+// Funzione opzionale per ottenere il ruolo dell'utente corrente
+export const getUserRole = () => {
+  return localStorage.getItem('ruolo');
 };
