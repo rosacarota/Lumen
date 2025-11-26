@@ -1,8 +1,8 @@
 import { useState, useRef } from "react";
 import { Image, FileText, SendHorizontal, ArrowLeft } from "lucide-react";
-import "../stylesheets/AggiungiStoria.css";
+import "../stylesheets/AddStory.css";
 
-const AggiungiStoria = ({ onSubmit, onClose }) => {
+const AddStory = ({ onSubmit, onClose }) => {
   const [storyType, setStoryType] = useState("text");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -233,4 +233,4 @@ const AggiungiStoria = ({ onSubmit, onClose }) => {
   );
 };
 
-export default AggiungiStoria;
+export default AddStory;

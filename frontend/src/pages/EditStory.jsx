@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { Image, FileText, X, ArrowLeft } from "lucide-react";
-import "../stylesheets/ModificaStoria.css";
+import "../stylesheets/EditStory.css";
 
-const ModificaStoria = ({ story, onCancel, onSave }) => {
+const EditStory = ({ story, onCancel, onSave }) => {
   const [storyType, setStoryType] = useState(
     story.type === "photo" ? "photo" : "text"
   );
@@ -214,4 +214,4 @@ const ModificaStoria = ({ story, onCancel, onSave }) => {
   );
 };
 
-export default ModificaStoria;
+export default EditStory;

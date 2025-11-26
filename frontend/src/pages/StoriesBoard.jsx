@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import AddStory from "./AggiungiStoria";
-import EditStory from "./ModificaStoria";
-import DeleteStory from "./EliminaStoria";
-import "../stylesheets/BachecaStorie.css";
+import AddStory from "./AddStory";
+import EditStory from "./EditStory";
+import DeleteStory from "./DeleteStory";
+import "../stylesheets/StoriesBoard.css";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
@@ -13,7 +13,7 @@ import {
   deleteStory,
 } from "../services/StoriesService";
 
-const BachecaStorie = () => {
+const StoriesBoard = () => {
   const [stories, setStories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -268,7 +268,7 @@ const BachecaStorie = () => {
 
       {/* POPUP NUOVO RACCONTO */}
       {isAddStoryOpen && (
-        <AggiungiStoria
+        <AddStory
           onSubmit={handleSubmitStory}
           onBack={closeAddStory}
           isModal={true}
@@ -277,7 +277,7 @@ const BachecaStorie = () => {
 
       {/* POPUP MODIFICA RACCONTO */}
       {editingStory && (
-        <ModicaStoria
+        <EditStory
           story={editingStory}
           onCancel={closeEditStory}
           onSave={handleSaveEditedStory}
@@ -286,7 +286,7 @@ const BachecaStorie = () => {
 
       {/* POPUP ELIMINA RACCONT0 */}
       {storyToDelete && (
-        <EliminaStoria
+        <DeleteStory
           story={storyToDelete}
           onCancel={closeDeleteStory}
           onConfirm={handleDeleteConfirm}
@@ -298,4 +298,4 @@ const BachecaStorie = () => {
   );
 };
 
-export default BachecaStorie;
+export default StoriesBoard;

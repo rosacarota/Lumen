@@ -1,7 +1,7 @@
 import { X, Trash2 } from "lucide-react";
-import "../stylesheets/EliminaStoria.css";
+import "../stylesheets/DeleteStory.css";
 
-const EliminaStoria = ({ story, onCancel, onConfirm }) => {
+const DeleteStory = ({ story, onCancel, onConfirm }) => {
   if (!story) return null;
 
   const formatDate = (iso) =>
@@ -100,4 +100,4 @@ const EliminaStoria = ({ story, onCancel, onConfirm }) => {
   );
 };
 
-export default EliminaStoria;
+export default DeleteStory;
