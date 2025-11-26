@@ -1,61 +1,109 @@
 package it.lumen.business.gestioneRaccoltaFondi.control;
 
+import it.lumen.business.gestioneAutenticazione.service.AutenticazioneService;
 import it.lumen.business.gestioneRaccoltaFondi.service.RaccoltaFondiService;
 import it.lumen.data.entity.RaccoltaFondi;
 import it.lumen.data.entity.Utente;
+import it.lumen.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/raccoltaFondi")
-public class RaccoltaFondiControl{
+@CrossOrigin(origins = "http://localhost:5173") // Abilita le chiamate dal Frontend
+public class RaccoltaFondiControl {
 
     private final RaccoltaFondiService raccoltaFondiService;
+    private final JwtUtil jwtUtil;
+    private final AutenticazioneService autenticazioneService;
 
     @Autowired
-    public RaccoltaFondiControl(RaccoltaFondiService raccoltaFondiService) {this.raccoltaFondiService = raccoltaFondiService;}
+    public RaccoltaFondiControl(RaccoltaFondiService raccoltaFondiService, JwtUtil jwtUtil, AutenticazioneService autenticazioneService) {
+        this.raccoltaFondiService = raccoltaFondiService;
+        this.jwtUtil = jwtUtil;
+        this.autenticazioneService = autenticazioneService;
+    }
 
-    //AVVIO RACCOLTA FONDI
     @PostMapping("/avviaRaccoltaFondi")
-    public ResponseEntity<String> avvioRaccoltaFondi(@Valid @RequestBody RaccoltaFondi raccoltaFondi, BindingResult result){
-        if (result.hasErrors()){
-            StringBuilder errorMsg = new StringBuilder("Errori di validazione: ");
-            result.getAllErrors().forEach(error -> errorMsg.append(error.getDefaultMessage()));
+    public ResponseEntity<String> avvioRaccoltaFondi(
+             @RequestBody RaccoltaFondi raccoltaFondi,
+            BindingResult result,
+            @RequestParam String token) {
+
+        System.out.println("--- INIZIO AVVIO RACCOLTA ---");
+        System.out.println("Token ricevuto: " + token);
+
+        if (result.hasErrors()) {
+            StringBuilder errorMsg = new StringBuilder("Errori validazione: ");
+            result.getAllErrors().forEach(error -> errorMsg.append(error.getDefaultMessage()).append("; "));
+            System.out.println("Errore: " + errorMsg);
             return ResponseEntity.badRequest().body(errorMsg.toString());
         }
+
+        String email = null;
+        try {
+            email = jwtUtil.extractEmail(token);
+            System.out.println("Email estratta dal token: " + email);
+        } catch (Exception e) {
+            System.out.println("Errore estrazione token (scaduto o formato errato): " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token non valido o scaduto");
+        }
+
+        if (email == null) {
+            System.out.println("Errore: Email null nel token");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token non valido");
+        }
+
+        Utente utente = autenticazioneService.getUtente(email);
+        raccoltaFondi.setEnte(utente);
+        if (utente == null) {
+            System.out.println("Errore: Utente non trovato nel DB con email " + email);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Utente non trovato");
+        }
+
+        System.out.println("Utente trovato: " + utente.getEmail() + " - Ruolo: " + utente.getRuolo());
+
+        if (utente.getRuolo() != Utente.Ruolo.Ente) {
+            System.out.println("Errore: L'utente non ha il ruolo Ente");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Solo gli Enti possono avviare raccolte fondi");
+        }
+
+
         raccoltaFondiService.avviaRaccoltaFondi(raccoltaFondi);
-        return ResponseEntity.ok("Raccolta fondi avviata " + raccoltaFondi.getTitolo() + " con successo");
+        System.out.println("Successo: Raccolta avviata");
+        return ResponseEntity.ok("Raccolta fondi " + raccoltaFondi.getTitolo() + " avviata con successo");
     }
 
-    //TERMINA RACCOLTA FONDI
     @PostMapping("/terminaRaccoltaFondi")
-    public ResponseEntity<String> terminaRaccoltaFondi(@Valid @RequestBody RaccoltaFondi raccoltaFondi, BindingResult result) {
-        if(result.hasErrors()){
-            StringBuilder errorMsg = new StringBuilder("Errori di validazione: ");
-            result.getAllErrors().forEach(error -> errorMsg.append(error.getDefaultMessage()));
-            return ResponseEntity.badRequest().body(errorMsg.toString());
+    public ResponseEntity<String> terminaRaccoltaFondi(@Valid @RequestBody RaccoltaFondi raccoltaFondi, BindingResult result, @RequestParam String token) {
+        if (result.hasErrors()) return ResponseEntity.badRequest().body("Dati non validi");
+
+        String email = jwtUtil.extractEmail(token);
+        if (email == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token non valido");
+
+        Utente utente = autenticazioneService.getUtente(email);
+        if (utente == null || utente.getRuolo() != Utente.Ruolo.Ente) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Non autorizzato");
         }
+
         raccoltaFondiService.terminaRaccoltaFondi(raccoltaFondi);
-        return ResponseEntity.ok("Raccolta fondi " + raccoltaFondi.getTitolo() + " terminata con successo");
+        return ResponseEntity.ok("Raccolta terminata");
     }
 
-    //OTTIENI RACCOLTA FONDI
     @GetMapping("/ottieniRaccolteDiEnte")
-    public ResponseEntity<String> ottieniRaccolteDiEnte(@Valid @RequestBody Utente utente, BindingResult result){
-        if (result.hasErrors()){
-            StringBuilder errorMsg = new StringBuilder("Errori di validazione: ");
-            result.getAllErrors().forEach(error -> errorMsg.append(error.getDefaultMessage()));
-            return ResponseEntity.badRequest().body(errorMsg.toString());
-        }
-        raccoltaFondiService.ottieniRaccolteDiEnte(utente);
-        return ResponseEntity.ok("Raccolte fondi dell'ente " +  utente.getNome() + " ottenute con successo");
+    public ResponseEntity<?> ottieniRaccolteDiEnte(@RequestParam String token) {
+        String email = jwtUtil.extractEmail(token);
+        if (email == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token non valido");
+
+        Utente utente = autenticazioneService.getUtente(email);
+        if (utente == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Utente non trovato");
+
+        return ResponseEntity.ok(raccoltaFondiService.ottieniRaccolteDiEnte(utente));
     }
 }
