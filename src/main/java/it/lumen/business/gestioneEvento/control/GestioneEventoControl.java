@@ -86,7 +86,7 @@ public class GestioneEventoControl {
                 return new ResponseEntity<>("Evento da modificare non trovato", HttpStatus.NOT_FOUND);
             }
             if (!gestioneEventoService.getEventoById(idEvento).getUtente().getEmail().equals(email)) {
-                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+                return new ResponseEntity<>("Non puoi modificare l'evento", HttpStatus.FORBIDDEN);
             }
 
             nuovoEvento.setUtente(autenticazioneService.getUtente(email));
@@ -109,9 +109,15 @@ public class GestioneEventoControl {
 
 
     @PostMapping("/rimuoviEvento")
-    public ResponseEntity<String> rimuoviEvento(@RequestBody Map<String, Integer> body) {
+    public ResponseEntity<String> rimuoviEvento(@RequestBody Map<String, Integer> body, @RequestParam String token) {
 
         try {
+            String email= util.extractEmail(token);
+            if (email == null) {
+
+                return new ResponseEntity<>("Email dell'utente non può essere vuota", HttpStatus.BAD_REQUEST);
+            }
+
             Integer idEvento = body.get("idEvento");
             if (idEvento == null) {
                 return new ResponseEntity<>("IdEvento non può essere vuoto", HttpStatus.BAD_REQUEST);
@@ -120,6 +126,12 @@ public class GestioneEventoControl {
 
             if (!gestioneEventoService.checkId(idEvento)) {
                 return new ResponseEntity<>("Evento da eliminare non trovato", HttpStatus.NOT_FOUND);
+            }
+
+            if(!gestioneEventoService.getEventoById(idEvento).getUtente().getEmail().equals(email)) {
+
+                return new ResponseEntity<>("Non puoi eliminare l'evento.", HttpStatus.FORBIDDEN);
+
             }
             gestioneEventoService.eliminaEvento(idEvento);
 
