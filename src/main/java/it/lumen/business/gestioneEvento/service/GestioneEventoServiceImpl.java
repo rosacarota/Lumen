@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import jakarta.transaction.Transactional;
-import java.util.List;
+
 @Service
 public class GestioneEventoServiceImpl implements GestioneEventoService {
 
@@ -35,7 +35,7 @@ public class GestioneEventoServiceImpl implements GestioneEventoService {
 
     @Override
     @Transactional
-    public void eliminaEvento(Integer idEvento) {
+    public void eliminaEvento(int idEvento) {
         eventoDAO.removeEventoByIdEvento(idEvento);
     }
 
@@ -46,7 +46,13 @@ public class GestioneEventoServiceImpl implements GestioneEventoService {
 
     }
 
+    @Override
+    public Evento getEventoById(int idEvento){
 
+        return eventoDAO.getEventoByIdEvento(idEvento);
+    }
+
+    @Override
     public List<Evento> cronologiaEventi(String email, String stato) {
         Date oggi = new Date();
 

@@ -60,52 +60,36 @@ public class GestioneEventoControl {
     }
 
     @PostMapping("/modificaEvento")
-    public ResponseEntity<String> modificaEvento(@RequestBody Evento nuovoEvento) {
+    public ResponseEntity<String> modificaEvento(@RequestBody Evento nuovoEvento,  @RequestParam String token) {
 
 
         try {
+            String email = util.extractEmail(token);
+
+            if (email == null) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
             Integer idEvento = nuovoEvento.getIdEvento();
+
             if (idEvento == null) {
                 return new ResponseEntity<>("IdEvento non può essere vuoto", HttpStatus.BAD_REQUEST);
 
             }
 
 
-            if (nuovoEvento.getTitolo() == null) {
+            if (nuovoEvento.getTitolo() == null || nuovoEvento.getDescrizione()==null || nuovoEvento.getIndirizzo()==null || nuovoEvento.getDataFine()==null || nuovoEvento.getDataInizio()==null) {
 
-                return new ResponseEntity<>("Titolo non può essere vuoto", HttpStatus.BAD_REQUEST);
-            }
-
-            if (nuovoEvento.getDescrizione() == null) {
-
-                return new ResponseEntity<>("Descrizione non può essere vuota", HttpStatus.BAD_REQUEST);
-            }
-
-            if (nuovoEvento.getIndirizzo() == null) {
-
-                return new ResponseEntity<>("Luogo non può essere vuoto", HttpStatus.BAD_REQUEST);
-            }
-
-            if (nuovoEvento.getDataFine() == null) {
-
-                return new ResponseEntity<>("Data di fine non può essere vuota", HttpStatus.BAD_REQUEST);
-            }
-
-
-            if (nuovoEvento.getUtente() == null) {
-
-                return new ResponseEntity<>("Email dell'utente non può essere vuota", HttpStatus.BAD_REQUEST);
-            }
-
-            if (nuovoEvento.getDataInizio() == null) {
-
-                return new ResponseEntity<>("Data di inizio evento non può essere vuota", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
 
             if (!gestioneEventoService.checkId(idEvento)) {
                 return new ResponseEntity<>("Evento da modificare non trovato", HttpStatus.NOT_FOUND);
             }
+            if (!gestioneEventoService.getEventoById(idEvento).getUtente().getEmail().equals(email)) {
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            }
 
+            nuovoEvento.setUtente(autenticazioneService.getUtente(email));
             Evento eventoModificato = gestioneEventoService.modificaEvento(nuovoEvento);
 
 
