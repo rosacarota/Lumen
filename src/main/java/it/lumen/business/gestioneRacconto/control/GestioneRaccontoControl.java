@@ -167,7 +167,7 @@ try {
     }
 
 
-    @PostMapping("/visualizza")
+    @GetMapping("/visualizza")
     public ResponseEntity<List<Racconto>> visualizzaRaccontiUtente(@RequestParam String token) {
 
         String email= util.extractEmail(token);
