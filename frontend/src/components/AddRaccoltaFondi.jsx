@@ -1,12 +1,30 @@
-import { useState } from "react";
-import { Coins, Target, Calendar, SendHorizontal, ArrowLeft, AlignLeft } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Coins, SendHorizontal, ArrowLeft } from "lucide-react";
+import { createRaccolta } from "../services/RaccoltaFondiService"; 
 import "../stylesheets/AddRaccoltaFondi.css";
 
-const AddRaccoltaFondi = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE_DEFAULT" }) => {
+const AddRaccoltaFondi = ({ onSubmit, onBack, isModal = false }) => {
   const [titolo, setTitolo] = useState("");
   const [descrizione, setDescrizione] = useState("");
   const [obiettivo, setObiettivo] = useState("");
   const [dataChiusura, setDataChiusura] = useState("");
+  const [isLoading, setIsLoading] = useState(false); // Stato per il caricamento
+  
+  const [currentUser, setCurrentUser] = useState(null);
+
+  // 1. Recupera l'Ente dal LocalStorage al caricamento della pagina
+  useEffect(() => {
+    // Assicurati che la chiave nel localStorage corrisponda a come salvi l'utente al login
+    const storedUser = localStorage.getItem("user"); 
+    if (storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        setCurrentUser(parsedUser);
+      } catch (error) {
+        console.error("Errore nel parsing dell'utente:", error);
+      }
+    }
+  }, []);
 
   const getMinDate = () => {
     const tomorrow = new Date();
@@ -21,32 +39,63 @@ const AddRaccoltaFondi = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE
     setDataChiusura("");
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+
+    // Validazione Ente
+    if (!currentUser) {
+      alert("Errore: Nessun Ente loggato. Effettua il login per creare una raccolta.");
+      return;
+    }
 
     if (parseFloat(obiettivo) <= 0) {
       alert("L'obiettivo deve essere maggiore di zero.");
       return;
     }
 
-    const nuovaRaccolta = {
-      // idraccolta: generato dal DB
+    setIsLoading(true); // Avvia spinner o stato di caricamento
+
+    // 2. Costruzione dell'oggetto JSON per il Backend Java
+    // Assicurati che i nomi dei campi corrispondano esattamente alla classe 'RaccoltaFondi' in Java
+    const nuovaRaccoltaPayload = {
       titolo: titolo.trim(),
       descrizione: descrizione.trim(),
       obiettivo: parseFloat(obiettivo),
-      totaleraccolto: 0,
-      dataapertura: new Date().toISOString().split("T")[0],
-      datachiusura: dataChiusura,
-      ente: enteId,
+      totaleRaccolto: 0.00, 
+      dataApertura: new Date().toISOString().split("T")[0], // YYYY-MM-DD
+      dataChiusura: dataChiusura,
+      // Il backend si aspetta un oggetto Utente/Ente completo o mappato correttamente
+      ente: currentUser, 
+      stato: "ATTIVA" // Opzionale: se il tuo backend richiede uno stato iniziale esplicito
     };
 
-    if (onSubmit) {
-      onSubmit(nuovaRaccolta);
-    } else {
-      console.log("Nuova Raccolta:", nuovaRaccolta);
-    }
+    try {
+      // 3. Chiamata al Service
+      console.log("Invio payload al backend:", nuovaRaccoltaPayload);
+      
+      // La risposta è una stringa (es. "Raccolta fondi avviata Titolo con successo")
+      const message = await createRaccolta(nuovaRaccoltaPayload);
+      
+      console.log("Risposta backend:", message);
+      alert(message); // Mostra il messaggio restituito dal controller Java
 
-    resetForm();
+      if (onSubmit) {
+        onSubmit(nuovaRaccoltaPayload);
+      }
+      
+      if (onBack) {
+        onBack(); 
+      } else {
+        resetForm();
+      }
+
+    } catch (error) {
+      console.error("Errore durante la creazione:", error);
+      // Mostra l'errore specifico (es. validazione fallita dal backend)
+      alert("Errore: " + error.message);
+    } finally {
+      setIsLoading(false); // Ferma stato di caricamento
+    }
   };
 
   return (
@@ -59,12 +108,13 @@ const AddRaccoltaFondi = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE
             className="arf-close-back-button"
             onClick={onBack}
             title="Torna indietro"
+            disabled={isLoading}
           >
             <ArrowLeft size={20} />
           </button>
         )}
 
-        {/* Pannello sinistro (Verde - Stile Originale) */}
+        {/* Pannello sinistro */}
         <div className="arf-left-panel">
           <div className="arf-gradient-overlay"></div>
           <div className="arf-blur-circle arf-circle-1"></div>
@@ -110,6 +160,7 @@ const AddRaccoltaFondi = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE
                       placeholder="Titolo della campagna"
                       required
                       maxLength={100}
+                      disabled={isLoading}
                     />
                   </div>
 
@@ -125,6 +176,7 @@ const AddRaccoltaFondi = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE
                         min="1"
                         step="0.50"
                         required
+                        disabled={isLoading}
                       />
                     </div>
                     
@@ -137,6 +189,7 @@ const AddRaccoltaFondi = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE
                         min={getMinDate()}
                         required
                         title="Data Chiusura"
+                        disabled={isLoading}
                       />
                     </div>
                   </div>
@@ -150,6 +203,7 @@ const AddRaccoltaFondi = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE
                       placeholder="Descrivi la causa, perché è importante e come verranno utilizzati i fondi..."
                       rows={4}
                       required
+                      disabled={isLoading}
                     />
                   </div>
                 </div>
@@ -158,9 +212,14 @@ const AddRaccoltaFondi = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE
                   <p className="arf-helper-text">
                     La raccolta sarà subito visibile.
                   </p>
-                  <button type="submit" className="arf-submit-button">
+                  <button 
+                    type="submit" 
+                    className="arf-submit-button"
+                    disabled={isLoading}
+                    style={{ opacity: isLoading ? 0.7 : 1, cursor: isLoading ? 'wait' : 'pointer' }}
+                  >
                     <SendHorizontal className="arf-submit-icon" />
-                    <span>PUBBLICA RACCOLTA</span>
+                    <span>{isLoading ? "INVIO IN CORSO..." : "PUBBLICA RACCOLTA"}</span>
                   </button>
                 </div>
               </form>
