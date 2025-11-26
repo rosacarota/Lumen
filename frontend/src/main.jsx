@@ -6,7 +6,6 @@ import App from './App.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import EnteProfile from './pages/EnteProfile.jsx'
 import Raccoltafondi from './pages/Raccoltafondi.jsx'
-import StoriesBoard from './pages/StoriesBoard.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode> 
