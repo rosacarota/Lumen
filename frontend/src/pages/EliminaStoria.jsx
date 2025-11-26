@@ -100,4 +100,4 @@ const EliminaStoria = ({ story, onCancel, onConfirm }) => {
   );
 };
 
-export default DeleteStory;
+export default EliminaStoria;

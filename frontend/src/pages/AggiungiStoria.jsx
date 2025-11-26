@@ -247,4 +247,4 @@ const AggiungiStoria = ({ onSubmit, onBack, isModal = false }) => {
   );
 };
 
-export default AddStory;
+export default AggiungiStoria;

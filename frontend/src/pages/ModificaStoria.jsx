@@ -213,4 +213,4 @@ const ModificaStoria = ({ story, onCancel, onSave }) => {
   );
 };
 
-export default EditStory;
+export default ModificaStoria;
