@@ -1,55 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Coins, SendHorizontal, ArrowLeft } from "lucide-react";
 
-const API_BASE_URL = "http://localhost:8080/raccoltaFondi";
-
-const getAuthToken = () => {
-  let token = localStorage.getItem("token");
-  if (!token) {
-    const userStr = localStorage.getItem("user");
-    if (userStr) {
-      try {
-        const userObj = JSON.parse(userStr);
-        token = userObj.token || userObj.jwt;
-      } catch (e) {
-        console.error("Errore parsing user per token", e);
-      }
-    }
-  }
-  return token;
-};
-
-const createRaccolta = async (raccoltaData) => {
-  const token = getAuthToken();
-
-  if (!token) {
-    throw new Error("Autenticazione mancante. Effettua il login.");
-  }
-
-  try {
-    const response = await fetch(`${API_BASE_URL}/avviaRaccoltaFondi`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}` 
-      },
-      body: JSON.stringify(raccoltaData),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(errorText || `Errore server: ${response.status}`);
-    }
-
-    const data = await response.text();
-    return data;
-
-  } catch (error) {
-    console.error("Errore nel service createRaccolta:", error);
-    throw error;
-  }
-};
-
+// IMPORTANTE: Importa la funzione dal file di servizio esterno che abbiamo creato prima.
+// Aggiusta il percorso "../..." in base a dove hai salvato quel file.
+import { createRaccolta } from "../services/RaccoltaFondiService"; 
 
 const cssStyles = `
 @keyframes fadeInUp {
@@ -257,7 +211,7 @@ const AddRaccoltaFondi = ({ onSubmit, onBack, isModal = false }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // 1. Recupera l'Ente dal LocalStorage al caricamento della pagina
+  // 1. Recupera l'Ente dal LocalStorage al caricamento per allegare l'oggetto utente al JSON
   useEffect(() => {
     const storedUser = localStorage.getItem("user"); 
     if (storedUser) {
@@ -286,11 +240,7 @@ const AddRaccoltaFondi = ({ onSubmit, onBack, isModal = false }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Validazione Ente
-    if (!currentUser) {
-      alert("Errore: Nessun Ente loggato. Effettua il login per creare una raccolta.");
-      return;
-    }
+    // Validazione base
 
     if (parseFloat(obiettivo) <= 0) {
       alert("L'obiettivo deve essere maggiore di zero.");
@@ -299,7 +249,7 @@ const AddRaccoltaFondi = ({ onSubmit, onBack, isModal = false }) => {
 
     setIsLoading(true);
 
-    // 3. Costruzione dell'oggetto JSON
+    // Costruzione dell'oggetto JSON
     const nuovaRaccoltaPayload = {
       titolo: titolo.trim(),
       descrizione: descrizione.trim(),
@@ -308,13 +258,13 @@ const AddRaccoltaFondi = ({ onSubmit, onBack, isModal = false }) => {
       dataApertura: new Date().toISOString().split("T")[0],
       dataChiusura: dataChiusura,
       stato: "ATTIVA",
-      ente: currentUser,
+      ente: currentUser, // L'oggetto utente recuperato dal localStorage
     };
 
     try {
-      // 4. Chiamata alla funzione interna
-      console.log("Invio dati al service...", nuovaRaccoltaPayload);
+      console.log("Invio dati tramite il service esterno...", nuovaRaccoltaPayload);
       
+      // Chiamata alla funzione importata
       const responseMessage = await createRaccolta(nuovaRaccoltaPayload);
       
       console.log("Risposta backend:", responseMessage);
@@ -331,7 +281,7 @@ const AddRaccoltaFondi = ({ onSubmit, onBack, isModal = false }) => {
       }
 
     } catch (error) {
-      console.error("Errore durante la creazione:", error);
+      console.error("Errore componente AddRaccoltaFondi:", error);
       alert("Errore: " + error.message);
     } finally {
       setIsLoading(false);
