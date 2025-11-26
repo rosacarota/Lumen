@@ -16,10 +16,8 @@ import java.util.Map;
 public class GestioneEventoControl {
 
 
-
     @Autowired
     private GestioneEventoService gestioneEventoService;
-
 
 
     @PostMapping("/aggiungiEvento")
@@ -27,37 +25,37 @@ public class GestioneEventoControl {
 
         try {
 
-            if(evento.getTitolo()==null) {
+            if (evento.getTitolo() == null) {
 
                 return new ResponseEntity<>("Titolo non può essere vuoto", HttpStatus.BAD_REQUEST);
             }
 
-            if(evento.getDescrizione()==null) {
+            if (evento.getDescrizione() == null) {
 
                 return new ResponseEntity<>("Descrizione non può essere vuota", HttpStatus.BAD_REQUEST);
             }
 
-            if(evento.getIndirizzo()==null) {
+            if (evento.getIndirizzo() == null) {
 
                 return new ResponseEntity<>("Luogo non può essere vuoto", HttpStatus.BAD_REQUEST);
             }
 
-            if(evento.getDataFine()==null){
+            if (evento.getDataFine() == null) {
 
                 return new ResponseEntity<>("Data di fine non può essere vuota", HttpStatus.BAD_REQUEST);
             }
 
-            if(evento.getUtente()==null) {
+            if (evento.getUtente() == null) {
 
                 return new ResponseEntity<>("Email dell'utente non può essere vuota", HttpStatus.BAD_REQUEST);
             }
 
 
-            if(evento.getDataInizio()==null){
+            if (evento.getDataInizio() == null) {
 
                 return new ResponseEntity<>("Data di inizio non può essere vuota", HttpStatus.BAD_REQUEST);
             }
-            Evento eventoSalvato= gestioneEventoService.aggiungiEvento(evento);
+            Evento eventoSalvato = gestioneEventoService.aggiungiEvento(evento);
             if (eventoSalvato != null) {
 
                 return new ResponseEntity<>("Aggiunta dell'evento avvenuta con successo.", HttpStatus.CREATED);
@@ -73,44 +71,44 @@ public class GestioneEventoControl {
     }
 
     @PostMapping("/modificaEvento")
-    public ResponseEntity<String> modificaEvento( @RequestBody Evento nuovoEvento) {
+    public ResponseEntity<String> modificaEvento(@RequestBody Evento nuovoEvento) {
 
 
         try {
-            Integer idEvento=nuovoEvento.getIdEvento();
+            Integer idEvento = nuovoEvento.getIdEvento();
             if (idEvento == null) {
                 return new ResponseEntity<>("IdEvento non può essere vuoto", HttpStatus.BAD_REQUEST);
 
             }
 
 
-            if(nuovoEvento.getTitolo()==null) {
+            if (nuovoEvento.getTitolo() == null) {
 
                 return new ResponseEntity<>("Titolo non può essere vuoto", HttpStatus.BAD_REQUEST);
             }
 
-            if(nuovoEvento.getDescrizione()==null) {
+            if (nuovoEvento.getDescrizione() == null) {
 
                 return new ResponseEntity<>("Descrizione non può essere vuota", HttpStatus.BAD_REQUEST);
             }
 
-            if(nuovoEvento.getIndirizzo()==null) {
+            if (nuovoEvento.getIndirizzo() == null) {
 
                 return new ResponseEntity<>("Luogo non può essere vuoto", HttpStatus.BAD_REQUEST);
             }
 
-            if(nuovoEvento.getDataFine()==null){
+            if (nuovoEvento.getDataFine() == null) {
 
                 return new ResponseEntity<>("Data di fine non può essere vuota", HttpStatus.BAD_REQUEST);
             }
 
 
-            if(nuovoEvento.getUtente()==null) {
+            if (nuovoEvento.getUtente() == null) {
 
                 return new ResponseEntity<>("Email dell'utente non può essere vuota", HttpStatus.BAD_REQUEST);
             }
 
-            if(nuovoEvento.getDataInizio()==null) {
+            if (nuovoEvento.getDataInizio() == null) {
 
                 return new ResponseEntity<>("Data di inizio evento non può essere vuota", HttpStatus.BAD_REQUEST);
             }
@@ -119,10 +117,10 @@ public class GestioneEventoControl {
                 return new ResponseEntity<>("Evento da modificare non trovato", HttpStatus.NOT_FOUND);
             }
 
-            Evento eventoModificato= gestioneEventoService.modificaEvento(nuovoEvento);
+            Evento eventoModificato = gestioneEventoService.modificaEvento(nuovoEvento);
 
 
-            if(eventoModificato!=null) {
+            if (eventoModificato != null) {
                 return new ResponseEntity<>("Modifica dell'evento avvenuta con successo.", HttpStatus.CREATED);
 
             } else {
@@ -141,7 +139,7 @@ public class GestioneEventoControl {
     public ResponseEntity<String> rimuoviEvento(@RequestBody Map<String, Integer> body) {
 
         try {
-            Integer idEvento=body.get("idEvento");
+            Integer idEvento = body.get("idEvento");
             if (idEvento == null) {
                 return new ResponseEntity<>("IdEvento non può essere vuoto", HttpStatus.BAD_REQUEST);
 
@@ -150,8 +148,7 @@ public class GestioneEventoControl {
             if (!gestioneEventoService.checkId(idEvento)) {
                 return new ResponseEntity<>("Evento da eliminare non trovato", HttpStatus.NOT_FOUND);
             }
-       gestioneEventoService.eliminaEvento(idEvento);
-
+            gestioneEventoService.eliminaEvento(idEvento);
 
 
             return new ResponseEntity<>("Evento eliminato con successo.", HttpStatus.OK);
@@ -161,27 +158,27 @@ public class GestioneEventoControl {
 
     }
 
-    @PostMapping("/cronologiaEventi")
-    public ResponseEntity<List<Evento>> cronologiaEvento(@RequestBody Map<String, String> body) {
+    @GetMapping("/cronologiaEventi")
+    public ResponseEntity<List<Evento>> cronologiaEvento(@RequestParam Map<String, String> param) {
 
 
-        String email=body.get("email");
-        if(email==null){
+        String email = param.get("email");
+
+
+        String stato = param.get("stato");
+
+        if (email == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
         }
 
-        List<Evento> listaEventi = gestioneEventoService.cronologiaEventi(email);
 
-        if(listaEventi.isEmpty()){
+        List<Evento> listaEventi = gestioneEventoService.cronologiaEventi(email, stato);
+
+        if (listaEventi == null || listaEventi.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-
-
 
         return ResponseEntity.ok(listaEventi);
 
     }
-
-
 }

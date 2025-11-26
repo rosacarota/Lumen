@@ -51,7 +51,8 @@ public class GestioneEventoServiceImpl implements GestioneEventoService {
         Date oggi = new Date();
 
 
-        if (stato == null) stato = "";
+        if (stato == null)
+            stato = "";
 
         switch (stato.toLowerCase()) {
             case "attivi":
