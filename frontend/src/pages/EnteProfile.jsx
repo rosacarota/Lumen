@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import '../stylesheets/EnteProfile.css';
 import Navbar from '../components/Navbar.jsx';
 // Assicurati che il percorso sia corretto
-import ProfileInfo from '../components/ProfileInfo.jsx'; 
+import InfoProfilo from '../components/InfoProfilo.jsx'; 
 
 const EnteProfile = () => {
     // --- STATI ---
