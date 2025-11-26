@@ -1,26 +1,30 @@
-import React from 'react';
-import { Camera } from 'lucide-react'; // Assicurati di avere lucide-react installato
+import React, { useState } from 'react';
+import { Camera, Plus } from 'lucide-react';
 import '../stylesheets/BachecaUltimeStorie.css';
+import AggiungiStoria from '../pages/AggiungiStoria';
 
 const BachecaUltimeStorie = () => {
+    const [isAddStoryOpen, setIsAddStoryOpen] = useState(false);
     return (
+        <>
         <div className="stories-card">
-            {/* Header: Bianco con testo Turchese scuro */}
             <div className="stories-header">
-                <h3>ULTIME STORIE</h3>
+                <h3>STORIE DELL'ACCOUNT</h3>
             </div>
-            
-            {/* Corpo: Gradiente verde chiaro (preso dal tuo style.loginPage) */}
             <div className="stories-body">
-                
-                {/* Placeholder: Quando non ci sono storie */}
                 <div className="empty-state">
                     <div className="empty-icon-wrapper">
                         <Camera size={32} color="#4AAFB8" />
                     </div>
-                    <p>Non ci sono nuove storie</p>
+                    <p>Non ci sono storie attive.</p>
+                    <div className="empty-icon-wrapper add-action" 
+                         onClick={() => setIsAddStoryOpen(true)}
+                         title="Crea una nuova storia"
+                    >
+                        <Plus size={32} color="#4AAFB8" />
+                        </div>
+                    <p>Aggiungi storia</p>
                 </div>
-
                 {/* ESEMPIO DI COME APPARIRANNO LE STORIE (Decommenta per vedere) */}
                 {/* <div className="story-item">
                     <div className="story-avatar"></div>
@@ -30,9 +34,12 @@ const BachecaUltimeStorie = () => {
                     </div>
                 </div> 
                 */}
-
             </div>
         </div>
+        {isAddStoryOpen && (
+            <AggiungiStoria onClose={() => setIsAddStoryOpen(false)} />
+        )}
+        </>
     );
 };
 

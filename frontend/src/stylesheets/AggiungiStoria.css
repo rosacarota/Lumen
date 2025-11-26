@@ -1,3 +1,13 @@
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -19,15 +29,20 @@
   }
 }
 
-/* --- Layout Principale --- */
-
-.story-page {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #f7fbfb 0%, #e9fbe7 100%);
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px 20px;
+  padding: 20px;
+  animation: fadeIn 0.3s ease-out;
 }
 
 .container {
@@ -39,10 +54,9 @@
   overflow: hidden;
   box-shadow: 0 20px 60px rgba(8, 120, 134, 0.25);
   background: white;
-  min-height: 480px; 
+  min-height: 480px;
+  max-height: 90vh;
 }
-
-/* Bottone freccia indietro */
 
 .close-back-button {
   position: absolute;
@@ -70,8 +84,6 @@
 .close-back-button svg {
   color: #087886;
 }
-
-/* --- Pannello Sinistro (Info) --- */
 
 .left-panel {
   flex: 1;
@@ -148,8 +160,6 @@
   opacity: 0.9;
 }
 
-/* --- Pannello Destro (Form) --- */
-
 .right-panel {
   flex: 1;
   background: white;
@@ -163,8 +173,6 @@
   width: 100%;
   max-width: 560px;
 }
-
-/* Logo & Titoli */
 
 .logo-section {
   margin-bottom: 32px;
@@ -200,8 +208,6 @@
   gap: 24px;
 }
 
-/* Form */
-
 .story-form {
   display: flex;
   flex-direction: column;
@@ -235,15 +241,11 @@
   resize: vertical;
 }
 
-/* Focus State */
-
 .input-field-no-icon:focus,
 .text-area:focus {
   border-color: #4aafb8;
   box-shadow: 0 0 0 3px rgba(74, 175, 184, 0.1);
 }
-
-/* --- Selettore Tipo --- */
 
 .type-selector {
   display: flex;
@@ -268,8 +270,6 @@
   transition: all 0.3s ease;
 }
 
-/* Hover effect */
-
 .type-button:not(.active):hover {
   border-color: #4aafb8;
   background: #e9fbe7;
@@ -286,8 +286,6 @@
   width: 18px;
   height: 18px;
 }
-
-/* --- Indicatori --- */
 
 .dots-indicator {
   display: flex;
@@ -309,12 +307,10 @@
   background: #087886;
 }
 
-/* --- Footer & Bottone Submit --- */
-
 .story-footer {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 16px;
   margin-top: 8px;
   flex-wrap: wrap;
@@ -327,7 +323,6 @@
   margin: 0;
 }
 
-/*bottone colorato*/
 .submit-button {
   display: inline-flex;
   align-items: center;
@@ -355,8 +350,6 @@
   width: 18px;
   height: 18px;
 }
-
-/* --- Upload Area --- */
 
 .file-upload-area {
   border: 2px dashed #4aafb8;
@@ -391,8 +384,6 @@
   color: #087886;
 }
 
-/* --- Responsive --- */
-
 @media (max-width: 900px) {
   .left-panel {
     display: none;
@@ -422,37 +413,4 @@
     width: 100%;
     min-width: unset;
   }
-}
-
-/* Modal: AddStory come pop-up */
-.story-page-modal {
-  position: fixed;
-  inset: 0;
-  z-index: 60;
-  background: rgba(15, 23, 42, 0.55);
-  backdrop-filter: blur(3px);
-  
-  /* Flexbox per centrare */
-  display: flex;
-  align-items: center;     /* Centra verticalmente */
-  justify-content: center; /* Centra orizzontalmente */
-  
-  padding: 20px; /* Padding uniforme su tutti i lati */
-  overflow-y: auto; /* Permette lo scroll se lo schermo è troppo basso */
-}
-
-
-/* Card nel modal */
-.story-page-modal .container {
-  max-width: 900px;
-  width: 100%;
-  min-height: auto;
-  overflow-y: auto;
-  border-radius: 24px;
-  overflow: hidden;
-}
-
-.story-page-modal .right-panel {
-  flex: 1;
-  padding: 40px;
 }

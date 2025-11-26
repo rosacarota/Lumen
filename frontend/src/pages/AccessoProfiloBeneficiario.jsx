@@ -3,13 +3,13 @@ import Navbar from '../components/Navbar';
 import AccessoInfoProfilo from '../components/AccessoInfoProfilo';
 import BachecaUltimeStorie from '../components/BachecaUltimeStorie';
 import Footer from '../components/Footer';
-import '../stylesheets/AccessoProfiloVolontario.css';
+import '../stylesheets/AccessoProfiloBeneficiario.css';
 
-const AccessoProfiloVolontario = () => {
+const AccessoProfiloBeneficiario = () => {
   return (
-    <div className="voluntary-page-wrapper">
+    <div className="beneficiary-page-wrapper">
       <Navbar />
-      <div className="voluntary-container">
+      <div className="beneficiary-container">
         <section className="profile-section-full">
           <AccessoInfoProfilo />
         </section>
@@ -22,4 +22,4 @@ const AccessoProfiloVolontario = () => {
   );
 };
 
-export default AccessoProfiloVolontario;
+export default AccessoProfiloBeneficiario;

@@ -2,12 +2,10 @@ import { useState, useRef } from "react";
 import { Image, FileText, SendHorizontal, ArrowLeft } from "lucide-react";
 import "../stylesheets/AggiungiStoria.css";
 
-// Componente per aggiungere un nuovo racconto (Testo / Foto)
-const AggiungiStoria = ({ onSubmit, onBack, isModal = false }) => {
-  const [storyType, setStoryType] = useState("text"); // "text" | "photo"
+const AggiungiStoria = ({ onSubmit, onClose }) => {
+  const [storyType, setStoryType] = useState("text");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-
   const [file, setFile] = useState(null);
   const fileInputRef = useRef(null);
 
@@ -23,8 +21,6 @@ const AggiungiStoria = ({ onSubmit, onBack, isModal = false }) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
-    // Validazione: se è foto deve esserci file oppure descrizione/link
     if (storyType === "photo" && !file && !content.trim()) {
       alert(
         "Per una storia con foto devi caricare un file o inserire una descrizione/link."
@@ -47,6 +43,8 @@ const AggiungiStoria = ({ onSubmit, onBack, isModal = false }) => {
     }
 
     resetForm();
+
+    if (onClose) onClose();
   };
 
   const handleFileChange = (event) => {
@@ -85,29 +83,23 @@ const AggiungiStoria = ({ onSubmit, onBack, isModal = false }) => {
   };
 
   const dotTypes = ["text", "photo"];
-
-/*pop-up*/
   return (
-    <div className={`story-page ${isModal ? "story-page-modal" : ""}`}>
-      <div className="container">
-        {/* Freccia indietro */}
-        {onBack && (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="container" onClick={(e) => e.stopPropagation()}>
+        {onClose && ( 
           <button
             type="button"
             className="close-back-button"
-            onClick={onBack}
-            title="Torna alla bacheca"
+            onClick={onClose}
+            title="Chiudi"
           >
             <ArrowLeft size={20} />
           </button>
         )}
-
-        {/* Pannello sinistro (verde) */}
         <div className="left-panel">
           <div className="gradient-overlay"></div>
           <div className="blur-circle circle-1"></div>
           <div className="blur-circle circle-2"></div>
-
           <div className="welcome-content">
             <h1 className="welcome-title">Condividi un racconto.</h1>
             <p className="welcome-subtitle">
@@ -119,8 +111,6 @@ const AggiungiStoria = ({ onSubmit, onBack, isModal = false }) => {
             </div>
           </div>
         </div>
-
-        {/* Pannello destro (form) */}
         <div className="right-panel">
           <div className="form-container">
             <div className="logo-section">
@@ -134,7 +124,6 @@ const AggiungiStoria = ({ onSubmit, onBack, isModal = false }) => {
             </div>
 
             <div className="form-content">
-              {/* Selettore tipo (solo Testo / Foto) */}
               <div className="type-selector">
                 <button
                   type="button"
@@ -159,7 +148,6 @@ const AggiungiStoria = ({ onSubmit, onBack, isModal = false }) => {
                 </button>
               </div>
 
-              {/* Input file nascosto (solo per foto) */}
               {storyType === "photo" && (
                 <input
                   type="file"
@@ -170,7 +158,6 @@ const AggiungiStoria = ({ onSubmit, onBack, isModal = false }) => {
                 />
               )}
 
-              {/* Form */}
               <form onSubmit={handleSubmit} className="story-form">
                 <div className="fields-container">
                   <div className="input-group">
@@ -195,7 +182,6 @@ const AggiungiStoria = ({ onSubmit, onBack, isModal = false }) => {
                     />
                   </div>
 
-                  {/* Area upload (solo foto) */}
                   {storyType === "photo" && (
                     <div
                       className="file-upload-area"
