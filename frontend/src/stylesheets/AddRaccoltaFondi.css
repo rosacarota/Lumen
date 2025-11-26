@@ -49,11 +49,6 @@
   transform: translateY(-1px);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
 }
-.arf-close-back-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
-}
 .arf-close-back-button svg { color: #087886; }
 
 /* --- Pannello Sinistro --- */
@@ -135,11 +130,6 @@
   box-shadow: 0 0 0 3px rgba(74, 175, 184, 0.1);
 }
 
-.arf-input-field:disabled, .arf-text-area:disabled {
-  background-color: #f3f4f6;
-  cursor: not-allowed;
-}
-
 /* Footer & Bottone */
 .arf-footer {
   display: flex; align-items: center; justify-content: space-between;
@@ -167,6 +157,11 @@
 .arf-submit-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(8, 120, 134, 0.4);
+}
+.arf-submit-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
 }
 .arf-submit-icon { width: 18px; height: 18px; }
 

@@ -1,20 +1,264 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Coins, SendHorizontal, ArrowLeft } from "lucide-react";
-import { createRaccolta } from "../services/RaccoltaFondiService"; 
-import "../stylesheets/AddRaccoltaFondi.css";
 
+const API_BASE_URL = "http://localhost:8080/raccoltaFondi";
+
+const getAuthToken = () => {
+  let token = localStorage.getItem("token");
+  if (!token) {
+    const userStr = localStorage.getItem("user");
+    if (userStr) {
+      try {
+        const userObj = JSON.parse(userStr);
+        token = userObj.token || userObj.jwt;
+      } catch (e) {
+        console.error("Errore parsing user per token", e);
+      }
+    }
+  }
+  return token;
+};
+
+const createRaccolta = async (raccoltaData) => {
+  const token = getAuthToken();
+
+  if (!token) {
+    throw new Error("Autenticazione mancante. Effettua il login.");
+  }
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/avviaRaccoltaFondi`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}` 
+      },
+      body: JSON.stringify(raccoltaData),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(errorText || `Errore server: ${response.status}`);
+    }
+
+    const data = await response.text();
+    return data;
+
+  } catch (error) {
+    console.error("Errore nel service createRaccolta:", error);
+    throw error;
+  }
+};
+
+
+const cssStyles = `
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* --- Layout Principale --- */
+.arf-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f7fbfb 0%, #e9fbe7 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.arf-container {
+  position: relative;
+  width: 100%;
+  max-width: 780px; 
+  min-height: 480px;
+  display: flex;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(8, 120, 134, 0.25);
+  background: white;
+}
+
+/* Bottone freccia indietro */
+.arf-close-back-button {
+  position: absolute;
+  top: 18px; left: 18px; z-index: 20;
+  width: 36px; height: 36px;
+  border-radius: 999px; border: none;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.14);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.arf-close-back-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+}
+.arf-close-back-button svg { color: #087886; }
+
+/* --- Pannello Sinistro --- */
+.arf-left-panel {
+  flex: 1;
+  background: linear-gradient(135deg, #087886 0%, #4aafb8 50%, #7cce6b 100%);
+  position: relative;
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  padding: 50px;
+}
+
+.arf-gradient-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(8, 120, 134, 0.8) 0%, rgba(74, 175, 184, 0.6) 50%, rgba(124, 206, 107, 0.4) 100%);
+}
+
+.arf-blur-circle {
+  position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.5;
+  animation: pulse 5s ease-in-out infinite;
+}
+.arf-circle-1 { width: 300px; height: 300px; background: #7cce6b; top: 10%; left: 10%; animation-duration: 4s; }
+.arf-circle-2 { width: 400px; height: 400px; background: #4aafb8; bottom: 10%; right: 10%; animation-duration: 5s; }
+
+.arf-welcome-content {
+  position: relative; z-index: 10; color: white; text-align: center;
+  animation: fadeInUp 0.6s ease-out;
+}
+.arf-welcome-title { font-size: 38px; font-weight: 700; margin-bottom: 24px; text-shadow: 0 2px 20px rgba(0, 0, 0, 0.2); }
+.arf-welcome-subtitle { font-size: 16px; line-height: 1.6; opacity: 0.95; margin-bottom: 32px; }
+.arf-welcome-footer { font-size: 14px; opacity: 0.9; }
+
+/* --- Pannello Destro --- */
+.arf-right-panel {
+  flex: 1;
+  background: white;
+  padding: 40px 50px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.arf-form-container { width: 100%; max-width: 420px; }
+
+/* Logo & Testi */
+.arf-logo-section { margin-bottom: 24px; }
+.arf-logo-wrapper { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.arf-logo-icon { width: 30px; height: 30px; color: #087886; }
+.arf-logo-text { font-size: 24px; font-weight: 700; color: #087886; }
+.arf-logo-subtitle { font-size: 14px; color: #6b7280; }
+
+/* Form */
+.arf-story-form { display: flex; flex-direction: column; gap: 24px; }
+.arf-fields-container { display: flex; flex-direction: column; gap: 16px; }
+.arf-input-group { position: relative; width: 100%; }
+
+/* Obiettivo e Data */
+.arf-row-split { display: flex; gap: 10px; }
+.arf-row-split .arf-input-group { flex: 1; }
+
+.arf-input-field, .arf-text-area {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 25px; 
+  font-size: 15px; outline: none;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.arf-date-input { color: #374151; cursor: pointer; }
+
+.arf-text-area {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.arf-input-field:focus, .arf-text-area:focus {
+  border-color: #4aafb8;
+  box-shadow: 0 0 0 3px rgba(74, 175, 184, 0.1);
+}
+
+/* Footer & Bottone */
+.arf-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; margin-top: 8px; flex-wrap: wrap;
+}
+
+.arf-helper-text { font-size: 13px; color: #6b7280; max-width: 200px; margin: 0; line-height: 1.2; }
+
+/* STILE BOTTONE */
+.arf-submit-button {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 8px;
+  padding: 14px 25px;
+  border: none;
+  border-radius: 25px; 
+  background: linear-gradient(135deg, #087886 0%, #7cce6b 120%); 
+  color: white;
+  font-size: 15px; font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(8, 120, 134, 0.3);
+  transition: all 0.3s ease;
+  min-width: 160px;
+}
+
+.arf-submit-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(8, 120, 134, 0.4);
+}
+.arf-submit-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+.arf-submit-icon { width: 18px; height: 18px; }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .arf-left-panel { display: none; }
+  .arf-container { min-height: auto; }
+  .arf-right-panel { width: 100%; padding: 40px 20px; }
+}
+
+@media (max-width: 600px) {
+  .arf-footer { flex-direction: column; align-items: stretch; }
+  .arf-submit-button { width: 100%; }
+  .arf-helper-text { text-align: center; max-width: 100%; margin-bottom: 10px; }
+}
+
+/* Modal */
+.arf-page-modal {
+  position: fixed; inset: 0; z-index: 60;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  backdrop-filter: blur(3px);
+}
+
+.arf-page-modal .arf-container {
+  max-width: 900px; 
+  width: 100%;
+  min-height: auto;
+}
+`;
+
+// --- COMPONENTE PRINCIPALE ---
 const AddRaccoltaFondi = ({ onSubmit, onBack, isModal = false }) => {
   const [titolo, setTitolo] = useState("");
   const [descrizione, setDescrizione] = useState("");
   const [obiettivo, setObiettivo] = useState("");
   const [dataChiusura, setDataChiusura] = useState("");
-  const [isLoading, setIsLoading] = useState(false); // Stato per il caricamento
   
   const [currentUser, setCurrentUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   // 1. Recupera l'Ente dal LocalStorage al caricamento della pagina
   useEffect(() => {
-    // Assicurati che la chiave nel localStorage corrisponda a come salvi l'utente al login
     const storedUser = localStorage.getItem("user"); 
     if (storedUser) {
       try {
@@ -53,34 +297,31 @@ const AddRaccoltaFondi = ({ onSubmit, onBack, isModal = false }) => {
       return;
     }
 
-    setIsLoading(true); // Avvia spinner o stato di caricamento
+    setIsLoading(true);
 
-    // 2. Costruzione dell'oggetto JSON per il Backend Java
-    // Assicurati che i nomi dei campi corrispondano esattamente alla classe 'RaccoltaFondi' in Java
+    // 3. Costruzione dell'oggetto JSON
     const nuovaRaccoltaPayload = {
       titolo: titolo.trim(),
       descrizione: descrizione.trim(),
       obiettivo: parseFloat(obiettivo),
-      totaleRaccolto: 0.00, 
-      dataApertura: new Date().toISOString().split("T")[0], // YYYY-MM-DD
+      totaleRaccolto: 0.00,
+      dataApertura: new Date().toISOString().split("T")[0],
       dataChiusura: dataChiusura,
-      // Il backend si aspetta un oggetto Utente/Ente completo o mappato correttamente
-      ente: currentUser, 
-      stato: "ATTIVA" // Opzionale: se il tuo backend richiede uno stato iniziale esplicito
+      stato: "ATTIVA",
+      ente: currentUser,
     };
 
     try {
-      // 3. Chiamata al Service
-      console.log("Invio payload al backend:", nuovaRaccoltaPayload);
+      // 4. Chiamata alla funzione interna
+      console.log("Invio dati al service...", nuovaRaccoltaPayload);
       
-      // La risposta è una stringa (es. "Raccolta fondi avviata Titolo con successo")
-      const message = await createRaccolta(nuovaRaccoltaPayload);
+      const responseMessage = await createRaccolta(nuovaRaccoltaPayload);
       
-      console.log("Risposta backend:", message);
-      alert(message); // Mostra il messaggio restituito dal controller Java
+      console.log("Risposta backend:", responseMessage);
+      alert("Successo: " + responseMessage);
 
       if (onSubmit) {
-        onSubmit(nuovaRaccoltaPayload);
+        onSubmit(responseMessage);
       }
       
       if (onBack) {
@@ -91,143 +332,145 @@ const AddRaccoltaFondi = ({ onSubmit, onBack, isModal = false }) => {
 
     } catch (error) {
       console.error("Errore durante la creazione:", error);
-      // Mostra l'errore specifico (es. validazione fallita dal backend)
       alert("Errore: " + error.message);
     } finally {
-      setIsLoading(false); // Ferma stato di caricamento
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className={`arf-page ${isModal ? "arf-page-modal" : ""}`}>
-      <div className="arf-container">
-        {/* Freccia indietro */}
-        {onBack && (
-          <button
-            type="button"
-            className="arf-close-back-button"
-            onClick={onBack}
-            title="Torna indietro"
-            disabled={isLoading}
-          >
-            <ArrowLeft size={20} />
-          </button>
-        )}
+    <>
+      <style>{cssStyles}</style>
+      <div className={`arf-page ${isModal ? "arf-page-modal" : ""}`}>
+        <div className="arf-container">
+          {/* Freccia indietro */}
+          {onBack && (
+            <button
+              type="button"
+              className="arf-close-back-button"
+              onClick={onBack}
+              title="Torna indietro"
+              disabled={isLoading}
+            >
+              <ArrowLeft size={20} />
+            </button>
+          )}
 
-        {/* Pannello sinistro */}
-        <div className="arf-left-panel">
-          <div className="arf-gradient-overlay"></div>
-          <div className="arf-blur-circle arf-circle-1"></div>
-          <div className="arf-blur-circle arf-circle-2"></div>
+          {/* Pannello sinistro */}
+          <div className="arf-left-panel">
+            <div className="arf-gradient-overlay"></div>
+            <div className="arf-blur-circle arf-circle-1"></div>
+            <div className="arf-blur-circle arf-circle-2"></div>
 
-          <div className="arf-welcome-content">
-            <h1 className="arf-welcome-title">Lancia una Missione.</h1>
-            <p className="arf-welcome-subtitle">
-              Definisci un obiettivo chiaro e mobilita la community. 
-              Le grandi cause hanno bisogno di grandi inizi.
-            </p>
-            <div className="arf-welcome-footer">
-              La trasparenza è la chiave per la fiducia.
+            <div className="arf-welcome-content">
+              <h1 className="arf-welcome-title">Lancia una Missione.</h1>
+              <p className="arf-welcome-subtitle">
+                Definisci un obiettivo chiaro e mobilita la community. 
+                Le grandi cause hanno bisogno di grandi inizi.
+              </p>
+              <div className="arf-welcome-footer">
+                La trasparenza è la chiave per la fiducia.
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Pannello destro (Form) */}
-        <div className="arf-right-panel">
-          <div className="arf-form-container">
-            
-            <div className="arf-logo-section">
-              <div className="arf-logo-wrapper">
-                <Coins className="arf-logo-icon" />
-                <span className="arf-logo-text">Nuova Raccolta</span>
+          {/* Pannello destro (Form) */}
+          <div className="arf-right-panel">
+            <div className="arf-form-container">
+              
+              <div className="arf-logo-section">
+                <div className="arf-logo-wrapper">
+                  <Coins className="arf-logo-icon" />
+                  <span className="arf-logo-text">Nuova Raccolta</span>
+                </div>
+                <p className="arf-logo-subtitle">
+                  Compila i dettagli per avviare la campagna.
+                </p>
               </div>
-              <p className="arf-logo-subtitle">
-                Compila i dettagli per avviare la campagna.
-              </p>
-            </div>
 
-            <div className="arf-form-content">
-              <form onSubmit={handleSubmit} className="arf-story-form">
-                <div className="arf-fields-container">
-                  
-                  {/* Titolo */}
-                  <div className="arf-input-group">
-                    <input
-                      className="arf-input-field"
-                      type="text"
-                      value={titolo}
-                      onChange={(e) => setTitolo(e.target.value)}
-                      placeholder="Titolo della campagna"
-                      required
-                      maxLength={100}
-                      disabled={isLoading}
-                    />
-                  </div>
-
-                  {/* Riga Doppia: Obiettivo e Data */}
-                  <div className="arf-row-split">
+              <div className="arf-form-content">
+                <form onSubmit={handleSubmit} className="arf-story-form">
+                  <div className="arf-fields-container">
+                    
+                    {/* Titolo */}
                     <div className="arf-input-group">
                       <input
                         className="arf-input-field"
-                        type="number"
-                        value={obiettivo}
-                        onChange={(e) => setObiettivo(e.target.value)}
-                        placeholder="Obiettivo (€)"
-                        min="1"
-                        step="0.50"
+                        type="text"
+                        value={titolo}
+                        onChange={(e) => setTitolo(e.target.value)}
+                        placeholder="Titolo della campagna"
                         required
+                        maxLength={100}
                         disabled={isLoading}
                       />
                     </div>
-                    
+
+                    {/* Riga Doppia: Obiettivo e Data */}
+                    <div className="arf-row-split">
+                      <div className="arf-input-group">
+                        <input
+                          className="arf-input-field"
+                          type="number"
+                          value={obiettivo}
+                          onChange={(e) => setObiettivo(e.target.value)}
+                          placeholder="Obiettivo (€)"
+                          min="1"
+                          step="0.50"
+                          required
+                          disabled={isLoading}
+                        />
+                      </div>
+                      
+                      <div className="arf-input-group">
+                         <input
+                          className="arf-input-field arf-date-input"
+                          type="date"
+                          value={dataChiusura}
+                          onChange={(e) => setDataChiusura(e.target.value)}
+                          min={getMinDate()}
+                          required
+                          title="Data Chiusura"
+                          disabled={isLoading}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Descrizione */}
                     <div className="arf-input-group">
-                       <input
-                        className="arf-input-field arf-date-input"
-                        type="date"
-                        value={dataChiusura}
-                        onChange={(e) => setDataChiusura(e.target.value)}
-                        min={getMinDate()}
+                      <textarea
+                        className="arf-text-area"
+                        value={descrizione}
+                        onChange={(e) => setDescrizione(e.target.value)}
+                        placeholder="Descrivi la causa, perché è importante e come verranno utilizzati i fondi..."
+                        rows={4}
                         required
-                        title="Data Chiusura"
                         disabled={isLoading}
                       />
                     </div>
                   </div>
 
-                  {/* Descrizione */}
-                  <div className="arf-input-group">
-                    <textarea
-                      className="arf-text-area"
-                      value={descrizione}
-                      onChange={(e) => setDescrizione(e.target.value)}
-                      placeholder="Descrivi la causa, perché è importante e come verranno utilizzati i fondi..."
-                      rows={4}
-                      required
+                  <div className="arf-footer">
+                    <p className="arf-helper-text">
+                      La raccolta sarà subito visibile.
+                    </p>
+                    <button 
+                      type="submit" 
+                      className="arf-submit-button"
                       disabled={isLoading}
-                    />
+                      style={{ opacity: isLoading ? 0.7 : 1, cursor: isLoading ? 'wait' : 'pointer' }}
+                    >
+                      <SendHorizontal className="arf-submit-icon" />
+                      <span>{isLoading ? "CARICAMENTO..." : "PUBBLICA RACCOLTA"}</span>
+                    </button>
                   </div>
-                </div>
-
-                <div className="arf-footer">
-                  <p className="arf-helper-text">
-                    La raccolta sarà subito visibile.
-                  </p>
-                  <button 
-                    type="submit" 
-                    className="arf-submit-button"
-                    disabled={isLoading}
-                    style={{ opacity: isLoading ? 0.7 : 1, cursor: isLoading ? 'wait' : 'pointer' }}
-                  >
-                    <SendHorizontal className="arf-submit-icon" />
-                    <span>{isLoading ? "INVIO IN CORSO..." : "PUBBLICA RACCOLTA"}</span>
-                  </button>
-                </div>
-              </form>
+                </form>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
