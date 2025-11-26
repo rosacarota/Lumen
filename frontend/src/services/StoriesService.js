@@ -3,20 +3,20 @@
 const API_BASE_URL = "http://localhost:8080";
 
 function getAuthToken() {
-  //  prendi il token dove lo salvi
-  // per esempio:
   return localStorage.getItem("token");
 }
 
 // Trasforma l'oggetto racconto REST 
 function mapStoryFromApi(apiStory) {
   return {
-    id: apiStory.idRacconto,
+    id: apiStory.idRacconto, 
     title: apiStory.titolo,
     content: apiStory.descrizione,
-    image: apiStory.immagine,            // può essere null
+    image: apiStory.immagine,
     createdAt: apiStory.dataPubblicazione,
-    authorName: apiStory.autoreNome || "Anonimo",
+    // Nota: I campi autoreNome e autoreRuolo probabilmente non sono presenti
+    // nel JSON di risposta del backend e dovrebbero essere aggiunti se necessari.
+    authorName: apiStory.autoreNome || "Anonimo", 
     authorRole: apiStory.autoreRuolo || "utente",
     type: apiStory.immagine ? "photo" : "text",
   };
@@ -25,7 +25,6 @@ function mapStoryFromApi(apiStory) {
 // Trasforma i dati del frontend in JSON per /aggiungi
 function mapNewStoryToApi(newStory) {
   return {
-    
     titolo: newStory.title,
     descrizione: newStory.content,
     immagine: newStory.image || null,
@@ -38,23 +37,28 @@ function mapUpdatedStoryToApi(updatedStory) {
     idRacconto: updatedStory.id,
     titolo: updatedStory.title,
     descrizione: updatedStory.content,
-    dataPubblicazione: updatedStory.createdAt, // va mandata ma NON cambiata
+    dataPubblicazione: updatedStory.createdAt, 
     immagine: updatedStory.image || null,
   };
 }
+
+// === METODI AGGIORNATI PER USARE ESCLUSIVAMENTE POST ===
 
 export async function fetchStories() {
   const token = getAuthToken();
 
   const res = await fetch(
-    `${API_BASE_URL}/racconto/visualizza?token=${token}`
+    `${API_BASE_URL}/racconto/visualizza?token=${token}`,
+    { 
+      method: "GET" 
+    } 
   );
 
   if (!res.ok) {
     throw new Error("Errore nel caricamento delle storie");
   }
 
-  const data = await res.json(); // supponiamo array di racconti
+  const data = await res.json(); 
   return data.map(mapStoryFromApi);
 }
 
@@ -65,9 +69,9 @@ export async function addStory(newStory) {
   const res = await fetch(
     `${API_BASE_URL}/racconto/aggiungi?token=${token}`,
     {
-      method: "POST",
+      method: "POST", // Corretto
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload), // crei il JSON
+      body: JSON.stringify(payload),
     }
   );
 
@@ -86,7 +90,7 @@ export async function editStory(updatedStory) {
   const res = await fetch(
     `${API_BASE_URL}/racconto/modifica?token=${token}`,
     {
-      method: "PUT",
+      method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     }
@@ -106,8 +110,9 @@ export async function deleteStory(storyId) {
   const res = await fetch(
     `${API_BASE_URL}/racconto/rimuovi?token=${token}`,
     {
-      method: "DELETE",
+      method: "POST",
       headers: { "Content-Type": "application/json" },
+      // Manteniamo il corpo per inviare l'ID, come previsto dal backend
       body: JSON.stringify({ idRacconto: storyId }), 
     }
   );
