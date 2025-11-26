@@ -1,6 +1,6 @@
-package it.lumen.business.richiestaServizio.control;
+package it.lumen.business.gestioneRichiesta.control;
 
-import it.lumen.business.richiestaServizio.service.RichiestaServizioService;
+import it.lumen.business.gestioneRichiesta.service.RichiestaServizioService;
 import it.lumen.data.entity.RichiestaServizio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

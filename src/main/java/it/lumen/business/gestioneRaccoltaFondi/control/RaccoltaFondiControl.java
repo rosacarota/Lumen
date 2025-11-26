@@ -1,6 +1,6 @@
-package it.lumen.business.raccoltaFondi.control;
+package it.lumen.business.gestioneRaccoltaFondi.control;
 
-import it.lumen.business.raccoltaFondi.service.RaccoltaFondiService;
+import it.lumen.business.gestioneRaccoltaFondi.service.RaccoltaFondiService;
 import it.lumen.data.entity.RaccoltaFondi;
 import it.lumen.data.entity.Utente;
 import org.springframework.beans.factory.annotation.Autowired;

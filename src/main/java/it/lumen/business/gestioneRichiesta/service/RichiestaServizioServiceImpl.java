@@ -1,4 +1,4 @@
-package it.lumen.business.richiestaServizio.service;
+package it.lumen.business.gestioneRichiesta.service;
 
 import it.lumen.data.dao.RichiestaServizioDAO;
 import it.lumen.data.entity.RichiestaServizio;

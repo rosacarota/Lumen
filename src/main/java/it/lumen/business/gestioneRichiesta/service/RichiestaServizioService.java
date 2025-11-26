@@ -1,9 +1,6 @@
-package it.lumen.business.richiestaServizio.service;
+package it.lumen.business.gestioneRichiesta.service;
 
-import it.lumen.data.entity.RaccoltaFondi;
 import it.lumen.data.entity.RichiestaServizio;
-import it.lumen.data.entity.Utente;
-import java.util.List;
 
 
 public interface RichiestaServizioService {

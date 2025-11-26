@@ -1,4 +1,4 @@
-package it.lumen.business.raccoltaFondi.service;
+package it.lumen.business.gestioneRaccoltaFondi.service;
 
 import it.lumen.data.entity.RaccoltaFondi;
 import it.lumen.data.entity.Utente;
