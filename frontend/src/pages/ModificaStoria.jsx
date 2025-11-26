@@ -13,6 +13,7 @@ const ModificaStoria = ({ story, onCancel, onSave }) => {
 
   // se cambi storia da modificare
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setStoryType(story.type === "photo" ? "photo" : "text");
     setTitle(story.title || "");
     setContent(story.content || "");
