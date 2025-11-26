@@ -144,19 +144,17 @@ public class GestioneEventoControl {
     }
 
     @GetMapping("/cronologiaEventi")
-    public ResponseEntity<List<Evento>> cronologiaEvento(@RequestParam Map<String, String> param) {
+    public ResponseEntity<List<Evento>> cronologiaEvento(@RequestParam Map<String, String> param, @RequestParam String token) {
 
 
-        String email = param.get("email");
-
-
-        String stato = param.get("stato");
+        String email= util.extractEmail(token);
 
         if (email == null) {
+
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-
+        String stato = param.get("stato");
         List<Evento> listaEventi = gestioneEventoService.cronologiaEventi(email, stato);
 
         if (listaEventi == null || listaEventi.isEmpty()) {
