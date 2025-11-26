@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { 
-  User, Mail, Phone, MapPin, Building2, Save, X, // Ho sostituito ArrowLeft con X per il modale, o puoi tenere ArrowLeft
+  User, Mail, Phone, MapPin, Building2, Save, X,
   Camera, Briefcase, Lock, Home, Map, ArrowLeft 
 } from 'lucide-react';
-import '../stylesheets/EditProfile.css';
+import '../stylesheets/ModificaProfilo.css';
 
-// --- MOCK DATA ---
 const MOCK_USER_DATA = {
   email: 'mario.volontario@lumen.com',
   nome: 'Mario', 
@@ -23,7 +22,6 @@ const MOCK_USER_DATA = {
   ncivico: '10'
 };
 
-// --- COMPONENTE MODALE ---
 export default function EditProfileModal({ isOpen, onClose }) {
   const [formData, setFormData] = useState(MOCK_USER_DATA);
   const [passwordData, setPasswordData] = useState({
@@ -32,8 +30,6 @@ export default function EditProfileModal({ isOpen, onClose }) {
     confirmPassword: ''
   });
   const [loading, setLoading] = useState(false);
-
-  // Se il modale non è aperto, non renderizzare nulla
   if (!isOpen) return null;
 
   const handleChange = (e) => {
@@ -60,7 +56,7 @@ export default function EditProfileModal({ isOpen, onClose }) {
       console.log("Dati aggiornati:", formData);
       alert("Profilo aggiornato!");
       setLoading(false);
-      onClose(); // Chiudi il modale dopo il salvataggio
+      onClose();
     }, 1000);
   };
 
@@ -122,16 +118,12 @@ export default function EditProfileModal({ isOpen, onClose }) {
     }
   };
   return (
-    // Overlay scuro (cliccando fuori si chiude)
     <div className="modal-overlay" onClick={onClose}>
-      {/* Contenitore Modale (cliccando dentro NON si chiude) */}
       <div className="edit-container" onClick={(e) => e.stopPropagation()}>
-        {/* --- LATO SINISTRO --- */}
         <div className="preview-panel">
           <div className="blur-circle circle-1"></div>
           <div className="blur-circle circle-2"></div>
           <div className="preview-content">
-            {/* Tasto Chiudi/Indietro */}
             <button className="back-button" onClick={onClose}>
               <ArrowLeft size={18} /> Chiudi
             </button>
@@ -148,13 +140,10 @@ export default function EditProfileModal({ isOpen, onClose }) {
             <p className="preview-bio">"{formData.descrizione}"</p>
           </div>
         </div>
-        {/* --- LATO DESTRO --- */}
         <div className="form-panel">
           <div className="form-wrapper">
-            {/* Header Form */}
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                 <h1 className="page-title">Modifica Profilo</h1>
-                {/* Opzionale: X per chiudere anche qui */}
                 <button onClick={onClose} style={{border:'none', background:'transparent', cursor:'pointer', color:'#aaa'}}>
                     <X size={24}/>
                 </button>
@@ -310,7 +299,6 @@ export default function EditProfileModal({ isOpen, onClose }) {
                 </div>
               </div>
               <div className="action-buttons">
-                {/* Tasto Annulla chiude il modale */}
                 <button type="button" className="btn-cancel" onClick={onClose}>
                   Annulla
                 </button>
