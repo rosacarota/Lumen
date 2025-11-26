@@ -9,7 +9,7 @@ const Home = () => {
     <div className="page-wrapper">
       <Navbar />
       <section className="hero-section">
-        <div className="container hero-container">
+        <div className="hero-container">
           
           <div className="hero-content">
             <span className="hero-badge">Benvenuti su Lumen</span>
