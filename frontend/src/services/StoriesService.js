@@ -1,5 +1,3 @@
-// src/services/storiesService.js
-
 const API_BASE_URL = "http://localhost:8080";
 
 function getAuthToken() {
@@ -14,7 +12,7 @@ function mapStoryFromApi(apiStory) {
     content: apiStory.descrizione,
     image: apiStory.immagine,
     createdAt: apiStory.dataPubblicazione,
-    // Nota: I campi autoreNome e autoreRuolo probabilmente non sono presenti
+   
     // nel JSON di risposta del backend e dovrebbero essere aggiunti se necessari.
     authorName: apiStory.autoreNome || "Anonimo", 
     authorRole: apiStory.autoreRuolo || "utente",
@@ -112,7 +110,7 @@ export async function deleteStory(storyId) {
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      // Manteniamo il corpo per inviare l'ID, come previsto dal backend
+      // corpo per inviare l'ID, come previsto dal backend
       body: JSON.stringify({ idRacconto: storyId }), 
     }
   );
