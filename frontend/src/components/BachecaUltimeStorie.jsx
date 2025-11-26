@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Camera, Plus } from 'lucide-react';
 import '../stylesheets/BachecaUltimeStorie.css';
-import AggiungiStoria from '../pages/AggiungiStoria';
+import AggiungiStoria from '../pages/AddStory';
 
 const BachecaUltimeStorie = () => {
     const [isAddStoryOpen, setIsAddStoryOpen] = useState(false);
