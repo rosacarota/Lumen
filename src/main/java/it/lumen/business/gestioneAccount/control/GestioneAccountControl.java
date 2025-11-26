@@ -43,7 +43,7 @@ public class GestioneAccountControl {
     }
 
 
-    public ResponseEntity<?> modificaUtente(@RequestBody UtenteDTO utenteDTO, @RequestParam String token) {
+    public ResponseEntity<?> modificaUtente(@RequestBody Utente utenteDTO, @RequestParam String token) {
         String email = jwtUtil.extractEmail(token);
 
         if (!email.equals(utenteDTO.getEmail())) {
@@ -60,7 +60,7 @@ public class GestioneAccountControl {
 
         utente.setDescrizione(utenteDTO.getDescrizione());
 
-        utente.setEmail(utenteDTO.getRecapitoTelefonico());
+        utente.setRecapitoTelefonico(utenteDTO.getRecapitoTelefonico());
 
         if (utente.getImmagine() != null && !utente.getImmagine().isEmpty()) {
             try {
@@ -72,6 +72,8 @@ public class GestioneAccountControl {
                 throw new RuntimeException("Errore durante il salvataggio dell'immagine: " + e.getMessage());
             }
         }
+
+        utente.setIndirizzo(utenteDTO.getIndirizzo());
 
 
         gestioneAccountService.modificaUtente(utente);
