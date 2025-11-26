@@ -1,24 +1,32 @@
 import React, { useState } from 'react';
-import '../stylesheets/AccessoEnteProfile.css';
+import '../stylesheets/EnteProfile.css';
 import Navbar from '../components/Navbar.jsx';
-import ProfileInfo from '../components/ProfileInfo.jsx';
+// Assicurati che il percorso sia corretto
+import AccessoProfileInfo from '../components/AccesssoProfileInfo.jsx'; 
 
-const AccessoEnteProfile = () => {
+const EnteProfile = () => {
     // --- STATI ---
+    
+    // 1. Stato per il bottone SEGUI (Passato a ProfileInfo)
     const [isFollowing, setIsFollowing] = useState(false);
+    
+    // 2. Stato Tab Eventi (Colonna Sinistra)
     const [activeTab, setActiveTab] = useState('futuri');
     
-    // Aggiunto questo stato per evitare errori nei campi di ricerca
+    // 3. Stato Tab Sidebar (Colonna Destra)
+    const [activeSideTab, setActiveSideTab] = useState('storie');
+
+    // 4. Stato Filtri Ricerca
     const [filters, setFilters] = useState({ data: '', orario: '', tipologia: '' });
 
     // --- HANDLERS (LOGICA) ---
 
-    // Funzione che inverte lo stato (Segui <-> Seguito)
+    // Funzione che gestisce il click su "Segui"
     const handleFollowClick = () => {
-        setIsFollowing(!isFollowing);
+        setIsFollowing(!isFollowing); // Inverte vero/falso
+        console.log("Stato Segui cambiato:", !isFollowing); // Debug per vedere se funziona
     };
 
-    // Funzione per gestire gli input della ricerca
     const handleFilterChange = (e) => {
         setFilters({ ...filters, [e.target.name]: e.target.value });
     };
@@ -29,28 +37,21 @@ const AccessoEnteProfile = () => {
             
             <div className="main-container">
                 
-                {/* --- 1. HERO SECTION (Ora collegata alla logica) --- */}
-                <ProfileInfo 
-                    title="UniCiock"
-                    subtitle="ENTE"
-                    description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-                    stat1="4k followers"
-                    stat2="20 eventi"
-                    
-                    // PROPS FONDAMENTALI PER IL FUNZIONAMENTO DEL BOTTONE
+                {/* --- 1. HERO SECTION (PROFILE INFO) --- */}
+                {/* Qui passiamo lo stato e la funzione al componente figlio */}
+                <AccessoProfileInfo 
                     isFollowing={isFollowing} 
-                    onToggle={handleFollowClick}
+                    onToggle={handleFollowClick} 
                 />
 
-                {/* --- 2. SEZIONE EVENTI --- */}
                 <section className="event-section">
                     
-                    {/* TAB E BOTTONI */}
+                    {/* --- 2. ZONA CONTROLLI (Tab e Affiliati) --- */}
                     <div className="controll">
                         <div className="tabs-left">
-                            <button className={activeTab === 'corso' ? 'active' : ''} onClick={() => setActiveTab('corso')}>EVENTI IN CORSO</button>
-                            <button className={activeTab === 'futuri' ? 'active' : ''} onClick={() => setActiveTab('futuri')}>EVENTI FUTURI</button>
-                            <button className={activeTab === 'svolti' ? 'active' : ''} onClick={() => setActiveTab('svolti')}>EVENTI SVOLTI</button>
+                            <button className={activeTab === 'corso' ? 'active' : ''} onClick={() => setActiveTab('corso')}>IN CORSO</button>
+                            <button className={activeTab === 'futuri' ? 'active' : ''} onClick={() => setActiveTab('futuri')}>FUTURI</button>
+                            <button className={activeTab === 'svolti' ? 'active' : ''} onClick={() => setActiveTab('svolti')}>SVOLTI</button>
                         </div>
                         <div className="actions-right">
                             <button className="btn-action">CREA EVENTO</button>
@@ -58,38 +59,80 @@ const AccessoEnteProfile = () => {
                         </div>
                     </div>
 
-                    {/* SEARCH BAR */}
-                    <div className="event-search">
-                        <h3 className="search-title">CERCA EVENTI</h3>
-                        <div className="search-inputs">
-                            <div className="input-group">
-                                <label>DATA</label>
-                                <input type="date" name="data" className="custom-input" onChange={handleFilterChange} />
+                    {/* --- 3. ZONA SPLIT (Search+Griglia | Toggles+Storie) --- */}
+                    <div className="split-layout">
+                        
+                        {/* COLONNA SINISTRA */}
+                        <div className="left-column">
+                            
+                            {/* Barra di Ricerca */}
+                            <div className="event-search">
+                                <h3 className="search-title">CERCA</h3>
+                                <div className="search-inputs">
+                                    <div className="input-group">
+                                        <label>DATA</label>
+                                        <input type="date" name="data" className="custom-input" onChange={handleFilterChange} />
+                                    </div>
+                                    <div className="input-group">
+                                        <label>ORARIO</label>
+                                        <input type="time" name="orario" className="custom-input" onChange={handleFilterChange} />
+                                    </div>
+                                    <div className="input-group">
+                                        <label>TIPO</label>
+                                        <select name="tipologia" className="custom-input" onChange={handleFilterChange}>
+                                            <option value="">Tutti</option>
+                                            <option value="conf">Conferenza</option>
+                                            <option value="party">Festa</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="input-group">
-                                <label>ORARIO</label>
-                                <input type="time" name="orario" className="custom-input" onChange={handleFilterChange} />
-                            </div>
-                            <div className="input-group">
-                                <label>TIPOLOGIA</label>
-                                <select name="tipologia" className="custom-input" onChange={handleFilterChange}>
-                                    <option value="">Tutti</option>
-                                    <option value="conf">Conferenza</option>
-                                    <option value="party">Festa</option>
-                                </select>
+
+                            {/* Griglia Eventi */}
+                            <div className="event-grid">
+                                <p>Nessun evento {activeTab} trovato.</p>
                             </div>
                         </div>
-                    </div>
 
-                    {/* GRIGLIA */}
-                    <div className="event-grid">
-                        <p>Nessun evento {activeTab} trovato.</p>
-                    </div>
+                        {/* COLONNA DESTRA */}
+                        <div className="right-column">
+                            
+                            {/* Switch Storie/Raccolte */}
+                            <div className="sidebar-header">
+                                <button 
+                                    className={`side-tab-btn ${activeSideTab === 'storie' ? 'active' : ''}`} 
+                                    onClick={() => setActiveSideTab('storie')}
+                                >
+                                    STORIE
+                                </button>
+                                <button 
+                                    className={`side-tab-btn ${activeSideTab === 'raccolte' ? 'active' : ''}`} 
+                                    onClick={() => setActiveSideTab('raccolte')}
+                                >
+                                    RACCOLTE FONDI
+                                </button>
+                            </div>
+                            
+                            {/* Contenuto Sidebar */}
+                            <div className="sidebar-content">
+                                {activeSideTab === 'storie' ? (
+                                    <div className="placeholder-content">
+                                        <div className="story-circle"></div>
+                                        <p>Nessuna storia recente.</p>
+                                    </div>
+                                ) : (
+                                    <div className="placeholder-content">
+                                        <p>Nessuna raccolta attiva.</p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
 
+                    </div>
                 </section>
             </div>
         </>
     );
 };
 
-export default AccessoEnteProfile;
+export default EnteProfile;
