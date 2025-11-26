@@ -12,6 +12,6 @@ public interface GestioneEventoService {
     public void eliminaEvento(Integer idEvento);
     public boolean checkId(int idEvento);
 
-    public List<Evento> cronologiaEventi(String email);
+    public List<Evento> cronologiaEventi(String email, String stato);
 }
 
