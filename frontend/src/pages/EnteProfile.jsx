@@ -4,12 +4,15 @@ import '../stylesheets/EnteProfile.css';
 
 // --- IMPORT COMPONENTI ---
 import Navbar from '../components/Navbar.jsx';
-import InfoProfilo from '../components/InfoProfilo.jsx';
-import AccessoProfileInfo from '../components/AccessoInfoProfilo.jsx';
+import InfoProfilo from '../components/InfoProfilo.jsx'; // Profilo pubblico (visto dagli altri)
+import AccessoProfileInfo from '../components/AccessoInfoProfilo.jsx'; // Profilo privato (con tasto Modifica)
 
 // --- IMPORT COMPONENTI PER I POPUP ---
 import AddEvento from '../components/AddEvento.jsx';
 import AddRaccoltaFondi from '../components/AddRaccoltaFondi.jsx';
+
+// --- IMPORT SERVICE PER I DATI UTENTE ---
+import { fetchUserProfile } from '../services/UserService.js';
 
 // --- COMPONENTE WRAPPER PER IL MODALE (STRUTTURA A STRATI) ---
 const ModalWrapper = ({ children, onClose }) => {
@@ -18,15 +21,13 @@ const ModalWrapper = ({ children, onClose }) => {
       style={{
         position: 'fixed',
         top: 0, left: 0, right: 0, bottom: 0,
-        zIndex: 9999, // Z-index altissimo per stare sopra a tutto
+        zIndex: 9999, 
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center'
       }}
     >
-      {/* 1. STRATO SFONDO (BACKDROP) 
-        Questo div è separato dal contenuto. Se clicchi qui, DEVE chiudersi.
-      */}
+      {/* 1. Sfondo scuro (Backdrop) */}
       <div 
         onClick={onClose}
         style={{
@@ -37,13 +38,11 @@ const ModalWrapper = ({ children, onClose }) => {
         }}
       />
 
-      {/* 2. STRATO CONTENUTO (BOX BIANCO)
-        Questo sta "sopra" lo sfondo (z-index relativo) e non eredita il click dello sfondo.
-      */}
+      {/* 2. Contenuto Modale */}
       <div 
         style={{
-          position: 'relative', // Importante: lo rende indipendente dallo sfondo assoluto
-          zIndex: 10, // Assicura che stia sopra lo sfondo scuro
+          position: 'relative', 
+          zIndex: 10, 
           backgroundColor: 'white',
           borderRadius: '12px',
           padding: '20px',
@@ -54,7 +53,6 @@ const ModalWrapper = ({ children, onClose }) => {
           boxShadow: '0 10px 25px rgba(0,0,0,0.3)'
         }}
       >
-        {/* Tasto Chiudi (X) */}
         <button
           onClick={onClose}
           style={{
@@ -71,8 +69,6 @@ const ModalWrapper = ({ children, onClose }) => {
         >
           &times;
         </button>
-
-        {/* Contenuto del form */}
         {children}
       </div>
     </div>
@@ -80,21 +76,36 @@ const ModalWrapper = ({ children, onClose }) => {
 };
 
 const EnteProfile = () => {
-  // --- 1. LOGICA DI ACCESSO ---
+  // --- 1. LOGICA DI ROUTING E OWNERSHIP ---
   const { id } = useParams();
   const [isOwner, setIsOwner] = useState(false);
 
-  // --- 2. STATI UI PAGINA ---
+  // --- 2. STATO DATI UTENTE (Per la modifica) ---
+  const [userProfile, setUserProfile] = useState(null);
+
+  // --- 3. STATI UI PAGINA ---
   const [isFollowing, setIsFollowing] = useState(false);
   const [activeTab, setActiveTab] = useState('futuri');
   const [activeSideTab, setActiveSideTab] = useState('storie');
   const [filters, setFilters] = useState({ data: '', orario: '', tipologia: '' });
 
-  // --- 3. STATI PER I POPUP (MODALI) ---
+  // --- 4. STATI PER I POPUP (MODALI EVENTI/RACCOLTE) ---
   const [showEventoModal, setShowEventoModal] = useState(false);
   const [showRaccoltaModal, setShowRaccoltaModal] = useState(false);
 
-  // --- 4. EFFETTO CONTROLLO UTENTE ---
+  // --- FUNZIONE PER SCARICARE I DATI AGGIORNATI ---
+  const loadData = async () => {
+    try {
+      const data = await fetchUserProfile();
+      setUserProfile(data);
+    } catch (error) {
+      console.error("Errore caricamento profilo:", error);
+    }
+  };
+
+  // --- EFFETTI ---
+  
+  // 1. Controllo se l'utente loggato è il proprietario della pagina
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser && id) {
@@ -102,6 +113,8 @@ const EnteProfile = () => {
         const currentUser = JSON.parse(storedUser);
         if (String(currentUser.id) === String(id)) {
           setIsOwner(true);
+          // Se sono il proprietario, carico i dati freschi per la modifica
+          loadData();
         } else {
           setIsOwner(false);
         }
@@ -122,11 +135,21 @@ const EnteProfile = () => {
     <>
       <Navbar />
       <div className="main-container">
+        
         {/* --- HEADER DINAMICO --- */}
         {isOwner ? (
-          <AccessoProfileInfo isFollowing={isFollowing} onToggle={handleFollowClick} />
+          /* MODALITÀ PROPRIETARIO (Con Modifica) */
+          /* Passiamo userProfile e la funzione loadData per aggiornare dopo il salvataggio */
+          <AccessoProfileInfo 
+            userData={userProfile} 
+            onUpdate={loadData} 
+          />
         ) : (
-          <InfoProfilo isFollowing={isFollowing} onToggle={handleFollowClick} />
+          /* MODALITÀ VISITATORE (Solo visualizzazione) */
+          <InfoProfilo 
+            isFollowing={isFollowing} 
+            onToggle={handleFollowClick} 
+          />
         )}
 
         <section className="event-section">
@@ -155,7 +178,8 @@ const EnteProfile = () => {
 
           {/* --- LAYOUT SPLIT --- */}
           <div className="split-layout">
-            {/* COLONNA SX */}
+            
+            {/* COLONNA SX: FILTRI E EVENTI */}
             <div className="left-column">
               <div className="event-search">
                 <h3 className="search-title">CERCA</h3>
@@ -183,7 +207,7 @@ const EnteProfile = () => {
               </div>
             </div>
 
-            {/* COLONNA DX */}
+            {/* COLONNA DX: STORIE E RACCOLTE */}
             <div className="right-column">
               <div className="sidebar-header">
                 <button className={`side-tab-btn ${activeSideTab === 'storie' ? 'active' : ''}`} onClick={() => setActiveSideTab('storie')}>STORIE</button>
@@ -206,7 +230,7 @@ const EnteProfile = () => {
         </section>
       </div>
 
-      {/* --- MODALI (POPUP) --- */}
+      {/* --- MODALI EVENTI E RACCOLTE --- */}
       {showEventoModal && (
         <ModalWrapper onClose={() => setShowEventoModal(false)}>
           <AddEvento onClose={() => setShowEventoModal(false)} isModal={true} />
