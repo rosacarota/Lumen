@@ -4,10 +4,10 @@ import {
   Camera, Briefcase, Home, Map, ArrowLeft 
 } from 'lucide-react';
 
-// Assicurati che questo file CSS esista, oppure usa quello di EditProfile.css rinominandolo
+// Assicurati che il percorso del CSS sia corretto
 import '../stylesheets/ModificaProfilo.css'; 
 
-// IMPORTANTE: Importiamo la funzione per salvare dal Service
+// Importiamo la funzione per salvare dal Service
 import { updateUserProfile } from '../services/UserServices.js'; 
 
 export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
@@ -21,7 +21,7 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
      recapitoTelefonico: '', 
      ambito: '', 
      ruolo: '', 
-     immagine: '',
+     immagine: '', // Qui finirà la stringa Base64 dell'immagine
      citta: '', 
      provincia: '', 
      cap: '', 
@@ -36,7 +36,6 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
     if (isOpen && currentUser) {
       setFormData({
         ...currentUser, 
-        // Usiamo || '' per evitare che i campi diventino "uncontrolled" se i dati sono null
         strada: currentUser.strada || '',
         ncivico: currentUser.ncivico || '',
         citta: currentUser.citta || '',
@@ -53,25 +52,38 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
   // Se il modale è chiuso, non renderizzare nulla
   if (!isOpen) return null;
 
-  // 3. Gestione cambiamento input
+  // 3. Gestione cambiamento input di testo
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // 4. Gestione Salvataggio
+  // 4. Gestione caricamento immagine (Conversione File -> Base64)
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      
+      // Quando il file è stato letto
+      reader.onloadend = () => {
+        // reader.result è la stringa lunga che rappresenta l'immagine
+        setFormData(prev => ({ ...prev, immagine: reader.result }));
+      };
+      
+      // Legge il file
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // 5. Gestione Salvataggio
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     
     try {
-      // Chiama il service per inviare i dati al backend
       await updateUserProfile(formData);
-      
       alert("Profilo aggiornato con successo!");
-      
-      // Chiude il modale (il padre si occuperà di ricaricare i dati grazie a onUpdate)
-      onClose(); 
+      onClose(); // Chiude il modale
     } catch (error) {
       console.error("Errore salvataggio:", error);
       alert("Errore durante il salvataggio: " + error.message);
@@ -110,7 +122,6 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
         </>
       );
     } else {
-      // Caso Utente/Volontario standard
       return (
         <div className="row-2">
           <div className="input-group">
@@ -142,7 +153,6 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      {/* Cliccando sul contenuto, l'evento non si propaga (il modale non si chiude) */}
       <div className="edit-container" onClick={(e) => e.stopPropagation()}>
         
         {/* --- LATO SINISTRO (Anteprima) --- */}
@@ -157,6 +167,7 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
                  src={formData.immagine || "https://via.placeholder.com/150"} 
                  alt="Avatar" 
                  className="avatar-image" 
+                 style={{objectFit: 'cover'}}
                />
              </div>
              
@@ -176,11 +187,9 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
             
             <form onSubmit={handleSubmit} className="form-grid">
               
-              {/* Sezione Anagrafica */}
               <div className="section-title"><User size={16}/> Anagrafica</div>
               {renderAnagraficaFields()}
               
-              {/* Sezione Contatti */}
               <div className="section-title"><Phone size={16}/> Contatti</div>
               <div className="row-2">
                  <div className="input-group">
@@ -207,7 +216,6 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
                  </div>
               </div>
 
-              {/* Sezione Indirizzo */}
               <div className="section-title"><MapPin size={16}/> Indirizzo</div>
               <div className="row-3">
                 <div className="input-group" style={{flex: 2}}>
@@ -267,7 +275,6 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
                  </div>
               </div>
 
-              {/* Sezione Dettagli */}
               <div className="section-title"><Briefcase size={16}/> Dettagli</div>
               <div className="input-group">
                 <Briefcase className="input-icon" />
@@ -290,19 +297,25 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
                   className="textarea-field"
                 />
               </div>
+
+              {/* --- CAMPO IMMAGINE (FILE UPLOAD) --- */}
               <div className="input-group">
                 <Camera className="input-icon" />
-                <input 
-                  type="text" 
-                  name="immagine" 
-                  value={formData.immagine} 
-                  onChange={handleChange} 
-                  placeholder="URL Immagine profilo" 
-                  className="input-field"
-                />
+                
+                <label className="file-upload-label" style={{display:'flex', flexDirection:'column', width:'100%'}}>
+                    <span style={{cursor: 'pointer', color: '#555', marginBottom:'5px', fontSize:'0.9rem'}}>
+                       {formData.immagine ? "Clicca per sostituire foto" : "Carica una foto profilo"}
+                    </span>
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      onChange={handleImageUpload}
+                      className="input-field"
+                      style={{paddingTop: '6px'}} 
+                    />
+                </label>
               </div>
 
-              {/* Pulsanti Azione */}
               <div className="action-buttons">
                 <button type="button" className="btn-cancel" onClick={onClose}>
                   Annulla

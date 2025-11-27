@@ -1,131 +1,133 @@
-const API_BASE_URL = "http://localhost:8080/account/datiUtente";
+// UserServices.js
 
+// CONFIGURAZIONE BASE
+const API_BASE_URL = "http://localhost:8080";
+
+// Funzione di utilità per prendere il token
 function getAuthToken() {
-  return localStorage.getItem("eyJhbGciOiJIUzI1NiJ9.eyJydW9sbyI6IlZvbG9udGFyaW8iLCJzdWIiOiJtYXR0ZW8uZGVzdGFzaW8wMEBnbWFpbC5jb20iLCJpYXQiOjE3NjQxOTg2MDgsImV4cCI6MTc2NDc5ODYwOH0.Xhaf_ehWAnzAdtCWTjbI9TPJsptKjIG-nQKKUQiC8I4");
+  // RITORNO DIRETTAMENTE LA STRINGA (Solo per test manuale!)
+  return localStorage.getItem("token");
 }
 
-// Funzione Decodifica JWT
-function parseJwt(token) {
-    if (!token) return {};
-    try {
-        const base64Url = token.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(c => 
-            '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
-        ).join(''));
-        return JSON.parse(jsonPayload);
-    } catch (e) {
-        console.error("Errore decodifica token:", e);
-        return {};
-    }
-}
+// ==========================================
+// 1. MAPPER: DA BACKEND A FRONTEND
+// ==========================================
+function mapApiToUser(apiData) {
+  const indirizzo = apiData.indirizzo || {};
 
-// === MAPPERS ===
-function mapUserFromApi(decodedData, roleFromResponse) {
   return {
-    id: decodedData.id || decodedData.sub, 
-    email: decodedData.email || decodedData.sub, 
-    nome: decodedData.nome || decodedData.name,
-    cognome: decodedData.cognome || decodedData.surname,
-    descrizione: decodedData.descrizione || decodedData.description,
+    email: apiData.email,
+    nome: apiData.nome,
+    cognome: apiData.cognome,
+    password: apiData.password, 
+    descrizione: apiData.descrizione,
+    recapitoTelefonico: apiData.recapitoTelefonico,
+    ruolo: apiData.ruolo,
+    ambito: apiData.ambito,
+    immagine: apiData.immagine,
     
-    // Priorità: Ruolo esplicito > Ruolo nel token > Default
-    ruolo: roleFromResponse || decodedData.ruolo || decodedData.role || "Ente", 
-    
-    ambito: decodedData.ambito,
-    immagine: decodedData.immagine || decodedData.image,
-    recapitoTelefonico: decodedData.telefono || decodedData.recapitoTelefonico,
-    strada: decodedData.via || decodedData.strada, 
-    ncivico: decodedData.numeroCivico || decodedData.ncivico,
-    citta: decodedData.citta,
-    provincia: decodedData.provincia,
-    cap: decodedData.cap
+    // Appiattimento indirizzo
+    citta: indirizzo.citta || "",
+    provincia: indirizzo.provincia || "",
+    cap: indirizzo.cap || "",
+    strada: indirizzo.strada || "",
+    ncivico: indirizzo.nCivico || "" 
   };
 }
 
-function mapUserUpdateToApi(formData, tokenString) {
-  return {
-    token: tokenString,
-    ruolo: formData.ruolo, 
-    nome: formData.nome,
-    cognome: formData.cognome,
-    descrizione: formData.descrizione,
-    ambito: formData.ambito,
-    immagine: formData.immagine,
-    telefono: formData.recapitoTelefonico,
-    via: formData.strada,
-    numeroCivico: formData.ncivico,
+// ==========================================
+// 2. MAPPER: DA FRONTEND A BACKEND
+// ==========================================
+function mapUserToApi(formData) {
+  const indirizzoObj = {
     citta: formData.citta,
     provincia: formData.provincia,
-    cap: formData.cap
+    cap: formData.cap,
+    strada: formData.strada,
+    nCivico: formData.ncivico
+  };
+
+  return {
+    email: formData.email,
+    nome: formData.nome,
+    cognome: formData.cognome,
+    password: formData.password,
+    descrizione: formData.descrizione,
+    recapitoTelefonico: formData.recapitoTelefonico,
+    ruolo: formData.ruolo,
+    ambito: formData.ambito,
+    immagine: formData.immagine, // Qui c'è la stringa Base64
+    indirizzo: indirizzoObj
   };
 }
 
-// === CHIAMATE API ===
+// ==========================================
+// CHIAMATE API
+// ==========================================
 
-// 1. GET standard (Caricamento pagina)
+/**
+ * SCARICA IL PROFILO (POST con Token nel body)
+ */
 export async function fetchUserProfile() {
   const token = getAuthToken();
-  const res = await fetch(`${API_BASE_URL}/account/datiUtente?token=${token}`, { method: "GET" });
-  if (!res.ok) throw new Error("Errore fetch profilo");
-  
-  const data = await res.json();
-  if (data.token) {
-      return mapUserFromApi(parseJwt(data.token), data.ruolo);
+
+  if (!token) {
+    console.warn("Nessun token trovato.");
+    return null;
   }
-  return {};
-}
 
-// 2. POST "Intelligente" per Modifica (Non chiede parametri)
-export async function fetchUserForEditing() {
-  const token = getAuthToken();
-  
-  // A. Decodifichiamo il token LOCALE per scoprire chi siamo
-  const localTokenData = parseJwt(token);
-  
-  // B. Recuperiamo il ruolo dal token (o fallback a 'Ente')
-  // Nota: Controlla se nel tuo token si chiama 'ruolo', 'role' o 'authority'
-  const ruoloRilevato = localTokenData.ruolo || localTokenData.role || "Ente";
+  try {
+    const response = await fetch(`${API_BASE_URL}/account/datiUtente`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ token: token })
+    });
 
-  console.log("--> Ruolo rilevato dal token locale:", ruoloRilevato);
+    if (!response.ok) {
+      throw new Error(`Errore server fetch: ${response.status}`);
+    }
 
-  // C. Prepariamo il payload per il server
-  const payload = { 
-      token: token, 
-      ruolo: ruoloRilevato 
-  };
+    const data = await response.json();
+    return mapApiToUser(data);
 
-  // D. Chiamata al server
-  const res = await fetch(`${API_BASE_URL}/account/datiUtente`, { 
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
-  });
-
-  if (!res.ok) throw new Error("Impossibile recuperare i dati per la modifica");
-  
-  const data = await res.json();
-
-  // E. Restituzione dati mappati
-  if (data.token) {
-      return mapUserFromApi(parseJwt(data.token), ruoloRilevato);
-  } else {
-      return mapUserFromApi(data, ruoloRilevato);
+  } catch (error) {
+    console.error("Errore fetchUserProfile:", error);
+    throw error;
   }
 }
 
-// 3. Salvataggio
+/**
+ * AGGIORNA IL PROFILO (POST con Token nell'URL)
+ */
 export async function updateUserProfile(formData) {
   const token = getAuthToken();
-  const payload = mapUserUpdateToApi(formData, token);
-  const res = await fetch(`${API_BASE_URL}/account/modifica`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-  if (!res.ok) {
-    const txt = await res.text();
-    throw new Error(txt);
+
+  if (!token) {
+    throw new Error("Sessione scaduta.");
   }
-  return true;
+
+  const payload = mapUserToApi(formData);
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/account/modificaUtente?token=${token}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(errorText || "Errore salvataggio profilo.");
+    }
+
+    return true;
+
+  } catch (error) {
+    console.error("Errore updateUserProfile:", error);
+    throw error;
+  }
 }
