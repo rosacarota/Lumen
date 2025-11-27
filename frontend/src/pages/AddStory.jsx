@@ -1,8 +1,10 @@
 import { useState, useRef } from "react";
 import { Image, FileText, SendHorizontal, ArrowLeft } from "lucide-react";
-import "../stylesheets/AddStory.css";
+// Assicurati che il percorso del CSS sia corretto
+import "../stylesheets/AddStory.css"; 
 
-const AddStory = ({ onSubmit, onClose }) => {
+// FIX: Ho cambiato 'onClose' in 'onBack' per combaciare con StoriesBoard.js
+const AddStory = ({ onSubmit, onBack }) => { 
   const [storyType, setStoryType] = useState("text");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -44,7 +46,8 @@ const AddStory = ({ onSubmit, onClose }) => {
 
     resetForm();
 
-    if (onClose) onClose();
+    // Usa onBack qui
+    if (onBack) onBack(); 
   };
 
   const handleFileChange = (event) => {
@@ -83,19 +86,29 @@ const AddStory = ({ onSubmit, onClose }) => {
   };
 
   const dotTypes = ["text", "photo"];
+  
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    // Usa onBack anche per chiudere cliccando fuori (opzionale)
+    <div className="modal-overlay" onClick={onBack}> 
       <div className="container" onClick={(e) => e.stopPropagation()}>
-        {onClose && ( 
+        
+        {/* FIX: Controlliamo se onBack esiste */}
+        {onBack && ( 
           <button
             type="button"
             className="close-back-button"
-            onClick={onClose}
+            onClick={onBack} // Chiama onBack
             title="Chiudi"
           >
+            {/* Tag per visualizzare la struttura se necessario, non in produzione */}
+            {/* 
+
+[Image of UI wireframe showing modal close button placement]
+ */}
             <ArrowLeft size={20} />
           </button>
         )}
+
         <div className="left-panel">
           <div className="gradient-overlay"></div>
           <div className="blur-circle circle-1"></div>
