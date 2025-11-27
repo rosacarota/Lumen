@@ -86,11 +86,11 @@ const ChiSiamo = () => {
                             <ul className="features-list">
                                 <li>
                                     <Search className="list-icon" size={20} />
-                                    <span><strong>Esplora:</strong> Trova facilmente associazioni ed enti attivi nel tuo territorio.</span>
+                                    <span><strong>Esplora:</strong> Trova facilmente enti attivi nel tuo territorio</span>
                                 </li>
                                 <li>
                                     <Calendar className="list-icon" size={20} />
-                                    <span><strong>Partecipa:</strong> Iscriviti a eventi, campagne di raccolta fondi e iniziative sociali organizzate dagli enti.</span>
+                                    <span><strong>Partecipa:</strong> Iscriviti a eventi e campagne di raccolta fondi organizzate dagli enti.</span>
                                 </li>
                                 <li>
                                     <Users className="list-icon" size={20} />
