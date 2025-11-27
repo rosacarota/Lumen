@@ -356,3 +356,27 @@
   /* Center button */
   width: fit-content;
 }
+/* --- SCROLL ANIMATIONS --- */
+.reveal {
+  opacity: 0;
+  transition: all 1s ease-out;
+  visibility: hidden; /* Prevents interaction before reveal */
+}
+
+.reveal.active {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(0, 0);
+}
+
+.fade-left {
+  transform: translateX(-100px);
+}
+
+.fade-right {
+  transform: translateX(100px);
+}
+
+.fade-up {
+  transform: translateY(50px);
+}

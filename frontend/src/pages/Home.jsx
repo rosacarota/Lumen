@@ -7,6 +7,27 @@ import '../stylesheets/Home.css';
 
 const Home = () => {
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    const revealOnScroll = () => {
+      const reveals = document.querySelectorAll('.reveal');
+      const windowHeight = window.innerHeight;
+      const elementVisible = 100;
+
+      reveals.forEach((reveal) => {
+        const elementTop = reveal.getBoundingClientRect().top;
+        if (elementTop < windowHeight - elementVisible) {
+          reveal.classList.add('active');
+        }
+      });
+    };
+
+    window.addEventListener('scroll', revealOnScroll);
+    revealOnScroll(); // Check on load
+
+    return () => window.removeEventListener('scroll', revealOnScroll);
+  }, []);
+
   return (
     <>
       <div className="page-wrapper">
@@ -62,7 +83,7 @@ const Home = () => {
         </section>
 
         {/* 3. FEATURES SECTION (Breve panoramica) */}
-        <section className="features-section">
+        <section className="features-section reveal fade-up">
           <div className="features-grid">
 
             <div className="feature-card">
@@ -87,7 +108,7 @@ const Home = () => {
         </section>
 
         {/* 4. STORIES SECTION */}
-        <section className="stories-section">
+        <section className="stories-section reveal fade-left">
           <div className="section-content">
             <h2>Storie di Cambiamento</h2>
             <p>
@@ -101,7 +122,7 @@ const Home = () => {
         </section>
 
         {/* 5. EVENTS SECTION */}
-        <section className="events-section">
+        <section className="events-section reveal fade-right">
           <div className="section-content">
             <h2>Partecipa agli Eventi</h2>
             <p>
