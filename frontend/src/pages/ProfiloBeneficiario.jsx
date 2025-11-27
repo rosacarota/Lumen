@@ -3,7 +3,7 @@ import Navbar from '../components/Navbar';
 import AccessoInfoProfilo from '../components/AccessoInfoProfilo';
 import BachecaUltimeStorie from '../components/BachecaUltimeStorie';
 import Footer from '../components/Footer';
-import '../stylesheets/AccessoProfiloBeneficiario.css';
+import '../stylesheets/ProfiloBeneficiario.css';
 
 const AccessoProfiloBeneficiario = () => {
   return (
