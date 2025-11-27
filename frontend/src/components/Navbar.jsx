@@ -1,23 +1,77 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Search, Bell, User, ChevronDown, LogOut, Settings, FileText, Briefcase, Users, Calendar, Heart, LogIn, UserPlus } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Search, User, ChevronDown, LogOut, Settings, FileText, Briefcase, Users, Calendar, Heart, LogIn } from 'lucide-react';
 import '../stylesheets/Navbar.css';
 import LogoLumen from '../assets/logo-lumen.png';
 
-const currentUser = {
-  username: null,
-  role: 'guest'
-};
-
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState({
+    username: 'Utente',
+    role: 'guest',
+    isLoggedIn: false
+  });
+  const navigate = useNavigate();
+
   const navItems = [
     { label: 'Chi siamo', path: '/chisiamo' },
     { label: 'Storie', path: '/storie' },
     { label: 'Eventi', path: '/eventi' }
   ];
 
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const storedRole = localStorage.getItem('ruolo');
+
+    if (token) {
+      // Imposta lo stato iniziale basato su localStorage
+      setCurrentUser(prev => ({
+        ...prev,
+        role: storedRole ? storedRole.toLowerCase() : 'guest',
+        isLoggedIn: true
+      }));
+
+      // Recupera il ruolo aggiornato dal server
+      fetch('http://localhost:8080/account/datiUtente', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ token: token })
+      })
+        .then(res => {
+          if (!res.ok) throw new Error('Network response was not ok');
+          return res.json();
+        })
+        .then(data => {
+          // Se l'API restituisce un oggetto con 'ruolo', aggiorniamo lo stato
+          if (data.ruolo) {
+            const normalizedRole = data.ruolo.toLowerCase();
+            setCurrentUser(prev => ({
+              ...prev,
+              role: normalizedRole,
+              username: data.nome || prev.username // Usa il nome se disponibile, altrimenti fallback
+            }));
+            // Aggiorna anche il localStorage per coerenza
+            localStorage.setItem('ruolo', data.ruolo);
+          }
+        })
+        .catch(err => {
+          console.error("Errore nel recupero dati utente:", err);
+          // Opzionale: se il token non è valido, potremmo fare logout o gestire l'errore
+        });
+    }
+  }, []);
+
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('ruolo');
+    setCurrentUser({ username: '', role: 'guest', isLoggedIn: false });
+    setIsDropdownOpen(false);
+    navigate('/login');
+  };
 
   return (
     <header className="navbar-wrapper">
@@ -53,19 +107,15 @@ const Navbar = () => {
             <input type="text" placeholder="Cerca..." className="search-input" />
           </div>
 
-          {currentUser.role !== 'guest' && (
-            <div className="icon-btn" title="Notifiche">
-              <Bell size={20} />
-            </div>
-          )}
+
 
           <div className="profile-container" onClick={toggleDropdown}>
             <div className={`profile-pill ${isDropdownOpen ? 'active' : ''}`}>
               <div className="profile-avatar">
-                {currentUser.role === 'guest' ? <User size={20} /> : currentUser.username.charAt(0).toUpperCase()}
+                {currentUser.role === 'guest' ? <User size={20} /> : (currentUser.username.charAt(0).toUpperCase())}
               </div>
 
-              {currentUser.role !== 'guest' && (
+              {currentUser.isLoggedIn && (
                 <div className="profile-details">
                   <span className="user-name">{currentUser.username}</span>
                   <span className="user-role">{currentUser.role}</span>
@@ -75,7 +125,12 @@ const Navbar = () => {
               <ChevronDown size={16} className={`arrow-icon ${isDropdownOpen ? 'rotated' : ''}`} />
             </div>
 
-            {isDropdownOpen && <DropdownMenu role={currentUser.role} />}
+            {isDropdownOpen && (
+              <DropdownMenu
+                role={currentUser.role}
+                onLogout={handleLogout}
+              />
+            )}
           </div>
         </div>
 
@@ -84,29 +139,29 @@ const Navbar = () => {
   );
 };
 
-const DropdownMenu = ({ role }) => {
+const DropdownMenu = ({ role, onLogout }) => {
   const getMenuItems = (role) => {
     switch (role) {
-      case 'beneficiario':
+      case 'beneficiario': // Cittadino
         return [
-          { label: 'Modifica account', icon: <Settings size={16} />, href: '#settings' },
-          { label: 'Gestione richieste', icon: <FileText size={16} />, href: '#requests' },
-          { label: 'Logout', icon: <LogOut size={16} />, href: '#logout', type: 'danger' }
+          { label: 'Modifica account', icon: <Settings size={16} />, href: '/AccessoInfoProfilo' },
+          { label: 'Gestione richieste', icon: <FileText size={16} />, href: '/richieste' },
+          { label: 'Logout', icon: <LogOut size={16} />, action: onLogout, type: 'danger' }
         ];
       case 'volontario':
         return [
-          { label: 'Modifica account', icon: <Settings size={16} />, href: '#settings' },
-          { label: 'Gestione servizi', icon: <Briefcase size={16} />, href: '#services' },
-          { label: 'Gestione affiliazioni', icon: <Users size={16} />, href: '#affiliations' },
-          { label: 'Logout', icon: <LogOut size={16} />, href: '#logout', type: 'danger' }
+          { label: 'Modifica account', icon: <Settings size={16} />, href: '/AccessoInfoProfilo' },
+          { label: 'Gestione servizi', icon: <Briefcase size={16} />, href: '/servizi' },
+          { label: 'Gestione affiliazioni', icon: <Users size={16} />, href: '/affiliazioni' },
+          { label: 'Logout', icon: <LogOut size={16} />, action: onLogout, type: 'danger' }
         ];
       case 'ente':
         return [
-          { label: 'Modifica account', icon: <Settings size={16} />, href: '#settings' },
-          { label: 'Gestione eventi', icon: <Calendar size={16} />, href: '#events' },
-          { label: 'Gestione raccolte fondi', icon: <Heart size={16} />, href: '#fundraising' },
-          { label: 'Gestione affiliazione', icon: <Users size={16} />, href: '#affiliations' },
-          { label: 'Logout', icon: <LogOut size={16} />, href: '#logout', type: 'danger' }
+          { label: 'Modifica account', icon: <Settings size={16} />, href: '/AccessoInfoProfilo' },
+          { label: 'Gestione eventi', icon: <Calendar size={16} />, href: '/eventi-gestione' },
+          { label: 'Gestione raccolte fondi', icon: <Heart size={16} />, href: '/raccolte-fondi' },
+          { label: 'Gestione affiliazione', icon: <Users size={16} />, href: '/affiliazioni' },
+          { label: 'Logout', icon: <LogOut size={16} />, action: onLogout, type: 'danger' }
         ];
       case 'guest':
       default:
@@ -121,9 +176,26 @@ const DropdownMenu = ({ role }) => {
   return (
     <div className="dropdown-box">
       {menuItems.map((item, index) => (
-        <Link key={index} to={item.href.replace('#', '/')} className={`dropdown-row ${item.type === 'danger' ? 'danger' : ''}`}>
-          <span className="row-icon">{item.icon}</span>{item.label}
-        </Link>
+        item.action ? (
+          <div
+            key={index}
+            className={`dropdown-row ${item.type === 'danger' ? 'danger' : ''}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              item.action();
+            }}
+          >
+            <span className="row-icon">{item.icon}</span>{item.label}
+          </div>
+        ) : (
+          <Link
+            key={index}
+            to={item.href}
+            className={`dropdown-row ${item.type === 'danger' ? 'danger' : ''}`}
+          >
+            <span className="row-icon">{item.icon}</span>{item.label}
+          </Link>
+        )
       ))}
     </div>
   );
