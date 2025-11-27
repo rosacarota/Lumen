@@ -8,7 +8,7 @@ import {
 import '../stylesheets/ModificaProfilo.css'; 
 
 // IMPORTANTE: Importiamo la funzione per salvare dal Service
-import { updateUserProfile } from '../services/UserService.js'; 
+import { updateUserProfile } from '../services/UserServices.js'; 
 
 export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
   

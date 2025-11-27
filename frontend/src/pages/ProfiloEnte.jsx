@@ -4,15 +4,14 @@ import '../stylesheets/ProfiloEnte.css';
 
 // --- IMPORT COMPONENTI ---
 import Navbar from '../components/Navbar.jsx';
-import InfoProfilo from '../components/InfoProfilo.jsx'; // Profilo pubblico (visto dagli altri)
-import AccessoProfileInfo from '../components/AccessoInfoProfilo.jsx'; // Profilo privato (con tasto Modifica)
+import InfoProfilo from '../components/AccessoInfoProfilo.jsx'; // Profilo pubblico (visto dagli altri)
 
 // --- IMPORT COMPONENTI PER I POPUP ---
 import AddEvento from '../components/AddEvento.jsx';
 import AddRaccoltaFondi from '../components/AddRaccoltaFondi.jsx';
 
 // --- IMPORT SERVICE PER I DATI UTENTE ---
-import { fetchUserProfile } from '../services/UserService.js';
+import { fetchUserProfile } from '../services/UserServices.js';
 
 // --- COMPONENTE WRAPPER PER IL MODALE (STRUTTURA A STRATI) ---
 const ModalWrapper = ({ children, onClose }) => {
@@ -75,7 +74,7 @@ const ModalWrapper = ({ children, onClose }) => {
   );
 };
 
-const EnteProfile = () => {
+const ProfiloEnte = () => {
   // --- 1. LOGICA DI ROUTING E OWNERSHIP ---
   const { id } = useParams();
   const [isOwner, setIsOwner] = useState(false);
@@ -112,6 +111,7 @@ const EnteProfile = () => {
       try {
         const currentUser = JSON.parse(storedUser);
         if (String(currentUser.id) === String(id)) {
+          // eslint-disable-next-line react-hooks/set-state-in-effect
           setIsOwner(true);
           // Se sono il proprietario, carico i dati freschi per la modifica
           loadData();
@@ -247,4 +247,4 @@ const EnteProfile = () => {
   );
 };
 
-export default EnteProfile;
+export default ProfiloEnte;

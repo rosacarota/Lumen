@@ -3,7 +3,7 @@ import { Pencil, Loader2 } from 'lucide-react';
 import ModificaProfilo from '../components/ModificaProfilo';
 import '../stylesheets/InfoProfilo.css';
 
-import { fetchUserForEditing } from '../services/UserService.js'; 
+import { fetchUserForEditing } from '../services/UserServices.js';
 
 const AccessoInfoProfilo = ({ userData, onUpdate }) => {
     
