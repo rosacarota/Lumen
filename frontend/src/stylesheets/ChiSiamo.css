@@ -328,7 +328,7 @@ body {
     border-radius: 30px;
     color: var(--white);
     box-shadow: 0 20px 40px rgba(8, 120, 134, 0.2);
-    margin-bottom: 40px;
+    margin-bottom: -60px;
 }
 
 .conclusion-block p {
