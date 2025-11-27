@@ -1,7 +1,8 @@
 const API_URL = "http://localhost:8080";
 
 function getAuthToken(){
-    return "eyJhbGciOiJIUzI1NiJ9.eyJydW9sbyI6IlZvbG9udGFyaW8iLCJzdWIiOiJlc2VtcGlvQGVtYWlsLmNvbSIsImlhdCI6MTc2NDI3OTg3OSwiZXhwIjoxNzY0ODc5ODc5fQ.rRpqxDLdLYyxaQhRV2lEX52AfedFHLpTq-Be9iL3wXk";
+    /*return "eyJhbGciOiJIUzI1NiJ9.eyJydW9sbyI6IkVudGUiLCJzdWIiOiJlc2VtcGlvZW1haWxAZ21haWwuY29tIiwiaWF0IjoxNzY0Mjg0MTk2LCJleHAiOjE3NjQ4ODQxOTZ9.seiXyoUBe2wj9rtkARCQTpaWwvbtsXtWR5seQnPMG_k";*/
+    return localStorage.getItem("token");
 }
 
 export const getCronologiaEventi = async (stato = null) => {
