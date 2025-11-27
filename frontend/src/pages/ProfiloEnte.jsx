@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import '../stylesheets/EnteProfile.css';
+import '../stylesheets/ProfiloEnte.css';
 
 // --- IMPORT COMPONENTI ---
 import Navbar from '../components/Navbar.jsx';
