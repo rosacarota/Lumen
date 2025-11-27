@@ -6,6 +6,7 @@ import '../stylesheets/ChiSiamo.css';
 
 const ChiSiamo = () => {
     return (
+        <>
         <div className="page-wrapper">
             <Navbar />
 
@@ -92,9 +93,10 @@ const ChiSiamo = () => {
 
                 </div>
             </section>
-
-            <Footer />
+            
         </div>
+        <Footer />
+        </>
     );
 };
 
