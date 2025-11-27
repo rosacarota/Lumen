@@ -129,13 +129,13 @@ public class GestioneRaccontoServiceImpl implements GestioneRaccontoService {
         Files.write(filePath, imageBytes);
 
 
-        return "/stories/" + fileName;
+        return "uploads/stories/" + fileName;
 
 
     }
 
     public boolean eliminaImmagine(String imageName) {
-        Path path = Paths.get("uploads/" + imageName);
+        Path path = Paths.get("uploads/stories/" + imageName);
         try {
             return Files.deleteIfExists(path);
         } catch (IOException e) {
