@@ -209,11 +209,14 @@ export default function LoginPage() {
     <>
     <Navbar />
     <div style={styles.loginPage}>
-      <style>{keyframes}</style>
-      <div style={{ ...styles.container, height: (!isLogin && userType) ? '800px' : '700px' }}>
+      <style>{cssStyles}</style>
+      
+      {/* AGGIUNTA CLASSE login-container PER RESPONSIVE */}
+      <div className="login-container" style={{ ...styles.container, height: (!isLogin && userType) ? 'min(800px, 80vh)' : 'min(700px, 75vh)' }}>
         
-        {/* GRADIENT PANEL */}
-        <div style={{ ...styles.gradientPanel, transform: isSwapped ? 'translateX(100%)' : 'translateX(0%)' }}>
+        {/* GRADIENT PANEL (Sinistra) */}
+        {/* AGGIUNTA CLASSE gradient-panel PER RESPONSIVE */}
+        <div className="gradient-panel" style={{ ...styles.gradientPanel, transform: isSwapped ? 'translateX(100%)' : 'translateX(0%)' }}>
           <div style={styles.gradientOverlay}></div>
           <div style={styles.blurCircle1}></div>
           <div style={styles.blurCircle2}></div>
@@ -233,8 +236,9 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* FORM PANEL */}
-        <div className="hide-scrollbar" style={{ ...styles.formPanel, transform: isSwapped ? 'translateX(-100%)' : 'translateX(0%)' }}>
+        {/* FORM PANEL (Destra) */}
+        {/* AGGIUNTA CLASSE form-panel PER RESPONSIVE */}
+        <div className="form-panel hide-scrollbar" style={{ ...styles.formPanel, transform: isSwapped ? 'translateX(-100%)' : 'translateX(0%)' }}>
           <div style={styles.formContainer}>
             <div style={styles.logoSection}>
               <div style={styles.logoWrapper}>
@@ -245,19 +249,19 @@ export default function LoginPage() {
             </div>
 
             <div style={styles.formContent}>
+              
               {/* CASO 1: SELEZIONE UTENTE CON ANIMAZIONE SLIDE IN */}
               {!isLogin && !userType ? (
                 <div style={styles.userTypeSelection}>
                   <h2 style={styles.formTitle}>Che tipo di utente sei?</h2>
-                  {['ente', 'volontario', 'beneficiario'].map((type, index) => ( // AGGIUNTO index
+                  {['ente', 'volontario', 'beneficiario'].map((type, index) => (
                       <button key={type} 
                         onClick={() => handleUserTypeSelection(type)} 
                         style={{
                             ...styles.userTypeCard,
-                            // AGGIUNTA ANIMAZIONE DINAMICA
                             animation: `slideInFromLeft 0.5s ease-out forwards`,
-                            animationDelay: `${index * 0.40}s`, // Delay scalato per ogni card
-                            opacity: 0 // Parte invisibile
+                            animationDelay: `${index * 0.15}s`, // REGOLAZIONE TIMING: Moltiplicatore 0.15s
+                            opacity: 0
                         }}
                         onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#4AAFB8'; e.currentTarget.style.background = '#E9FBE7'; e.currentTarget.querySelector('.icon-wrapper').style.background = '#7CCE6B'; }}
                         onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E5E7EB'; e.currentTarget.style.background = 'white'; e.currentTarget.querySelector('.icon-wrapper').style.background = '#E9FBE7'; }}>
@@ -284,7 +288,7 @@ export default function LoginPage() {
               // CASO 3: STEP 2 (CONOSCIAMOCI MEGLIO)
               ) : !isLogin && userType && step === 2 ? (
                 <div style={styles.registrationForm}>
-                  <h2 style={styles.formTitle}>Conosciamoci meglio</h2>
+                  <h2 style={styles.formTitle}>Personalizzazione del profilo</h2>
                   
                   {/* UPLOAD */}
                   <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px', position: 'relative' }}>
@@ -306,12 +310,12 @@ export default function LoginPage() {
                      {/* AMBITO SOLO SE ENTE O VOLONTARIO */}
                      {(userType === 'ente' || userType === 'volontario') && (
                         <div style={styles.inputGroup}>
-                           <input type="text" name="ambito" value={formData.ambito} onChange={handleChange} placeholder="Ambito (es. Sociale)" style={styles.inputFieldNoIcon} />
+                           <input type="text" name="ambito" value={formData.ambito} onChange={handleChange} placeholder="Di cosa ti occupi? (es. Sociale)" style={styles.inputFieldNoIcon} />
                         </div>
                      )}
 
                      <div style={styles.inputGroup}>
-                        <textarea name="descrizione" value={formData.descrizione} onChange={handleChange} placeholder="Descrizione / Bio" style={styles.textareaField} rows="3" />
+                        <textarea name="descrizione" value={formData.descrizione} onChange={handleChange} placeholder="Parlaci di te / Bio" style={styles.textareaField} rows="3" />
                      </div>
                      
                      <div style={{ fontSize: '14px', fontWeight: '600', color: '#087886', marginTop: '10px' }}>Indirizzo (Opzionale)</div>
@@ -383,23 +387,43 @@ export default function LoginPage() {
   );
 }
 
-// AGGIUNTA KEYFRAME slideInFromLeft
-const keyframes = `
+// CSS STYLES (Keyframes + Responsive Overrides)
+const cssStyles = `
   @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-  
-  /* Nuova animazione Slide In da Sinistra */
-  @keyframes slideInFromLeft {
-    from { opacity: 0; transform: translateX(-30px); }
-    to { opacity: 1; transform: translateX(0); }
-  }
+  @keyframes slideInFromLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
 
   .hide-scrollbar {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
   .hide-scrollbar::-webkit-scrollbar {
-    display: none; /* Chrome, Safari and Opera */
+    display: none;
+  }
+
+  /* MEDIA QUERY PER MOBILE/TABLET (max-width: 968px) */
+  @media (max-width: 968px) {
+    .login-container {
+      flex-direction: column !important;
+      width: 100% !important;
+      height: auto !important;
+      max-height: 90vh !important;
+      border-radius: 20px !important;
+    }
+
+    /* Nascondi il pannello decorativo a sinistra su mobile */
+    .gradient-panel {
+      display: none !important;
+    }
+
+    /* Il form occupa tutto lo spazio */
+    .form-panel {
+      position: relative !important;
+      width: 100% !important;
+      height: auto !important;
+      transform: none !important; /* Disabilita lo slide orizzontale */
+      padding: 30px 20px !important;
+    }
   }
 `;
 
