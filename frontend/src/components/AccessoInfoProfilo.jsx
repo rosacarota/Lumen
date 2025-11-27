@@ -1,61 +1,77 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Pencil, Loader2 } from 'lucide-react';
-import ModificaProfilo from '../components/ModificaProfilo'; // Assicurati che il percorso sia giusto
+import ModificaProfilo from '../components/ModificaProfilo'; 
 import '../stylesheets/InfoProfilo.css';
 
-// Importiamo la funzione corretta dal Service che abbiamo appena creato
+// Importiamo la funzione per scaricare i dati
 import { fetchUserProfile } from '../services/UserServices.js';
 
-const AccessoInfoProfilo = ({ userData, onUpdate }) => {
+const AccessoInfoProfilo = ({ userData: initialData, onUpdate }) => {
     
+    // 1. STATO LOCALE DEI DATI
+    // Se ci arrivano dati dal padre (initialData) li usiamo subito, altrimenti null
+    const [currentUser, setCurrentUser] = useState(initialData || null);
+    const [isLoadingData, setIsLoadingData] = useState(!initialData); // Caricamento se non abbiamo dati iniziali
+    
+    // Stati per la modalità modifica
     const [isEditing, setIsEditing] = useState(false);
     const [isLoadingEdit, setIsLoadingEdit] = useState(false);
-    const [dataForModal, setDataForModal] = useState(null);
 
-    // --- VISUALIZZAZIONE ---
-    // Usiamo i dati passati dal padre (userData) per mostrare il profilo
-    const displayTitle = userData 
-        ? (userData.ruolo === 'Ente' ? userData.nome : `${userData.nome} ${userData.cognome}`)
+    // 2. EFFETTO: SCARICA DATI ALL'AVVIO
+    useEffect(() => {
+        loadData();
+    }, []);
+
+    // Funzione per scaricare/aggiornare i dati dal backend
+    const loadData = async () => {
+        try {
+            const data = await fetchUserProfile();
+            if (data) {
+                setCurrentUser(data);
+            }
+        } catch (error) {
+            console.error("Errore caricamento profilo:", error);
+        } finally {
+            setIsLoadingData(false);
+        }
+    };
+
+    // 3. LOGICA DI VISUALIZZAZIONE
+    // Usiamo 'currentUser' (che contiene i dati scaricati o quelli iniziali)
+    const displayTitle = currentUser 
+        ? (currentUser.ruolo === 'Ente' ? currentUser.nome : `${currentUser.nome} ${currentUser.cognome}`)
         : "Caricamento...";
     
-    const displaySubtitle = userData?.ruolo?.toUpperCase() || "";
-    const displayDescription = userData?.descrizione || "Nessuna descrizione.";
-    const displayImage = userData?.immagine;
+    const displaySubtitle = currentUser?.ruolo?.toUpperCase() || "";
+    const displayDescription = currentUser?.descrizione || "Nessuna descrizione.";
+    const displayImage = currentUser?.immagine;
 
     // --- GESTIONE CLICK "MODIFICA" ---
     const handleEditClick = async () => {
         setIsLoadingEdit(true);
-        try {
-            // 1. Scarichiamo i dati freschi dal server usando la funzione corretta
-            const freshData = await fetchUserProfile();
-            
-            // 2. Uniamo i dati (quelli freschi hanno la precedenza)
-            const mergedData = {
-                ...(userData || {}), // Dati attuali come base
-                ...(freshData || {}) // Dati nuovi sovrascrivono
-            };
-
-            console.log("Dati pronti per il modale:", mergedData);
-            setDataForModal(mergedData);
-            setIsEditing(true);
-
-        } catch (error) {
-            console.error("Errore recupero dati per modifica:", error);
-            // Fallback: se la fetch fallisce, apriamo il modale con i dati che abbiamo già in pagina
-            setDataForModal(userData || {}); 
-            setIsEditing(true);
-        } finally {
-            setIsLoadingEdit(false);
-        }
+        // Per sicurezza, rinfreschiamo i dati prima di aprire il modale
+        // (anche se currentUser dovrebbe essere già aggiornato)
+        await loadData();
+        setIsEditing(true);
+        setIsLoadingEdit(false);
     };
 
     // --- CHIUSURA MODALE ---
     const handleCloseModal = () => {
         setIsEditing(false);
-        // Chiamiamo onUpdate (passato dal genitore) per ricaricare la pagina principale
-        // e mostrare subito le modifiche appena salvate
+        
+        // Appena chiudiamo il modale, ricarichiamo i dati PER VEDERE SUBITO LE MODIFICHE
+        loadData(); 
+
+        // Avvisiamo anche il componente padre se necessario
         if (onUpdate) onUpdate(); 
     };
+
+    if (isLoadingData && !currentUser) {
+        return <div className="hero-wrapper" style={{display:'flex', justifyContent:'center', alignItems:'center', color:'white'}}>
+            <Loader2 className="animate-spin" /> Caricamento profilo...
+        </div>;
+    }
 
     return (
         <>
@@ -71,6 +87,7 @@ const AccessoInfoProfilo = ({ userData, onUpdate }) => {
                                 style={{width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%'}} 
                             />
                         ) : (
+                            // Placeholder grigio se non c'è immagine
                             <div style={{width:'100%', height:'100%', background:'#ccc', borderRadius:'50%'}}></div>
                         )}
                     </div>
@@ -100,12 +117,12 @@ const AccessoInfoProfilo = ({ userData, onUpdate }) => {
             </div>
         </div>
 
-        {/* Renderizziamo il modale solo quando serve e se abbiamo i dati */}
-        {isEditing && dataForModal && (
+        {/* Passiamo currentUser al modale */}
+        {isEditing && currentUser && (
             <ModificaProfilo 
                 isOpen={isEditing} 
                 onClose={handleCloseModal} 
-                currentUser={dataForModal} 
+                currentUser={currentUser} 
             />
         )}
         </>
