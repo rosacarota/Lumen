@@ -42,7 +42,7 @@ public class GestioneAccountControl {
         return  ResponseEntity.status(HttpStatus.OK).body(utente);
     }
 
-
+    @PostMapping("/modificaUtente")
     public ResponseEntity<?> modificaUtente(@RequestBody Utente utenteDTO, @RequestParam String token) {
         String email = jwtUtil.extractEmail(token);
 

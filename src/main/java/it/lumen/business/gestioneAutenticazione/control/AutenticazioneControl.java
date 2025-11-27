@@ -25,7 +25,7 @@ public class AutenticazioneControl {
     }
 
     @PostMapping
-    public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
+    public ResponseEntity<?>login(@RequestBody Map<String, String> credentials) {
         String email = credentials.get("email");
         String password = credentials.get("password");
 
