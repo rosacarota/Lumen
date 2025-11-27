@@ -160,7 +160,7 @@ export default function EventCard({
             {loadingBtn ? "..." : isParticipating ? (
                 <>
                     <UserCheck size={18} />
-                    Non partecipare
+                    Iscritto
                 </>
             ) : (
                 <>

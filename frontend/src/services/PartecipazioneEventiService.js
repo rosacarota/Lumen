@@ -5,42 +5,32 @@ const getToken = () => localStorage.getItem("token") || "";
 // Helper: Recupera l'email salvata al login
 const getUserEmail = () => localStorage.getItem("userEmail") || "";
 
-// --- 1. RECUPERA EVENTI (Lista) ---
-// Nota: Non mi hai mandato EventoControl, quindi qui lascio i dati finti per ora.
-// Quando avrai il backend eventi, scommenta la fetch.
+// --- 1. RECUPERA EVENTI (Lista Reale dal Database) ---
 export const fetchEvents = async () => {
-  /*
+  const token = getToken(); 
+  
   try {
-    const response = await fetch(`${API_BASE_URL}/evento/visualizzaTutti`);
-    return await response.json();
-  } catch (error) { return []; }
-  */
- 
-  // MOCK DATA (Dati finti per vedere la grafica)
-  return [
-    {
-      idEvento: 1,
-      titolo: "Pulizia Spiaggia",
-      descrizione: "Raccogliamo la plastica per un mare più pulito.",
-      luogo: "Lido di Ostia",
-      dataInizio: "2025-06-15T09:00:00",
-      dataFine: "2025-06-15T13:00:00",
-      ente: "Legambiente",
-      maxPartecipanti: 50,
-      immagine: null
-    },
-    {
-      idEvento: 2,
-      titolo: "Raccolta Alimentare",
-      descrizione: "Aiuto per le famiglie in difficoltà.",
-      luogo: "Roma",
-      dataInizio: "2025-12-05T08:00:00",
-      dataFine: "2025-12-05T20:00:00",
-      ente: "Caritas",
-      maxPartecipanti: 100,
-      immagine: null
+    // Chiamata reale al backend
+    // Assumo che l'endpoint sia GET /evento/visualizzaTutti e richieda il token
+    const response = await fetch(`${API_BASE_URL}/evento/visualizzaTutti?token=${token}`, {
+      method: 'GET', // Se il tuo EventoControl usa @PostMapping, cambia 'GET' in 'POST'
+      headers: { 
+        'Content-Type': 'application/json' 
+      }
+    });
+
+    if (!response.ok) {
+      console.error("Errore nel recupero eventi dal server:", response.status);
+      return [];
     }
-  ];
+
+    // Il backend deve restituire una lista di oggetti Evento in formato JSON
+    return await response.json();
+
+  } catch (error) { 
+    console.error("Errore di connessione fetchEvents:", error);
+    return []; 
+  }
 };
 
 // --- 2. CONTROLLA SE L'UTENTE PARTECIPA GIA' ---
