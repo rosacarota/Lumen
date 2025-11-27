@@ -3,14 +3,11 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import './index.css'
 import App from './App.jsx'
-import LoginPage from './pages/LoginPage.jsx'
-import EnteProfile from './pages/EnteProfile.jsx'
-import Raccoltafondi from './pages/Raccoltafondi.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode> 
     <BrowserRouter>
-      <App/>
+      <App />
     </BrowserRouter>
-  </StrictMode>,
+  </StrictMode>
 )
