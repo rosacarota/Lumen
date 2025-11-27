@@ -36,7 +36,6 @@ public class UtenteDTO {
 
     private Utente.Ruolo ruolo;
 
-    @Size(max = 255)
     private String immagine;
 
 }

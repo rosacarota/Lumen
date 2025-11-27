@@ -19,7 +19,7 @@
     RecapitoTelefonico CHAR(10),
     Ambito VARCHAR(100),
     Ruolo VARCHAR(50) NOT NULL,
-    Immagine VARCHAR(255),
+    Immagine TEXT,
     FOREIGN KEY (Indirizzo) REFERENCES Indirizzo(IDIndirizzo),
     CONSTRAINT chk_ruolo CHECK (Ruolo IN ('Volontario', 'Beneficiario', 'Ente'))
     );
@@ -31,7 +31,7 @@
     Descrizione TEXT,
     Utente VARCHAR(255) NOT NULL,
     DataPubblicazione DATE NOT NULL,
-    Immagine VARCHAR(255),
+    Immagine TEXT,
     FOREIGN KEY (Utente) REFERENCES Utente(Email) ON DELETE CASCADE
     );
 
@@ -44,7 +44,7 @@
     DataInizio DATE NOT NULL,
     DataFine DATE NOT NULL,
     MaxPartecipanti INTEGER,
-    Immagine VARCHAR(255),
+    Immagine TEXT,
     Ente VARCHAR(255) NOT NULL,
     FOREIGN KEY (Ente) REFERENCES Utente(Email) ON DELETE CASCADE,
     FOREIGN KEY (Luogo) REFERENCES Indirizzo(IDIndirizzo)
