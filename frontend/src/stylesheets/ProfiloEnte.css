@@ -1,22 +1,50 @@
-:root {
-  /* -- Sfondi -- */
-  --bg-main: #F7FBFB;  /* Bianco freddo */
-  --bg-soft: #f0f5f5;  /* Sfondo pagina */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
 
-  /* -- Colori Principali -- */
-  --first-color: #087886; /* Turchese */
-  --second-color: #4AAFB8; /* Azzurro */
-  --third-color: #7CCE6B;  /* Verde */
+:root {
+  --bg-main: #F7FBFB;
+  --bg-soft: #E9FBE7;
+  --first-color: #087886;
+  --second-color: #4AAFB8;
+  --third-color: #7CCE6B;
+  --max-width: 1400px;
+}
+
+.ente-page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--bg-soft);
+  font-family: 'Segoe UI', sans-serif;
+  overflow-x: hidden;
+}
+
+.main-container {
+  flex: 1 0 auto;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding-top: 50px;
+  padding-bottom: 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.ente-page-wrapper > footer, 
+.ente-page-wrapper > div:last-child:not(.main-container) {
+  flex-shrink: 0; 
+  flex-grow: 0;   
+  height: auto;
 }
 
 body {
   background-color: var(--bg-soft);
   color: var(--first-color);
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
-/* Correzione bottone follow */
 .follow-btn.following { 
   background: rgba(0,0,0,0.6); 
   color: white; 
@@ -24,36 +52,31 @@ body {
   box-shadow: none; 
 }
 
-/* --- LAYOUT GENERALE --- */
-.main-container {
-  padding-top: 30px; 
-  padding-bottom: 50px;
-}
-
 .event-section { 
-  max-width: 1200px; 
+  width: 100%;
+  max-width: var(--max-width);
   margin: 0 auto; 
-  padding: 0 20px; 
-  /* Flex direction column permette di impilare la zona Tab sopra la zona Split */
+  padding: 0 20px;
   display: flex;
   flex-direction: column; 
 }
 
-/* --- ZONA SUPERIORE: CONTROLLI E TAB (Full Width) --- */
 .controll {
   display: flex; 
   justify-content: space-between; 
   align-items: center;
-  width: 100%; /* Forza la larghezza intera */
-  margin-bottom: 30px; /* Più spazio prima che inizi la griglia/search */
+  width: 100%;
+  margin-bottom: 30px;
   flex-wrap: wrap; 
   gap: 15px; 
   border-bottom: 1px solid #ccc; 
   padding-bottom: 10px;
-  box-sizing: border-box;
 }
 
-.tabs-left { display: flex; gap: 20px; }
+.tabs-left { 
+  display: flex; 
+  gap: 20px; 
+}
 
 .tabs-left button {
   background: none; 
@@ -96,27 +119,23 @@ body {
   transform: translateY(-2px);
 }
 
-/* --- ZONA INFERIORE: STRUTTURA A DUE COLONNE (SPLIT) --- */
 .split-layout {
   display: flex;
-  gap: 30px; /* Spazio tra colonna sx e dx */
-  align-items: flex-start; /* Allinea l'inizio delle colonne in alto */
+  gap: 30px;
+  align-items: flex-start;
   width: 100%;
 }
 
-/* Colonna Sinistra (Eventi) - Più larga (circa 66%) */
 .left-column {
   flex: 2;
   min-width: 0;
 }
 
-/* Colonna Destra (Sidebar) - Più stretta (circa 33%) */
 .right-column {
   flex: 1;
   min-width: 300px; 
 }
 
-/* --- COLONNA SINISTRA: SEARCH BAR SLIM --- */
 .event-search {
   background-color: var(--second-color);
   padding: 12px 20px; 
@@ -127,7 +146,6 @@ body {
   flex-wrap: wrap; 
   gap: 15px; 
   margin-bottom: 20px;
-  /* Assicura altezza uniforme per l'allineamento visivo */
   min-height: 50px; 
   box-sizing: border-box;
 }
@@ -179,7 +197,6 @@ body {
   box-sizing: border-box;
 }
 
-/* --- COLONNA SINISTRA: GRIGLIA --- */
 .event-grid {
   background-color: rgba(255,255,255,0.5); 
   border: 1px solid white;
@@ -192,13 +209,8 @@ body {
   color: #999;
 }
 
-
-/* --- COLONNA DESTRA: SIDEBAR HEADER E CONTENUTO --- */
-
-/* Intestazione Sidebar (Tab Storie/Raccolte) */
 .sidebar-header {
   background-color: var(--second-color);
-  /* Padding leggermente maggiore per eguagliare l'altezza della search bar visivamente */
   padding: 19px; 
   border-radius: 20px;
   display: flex;
@@ -214,7 +226,7 @@ body {
   color: var(--bg-main);
   font-weight: 700;
   font-size: 0.85rem;
-  padding: 8px 0; /* Padding verticale */
+  padding: 8px 0;
   border-radius: 15px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -231,7 +243,6 @@ body {
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-/* Contenuto Sidebar */
 .sidebar-content {
   background-color: rgba(255,255,255,0.5);
   border: 1px solid white;
@@ -246,7 +257,6 @@ body {
   color: #999;
 }
 
-/* Elementi segnaposto */
 .placeholder-content {
   display: flex;
   flex-direction: column;
@@ -260,9 +270,15 @@ body {
   border: 2px dashed #ccc;
 }
 
-
-/* --- RESPONSIVE (MOBILE) --- */
 @media (max-width: 900px) {
+  .main-container { 
+    padding: 0 10px; 
+  }
+
+  .event-section { 
+    padding: 0; 
+  }
+  
   .split-layout {
     flex-direction: column; 
     gap: 40px;
@@ -277,7 +293,7 @@ body {
   .event-search {
     flex-direction: column;
     align-items: stretch;
-    height: auto; /* Altezza automatica su mobile */
+    height: auto;
   }
   
   .search-inputs {
