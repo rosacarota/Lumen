@@ -18,14 +18,12 @@ function App() {
 
       {/* ROUTING se volete modificare/aggiungere la vostra pagina cambiate il path e il component */}
       <Routes>
-        {/* Rotta di default: Va al Login */}
-        <Route path="/" element={<LoginPage />} />
-        
-        {/* Rotta Home: Dove si va dopo il login */}
+        {/* Rotta di default: Va alla home */}
         <Route path="/home" element={<Home />} />
+        
+        {/* Rotta Home: Dove si va dalla home */}
+        <Route path="/login" element={<LoginPage />} />
         <Route path="/chisiamo" element={<ChiSiamo />} />
-
-        {/* Rotte Bacheca Eventi/Storie dalla Home*/}
         <Route path="/storie" element={<StoriesBoard />} />
         <Route path="/eventi" element={<EventsPage />} />
 
@@ -33,7 +31,7 @@ function App() {
         <Route path="/AccessoInfoProfilo" element={<AccessoInfoProfilo />} />
         
         {/* Qualsiasi altro URL porta al Login */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Navigate to="/home" replace />} />
       </Routes>
     </div>
   );
