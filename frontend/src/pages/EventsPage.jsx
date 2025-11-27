@@ -6,6 +6,7 @@ import Footer from '../components/Footer';
 
 export default function EventsPage() {
   return (
+    <>
     <div className="page-wrapper">
       <Navbar />
 
@@ -34,7 +35,8 @@ export default function EventsPage() {
 
         </div>
       </div>
-      <Footer />
     </div>
+    <Footer />
+    </>
   );
 }
