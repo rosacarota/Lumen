@@ -62,8 +62,8 @@ public class GestioneAccountControl {
 
         utente.setRecapitoTelefonico(utenteDTO.getRecapitoTelefonico());
 
-        if (utente.getImmagine() != null && !utente.getImmagine().isEmpty()) {
             try {
+
                 String pathImmagineSalvata = registrazioneService.salvaImmagine(utenteDTO.getImmagine());
 
                 utente.setImmagine(pathImmagineSalvata);
@@ -71,7 +71,6 @@ public class GestioneAccountControl {
             } catch (IOException e) {
                 throw new RuntimeException("Errore durante il salvataggio dell'immagine: " + e.getMessage());
             }
-        }
 
         utente.setIndirizzo(utenteDTO.getIndirizzo());
 
