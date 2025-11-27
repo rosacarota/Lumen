@@ -18,7 +18,6 @@
   padding-top: 50px;
   display: flex;
   flex-direction: column;
-  gap: 30px;
 }
 
 .voluntary-page-wrapper > footer, 
@@ -32,9 +31,11 @@
   width: 100%;
 }
 
-.future-content-section {
-  width: 100%;
+.stories-section {
+  width: 50%;
+  margin: 5px 0 45px 40px;
 }
+
 @media (max-width: 768px) {
   .voluntary-container {
     gap: 20px;

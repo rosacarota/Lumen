@@ -1,6 +1,7 @@
 import React from 'react';
 import Navbar from '../components/Navbar';
-import ProfileInfo from '../components/ProfileInfo';
+import AccessoInfoProfilo from '../components/AccessoInfoProfilo';
+import BachecaUltimeStorie from '../components/BachecaUltimeStorie';
 import Footer from '../components/Footer';
 import '../stylesheets/ProfiloVolontario.css';
 
@@ -10,9 +11,10 @@ const ProfiloVolontario = () => {
       <Navbar />
       <div className="voluntary-container">
         <section className="profile-section-full">
-          <ProfileInfo />
+          <AccessoInfoProfilo />
         </section>
-        <section className="future-content-section">
+        <section className="stories-section">
+          <BachecaUltimeStorie />
         </section>
       </div>
       <Footer />
