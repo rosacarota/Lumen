@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/partecipazione")
-public class gestionePartecipazioneEventoControl {
+public class PartecipazioneEventoControl {
 
 	@Autowired
 	private PartecipazioneEventoService partecipazioneEventoService;
