@@ -111,8 +111,7 @@ const DropdownMenu = ({ role }) => {
       case 'guest':
       default:
         return [
-          { label: 'Login', icon: <LogIn size={16} />, href: '#login' },
-          { label: 'Registrazione', icon: <UserPlus size={16} />, href: '#register' }
+          { label: 'Login', icon: <LogIn size={16} />, href: '/login' },
         ];
     }
   };
@@ -122,9 +121,9 @@ const DropdownMenu = ({ role }) => {
   return (
     <div className="dropdown-box">
       {menuItems.map((item, index) => (
-        <a key={index} href={item.href} className={`dropdown-row ${item.type === 'danger' ? 'danger' : ''}`}>
+        <Link key={index} to={item.href.replace('#', '/')} className={`dropdown-row ${item.type === 'danger' ? 'danger' : ''}`}>
           <span className="row-icon">{item.icon}</span>{item.label}
-        </a>
+        </Link>
       ))}
     </div>
   );
