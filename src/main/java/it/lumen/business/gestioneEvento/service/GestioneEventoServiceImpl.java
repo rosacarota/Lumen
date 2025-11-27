@@ -74,4 +74,8 @@ public class GestioneEventoServiceImpl implements GestioneEventoService {
                 return eventoDAO.findAllByUtente_Email(email);
         }
     }
+
+    public List<Evento> tuttiGliEventi(){
+        return eventoDAO.findAll();
+    }
 }

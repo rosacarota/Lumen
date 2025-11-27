@@ -13,5 +13,6 @@ public interface GestioneEventoService {
     public boolean checkId(int idEvento);
     public List<Evento> cronologiaEventi(String email, String stato);
     public Evento getEventoById(int idEvento);
+    public List<Evento> tuttiGliEventi();
 }
 

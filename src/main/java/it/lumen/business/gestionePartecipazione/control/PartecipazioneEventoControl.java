@@ -8,7 +8,10 @@ import it.lumen.data.entity.Utente;
 import it.lumen.security.JwtUtil;
 
 import java.sql.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -166,4 +169,31 @@ public class PartecipazioneEventoControl {
             return new ResponseEntity<>("Errore interno del server: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/checkIscrizione/{idEvento}")
+    public ResponseEntity<Map<String, Object>> checkIscrizione(@PathVariable Integer idEvento, @RequestParam String token) {
+        String email = util.extractEmail(token);
+
+        if (email == null) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
+        // Recupera la lista lato server (non esce dal backend)
+        List<Partecipazione> lista = partecipazioneEventoService.listaPartecipazioni(idEvento);
+
+        // Cerca la corrispondenza
+        Optional<Partecipazione> partecipazione = lista.stream()
+                .filter(p -> p.getVolontario().getEmail().equals(email))
+                .findFirst();
+
+        Map<String, Object> response = new HashMap<>();
+        if (partecipazione.isPresent()) {
+            response.put("isParticipating", true);
+            response.put("idPartecipazione", partecipazione.get().getIdPartecipazione());
+        } else {
+            response.put("isParticipating", false);
+            response.put("idPartecipazione", null);
+        }
+
+        return ResponseEntity.ok(response);
+    }
+
 }

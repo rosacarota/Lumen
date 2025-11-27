@@ -164,4 +164,14 @@ public class GestioneEventoControl {
         return ResponseEntity.ok(listaEventi);
 
     }
+
+    @GetMapping("/tuttiGliEventi")
+    public ResponseEntity<List<Evento>> cronologiaEvento(){
+        List<Evento> eventi = gestioneEventoService.tuttiGliEventi();
+        if (eventi == null || eventi.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return ResponseEntity.ok(eventi);
+    }
+
 }

@@ -1,4 +1,4 @@
-TRUNCATE TABLE Indirizzo, Utente, Racconto, Evento, RaccoltaFondi, Affiliazione, RichiestaServizio, Partecipazione, Donazione RESTART IDENTITY CASCADE;
+--TRUNCATE TABLE Indirizzo, Utente, Racconto, Evento, RaccoltaFondi, Affiliazione, RichiestaServizio, Partecipazione, Donazione RESTART IDENTITY CASCADE;
 
 INSERT INTO Indirizzo (Citta, Provincia, CAP, Strada, NCivico) VALUES
 ('Roma', 'RM', '00185', 'Via Marsala', '8'),
@@ -32,11 +32,11 @@ INSERT INTO Racconto (Titolo, Descrizione, Utente, DataPubblicazione, Immagine) 
 ('Consegna pacchi viveri', 'Abbiamo raggiunto 50 famiglie in difficoltà nella periferia nord.', 'luca.autista@email.com', '2023-11-12', 'furgone.jpg');
 
 INSERT INTO Evento (Titolo, Descrizione, Luogo, DataInizio, DataFine, MaxPartecipanti, Immagine, Ente) VALUES
-('Screening Sanitario Gratuito', 'Visite mediche di base e controllo pressione per senza fissa dimora.', 1, '2023-12-05', '2023-12-05', 100, 'visite.jpg', 'msf.italia@lumen.it'),
-('Raccolta Farmaci', 'Giornata di raccolta farmaci da banco da destinare alle famiglie indigenti.', 2, '2023-12-10', '2023-12-10', 50, 'farmaci.jpg', 'caritas.ambrosiana@lumen.it'),
-('Pranzo di Natale Solidale', 'Un pranzo completo offerto a chi non può permetterselo.', 3, '2023-12-25', '2023-12-25', 300, 'natale.jpg', 'bancoalimentare@lumen.it'),
-('Formazione Logisti Umanitari', 'Corso per gestione campi profughi e magazzini in emergenza.', 4, '2024-01-15', '2024-01-20', 25, 'logistica.jpg', 'emergency@lumen.it'),
-('Supporto Psicologico Migranti', 'Gruppi di ascolto e supporto con mediatori culturali.', 5, '2024-02-01', '2024-02-28', 40, 'ascolto.jpg', 'msf.italia@lumen.it');
+('Screening Sanitario Gratuito', 'Visite mediche di base e controllo pressione per senza fissa dimora.', 1, '2023-12-05', '2023-12-05', 100, 'visite.jpg', 'michelechierchia2@gmail.com'),
+('Raccolta Farmaci', 'Giornata di raccolta farmaci da banco da destinare alle famiglie indigenti.', 2, '2023-12-10', '2023-12-10', 50, 'farmaci.jpg', 'michelechierchia2@gmail.com'),
+('Pranzo di Natale Solidale', 'Un pranzo completo offerto a chi non può permetterselo.', 3, '2023-12-25', '2023-12-25', 300, 'natale.jpg', 'michelechierchia2@gmail.com'),
+('Formazione Logisti Umanitari', 'Corso per gestione campi profughi e magazzini in emergenza.', 4, '2024-01-15', '2024-01-20', 25, 'logistica.jpg', 'michelechierchia2@gmail.com'),
+('Supporto Psicologico Migranti', 'Gruppi di ascolto e supporto con mediatori culturali.', 5, '2024-02-01', '2024-02-28', 40, 'ascolto.jpg', 'michelechierchia2@gmail.com');
 
 INSERT INTO RaccoltaFondi (Titolo, Descrizione, Obiettivo, TotaleRaccolto, DataApertura, DataChiusura, Ente) VALUES
 ('Ospedale da Campo Sudan', 'Fondi urgenti per l''acquisto di generatori e materiale chirurgico.', 150000.00, 12000.00, '2023-06-01', '2023-12-31', 'emergency@lumen.it'),

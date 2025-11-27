@@ -18,4 +18,7 @@ public interface EventoDAO extends JpaRepository<Evento, Integer> {
     List<Evento> findAllByUtente_EmailAndDataFineBefore(String email, Date oggi);
 
     Evento findEventoByIdEvento(Integer idEvento);
+
+    @Override
+    List<Evento> findAll();
 }
