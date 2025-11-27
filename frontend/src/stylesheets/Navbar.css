@@ -382,15 +382,23 @@ body {
   }
 
   .search-input {
-    display: none;
+    /* display: none; REMOVED to allow focus */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 20;
+    /* Above icon */
   }
 
   .search-icon {
     color: var(--text-main);
   }
 
-  /* Expand on hover or focus */
-  .search-box:hover,
+  /* Expand ONLY on focus (click) */
   .search-box:focus-within {
     width: 220px;
     background-color: #ffffff;
@@ -400,9 +408,12 @@ body {
     justify-content: flex-start;
   }
 
-  .search-box:hover .search-input,
   .search-box:focus-within .search-input {
-    display: block;
+    position: relative;
+    opacity: 1;
     width: 100%;
+    height: auto;
+    z-index: auto;
+    cursor: text;
   }
 }
