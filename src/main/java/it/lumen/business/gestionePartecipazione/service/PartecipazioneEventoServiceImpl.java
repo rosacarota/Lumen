@@ -1,4 +1,4 @@
-package it.lumen.business.gestionePartecipazioneEvento.service;
+package it.lumen.business.gestionePartecipazione.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

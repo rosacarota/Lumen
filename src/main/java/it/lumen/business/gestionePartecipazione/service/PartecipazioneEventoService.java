@@ -1,4 +1,4 @@
-package it.lumen.business.gestionePartecipazioneEvento.service;
+package it.lumen.business.gestionePartecipazione.service;
 
 
 import it.lumen.data.entity.Partecipazione;

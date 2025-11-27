@@ -1,14 +1,11 @@
-package it.lumen.business.gestionePartecipazioneEvento.control;
+package it.lumen.business.gestionePartecipazione.control;
 
-import it.lumen.business.gestioneAccount.service.GestioneAccountService;
-import it.lumen.business.gestionePartecipazioneEvento.service.PartecipazioneEventoService;
-import it.lumen.data.dao.PartecipazioneDAO;
+import it.lumen.business.gestionePartecipazione.service.PartecipazioneEventoService;
 import it.lumen.data.entity.Evento;
 import it.lumen.data.entity.Partecipazione;
 import it.lumen.data.entity.Utente;
 import it.lumen.security.JwtUtil;
 
-import java.util.ArrayList;
 import java.sql.Date;
 import java.util.List;
 
@@ -16,9 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.validation.BindingResult;
-
-import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/partecipazione")
