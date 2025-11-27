@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Search, Bell, User, ChevronDown, LogOut, Settings, FileText, Briefcase, Users, Calendar, Heart, LogIn, UserPlus } from 'lucide-react';
 import '../stylesheets/Navbar.css';
-import LogoLumen from '../assets/logo-lumen.png'; 
+import LogoLumen from '../assets/logo-lumen.png';
 
-const currentUser = { 
-  username: null, 
-  role: 'guest' 
+const currentUser = {
+  username: null,
+  role: 'guest'
 };
 
 const Navbar = () => {
@@ -21,7 +21,7 @@ const Navbar = () => {
         <div className="navbar-left">
           <div className="navbar-logo">
             <div className="logo-circle">
-               <img src={LogoLumen} alt="Lumen Logo" /> 
+              <img src={LogoLumen} alt="Lumen Logo" />
             </div>
           </div>
 
@@ -29,7 +29,11 @@ const Navbar = () => {
 
           <div className="navbar-links">
             {navItems.map((item, index) => (
-              <a key={index} href={`#${item.replace(' ', '').toLowerCase()}`} className="nav-item">
+              <a
+                key={index}
+                href={item === 'Chi Siamo' ? '/chi-siamo' : `#${item.replace(' ', '').toLowerCase()}`}
+                className="nav-item"
+              >
                 {item}
               </a>
             ))}
@@ -38,10 +42,10 @@ const Navbar = () => {
 
         <div className="navbar-right">
           <div className="search-box">
-    <Search size={18} className="search-icon" />
-    <input type="text" placeholder="Cerca..." className="search-input" />
-  </div>
-          
+            <Search size={18} className="search-icon" />
+            <input type="text" placeholder="Cerca..." className="search-input" />
+          </div>
+
           {currentUser.role !== 'guest' && (
             <div className="icon-btn" title="Notifiche">
               <Bell size={20} />
@@ -53,14 +57,14 @@ const Navbar = () => {
               <div className="profile-avatar">
                 {currentUser.role === 'guest' ? <User size={20} /> : currentUser.username.charAt(0).toUpperCase()}
               </div>
-              
+
               {currentUser.role !== 'guest' && (
                 <div className="profile-details">
                   <span className="user-name">{currentUser.username}</span>
                   <span className="user-role">{currentUser.role}</span>
                 </div>
               )}
-              
+
               <ChevronDown size={16} className={`arrow-icon ${isDropdownOpen ? 'rotated' : ''}`} />
             </div>
 
@@ -74,49 +78,49 @@ const Navbar = () => {
 };
 
 const DropdownMenu = ({ role }) => {
-    const getMenuItems = (role) => {
-      switch(role) {
-        case 'beneficiario': 
-          return [
-            { label: 'Modifica account', icon: <Settings size={16} />, href: '#settings' }, 
-            { label: 'Gestione richieste', icon: <FileText size={16} />, href: '#requests' }, 
-            { label: 'Logout', icon: <LogOut size={16} />, href: '#logout', type: 'danger' }
-          ];
-        case 'volontario': 
-          return [
-            { label: 'Modifica account', icon: <Settings size={16} />, href: '#settings' }, 
-            { label: 'Gestione servizi', icon: <Briefcase size={16} />, href: '#services' }, 
-            { label: 'Gestione affiliazioni', icon: <Users size={16} />, href: '#affiliations' }, 
-            { label: 'Logout', icon: <LogOut size={16} />, href: '#logout', type: 'danger' }
-          ];
-        case 'ente': 
-          return [
-            { label: 'Modifica account', icon: <Settings size={16} />, href: '#settings' }, 
-            { label: 'Gestione eventi', icon: <Calendar size={16} />, href: '#events' }, 
-            { label: 'Gestione raccolte fondi', icon: <Heart size={16} />, href: '#fundraising' }, 
-            { label: 'Gestione affiliazione', icon: <Users size={16} />, href: '#affiliations' }, 
-            { label: 'Logout', icon: <LogOut size={16} />, href: '#logout', type: 'danger' }
-          ];
-        case 'guest': 
-        default: 
-          return [
-            { label: 'Login', icon: <LogIn size={16} />, href: '#login' }, 
-            { label: 'Registrazione', icon: <UserPlus size={16} />, href: '#register' }
-          ];
-      }
-    };
-  
-    const menuItems = getMenuItems(role);
-  
-    return (
-      <div className="dropdown-box">
-        {menuItems.map((item, index) => (
-          <a key={index} href={item.href} className={`dropdown-row ${item.type === 'danger' ? 'danger' : ''}`}>
-            <span className="row-icon">{item.icon}</span>{item.label}
-          </a>
-        ))}
-      </div>
-    );
+  const getMenuItems = (role) => {
+    switch (role) {
+      case 'beneficiario':
+        return [
+          { label: 'Modifica account', icon: <Settings size={16} />, href: '#settings' },
+          { label: 'Gestione richieste', icon: <FileText size={16} />, href: '#requests' },
+          { label: 'Logout', icon: <LogOut size={16} />, href: '#logout', type: 'danger' }
+        ];
+      case 'volontario':
+        return [
+          { label: 'Modifica account', icon: <Settings size={16} />, href: '#settings' },
+          { label: 'Gestione servizi', icon: <Briefcase size={16} />, href: '#services' },
+          { label: 'Gestione affiliazioni', icon: <Users size={16} />, href: '#affiliations' },
+          { label: 'Logout', icon: <LogOut size={16} />, href: '#logout', type: 'danger' }
+        ];
+      case 'ente':
+        return [
+          { label: 'Modifica account', icon: <Settings size={16} />, href: '#settings' },
+          { label: 'Gestione eventi', icon: <Calendar size={16} />, href: '#events' },
+          { label: 'Gestione raccolte fondi', icon: <Heart size={16} />, href: '#fundraising' },
+          { label: 'Gestione affiliazione', icon: <Users size={16} />, href: '#affiliations' },
+          { label: 'Logout', icon: <LogOut size={16} />, href: '#logout', type: 'danger' }
+        ];
+      case 'guest':
+      default:
+        return [
+          { label: 'Login', icon: <LogIn size={16} />, href: '#login' },
+          { label: 'Registrazione', icon: <UserPlus size={16} />, href: '#register' }
+        ];
+    }
   };
+
+  const menuItems = getMenuItems(role);
+
+  return (
+    <div className="dropdown-box">
+      {menuItems.map((item, index) => (
+        <a key={index} href={item.href} className={`dropdown-row ${item.type === 'danger' ? 'danger' : ''}`}>
+          <span className="row-icon">{item.icon}</span>{item.label}
+        </a>
+      ))}
+    </div>
+  );
+};
 
 export default Navbar;
