@@ -312,3 +312,46 @@
     width: max-content;
   }
 }
+
+/* --- STORIES & EVENTS SECTIONS --- */
+.stories-section, 
+.events-section {
+  padding: 80px 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.stories-section {
+  background-color: var(--bg-soft); /* Alternating background */
+}
+
+.events-section {
+  background-color: white;
+}
+
+.section-content {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.section-content h2 {
+  font-size: 2.5rem;
+  color: var(--text-main);
+  margin-bottom: 16px;
+  font-weight: 700;
+}
+
+.section-content p {
+  font-size: 1.1rem;
+  color: var(--text-sub);
+  margin-bottom: 32px;
+  line-height: 1.6;
+}
+
+.section-content .btn {
+  margin: 0 auto; /* Center button */
+  width: fit-content;
+}
+

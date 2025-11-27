@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Search, Bell, User, ChevronDown, LogOut, Settings, FileText, Briefcase, Users, Calendar, Heart, LogIn, UserPlus } from 'lucide-react';
 import '../stylesheets/Navbar.css';
 import LogoLumen from '../assets/logo-lumen.png';
@@ -10,7 +11,11 @@ const currentUser = {
 
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const navItems = ['Chi siamo', 'Storie', 'Eventi'];
+  const navItems = [
+    { label: 'Chi siamo', path: '/chisiamo' },
+    { label: 'Storie', path: '/storie' },
+    { label: 'Eventi', path: '/eventi' }
+  ];
 
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
@@ -20,22 +25,24 @@ const Navbar = () => {
 
         <div className="navbar-left">
           <div className="navbar-logo">
-            <div className="logo-circle">
-              <img src={LogoLumen} alt="Lumen Logo" />
-            </div>
+            <Link to="/home">
+              <div className="logo-circle">
+                <img src={LogoLumen} alt="Lumen Logo" />
+              </div>
+            </Link>
           </div>
 
           <div className="nav-divider"></div>
 
           <div className="navbar-links">
             {navItems.map((item, index) => (
-              <a
+              <Link
                 key={index}
-                href={item === 'Chi Siamo' ? '/chi-siamo' : `#${item.replace(' ', '').toLowerCase()}`}
+                to={item.path}
                 className="nav-item"
               >
-                {item}
-              </a>
+                {item.label}
+              </Link>
             ))}
           </div>
         </div>
