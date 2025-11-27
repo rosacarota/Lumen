@@ -10,17 +10,17 @@ const Home = () => {
       <Navbar />
       <section className="hero-section">
         <div className="hero-container">
-          
+
           <div className="hero-content">
             <span className="hero-badge">Benvenuti su Lumen</span>
             <h1 className="hero-title">
               Insieme per un futuro <span className="highlight">luminoso</span>.
             </h1>
             <p className="hero-description">
-              La piattaforma che connette volontari, enti e beneficiari. 
+              La piattaforma che connette volontari, enti e beneficiari.
               Gestisci eventi, donazioni e servizi in un unico ecosistema digitale semplice e trasparente.
             </p>
-            
+
             <div className="hero-actions">
               <button className="btn btn-primary">
                 Inizia ora <ArrowRight size={18} />
@@ -48,9 +48,9 @@ const Home = () => {
           <div className="hero-visual">
             {/* Usa un'immagine reale o questo placeholder di Unsplash */}
             <div className="image-wrapper">
-              <img 
-                src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
-                alt="Volontariato e comunità" 
+              <img
+                src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                alt="Volontariato e comunità"
               />
             </div>
           </div>
@@ -60,8 +60,8 @@ const Home = () => {
 
       {/* 3. FEATURES SECTION (Breve panoramica) */}
       <section className="features-section">
-        <div className="container features-grid">
-          
+        <div className="features-grid">
+
           <div className="feature-card">
             <div className="icon-box"><Users size={24} /></div>
             <h3>Connettiti</h3>
