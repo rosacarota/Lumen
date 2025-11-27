@@ -6,7 +6,7 @@ import Home from './pages/Home';
 import EventsPage from './pages/EventsPage';
 import AccessoInfoProfilo from './components/AccessoInfoProfilo';
 import StoriesBoard from './pages/StoriesBoard';
-
+import ChiSiamo from './pages/ChiSiamo';
 
 
 function App() {
@@ -23,6 +23,7 @@ function App() {
         
         {/* Rotta Home: Dove si va dopo il login */}
         <Route path="/home" element={<Home />} />
+        <Route path="/chisiamo" element={<ChiSiamo />} />
 
         {/* Rotte Bacheca Eventi/Storie dalla Home*/}
         <Route path="/storie" element={<StoriesBoard />} />
