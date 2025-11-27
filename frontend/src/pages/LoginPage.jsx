@@ -4,8 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import { User, Lock, Mail, Building2, Heart, Users, HeartHandshake, Pencil, Camera } from 'lucide-react';
 import { registerUser, loginUser } from '../services/loginService';
 import { validateRegistration } from '../utils/loginValidation';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 export default function LoginPage() {
+
   const [isLogin, setIsLogin] = useState(true);
   const [userType, setUserType] = useState(null);
   const [rememberMe, setRememberMe] = useState(false);
@@ -62,20 +65,14 @@ export default function LoginPage() {
     if (isLogin) {
       // --- LOGICA LOGIN ---
       try {
-        // loginUser ora supporta la risposta testuale del tuo controller
         const resultMessage = await loginUser({ email: formData.email, password: formData.password });
-        
-        // Opzionale: Mostra messaggio o logga
-        console.log(resultMessage); // "Accesso con successo"
-        
-        // Reindirizza alla Home Page
+        console.log(resultMessage); 
         navigate('/home'); 
-        
       } catch (error) {
         alert("Errore Login: " + error.message);
       }
     } else {
-      // --- REGISTRAZIONE (Invariata) ---
+      // --- REGISTRAZIONE ---
       const validation = validateRegistration(formData);
       if (!validation.isValid) {
         alert(Object.values(validation.errors)[0]);
@@ -127,7 +124,6 @@ export default function LoginPage() {
         setIsLogin(true);
         setStep(1);
         setUserType(null);
-        // Resetto form o almeno la password
         setFormData(prev => ({...prev, password: '', confirmPassword: ''}));
       } catch (error) {
         alert("Errore registrazione: " + error.message);
@@ -179,6 +175,7 @@ export default function LoginPage() {
           </div>
         );
     }
+    
     return (
         <div style={styles.fieldsContainer}>
         <div style={styles.inputGroup}>
@@ -208,7 +205,9 @@ export default function LoginPage() {
   const welcomeMsg = getWelcomeMessage();
   const isSwapped = !isLogin && step !== 2;
 
-  return (
+  return ( 
+    <>
+    <Navbar />
     <div style={styles.loginPage}>
       <style>{keyframes}</style>
       <div style={{ ...styles.container, height: (!isLogin && userType) ? '800px' : '700px' }}>
@@ -235,7 +234,7 @@ export default function LoginPage() {
         </div>
 
         {/* FORM PANEL */}
-        <div style={{ ...styles.formPanel, transform: isSwapped ? 'translateX(-100%)' : 'translateX(0%)' }}>
+        <div className="hide-scrollbar" style={{ ...styles.formPanel, transform: isSwapped ? 'translateX(-100%)' : 'translateX(0%)' }}>
           <div style={styles.formContainer}>
             <div style={styles.logoSection}>
               <div style={styles.logoWrapper}>
@@ -246,15 +245,20 @@ export default function LoginPage() {
             </div>
 
             <div style={styles.formContent}>
-              {/* CASO 1: SELEZIONE UTENTE */}
+              {/* CASO 1: SELEZIONE UTENTE CON ANIMAZIONE SLIDE IN */}
               {!isLogin && !userType ? (
                 <div style={styles.userTypeSelection}>
                   <h2 style={styles.formTitle}>Che tipo di utente sei?</h2>
-                  {['ente', 'volontario', 'beneficiario'].map((type) => (
+                  {['ente', 'volontario', 'beneficiario'].map((type, index) => ( // AGGIUNTO index
                       <button key={type} 
-                        // MODIFICATO QUI: Salva sia userType che il ruolo nel formData
                         onClick={() => handleUserTypeSelection(type)} 
-                        style={styles.userTypeCard}
+                        style={{
+                            ...styles.userTypeCard,
+                            // AGGIUNTA ANIMAZIONE DINAMICA
+                            animation: `slideInFromLeft 0.5s ease-out forwards`,
+                            animationDelay: `${index * 0.40}s`, // Delay scalato per ogni card
+                            opacity: 0 // Parte invisibile
+                        }}
                         onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#4AAFB8'; e.currentTarget.style.background = '#E9FBE7'; e.currentTarget.querySelector('.icon-wrapper').style.background = '#7CCE6B'; }}
                         onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E5E7EB'; e.currentTarget.style.background = 'white'; e.currentTarget.querySelector('.icon-wrapper').style.background = '#E9FBE7'; }}>
                         <div className="icon-wrapper" style={styles.userTypeIconWrapper}>
@@ -298,7 +302,7 @@ export default function LoginPage() {
                   </div>
 
                   <div style={styles.fieldsContainer}>
-                     
+                      
                      {/* AMBITO SOLO SE ENTE O VOLONTARIO */}
                      {(userType === 'ente' || userType === 'volontario') && (
                         <div style={styles.inputGroup}>
@@ -321,9 +325,9 @@ export default function LoginPage() {
                         <input type="text" name="cap" value={formData.cap} onChange={handleChange} placeholder="CAP" style={styles.inputFieldNoIcon} />
                      </div>
                      <input type="text" name="provincia" value={formData.provincia} onChange={handleChange} placeholder="Provincia (es. MI)" style={styles.inputFieldNoIcon} />
+                     
+                     <button onClick={handleSubmit} style={styles.submitButton}>COMPLETA REGISTRAZIONE</button>
                   </div>
-                  
-                  <button onClick={handleSubmit} style={styles.submitButton}>COMPLETA REGISTRAZIONE</button>
                 </div>
 
               // CASO 4: LOGIN
@@ -374,19 +378,36 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+    <Footer />
+    </>
   );
 }
 
+// AGGIUNTA KEYFRAME slideInFromLeft
 const keyframes = `
   @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+  
+  /* Nuova animazione Slide In da Sinistra */
+  @keyframes slideInFromLeft {
+    from { opacity: 0; transform: translateX(-30px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .hide-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
 `;
 
 const styles = {
-  loginPage: { minHeight: '100vh', background: 'linear-gradient(135deg, #F7FBFB 0%, #E9FBE7 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' },
+  loginPage: { flex: 1, background: 'linear-gradient(135deg, #F7FBFB 0%, #E9FBE7 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '46px', overflow: 'hidden' },
   container: { width: '100%', maxWidth: '1200px', display: 'flex', borderRadius: '30px', overflow: 'hidden', boxShadow: '0 20px 60px rgba(8, 120, 134, 0.15)', background: 'white', position: 'relative', transition: 'height 0.5s cubic-bezier(0.4, 0, 0.2, 1)' },
   gradientPanel: { position: 'absolute', width: '50%', height: '100%', left: 0, top: 0, background: 'linear-gradient(135deg, #087886 0%, #4AAFB8 50%, #7CCE6B 100%)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '60px', transition: 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)', zIndex: 2 },
-  formPanel: { position: 'absolute', width: '50%', height: '100%', right: 0, top: 0, background: 'white', padding: '40px 60px', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)', zIndex: 1 },
+  formPanel: { position: 'absolute', width: '50%', height: '100%', right: 0, top: 0, background: 'white', padding: '20px 60px', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)', zIndex: 1, overflowY: 'auto' },
   gradientOverlay: { position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(8, 120, 134, 0.8) 0%, rgba(74, 175, 184, 0.6) 50%, rgba(124, 206, 107, 0.4) 100%)' },
   blurCircle1: { position: 'absolute', width: '300px', height: '300px', background: '#7CCE6B', borderRadius: '50%', filter: 'blur(80px)', opacity: 0.5, top: '10%', left: '10%', animation: 'pulse 4s ease-in-out infinite' },
   blurCircle2: { position: 'absolute', width: '400px', height: '400px', background: '#4AAFB8', borderRadius: '50%', filter: 'blur(80px)', opacity: 0.5, bottom: '10%', right: '10%', animation: 'pulse 5s ease-in-out infinite' },
