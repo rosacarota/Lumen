@@ -5,7 +5,7 @@ import BachecaUltimeStorie from '../components/BachecaUltimeStorie';
 import Footer from '../components/Footer';
 import '../stylesheets/ProfiloBeneficiario.css';
 
-const AccessoProfiloBeneficiario = () => {
+const ProfiloBeneficiario = () => {
   return (
     <div className="beneficiary-page-wrapper">
       <Navbar />
@@ -22,4 +22,4 @@ const AccessoProfiloBeneficiario = () => {
   );
 };
 
-export default AccessoProfiloBeneficiario;
+export default ProfiloBeneficiario;
