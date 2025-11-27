@@ -10,7 +10,7 @@ const ChiSiamo = () => {
             <Navbar />
 
             <section className="about-hero">
-                <div className="container">
+                <div className="about-container">
                     <h1 className="about-title">Connettiamo cuori, <span className="highlight">costruiamo comunità</span>.</h1>
                     <p className="about-subtitle">
                         La tecnologia al servizio della solidarietà: un ponte digitale tra chi offre aiuto e chi ne ha bisogno.
@@ -19,7 +19,7 @@ const ChiSiamo = () => {
             </section>
 
             <section className="about-content">
-                <div className="container">
+                <div className="about-container">
 
                     <div className="text-block">
                         <p>

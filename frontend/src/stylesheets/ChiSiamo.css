@@ -1,162 +1,309 @@
 /* ChiSiamo.css */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
 
+:root {
+    /* Fallback/Local variables if not defined globally */
+    --bg-main: #F7FBFB;
+    --bg-soft: #F0F5F5;
+    --first-color: #087886;
+    --second-color: #4AAFB8;
+    --third-color: #7CCE6B;
+
+    /* Missing variables defined here */
+    --text-main: #1A2B3C;
+    --text-sub: #5A6B7C;
+    --white: #FFFFFF;
+    --shadow-soft: 0 10px 40px rgba(8, 120, 134, 0.08);
+    --shadow-hover: 0 20px 50px rgba(8, 120, 134, 0.15);
+    --gradient-hero: linear-gradient(135deg, var(--bg-soft) 0%, #E0F2F4 100%);
+}
+
+body {
+    font-family: 'Outfit', sans-serif;
+    color: var(--text-main);
+    background-color: var(--bg-main);
+}
+
+.page-wrapper {
+    overflow-x: hidden;
+}
+
+/* Container */
+.about-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+/* Hero Section */
 .about-hero {
-    background-color: var(--bg-soft);
-    padding: 80px 0 60px;
+    background: var(--gradient-hero);
+    padding: 120px 0 100px;
     text-align: center;
-    margin-bottom: 40px;
+    position: relative;
+    overflow: hidden;
+}
+
+.about-hero::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 300px;
+    height: 300px;
+    background: var(--second-color);
+    opacity: 0.1;
+    border-radius: 50%;
+    filter: blur(80px);
+}
+
+.about-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -50px;
+    left: -50px;
+    width: 250px;
+    height: 250px;
+    background: var(--third-color);
+    opacity: 0.1;
+    border-radius: 50%;
+    filter: blur(80px);
 }
 
 .about-title {
-    font-size: 3rem;
+    font-size: 3.5rem;
+    line-height: 1.1;
     color: var(--text-main);
     font-weight: 800;
-    margin-bottom: 16px;
+    margin-bottom: 24px;
+    position: relative;
+    z-index: 1;
 }
 
 .about-title .highlight {
     color: var(--first-color);
+    position: relative;
+    display: inline-block;
+}
+
+.about-title .highlight::after {
+    content: '';
+    position: absolute;
+    bottom: 8px;
+    left: 0;
+    width: 100%;
+    height: 12px;
+    background-color: var(--third-color);
+    opacity: 0.3;
+    z-index: -1;
+    border-radius: 4px;
 }
 
 .about-subtitle {
-    font-size: 1.2rem;
+    font-size: 1.25rem;
     color: var(--text-sub);
     max-width: 700px;
     margin: 0 auto;
+    line-height: 1.6;
+    position: relative;
+    z-index: 1;
 }
 
+/* Content Section */
 .about-content {
-    padding-bottom: 80px;
-}
-
-.about-image-wrapper {
-    width: 100%;
-    max-width: 1000px;
-    height: 400px;
-    margin: -40px auto 60px;
-    /* Sovrappone leggermente l'immagine alla hero o la stacca */
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-}
-
-.about-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    padding: 80px 0;
+    background-color: var(--bg-main);
 }
 
 .text-block {
-    max-width: 900px;
-    margin: 0 auto 60px;
+    max-width: 800px;
+    margin: 0 auto 80px;
     text-align: center;
-    font-size: 1.15rem;
-    line-height: 1.8;
-    color: var(--text-main);
 }
 
 .text-block p {
-    margin-bottom: 20px;
+    font-size: 1.15rem;
+    line-height: 1.8;
+    color: var(--text-sub);
+    margin-bottom: 24px;
 }
 
+.text-block strong {
+    color: var(--first-color);
+    font-weight: 600;
+}
+
+/* Section Titles */
 .section-title {
     text-align: center;
-    font-size: 2rem;
-    color: var(--first-color);
-    margin-bottom: 40px;
-    font-weight: 700;
+    font-size: 2.2rem;
+    color: var(--text-main);
+    margin-bottom: 60px;
+    font-weight: 800;
+    position: relative;
+    display: inline-block;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.section-title::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 4px;
+    background: var(--second-color);
+    margin: 16px auto 0;
+    border-radius: 2px;
 }
 
 /* Roles Grid */
 .roles-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
-    margin-bottom: 80px;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 40px;
+    margin-bottom: 100px;
 }
 
 .role-card {
-    background: white;
-    padding: 32px;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    background: var(--white);
+    padding: 40px 32px;
+    border-radius: 24px;
+    box-shadow: var(--shadow-soft);
     text-align: center;
-    transition: transform 0.3s ease;
-    border: 1px solid #f0f0f0;
+    transition: all 0.4s ease;
+    border: 1px solid rgba(0, 0, 0, 0.03);
+    position: relative;
+    overflow: hidden;
 }
 
 .role-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-10px);
+    box-shadow: var(--shadow-hover);
     border-color: var(--second-color);
 }
 
 .icon-wrapper {
-    width: 70px;
-    height: 70px;
-    background-color: var(--bg-soft);
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--bg-soft), #fff);
     color: var(--first-color);
-    border-radius: 50%;
+    border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 20px;
+    margin: 0 auto 24px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+}
+
+.role-card:hover .icon-wrapper {
+    transform: scale(1.1) rotate(5deg);
+    color: var(--second-color);
 }
 
 .role-card h3 {
-    font-size: 1.4rem;
+    font-size: 1.5rem;
     color: var(--text-main);
     margin-bottom: 16px;
+    font-weight: 700;
 }
 
 .role-card p {
     color: var(--text-sub);
-    line-height: 1.6;
+    line-height: 1.7;
+    font-size: 1rem;
 }
 
 /* Features List */
 .features-list-section {
-    max-width: 800px;
-    margin: 0 auto 60px;
-    background: white;
-    padding: 40px;
-    border-radius: 20px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    max-width: 900px;
+    margin: 0 auto 100px;
+    background: var(--white);
+    padding: 60px;
+    border-radius: 30px;
+    box-shadow: var(--shadow-soft);
+    position: relative;
 }
 
 .features-list {
     list-style: none;
     padding: 0;
     margin: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
 }
 
 .features-list li {
     display: flex;
     align-items: flex-start;
-    gap: 16px;
-    margin-bottom: 24px;
-    font-size: 1.05rem;
-    color: var(--text-main);
-    line-height: 1.5;
+    gap: 20px;
+    padding: 20px;
+    border-radius: 16px;
+    transition: background-color 0.3s ease;
 }
 
-.features-list li:last-child {
-    margin-bottom: 0;
+.features-list li:hover {
+    background-color: var(--bg-soft);
 }
 
 .list-icon {
     color: var(--third-color);
     flex-shrink: 0;
-    margin-top: 4px;
+    background: rgba(124, 206, 107, 0.15);
+    padding: 8px;
+    border-radius: 12px;
+    width: 40px;
+    height: 40px;
 }
 
+.features-list span {
+    font-size: 1.1rem;
+    color: var(--text-sub);
+    line-height: 1.6;
+}
+
+.features-list strong {
+    color: var(--text-main);
+    font-weight: 700;
+    display: block;
+    margin-bottom: 4px;
+}
+
+/* Conclusion Block */
 .conclusion-block {
     text-align: center;
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: var(--first-color);
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: var(--bg-soft);
-    border-radius: 12px;
+    padding: 60px 20px;
+    background: linear-gradient(135deg, var(--first-color), var(--second-color));
+    border-radius: 30px;
+    color: var(--white);
+    box-shadow: 0 20px 40px rgba(8, 120, 134, 0.2);
+    margin-bottom: 40px;
+}
+
+.conclusion-block p {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .about-title {
+        font-size: 2.5rem;
+    }
+
+    .about-hero {
+        padding: 80px 0 60px;
+    }
+
+    .features-list-section {
+        padding: 30px;
+    }
+
+    .conclusion-block p {
+        font-size: 1.2rem;
+    }
 }
