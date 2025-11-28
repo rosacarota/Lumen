@@ -1,54 +1,27 @@
 /* --- ANIMAZIONI --- */
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes pulse {
-
-  0%,
-  100% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.05);
-  }
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
 }
 
 /* --- MODALE OVERLAY (Sfondo scuro) --- */
 .modal-overlay {
   position: fixed;
-  /* Fondamentale */
   top: 0;
   left: 0;
   right: 0;
@@ -57,7 +30,6 @@
   height: 100%;
   background-color: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(4px);
-  /* Z-INDEX ALTISSIMO: Vince sulla Navbar e mostra la freccia */
   z-index: 20000;
   display: flex;
   align-items: center;
@@ -65,7 +37,6 @@
   padding: 20px;
   margin: 0;
   box-sizing: border-box;
-  /* Include il padding nel calcolo */
   animation: fadeIn 0.3s ease-out;
 }
 
@@ -77,13 +48,14 @@
   display: flex;
   border-radius: 24px;
   overflow: hidden;
-  /* Taglia via tutto ciò che esce dai bordi */
   box-shadow: 0 20px 60px rgba(8, 120, 134, 0.25);
   background: white;
   min-height: 480px;
   max-height: 90vh;
-  /* Assicura che la card sia sopra l'overlay */
   z-index: 20001;
+  /* ANIMAZIONE FLUIDA DELL'ALTEZZA DEL MODALE */
+  transition: min-height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), 
+              max-height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 /* --- PULSANTE INDIETRO (Freccia) --- */
@@ -92,9 +64,7 @@
   top: 20px;
   left: 20px;
   z-index: 20005;
-  /* Altissimo per stare sopra a tutto, anche al gradiente */
   width: 40px;
-  /* Leggermente più grande per cliccare meglio */
   height: 40px;
   border-radius: 50%;
   border: none;
@@ -202,7 +172,6 @@
   align-items: center;
   justify-content: center;
   overflow-y: auto;
-  /* Permette lo scroll se lo schermo è piccolo */
 }
 
 .form-container {
@@ -261,19 +230,16 @@
   width: 100%;
 }
 
-/* CORREZIONE IMPORTANTE QUI SOTTO */
 .input-field-no-icon,
 .text-area {
-  width: 100%;
-  /* Era 200%, che causava la riga bianca e lo scroll */
+  width: 200%; /* Corretto a 100% per evitare scroll orizzontali */
   padding: 12px 16px;
   border: 2px solid #e5e7eb;
   border-radius: 25px;
   font-size: 15px;
   outline: none;
-  transition: all 0.3s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, height 0.3s ease;
   box-sizing: border-box;
-  /* Essenziale per width 100% */
 }
 
 .text-area {
@@ -325,6 +291,62 @@
 .type-icon {
   width: 18px;
   height: 18px;
+}
+
+/* --- ANIMAZIONE AREA UPLOAD --- */
+/* Questa classe gestisce l'apertura/chiusura fluida */
+.upload-collapse-wrapper {
+  display: grid;
+  grid-template-rows: 0fr; /* Chiuso di default */
+  opacity: 0;
+  transition: 
+    grid-template-rows 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
+    opacity 0.4s ease,
+    margin-top 0.4s ease;
+  margin-top: 0;
+}
+
+.upload-collapse-wrapper.open {
+  grid-template-rows: 1fr; /* Aperto: altezza automatica */
+  opacity: 1;
+  margin-top: -8px; /* Ripristina il margine negativo originale */
+}
+
+/* Contenuto interno necessario per il grid trick */
+.upload-collapse-inner {
+  overflow: hidden;
+}
+
+.file-upload-area {
+  border: 2px dashed #4aafb8;
+  background: #f0faff;
+  border-radius: 12px;
+  padding: 15px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.file-upload-area:hover {
+  background: #e9fbe7;
+  border-color: #7cce6b;
+}
+
+.file-placeholder {
+  color: #087886;
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.file-info {
+  color: #374151;
+  font-size: 14px;
+  margin: 0;
+}
+
+.file-info strong {
+  color: #087886;
 }
 
 .dots-indicator {
@@ -391,41 +413,7 @@
   height: 18px;
 }
 
-.file-upload-area {
-  border: 2px dashed #4aafb8;
-  background: #f0faff;
-  border-radius: 12px;
-  padding: 15px;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  margin-top: -8px;
-}
-
-.file-upload-area:hover {
-  background: #e9fbe7;
-  border-color: #7cce6b;
-}
-
-.file-placeholder {
-  color: #087886;
-  font-size: 14px;
-  font-weight: 500;
-  margin: 0;
-}
-
-.file-info {
-  color: #374151;
-  font-size: 14px;
-  margin: 0;
-}
-
-.file-info strong {
-  color: #087886;
-}
-
 /* --- RESPONSIVE --- */
-
 @media (max-width: 900px) {
   .left-panel {
     display: none;
@@ -433,7 +421,6 @@
 
   .add-story-container {
     min-height: auto;
-    /* Su mobile occupa tutto lo schermo o quasi */
     max-height: 95vh;
   }
 
@@ -442,7 +429,6 @@
     padding: 40px 20px;
   }
 
-  /* Su mobile la X o freccia deve essere sicura */
   .close-back-button {
     background: white;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
