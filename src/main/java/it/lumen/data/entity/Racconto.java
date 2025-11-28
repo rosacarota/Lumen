@@ -45,7 +45,7 @@ public class Racconto {
 
     @Column(name = "immagine", length = 255)
     @Pattern(regexp = "^[a-zA-Z0-9\\s._/\\\\:-]*\\.(jpg|jpeg|png|gif|webp)$",
-            message = "Formato immagine non supportato. Usa jpg, jpeg, png, gif o webp")
+           message = "Formato immagine non supportato. Usa jpg, jpeg, png, gif o webp")
     private String immagine;
 
 }

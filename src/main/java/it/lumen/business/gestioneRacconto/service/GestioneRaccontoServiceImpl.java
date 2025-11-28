@@ -2,11 +2,8 @@ package it.lumen.business.gestioneRacconto.service;
 
 import it.lumen.data.dao.RaccontoDAO;
 import it.lumen.data.entity.Racconto;
-import it.lumen.data.entity.Utente;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.FileNotFoundException;
@@ -23,22 +20,23 @@ import java.util.UUID;
 public class GestioneRaccontoServiceImpl implements GestioneRaccontoService {
 
     private final RaccontoDAO raccontoDAO;
+    private static final String UPLOAD_DIR = Paths.get("uploads/stories").toAbsolutePath().toString();
+
 
     @Autowired
     public GestioneRaccontoServiceImpl(RaccontoDAO raccontoDAO) {
         this.raccontoDAO = raccontoDAO;
     }
 
+    // ========================= CRUD =========================
+
     @Override
     @Transactional
     public Racconto aggiungiRacconto(Racconto racconto) {
-
         if (racconto.getImmagine() != null && !racconto.getImmagine().isEmpty()) {
             try {
-                String pathImmagineSalvata = salvaImmagine(racconto.getImmagine());
-
-                racconto.setImmagine(pathImmagineSalvata);
-
+                String fileName = salvaImmagine(racconto.getImmagine());
+                racconto.setImmagine(fileName); // salvo solo il nome del file
             } catch (IOException e) {
                 throw new RuntimeException("Errore durante il salvataggio dell'immagine: " + e.getMessage());
             }
@@ -49,18 +47,22 @@ public class GestioneRaccontoServiceImpl implements GestioneRaccontoService {
     @Override
     @Transactional
     public Racconto modificaRacconto(Racconto nuovoRacconto) {
+        Racconto vecchioRacconto = raccontoDAO.getRaccontoByIdRacconto(nuovoRacconto.getIdRacconto());
 
-        String pathImmagineDaCancellare=raccontoDAO.getRaccontoByIdRacconto(nuovoRacconto.getIdRacconto()).getImmagine();
-
-        if(pathImmagineDaCancellare!=null) {
-            eliminaImmagine(pathImmagineDaCancellare);
+        /*
+        // elimina vecchia immagine se presente
+        if (vecchioRacconto != null && vecchioRacconto.getImmagine() != null && !vecchioRacconto.getImmagine().trim().isEmpty()) {
+            boolean deleted = eliminaImmagine(vecchioRacconto.getImmagine());
+            System.out.println("File eliminato vecchia immagine: " + deleted + " -> " + vecchioRacconto.getImmagine());
         }
+        */
 
+
+        // salva nuova immagine se presente
         if (nuovoRacconto.getImmagine() != null && !nuovoRacconto.getImmagine().isEmpty()) {
             try {
-                String pathImmagineSalvata = salvaImmagine(nuovoRacconto.getImmagine());
-                nuovoRacconto.setImmagine(pathImmagineSalvata);
-
+                String fileName = salvaImmagine(nuovoRacconto.getImmagine());
+                nuovoRacconto.setImmagine(fileName);
             } catch (IOException e) {
                 throw new RuntimeException("Errore durante il salvataggio dell'immagine: " + e.getMessage());
             }
@@ -72,125 +74,124 @@ public class GestioneRaccontoServiceImpl implements GestioneRaccontoService {
     @Override
     @Transactional
     public void eliminaRacconto(Integer idRacconto) {
-
-        String pathImmagineDaCancellare=raccontoDAO.getRaccontoByIdRacconto(idRacconto).getImmagine();
-
-        if(pathImmagineDaCancellare!=null) {
-            eliminaImmagine(pathImmagineDaCancellare);
+        Racconto racconto = raccontoDAO.getRaccontoByIdRacconto(idRacconto);
+        if (racconto == null) {
+            System.out.println("Racconto non trovato: " + idRacconto);
+            return;
         }
+
+        /*
+        // elimina immagine se presente
+        if (racconto.getImmagine() != null && !racconto.getImmagine().trim().isEmpty()) {
+            boolean deleted = eliminaImmagine(racconto.getImmagine());
+            System.out.println("File eliminato immagine: " + deleted + " -> " + racconto.getImmagine());
+        }
+        */
+
 
         raccontoDAO.removeByIdRacconto(idRacconto);
     }
 
+    @Override
     public Racconto getByIdRacconto(int idRacconto) {
-
         Racconto racconto = raccontoDAO.getRaccontoByIdRacconto(idRacconto);
-        try {
-            racconto.setImmagine(recuperaImmagine(racconto.getImmagine()));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (racconto != null && racconto.getImmagine() != null) {
+            try {
+                racconto.setImmagine(recuperaImmagine(racconto.getImmagine()));
+            } catch (IOException e) {
+                System.out.println("Errore nel recupero immagine: " + e.getMessage());
+            }
         }
         return racconto;
     }
 
-    public boolean checkId(int idRacconto) {
-
-        return raccontoDAO.existsById(idRacconto);
-
+    @Override
+    public Racconto getByIdRaccontoRaw(int idRacconto) {
+        return raccontoDAO.getRaccontoByIdRacconto(idRacconto);
     }
 
+
+    @Override
+    public boolean checkId(int idRacconto) {
+        return raccontoDAO.existsById(idRacconto);
+    }
+
+    @Override
     public List<Racconto> listaRaccontiUtente(String email) {
-
-       List<Racconto> racconti=  raccontoDAO.findAllByUtente_Email(email);
-
-       for(Racconto racconto : racconti){
-           try {
-               racconto.setImmagine(recuperaImmagine(racconto.getImmagine()));
-           } catch (IOException e) {
-               throw new RuntimeException(e);
-           }
-       }
+        List<Racconto> racconti = raccontoDAO.findAllByUtente_Email(email);
+        for (Racconto racconto : racconti) {
+            if (racconto.getImmagine() != null) {
+                try {
+                    racconto.setImmagine(recuperaImmagine(racconto.getImmagine()));
+                } catch (IOException e) {
+                    System.out.println("Errore nel recupero immagine: " + e.getMessage());
+                }
+            }
+        }
         return racconti;
     }
 
-    public String salvaImmagine(String base64String) throws IOException {
+    // ========================= IMMAGINI =========================
 
-        String[] parts = base64String.split(",");
+    public String salvaImmagine(String base64) throws IOException {
+        String[] parts = base64.split(",");
         String header = parts[0];
         String content = parts[1];
 
-        String extension = ".jpg";
-        if (header.contains("image/png")) {
-            extension = ".png";
-        } else if (header.contains("image/jpeg") || header.contains("image/jpg")) {
-            extension = ".jpg";
-        } else if (header.contains("image/gif")) {
-            extension = ".gif";
-        }
+        String ext = ".jpg";
+        if (header.contains("image/png")) ext = ".png";
+        else if (header.contains("image/gif")) ext = ".gif";
 
-        byte[] imageBytes = Base64.getDecoder().decode(content);
+        byte[] bytes = Base64.getDecoder().decode(content);
+        String fileName = UUID.randomUUID().toString() + ext;
 
-        String fileName = UUID.randomUUID().toString() + extension;
-
-        String UPLOAD_DIR = "uploads/stories/";
         Path uploadPath = Paths.get(UPLOAD_DIR);
-        if (!Files.exists(uploadPath)) {
-            Files.createDirectories(uploadPath);
-        }
+        if (!Files.exists(uploadPath)) Files.createDirectories(uploadPath);
 
-        Path filePath = uploadPath.resolve(fileName);
+        Files.write(uploadPath.resolve(fileName), bytes);
 
-        Files.write(filePath, imageBytes);
-
-
-        return "uploads/stories/" + fileName;
-
-
+        return fileName; // salvo solo il nome
     }
 
-    public String recuperaImmagine(String pathImmagine) throws IOException {
+    public String recuperaImmagine(String fileName) throws IOException {
+        if (fileName == null || fileName.trim().isEmpty()) return null;
 
-        if (pathImmagine == null || pathImmagine.trim().isEmpty()) {
-            return null;
-        }
+        Path path = Paths.get(UPLOAD_DIR).resolve(fileName);
+        if (!Files.exists(path)) throw new FileNotFoundException(path.toString());
+        if (Files.isDirectory(path)) throw new AccessDeniedException(path.toString());
+        if (!Files.isReadable(path)) throw new AccessDeniedException(path.toString());
 
-        String fileName = pathImmagine.substring(pathImmagine.lastIndexOf("/") + 1);
+        byte[] bytes = Files.readAllBytes(path);
+        String mime = "image/jpeg";
+        if (fileName.toLowerCase().endsWith(".png")) mime = "image/png";
+        else if (fileName.toLowerCase().endsWith(".gif")) mime = "image/gif";
 
-        if (fileName.trim().isEmpty()) {
-            throw new IllegalArgumentException("Nome file non valido estratto dal percorso: " + pathImmagine);
-        }
-
-        String UPLOAD_DIR = "uploads/stories/";
-        Path filePath = Paths.get(UPLOAD_DIR).resolve(fileName);
-
-        if (!Files.exists(filePath)) {
-            throw new FileNotFoundException("File non trovato: " + filePath.toString());
-        }
-        if (Files.isDirectory(filePath)) {
-            throw new AccessDeniedException("Il percorso punta a una directory, non a un file: " + filePath.toString());
-        }
-        if (!Files.isReadable(filePath)) {
-            throw new AccessDeniedException("Permessi di lettura mancanti per il file: " + filePath.toString());
-        }
-
-        byte[] imageBytes = Files.readAllBytes(filePath);
-
-        String mimeType = "image/jpeg";
-        if (fileName.toLowerCase().endsWith(".png")) mimeType = "image/png";
-        else if (fileName.toLowerCase().endsWith(".gif")) mimeType = "image/gif";
-
-        String base64Content = Base64.getEncoder().encodeToString(imageBytes);
-        return "data:" + mimeType + ";base64," + base64Content;
+        return "data:" + mime + ";base64," + Base64.getEncoder().encodeToString(bytes);
     }
 
+    /*
+    public boolean eliminaImmagine(String fileName) {
+        if (fileName == null || fileName.trim().isEmpty()) return false;
 
-    public boolean eliminaImmagine(String imageName) {
-        Path path = Paths.get("uploads/stories/" + imageName);
+        Path path = Paths.get(UPLOAD_DIR, fileName).toAbsolutePath();
+        System.out.println("Provo a eliminare file: " + path);
+
+        if (!Files.exists(path)) {
+            System.out.println("File non trovato: " + path);
+            return false;
+        }
+
         try {
-            return Files.deleteIfExists(path);
+            boolean deleted = Files.deleteIfExists(path);
+            System.out.println("File eliminato: " + deleted);
+            return deleted;
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Errore eliminazione file: " + e.getMessage());
             return false;
         }
     }
+    */
+
+
+
 }
