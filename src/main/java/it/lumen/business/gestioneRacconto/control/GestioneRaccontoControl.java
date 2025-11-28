@@ -84,7 +84,7 @@ public class GestioneRaccontoControl {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
 
-            if (!gestioneRaccontoService.getByIdRacconto(idRacconto).getUtente().getEmail().equals(email)) {
+            if (!gestioneRaccontoService.getByIdRaccontoRaw(idRacconto).getUtente().getEmail().equals(email)) {
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);
             }
 
@@ -126,7 +126,8 @@ try {
         return new ResponseEntity<>("Racconto da eliminare non trovato", HttpStatus.NOT_FOUND);
     }
 
-    if(!gestioneRaccontoService.getByIdRacconto(idRacconto).getUtente().getEmail().equals(email)) {
+
+    if(!gestioneRaccontoService.getByIdRaccontoRaw(idRacconto).getUtente().getEmail().equals(email)) {
 
         return new ResponseEntity<>("Non puoi eliminare il racconto.", HttpStatus.FORBIDDEN);
 

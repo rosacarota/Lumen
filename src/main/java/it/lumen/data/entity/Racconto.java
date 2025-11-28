@@ -3,6 +3,7 @@ package it.lumen.data.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,6 +15,7 @@ import java.sql.Date;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Racconto {
 
     @Id
@@ -43,7 +45,7 @@ public class Racconto {
 
     @Column(name = "immagine", length = 255)
     @Pattern(regexp = "^[a-zA-Z0-9\\s._/\\\\:-]*\\.(jpg|jpeg|png|gif|webp)$",
-            message = "Formato immagine non supportato. Usa jpg, jpeg, png, gif o webp")
+           message = "Formato immagine non supportato. Usa jpg, jpeg, png, gif o webp")
     private String immagine;
 
 }

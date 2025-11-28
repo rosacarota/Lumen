@@ -1,6 +1,7 @@
-package it.lumen.business.gestionePartecipazioneEvento.service;
+package it.lumen.business.gestionePartecipazione.service;
 
 
+import it.lumen.data.entity.Evento;
 import it.lumen.data.entity.Partecipazione;
 import java.util.List;
 
@@ -10,4 +11,6 @@ public interface PartecipazioneEventoService{
 	public void modificaPartecipazione(Partecipazione partecipazione);
 	public void eliminaPartecipazione(Integer idPartecipazione);
 	public List<Partecipazione> listaPartecipazioni(Integer idEvento);
+    public Evento getEventoById(Integer idEvento);
+    public Partecipazione getPartecipazioneById(Integer idEvento);
 }

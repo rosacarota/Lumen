@@ -19,7 +19,7 @@
     RecapitoTelefonico CHAR(10),
     Ambito VARCHAR(100),
     Ruolo VARCHAR(50) NOT NULL,
-    Immagine VARCHAR(255),
+    Immagine TEXT,
     FOREIGN KEY (Indirizzo) REFERENCES Indirizzo(IDIndirizzo),
     CONSTRAINT chk_ruolo CHECK (Ruolo IN ('Volontario', 'Beneficiario', 'Ente'))
     );
@@ -31,7 +31,7 @@
     Descrizione TEXT,
     Utente VARCHAR(255) NOT NULL,
     DataPubblicazione DATE NOT NULL,
-    Immagine VARCHAR(255),
+    Immagine TEXT,
     FOREIGN KEY (Utente) REFERENCES Utente(Email) ON DELETE CASCADE
     );
 
@@ -44,7 +44,7 @@
     DataInizio DATE NOT NULL,
     DataFine DATE NOT NULL,
     MaxPartecipanti INTEGER,
-    Immagine VARCHAR(255),
+    Immagine TEXT,
     Ente VARCHAR(255) NOT NULL,
     FOREIGN KEY (Ente) REFERENCES Utente(Email) ON DELETE CASCADE,
     FOREIGN KEY (Luogo) REFERENCES Indirizzo(IDIndirizzo)
@@ -99,30 +99,3 @@
     FOREIGN KEY (Volontario) REFERENCES Utente(Email) ON DELETE CASCADE,
     UNIQUE(Evento, Volontario)
     );
-
-    -- Tabella Donazione
-    CREATE TABLE Donazione (
-    IDDonazione SERIAL PRIMARY KEY,
-    Utente VARCHAR(255) NOT NULL,
-    IDRaccolta INTEGER NOT NULL,
-    Importo DECIMAL(10, 2) NOT NULL,
-    DataDonazione DATE NOT NULL,
-    FOREIGN KEY (Utente) REFERENCES Utente(Email) ON DELETE CASCADE,
-    FOREIGN KEY (IDRaccolta) REFERENCES RaccoltaFondi(IDRaccolta) ON DELETE CASCADE
-    );
-
--- Trigger per aggiornare il totale della raccolta fondi
-CREATE FUNCTION aggiorna_totale_raccolta()
-    RETURNS TRIGGER AS $$
-BEGIN
-    UPDATE RaccoltaFondi
-    SET TotaleRaccolto = TotaleRaccolto + NEW.Importo
-    WHERE IDRaccolta = NEW.IDRaccolta;
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER trigger_aggiorna_totale
-    AFTER INSERT ON Donazione
-    FOR EACH ROW
-EXECUTE FUNCTION aggiorna_totale_raccolta();

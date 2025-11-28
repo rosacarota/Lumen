@@ -9,9 +9,10 @@ public interface GestioneEventoService {
 
     public Evento aggiungiEvento(Evento evento);
     public Evento modificaEvento(Evento evento);
-    public void eliminaEvento(Integer idEvento);
+    public void eliminaEvento(int idEvento);
     public boolean checkId(int idEvento);
-
-    public List<Evento> cronologiaEventi(String email);
+    public List<Evento> cronologiaEventi(String email, String stato);
+    public Evento getEventoById(int idEvento);
+    public List<Evento> tuttiGliEventi();
 }
 
