@@ -38,20 +38,41 @@ export const checkUserParticipation = async (idEvento) => {
 };
 
 export const iscrivitiEvento = async (idEvento) => {
-  const token = getToken();
-  try {
-    const response = await fetch(`${API_BASE_URL}/partecipazione/aggiungi?token=${token}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ evento: { idEvento: idEvento } })
-    });
+  // DEBUG: Stampa cosa stai per inviare
+  console.log("Tentativo iscrizione a ID:", idEvento);
 
-    if (response.ok) return { success: true };
-    return { success: false, message: await response.text() };
+  if (!idEvento) {
+    console.error("ERRORE: idEvento mancante o non valido!");
+    return { success: false, message: "ID Evento mancante" };
+  }
+
+  const token = getToken();
+  
+  try {
+    const response = await fetch(`${API_BASE_URL}/partecipazione/aggiungi?token=${encodeURIComponent(token)}&idEvento=${idEvento}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+      // Usa parseInt per essere sicuro che sia un numero e non una stringa "1"
+      /* body: JSON.stringify({ 
+          evento: { idEvento: parseInt(idEvento) } 
+      }) */
+    });
+    
+
+    if (response.ok) {
+        return { success: true };
+    }
+    
+    // Recupera il messaggio di errore specifico dal backend (es. "Numero di partecipanti al completo")
+    const errorMessage = await response.text();
+    return { success: false, message: errorMessage };
+
   } catch (error) {
-    return { success: false, message: "Errore connessione" };
+    console.error("Errore durante l'iscrizione:", error);
+    return { success: false, message: "Errore di connessione al server" };
   }
 };
+
 
 export const rimuoviIscrizione = async (idPartecipazione) => {
   const token = getToken();
