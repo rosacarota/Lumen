@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 // Aggiungi useNavigate per il reindirizzamento
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';
 import { User, Lock, Mail, Building2, Heart, Users, HeartHandshake, Pencil, Camera } from 'lucide-react';
 import { registerUser, loginUser } from '../services/loginService';
 import { validateRegistration } from '../utils/loginValidation';
@@ -14,7 +14,7 @@ export default function LoginPage() {
   const [rememberMe, setRememberMe] = useState(false);
   const [step, setStep] = useState(1);
   const fileInputRef = useRef(null);
-  
+
   // Hook per la navigazione
   const navigate = useNavigate();
 
@@ -23,20 +23,20 @@ export default function LoginPage() {
     email: '',
     password: '',
     confirmPassword: '',
-    nome: '',      
-    cognome: '',    
-    nomeEnte: '',   
-    referente: '', 
-    telefono: '',   
-    descrizione: '', 
+    nome: '',
+    cognome: '',
+    nomeEnte: '',
+    // referente: '',  <-- RIMOSSO
+    telefono: '',
+    descrizione: '',
     ambito: '',
-    immagineBase64: null, 
+    immagineBase64: null,
     citta: '',
     provincia: '',
     cap: '',
     strada: '',
     nCivico: '',
-    ruolo: '' 
+    ruolo: ''
   });
 
   const handleChange = (e) => {
@@ -66,14 +66,15 @@ export default function LoginPage() {
       // --- LOGICA LOGIN ---
       try {
         const resultMessage = await loginUser({ email: formData.email, password: formData.password });
-        console.log(resultMessage); 
-        navigate('/home'); 
+        console.log(resultMessage);
+        navigate('/home');
       } catch (error) {
         alert("Errore Login: " + error.message);
       }
     } else {
       // --- REGISTRAZIONE ---
       const validation = validateRegistration(formData);
+      // Nota: Potresti dover aggiornare validateRegistration per non richiedere referente
       if (!validation.isValid) {
         alert(Object.values(validation.errors)[0]);
         return;
@@ -85,37 +86,38 @@ export default function LoginPage() {
 
       const hasAddress = formData.citta || formData.strada;
       const indirizzoObj = hasAddress ? {
-          citta: formData.citta || "",
-          provincia: formData.provincia || "",
-          cap: formData.cap || "",
-          strada: formData.strada || "",
-          nCivico: formData.nCivico ? parseInt(formData.nCivico) : null
+        citta: formData.citta || "",
+        provincia: formData.provincia || "",
+        cap: formData.cap || "",
+        strada: formData.strada || "",
+        nCivico: formData.nCivico ? parseInt(formData.nCivico) : null
       } : null;
 
       let finalNome = formData.nome;
       let finalCognome = formData.cognome;
 
+      // MODIFICA PER ENTE: Nome Ente va nel campo "nome" del payload
       if (userType === 'ente') {
-          finalNome = formData.nomeEnte;
-          finalCognome = null; 
+        finalNome = formData.nomeEnte;
+        finalCognome = null;
       }
 
       let finalAmbito = formData.ambito;
       if (userType === 'beneficiario') {
-          finalAmbito = null;
+        finalAmbito = null;
       }
 
       const payload = {
-          email: formData.email,
-          nome: finalNome,
-          cognome: finalCognome, 
-          password: formData.password,
-          descrizione: formData.descrizione || null,
-          recapitoTelefonico: formData.telefono, 
-          ruolo: formData.ruolo,
-          ambito: finalAmbito || null,
-          immagine: formData.immagineBase64 || null,
-          indirizzo: indirizzoObj
+        email: formData.email,
+        nome: finalNome,
+        cognome: finalCognome,
+        password: formData.password,
+        descrizione: formData.descrizione || null,
+        recapitoTelefonico: formData.telefono,
+        ruolo: formData.ruolo,
+        ambito: finalAmbito || null,
+        immagine: formData.immagineBase64 || null,
+        indirizzo: indirizzoObj
       };
 
       try {
@@ -124,7 +126,7 @@ export default function LoginPage() {
         setIsLogin(true);
         setStep(1);
         setUserType(null);
-        setFormData(prev => ({...prev, password: '', confirmPassword: ''}));
+        setFormData(prev => ({ ...prev, password: '', confirmPassword: '' }));
       } catch (error) {
         alert("Errore registrazione: " + error.message);
       }
@@ -132,10 +134,22 @@ export default function LoginPage() {
   };
 
   const handleNextStep = () => {
+    // Controllo campi obbligatori per passare allo step 2
     if (!formData.email || !formData.password) {
-        alert("Compila email e password per proseguire.");
+      alert("Compila email e password per proseguire.");
+      return;
+    }
+    // Per Ente, controlliamo anche nomeEnte
+    if (userType === 'ente' && !formData.nomeEnte) {
+       alert("Compila il nome dell'Ente per proseguire.");
+       return;
+    }
+    // Per Volontario/Beneficiario controlliamo nome e cognome
+    if ((userType === 'volontario' || userType === 'beneficiario') && (!formData.nome || !formData.cognome)) {
+        alert("Compila nome e cognome per proseguire.");
         return;
     }
+
     setStep(2);
   };
 
@@ -158,36 +172,37 @@ export default function LoginPage() {
     );
 
     if (userType === 'ente') {
-        return (
-          <div style={styles.fieldsContainer}>
-            <div style={styles.inputGroup}>
-              <Building2 style={styles.inputIcon} />
-              <input type="text" name="nome" value={formData.nome} onChange={handleChange} placeholder="Nome Ente" style={styles.inputField} onFocus={(e) => { e.target.style.borderColor = '#4AAFB8'; e.target.style.boxShadow = '0 0 0 3px rgba(74, 175, 184, 0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }} />
-        </div>
-            
-            <div style={styles.inputGroup}>
-              <input type="text" name="telefono" value={formData.telefono} onChange={handleChange} placeholder="Telefono" style={styles.inputFieldNoIcon} onFocus={(e) => { e.target.style.borderColor = '#4AAFB8'; e.target.style.boxShadow = '0 0 0 3px rgba(74, 175, 184, 0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }} />
-            </div>
-            {commonFields}
-          </div>
-        );
-    }
-    
-    return (
+      return (
         <div style={styles.fieldsContainer}>
-        <div style={styles.inputGroup}>
-            <User style={styles.inputIcon} />
-            <input type="text" name="nome" value={formData.nome} onChange={handleChange} placeholder="Nome" style={styles.inputField} onFocus={(e) => { e.target.style.borderColor = '#4AAFB8'; e.target.style.boxShadow = '0 0 0 3px rgba(74, 175, 184, 0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }} />
-        </div>
-        <div style={styles.inputGroup}>
-            <User style={styles.inputIcon} />
-            <input type="text" name="cognome" value={formData.cognome} onChange={handleChange} placeholder="Cognome" style={styles.inputField} onFocus={(e) => { e.target.style.borderColor = '#4AAFB8'; e.target.style.boxShadow = '0 0 0 3px rgba(74, 175, 184, 0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }} />
-        </div>
-        <div style={styles.inputGroup}>
+          <div style={styles.inputGroup}>
+            <Building2 style={styles.inputIcon} />
+            {/* Usiamo nomeEnte nello stato, ma verrà mappato a "nome" nel payload */}
+            <input type="text" name="nomeEnte" value={formData.nomeEnte} onChange={handleChange} placeholder="Nome Ente" style={styles.inputField} onFocus={(e) => { e.target.style.borderColor = '#4AAFB8'; e.target.style.boxShadow = '0 0 0 3px rgba(74, 175, 184, 0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }} />
+          </div>
+          {/* RIMOSSO IL CAMPO REFERENTE QUI */}
+          <div style={styles.inputGroup}>
             <input type="text" name="telefono" value={formData.telefono} onChange={handleChange} placeholder="Telefono" style={styles.inputFieldNoIcon} onFocus={(e) => { e.target.style.borderColor = '#4AAFB8'; e.target.style.boxShadow = '0 0 0 3px rgba(74, 175, 184, 0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }} />
+          </div>
+          {commonFields}
+        </div>
+      );
+    }
+
+    return (
+      <div style={styles.fieldsContainer}>
+        <div style={styles.inputGroup}>
+          <User style={styles.inputIcon} />
+          <input type="text" name="nome" value={formData.nome} onChange={handleChange} placeholder="Nome" style={styles.inputField} onFocus={(e) => { e.target.style.borderColor = '#4AAFB8'; e.target.style.boxShadow = '0 0 0 3px rgba(74, 175, 184, 0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }} />
+        </div>
+        <div style={styles.inputGroup}>
+          <User style={styles.inputIcon} />
+          <input type="text" name="cognome" value={formData.cognome} onChange={handleChange} placeholder="Cognome" style={styles.inputField} onFocus={(e) => { e.target.style.borderColor = '#4AAFB8'; e.target.style.boxShadow = '0 0 0 3px rgba(74, 175, 184, 0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }} />
+        </div>
+        <div style={styles.inputGroup}>
+          <input type="text" name="telefono" value={formData.telefono} onChange={handleChange} placeholder="Telefono" style={styles.inputFieldNoIcon} onFocus={(e) => { e.target.style.borderColor = '#4AAFB8'; e.target.style.boxShadow = '0 0 0 3px rgba(74, 175, 184, 0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }} />
         </div>
         {commonFields}
-        </div>
+      </div>
     );
   };
 
@@ -202,63 +217,63 @@ export default function LoginPage() {
   const welcomeMsg = getWelcomeMessage();
   const isSwapped = !isLogin && step !== 2;
 
-  return ( 
+  return (
     <>
-    <Navbar />
-    <div style={styles.loginPage}>
-      <style>{cssStyles}</style>
-      
-      {/* AGGIUNTA CLASSE login-container PER RESPONSIVE */}
-      <div className="login-container" style={{ ...styles.container, height: (!isLogin && userType) ? 'min(800px, 80vh)' : 'min(700px, 75vh)' }}>
-        
-        {/* GRADIENT PANEL (Sinistra) */}
-        {/* AGGIUNTA CLASSE gradient-panel PER RESPONSIVE */}
-        <div className="gradient-panel" style={{ ...styles.gradientPanel, transform: isSwapped ? 'translateX(100%)' : 'translateX(0%)' }}>
-          <div style={styles.gradientOverlay}></div>
-          <div style={styles.blurCircle1}></div>
-          <div style={styles.blurCircle2}></div>
-          <div style={styles.welcomeContent} key={`${isLogin}-${step}-${userType}`}>
-            <h1 style={styles.welcomeTitle}>{welcomeMsg.title}</h1>
-            <p style={styles.welcomeSubtitle}>{welcomeMsg.subtitle}</p>
-            <div style={styles.welcomeFooter}>
-              {welcomeMsg.footer}{' '}
-              {step === 2 ? (
-                 <button onClick={() => setStep(1)} style={styles.linkButton} onMouseEnter={(e) => e.target.style.opacity = '0.8'} onMouseLeave={(e) => e.target.style.opacity = '1'}>Torna indietro</button>
-              ) : (
-                <button onClick={() => { setIsLogin(!isLogin); setUserType(null); setStep(1); }} style={styles.linkButton} onMouseEnter={(e) => e.target.style.opacity = '0.8'} onMouseLeave={(e) => e.target.style.opacity = '1'}>
-                  {isLogin ? 'Iscriviti ora' : 'Accedi'}
-                </button>
-              )}
+      <Navbar />
+      <div style={styles.loginPage}>
+        <style>{cssStyles}</style>
+
+        {/* AGGIUNTA CLASSE login-container PER RESPONSIVE */}
+        <div className="login-container" style={{ ...styles.container, height: (!isLogin && userType) ? 'min(800px, 80vh)' : 'min(700px, 75vh)' }}>
+
+          {/* GRADIENT PANEL (Sinistra) */}
+          {/* AGGIUNTA CLASSE gradient-panel PER RESPONSIVE */}
+          <div className="gradient-panel" style={{ ...styles.gradientPanel, transform: isSwapped ? 'translateX(100%)' : 'translateX(0%)' }}>
+            <div style={styles.gradientOverlay}></div>
+            <div style={styles.blurCircle1}></div>
+            <div style={styles.blurCircle2}></div>
+            <div style={styles.welcomeContent} key={`${isLogin}-${step}-${userType}`}>
+              <h1 style={styles.welcomeTitle}>{welcomeMsg.title}</h1>
+              <p style={styles.welcomeSubtitle}>{welcomeMsg.subtitle}</p>
+              <div style={styles.welcomeFooter}>
+                {welcomeMsg.footer}{' '}
+                {step === 2 ? (
+                  <button onClick={() => setStep(1)} style={styles.linkButton} onMouseEnter={(e) => e.target.style.opacity = '0.8'} onMouseLeave={(e) => e.target.style.opacity = '1'}>Torna indietro</button>
+                ) : (
+                  <button onClick={() => { setIsLogin(!isLogin); setUserType(null); setStep(1); }} style={styles.linkButton} onMouseEnter={(e) => e.target.style.opacity = '0.8'} onMouseLeave={(e) => e.target.style.opacity = '1'}>
+                    {isLogin ? 'Iscriviti ora' : 'Accedi'}
+                  </button>
+                )}
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* FORM PANEL (Destra) */}
-        {/* AGGIUNTA CLASSE form-panel PER RESPONSIVE */}
-        <div className="form-panel hide-scrollbar" style={{ ...styles.formPanel, transform: isSwapped ? 'translateX(-100%)' : 'translateX(0%)' }}>
-          <div style={styles.formContainer}>
-            <div style={styles.logoSection}>
-              <div style={styles.logoWrapper}>
-                <HeartHandshake style={styles.logoIcon} />
-                <span style={styles.logoText}>Lumen</span>
+          {/* FORM PANEL (Destra) */}
+          {/* AGGIUNTA CLASSE form-panel PER RESPONSIVE */}
+          <div className="form-panel hide-scrollbar" style={{ ...styles.formPanel, transform: isSwapped ? 'translateX(-100%)' : 'translateX(0%)' }}>
+            <div style={styles.formContainer}>
+              <div style={styles.logoSection}>
+                <div style={styles.logoWrapper}>
+                  <HeartHandshake style={styles.logoIcon} />
+                  <span style={styles.logoText}>Lumen</span>
+                </div>
+                <p style={styles.logoSubtitle}>Insieme, per un futuro luminoso</p>
               </div>
-              <p style={styles.logoSubtitle}>Insieme, per un futuro luminoso</p>
-            </div>
 
-            <div style={styles.formContent}>
-              
-              {/* CASO 1: SELEZIONE UTENTE CON ANIMAZIONE SLIDE IN */}
-              {!isLogin && !userType ? (
-                <div style={styles.userTypeSelection}>
-                  <h2 style={styles.formTitle}>Che tipo di utente sei?</h2>
-                  {['ente', 'volontario', 'beneficiario'].map((type, index) => (
-                      <button key={type} 
-                        onClick={() => handleUserTypeSelection(type)} 
+              <div style={styles.formContent}>
+
+                {/* CASO 1: SELEZIONE UTENTE CON ANIMAZIONE SLIDE IN */}
+                {!isLogin && !userType ? (
+                  <div style={styles.userTypeSelection}>
+                    <h2 style={styles.formTitle}>Che tipo di utente sei?</h2>
+                    {['ente', 'volontario', 'beneficiario'].map((type, index) => (
+                      <button key={type}
+                        onClick={() => handleUserTypeSelection(type)}
                         style={{
-                            ...styles.userTypeCard,
-                            animation: `slideInFromLeft 0.5s ease-out forwards`,
-                            animationDelay: `${index * 0.15}s`, // REGOLAZIONE TIMING: Moltiplicatore 0.15s
-                            opacity: 0
+                          ...styles.userTypeCard,
+                          animation: `slideInFromLeft 0.5s ease-out forwards`,
+                          animationDelay: `${index * 0.15}s`, // REGOLAZIONE TIMING: Moltiplicatore 0.15s
+                          opacity: 0
                         }}
                         onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#4AAFB8'; e.currentTarget.style.background = '#E9FBE7'; e.currentTarget.querySelector('.icon-wrapper').style.background = '#7CCE6B'; }}
                         onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E5E7EB'; e.currentTarget.style.background = 'white'; e.currentTarget.querySelector('.icon-wrapper').style.background = '#E9FBE7'; }}>
@@ -270,116 +285,116 @@ export default function LoginPage() {
                           <div style={styles.userTypeDesc}>{type === 'ente' ? 'Organizzazione o associazione' : type === 'volontario' ? 'Voglio offrire il mio tempo' : 'Ho bisogno di supporto'}</div>
                         </div>
                       </button>
-                  ))}
-                </div>
-
-              // CASO 2: STEP 1
-              ) : !isLogin && userType && step === 1 ? (
-                <div style={styles.registrationForm}>
-                  <button onClick={() => setUserType(null)} style={styles.backButton}>← Indietro</button>
-                  <h2 style={styles.formTitle}>Registrazione {userType.charAt(0).toUpperCase() + userType.slice(1)}</h2>
-                  {renderRegistrationFields()}
-                  <button onClick={handleNextStep} style={styles.submitButton}>CONTINUA</button>
-                </div>
-
-              // CASO 3: STEP 2 (CONOSCIAMOCI MEGLIO)
-              ) : !isLogin && userType && step === 2 ? (
-                <div style={styles.registrationForm}>
-                  <h2 style={styles.formTitle}>Personalizzazione del profilo</h2>
-                  
-                  {/* UPLOAD */}
-                  <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px', position: 'relative' }}>
-                    <div style={{ width: '100px', height: '100px', borderRadius: '50%', background: '#F3F4F6', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #E5E7EB', position: 'relative' }}>
-                         {formData.immagineBase64 ? (
-                            <img src={formData.immagineBase64} alt="Preview" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
-                         ) : (
-                            <Camera size={40} color="#9CA3AF" />
-                         )}
-                         <input type="file" ref={fileInputRef} onChange={handleImageUpload} accept="image/*" style={{ display: 'none' }} />
-                         <button onClick={() => fileInputRef.current.click()} style={{ position: 'absolute', bottom: 0, right: 0, background: '#087886', border: '2px solid white', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-                            <Pencil size={16} color="white" />
-                         </button>
-                    </div>
+                    ))}
                   </div>
 
-                  <div style={styles.fieldsContainer}>
-                      
-                     {/* AMBITO SOLO SE ENTE O VOLONTARIO */}
-                     {(userType === 'ente' || userType === 'volontario') && (
-                        <div style={styles.inputGroup}>
-                           <input type="text" name="ambito" value={formData.ambito} onChange={handleChange} placeholder="Di cosa ti occupi? (es. Sociale)" style={styles.inputFieldNoIcon} />
-                        </div>
-                     )}
+                  // CASO 2: STEP 1
+                ) : !isLogin && userType && step === 1 ? (
+                  <div style={styles.registrationForm}>
+                    <button onClick={() => setUserType(null)} style={styles.backButton}>← Indietro</button>
+                    <h2 style={styles.formTitle}>Registrazione {userType.charAt(0).toUpperCase() + userType.slice(1)}</h2>
+                    {renderRegistrationFields()}
+                    <button onClick={handleNextStep} style={styles.submitButton}>CONTINUA</button>
+                  </div>
 
-                     <div style={styles.inputGroup}>
+                  // CASO 3: STEP 2 (CONOSCIAMOCI MEGLIO)
+                ) : !isLogin && userType && step === 2 ? (
+                  <div style={styles.registrationForm}>
+                    <h2 style={styles.formTitle}>Personalizzazione del profilo</h2>
+
+                    {/* UPLOAD */}
+                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px', position: 'relative' }}>
+                      <div style={{ width: '100px', height: '100px', borderRadius: '50%', background: '#F3F4F6', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #E5E7EB', position: 'relative' }}>
+                        {formData.immagineBase64 ? (
+                          <img src={formData.immagineBase64} alt="Preview" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+                        ) : (
+                          <Camera size={40} color="#9CA3AF" />
+                        )}
+                        <input type="file" ref={fileInputRef} onChange={handleImageUpload} accept="image/*" style={{ display: 'none' }} />
+                        <button onClick={() => fileInputRef.current.click()} style={{ position: 'absolute', bottom: 0, right: 0, background: '#087886', border: '2px solid white', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                          <Pencil size={16} color="white" />
+                        </button>
+                      </div>
+                    </div>
+
+                    <div style={styles.fieldsContainer}>
+
+                      {/* AMBITO SOLO SE ENTE O VOLONTARIO */}
+                      {(userType === 'ente' || userType === 'volontario') && (
+                        <div style={styles.inputGroup}>
+                          <input type="text" name="ambito" value={formData.ambito} onChange={handleChange} placeholder="Di cosa ti occupi? (es. Sociale)" style={styles.inputFieldNoIcon} />
+                        </div>
+                      )}
+
+                      <div style={styles.inputGroup}>
                         <textarea name="descrizione" value={formData.descrizione} onChange={handleChange} placeholder="Parlaci di te / Bio" style={styles.textareaField} rows="3" />
-                     </div>
-                     
-                     <div style={{ fontSize: '14px', fontWeight: '600', color: '#087886', marginTop: '10px' }}>Indirizzo (Opzionale)</div>
-                     
-                     <div style={{ display: 'flex', gap: '10px' }}>
+                      </div>
+
+                      <div style={{ fontSize: '14px', fontWeight: '600', color: '#087886', marginTop: '10px' }}>Indirizzo (Opzionale)</div>
+
+                      <div style={{ display: 'flex', gap: '10px' }}>
                         <input type="text" name="strada" value={formData.strada} onChange={handleChange} placeholder="Via/Piazza" style={{ ...styles.inputFieldNoIcon, flex: 2 }} />
                         <input type="text" name="nCivico" value={formData.nCivico} onChange={handleChange} placeholder="N." style={{ ...styles.inputFieldNoIcon, flex: 1 }} />
-                     </div>
-                     <div style={{ display: 'flex', gap: '10px' }}>
+                      </div>
+                      <div style={{ display: 'flex', gap: '10px' }}>
                         <input type="text" name="citta" value={formData.citta} onChange={handleChange} placeholder="Città" style={styles.inputFieldNoIcon} />
                         <input type="text" name="cap" value={formData.cap} onChange={handleChange} placeholder="CAP" style={styles.inputFieldNoIcon} />
-                     </div>
-                     <input type="text" name="provincia" value={formData.provincia} onChange={handleChange} placeholder="Provincia (es. MI)" style={styles.inputFieldNoIcon} />
-                     
-                     <button onClick={handleSubmit} style={styles.submitButton}>COMPLETA REGISTRAZIONE</button>
-                  </div>
-                </div>
+                      </div>
+                      <input type="text" name="provincia" value={formData.provincia} onChange={handleChange} placeholder="Provincia (es. MI)" style={styles.inputFieldNoIcon} />
 
-              // CASO 4: LOGIN
-              ) : (
-                <div style={styles.loginForm}>
-                  <div style={styles.avatarWrapper}>
-                    <User style={styles.avatarIcon} />
-                  </div>
-                  <div style={styles.fieldsContainer}>
-                    <div style={styles.inputGroup}>
-                      <User style={styles.inputIcon} />
-                      <input type="text" name="email" value={formData.email} onChange={handleChange} placeholder="USERNAME" style={styles.inputField} onFocus={(e) => { e.target.style.borderColor = '#4AAFB8'; e.target.style.boxShadow = '0 0 0 3px rgba(74, 175, 184, 0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }} />
-                    </div>
-                    <div style={styles.inputGroup}>
-                      <Lock style={styles.inputIcon} />
-                      <input type="password" name="password" value={formData.password} onChange={handleChange} placeholder="PASSWORD" style={styles.inputField} onFocus={(e) => { e.target.style.borderColor = '#4AAFB8'; e.target.style.boxShadow = '0 0 0 3px rgba(74, 175, 184, 0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }} />
+                      <button onClick={handleSubmit} style={styles.submitButton}>COMPLETA REGISTRAZIONE</button>
                     </div>
                   </div>
-                  <button onClick={handleSubmit} style={styles.submitButton} onMouseEnter={(e) => { e.target.style.transform = 'translateY(-2px)'; e.target.style.boxShadow = '0 6px 20px rgba(8, 120, 134, 0.4)'; }} onMouseLeave={(e) => { e.target.style.transform = 'translateY(0)'; e.target.style.boxShadow = '0 4px 12px rgba(8, 120, 134, 0.3)'; }}>LOGIN</button>
-                  <div style={styles.loginOptions}>
-                    <label style={styles.rememberMe}>
-                      <input type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} style={styles.checkbox} /> Ricordami
-                    </label>
-                    <button style={styles.forgotPassword} onMouseEnter={(e) => e.target.style.color = '#4AAFB8'} onMouseLeave={(e) => e.target.style.color = '#6B7280'}>Password dimenticata?</button>
+
+                  // CASO 4: LOGIN
+                ) : (
+                  <div style={styles.loginForm}>
+                    <div style={styles.avatarWrapper}>
+                      <User style={styles.avatarIcon} />
+                    </div>
+                    <div style={styles.fieldsContainer}>
+                      <div style={styles.inputGroup}>
+                        <User style={styles.inputIcon} />
+                        <input type="text" name="email" value={formData.email} onChange={handleChange} placeholder="USERNAME" style={styles.inputField} onFocus={(e) => { e.target.style.borderColor = '#4AAFB8'; e.target.style.boxShadow = '0 0 0 3px rgba(74, 175, 184, 0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }} />
+                      </div>
+                      <div style={styles.inputGroup}>
+                        <Lock style={styles.inputIcon} />
+                        <input type="password" name="password" value={formData.password} onChange={handleChange} placeholder="PASSWORD" style={styles.inputField} onFocus={(e) => { e.target.style.borderColor = '#4AAFB8'; e.target.style.boxShadow = '0 0 0 3px rgba(74, 175, 184, 0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }} />
+                      </div>
+                    </div>
+                    <button onClick={handleSubmit} style={styles.submitButton} onMouseEnter={(e) => { e.target.style.transform = 'translateY(-2px)'; e.target.style.boxShadow = '0 6px 20px rgba(8, 120, 134, 0.4)'; }} onMouseLeave={(e) => { e.target.style.transform = 'translateY(0)'; e.target.style.boxShadow = '0 4px 12px rgba(8, 120, 134, 0.3)'; }}>LOGIN</button>
+                    <div style={styles.loginOptions}>
+                      <label style={styles.rememberMe}>
+                        <input type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} style={styles.checkbox} /> Ricordami
+                      </label>
+                      <button style={styles.forgotPassword} onMouseEnter={(e) => e.target.style.color = '#4AAFB8'} onMouseLeave={(e) => e.target.style.color = '#6B7280'}>Password dimenticata?</button>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              {/* Punti */}
-              {!isLogin && (
-                <div style={styles.dotsIndicator}>
-                  <span style={!userType ? styles.dotActive : styles.dot}></span>
-                  <span style={userType && step === 1 ? styles.dotActive : styles.dot}></span>
-                  <span style={step === 2 ? styles.dotActive : styles.dot}></span>
-                </div>
-              )}
+                {/* Punti */}
+                {!isLogin && (
+                  <div style={styles.dotsIndicator}>
+                    <span style={!userType ? styles.dotActive : styles.dot}></span>
+                    <span style={userType && step === 1 ? styles.dotActive : styles.dot}></span>
+                    <span style={step === 2 ? styles.dotActive : styles.dot}></span>
+                  </div>
+                )}
 
-              {/* Toggle */}
-              <div style={styles.toggleForm}>
-                {isLogin ? (
-                  <>Non hai un account? <button onClick={() => { setIsLogin(false); setUserType(null); setStep(1); }} style={styles.toggleButton}>Registrati ora</button></>
-                ) : !userType ? (
-                  <>Hai già un account? <button onClick={() => { setIsLogin(true); setUserType(null); setStep(1); }} style={styles.toggleButton}>Accedi</button></>
-                ) : null}
+                {/* Toggle */}
+                <div style={styles.toggleForm}>
+                  {isLogin ? (
+                    <>Non hai un account? <button onClick={() => { setIsLogin(false); setUserType(null); setStep(1); }} style={styles.toggleButton}>Registrati ora</button></>
+                  ) : !userType ? (
+                    <>Hai già un account? <button onClick={() => { setIsLogin(true); setUserType(null); setStep(1); }} style={styles.toggleButton}>Accedi</button></>
+                  ) : null}
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    <Footer />
+      <Footer />
     </>
   );
 }
