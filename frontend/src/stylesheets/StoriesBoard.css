@@ -154,21 +154,26 @@
     color: #4b5563;
     margin: 0 0 10px;
   }
-  
+
   /* Immagine nel racconto principale */
 .story-image-wrapper {
-  margin: 8px 0 10px;
+  margin: 10px 0 14px;
   border-radius: 16px;
   overflow: hidden;
   border: 1px solid #e5e7eb;
   background: #f9fafb;
+  max-height: 380px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .story-image {
   display: block;
   width: 100%;
-  max-height: 320px;
-  object-fit: cover;
+  max-height: 380px;
+  object-fit: contain;
+  height: auto;
 }
 
   .story-card-footer {
