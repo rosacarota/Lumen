@@ -8,8 +8,15 @@ import it.lumen.security.JwtUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 
 @RestController
@@ -44,6 +51,8 @@ public class GestioneEventoControl {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
             evento.setUtente(autenticazioneService.getUtente(email));
+            String path = salvaImmagine(evento.getImmagine());
+            evento.setImmagine(path);
             Evento eventoSalvato = gestioneEventoService.aggiungiEvento(evento);
             if (eventoSalvato != null) {
 
@@ -172,6 +181,42 @@ public class GestioneEventoControl {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return ResponseEntity.ok(eventi);
+    }
+
+
+    public String salvaImmagine(String base64String) throws IOException {
+
+        String[] parts = base64String.split(",");
+        String header = parts[0];
+        String content = parts[1];
+
+        String extension = ".jpg";
+        if (header.contains("image/png")) {
+            extension = ".png";
+        } else if (header.contains("image/jpeg") || header.contains("image/jpg")) {
+            extension = ".jpg";
+        } else if (header.contains("image/gif")) {
+            extension = ".gif";
+        }
+
+        byte[] imageBytes = Base64.getDecoder().decode(content);
+
+        String fileName = UUID.randomUUID().toString() + extension;
+
+        String UPLOAD_DIR = "uploads/stories/";
+        Path uploadPath = Paths.get(UPLOAD_DIR);
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+
+        Path filePath = uploadPath.resolve(fileName);
+
+        Files.write(filePath, imageBytes);
+
+
+        return "/stories/" + fileName;
+
+
     }
 
 }
