@@ -31,13 +31,13 @@ public class PartecipazioneEventoControl {
     @Autowired
     private JwtUtil util;
 
-    @PostMapping("/aggiungi")
-    public ResponseEntity<String> aggiungiPartecipazione(@RequestBody Partecipazione partecipazione, @RequestParam String token) {
+    @GetMapping("/aggiungi")
+    public ResponseEntity<String> aggiungiPartecipazione( @RequestParam String token, @RequestParam int idEvento) {
 
         String ruolo = util.extractRuolo(token);
         String email = util.extractEmail(token);
 
-        Evento evento = partecipazioneEventoService.getEventoById(partecipazione.getEvento().getIdEvento());
+        Evento evento = partecipazioneEventoService.getEventoById(idEvento);
         Utente volontario = autenticazioneService.getUtente(email);
 
         try {
@@ -51,6 +51,7 @@ public class PartecipazioneEventoControl {
                 return new ResponseEntity<>("Utente deve essere volontario per partecipare", HttpStatus.BAD_REQUEST);
             }
 
+            Partecipazione partecipazione = new Partecipazione();
             partecipazione.setEvento(evento);
             partecipazione.setVolontario(volontario);
 
