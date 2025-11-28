@@ -47,20 +47,18 @@ public class GestioneRaccontoServiceImpl implements GestioneRaccontoService {
     @Override
     @Transactional
     public Racconto modificaRacconto(Racconto nuovoRacconto) {
+        // Recupera il racconto esistente dal DB
         Racconto vecchioRacconto = raccontoDAO.getRaccontoByIdRacconto(nuovoRacconto.getIdRacconto());
-
-        /*
-        // elimina vecchia immagine se presente
-        if (vecchioRacconto != null && vecchioRacconto.getImmagine() != null && !vecchioRacconto.getImmagine().trim().isEmpty()) {
-            boolean deleted = eliminaImmagine(vecchioRacconto.getImmagine());
-            System.out.println("File eliminato vecchia immagine: " + deleted + " -> " + vecchioRacconto.getImmagine());
+        if (vecchioRacconto == null) {
+            throw new RuntimeException("Racconto non trovato con id: " + nuovoRacconto.getIdRacconto());
         }
-        */
 
-
-        // salva nuova immagine se presente
-        if (nuovoRacconto.getImmagine() != null && !nuovoRacconto.getImmagine().isEmpty()) {
+        // Mantieni vecchia immagine se non viene inviata una nuova
+        if (nuovoRacconto.getImmagine() == null || nuovoRacconto.getImmagine().isEmpty()) {
+            nuovoRacconto.setImmagine(vecchioRacconto.getImmagine());
+        } else {
             try {
+                // Salva nuova immagine
                 String fileName = salvaImmagine(nuovoRacconto.getImmagine());
                 nuovoRacconto.setImmagine(fileName);
             } catch (IOException e) {
@@ -68,8 +66,16 @@ public class GestioneRaccontoServiceImpl implements GestioneRaccontoService {
             }
         }
 
+        // Mantieni data pubblicazione originale
+        nuovoRacconto.setDataPubblicazione(vecchioRacconto.getDataPubblicazione());
+
+        // Mantieni l’utente originale
+        nuovoRacconto.setUtente(vecchioRacconto.getUtente());
+
+        // Salva modifiche
         return raccontoDAO.save(nuovoRacconto);
     }
+
 
     @Override
     @Transactional
