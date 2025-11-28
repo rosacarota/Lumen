@@ -1,27 +1,54 @@
 /* --- ANIMAZIONI --- */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
 }
 
 /* --- MODALE OVERLAY (Sfondo scuro) --- */
 .modal-overlay {
-  position: fixed; /* Fondamentale */
+  position: fixed;
+  /* Fondamentale */
   top: 0;
   left: 0;
   right: 0;
@@ -31,30 +58,32 @@
   background-color: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(4px);
   /* Z-INDEX ALTISSIMO: Vince sulla Navbar e mostra la freccia */
-  z-index: 20000; 
+  z-index: 20000;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
   margin: 0;
-  box-sizing: border-box; /* Include il padding nel calcolo */
+  box-sizing: border-box;
+  /* Include il padding nel calcolo */
   animation: fadeIn 0.3s ease-out;
 }
 
 /* --- CONTENITORE PRINCIPALE (La card bianca) --- */
-.container {
+.add-story-container {
   position: relative;
   width: 100%;
   max-width: 980px;
   display: flex;
   border-radius: 24px;
-  overflow: hidden; /* Taglia via tutto ciò che esce dai bordi */
+  overflow: hidden;
+  /* Taglia via tutto ciò che esce dai bordi */
   box-shadow: 0 20px 60px rgba(8, 120, 134, 0.25);
   background: white;
   min-height: 480px;
   max-height: 90vh;
   /* Assicura che la card sia sopra l'overlay */
-  z-index: 20001; 
+  z-index: 20001;
 }
 
 /* --- PULSANTE INDIETRO (Freccia) --- */
@@ -62,8 +91,10 @@
   position: absolute;
   top: 20px;
   left: 20px;
-  z-index: 20005; /* Altissimo per stare sopra a tutto, anche al gradiente */
-  width: 40px; /* Leggermente più grande per cliccare meglio */
+  z-index: 20005;
+  /* Altissimo per stare sopra a tutto, anche al gradiente */
+  width: 40px;
+  /* Leggermente più grande per cliccare meglio */
   height: 40px;
   border-radius: 50%;
   border: none;
@@ -103,12 +134,10 @@
 .gradient-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(8, 120, 134, 0.8) 0%,
-    rgba(74, 175, 184, 0.6) 50%,
-    rgba(124, 206, 107, 0.4) 100%
-  );
+  background: linear-gradient(135deg,
+      rgba(8, 120, 134, 0.8) 0%,
+      rgba(74, 175, 184, 0.6) 50%,
+      rgba(124, 206, 107, 0.4) 100%);
 }
 
 .blur-circle {
@@ -172,7 +201,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow-y: auto; /* Permette lo scroll se lo schermo è piccolo */
+  overflow-y: auto;
+  /* Permette lo scroll se lo schermo è piccolo */
 }
 
 .form-container {
@@ -234,14 +264,16 @@
 /* CORREZIONE IMPORTANTE QUI SOTTO */
 .input-field-no-icon,
 .text-area {
-  width: 100%; /* Era 200%, che causava la riga bianca e lo scroll */
+  width: 100%;
+  /* Era 200%, che causava la riga bianca e lo scroll */
   padding: 12px 16px;
   border: 2px solid #e5e7eb;
   border-radius: 25px;
   font-size: 15px;
   outline: none;
   transition: all 0.3s ease;
-  box-sizing: border-box; /* Essenziale per width 100% */
+  box-sizing: border-box;
+  /* Essenziale per width 100% */
 }
 
 .text-area {
@@ -393,12 +425,13 @@
 }
 
 /* --- RESPONSIVE --- */
+
 @media (max-width: 900px) {
   .left-panel {
     display: none;
   }
 
-  .container {
+  .add-story-container {
     min-height: auto;
     /* Su mobile occupa tutto lo schermo o quasi */
     max-height: 95vh;
@@ -408,11 +441,11 @@
     width: 100%;
     padding: 40px 20px;
   }
-  
+
   /* Su mobile la X o freccia deve essere sicura */
   .close-back-button {
-      background: white;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 }
 
