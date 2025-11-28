@@ -13,7 +13,7 @@ const ProfiloVolontario = () => {
         <section className="profile-section-full">
           <AccessoInfoProfilo />
         </section>
-        <section className="stories-section">
+        <section className="voluntary-stories-section">
           <BachecaUltimeStorie />
         </section>
       </div>

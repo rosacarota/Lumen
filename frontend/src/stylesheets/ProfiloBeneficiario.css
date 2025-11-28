@@ -11,7 +11,7 @@
 }
 
 .beneficiary-container {
-  flex: 1 0 auto; 
+  flex: 1 0 auto;
   width: 100%;
   max-width: 100%;
   margin: 0;
@@ -20,10 +20,10 @@
   flex-direction: column;
 }
 
-.beneficiary-page-wrapper > footer, 
-.beneficiary-page-wrapper > div:last-child {
-  flex-shrink: 0; 
-  flex-grow: 0;   
+.beneficiary-page-wrapper>footer,
+.beneficiary-page-wrapper>div:last-child {
+  flex-shrink: 0;
+  flex-grow: 0;
   height: auto;
 }
 
@@ -31,7 +31,7 @@
   width: 100%;
 }
 
-.stories-section {
+.beneficiary-stories-section {
   width: 50%;
   margin: 5px 0 45px 40px;
 }
@@ -39,6 +39,6 @@
 @media (max-width: 768px) {
   .voluntary-container {
     gap: 20px;
-    padding: 0 10px; 
+    padding: 0 10px;
   }
 }
