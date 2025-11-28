@@ -163,7 +163,8 @@ export default function LoginPage() {
             <div style={styles.inputGroup}>
               <Building2 style={styles.inputIcon} />
               <input type="text" name="nome" value={formData.nome} onChange={handleChange} placeholder="Nome Ente" style={styles.inputField} onFocus={(e) => { e.target.style.borderColor = '#4AAFB8'; e.target.style.boxShadow = '0 0 0 3px rgba(74, 175, 184, 0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }} />
-            </div>
+        </div>
+            
             <div style={styles.inputGroup}>
               <input type="text" name="telefono" value={formData.telefono} onChange={handleChange} placeholder="Telefono" style={styles.inputFieldNoIcon} onFocus={(e) => { e.target.style.borderColor = '#4AAFB8'; e.target.style.boxShadow = '0 0 0 3px rgba(74, 175, 184, 0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }} />
             </div>
