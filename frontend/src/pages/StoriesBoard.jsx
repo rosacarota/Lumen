@@ -18,16 +18,14 @@ const StoriesBoard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // popup "nuovo racconto"
+  //popup "nuovo racconto"
   const [isAddStoryOpen, setIsAddStoryOpen] = useState(false);
-
-  // popup "modifica racconto"
+  //popup "modifica racconto"
   const [editingStory, setEditingStory] = useState(null);
-
-  // popup "elimina racconto"
+  //popup "elimina racconto"
   const [storyToDelete, setStoryToDelete] = useState(null);
 
-  // carica le storie dal backend
+  //carica le storie dal backend
   useEffect(() => {
     const loadStories = async () => {
       try {
@@ -48,12 +46,12 @@ const StoriesBoard = () => {
   const openAddStory = () => setIsAddStoryOpen(true);
   const closeAddStory = () => setIsAddStoryOpen(false);
 
-  // crea nuovo racconto -> POST /aggiungi
+  //crea nuovo racconto, post/aggiungi
   const handleSubmitStory = async (newStory) => {
     try {
       const created = await addStory({
         ...newStory,
-        image: null, // per ora niente upload reale
+        image: null,
       });
 
       setStories((prev) => [created, ...prev]);
@@ -64,17 +62,17 @@ const StoriesBoard = () => {
     }
   };
 
-  // apri popup modifica
+  //apri popup modifica 
   const openEditStory = (story) => {
     setEditingStory(story);
   };
 
-  // chiudi popup modifica
+  //chiudi popup modifica
   const closeEditStory = () => {
     setEditingStory(null);
   };
 
-  // salva modifiche -> PUT /modifica
+  //salva modifica
   const handleSaveEditedStory = async (updatedStory) => {
     try {
       const saved = await editStory(updatedStory);
@@ -89,17 +87,17 @@ const StoriesBoard = () => {
     }
   };
 
-  // apri popup elimina
+  //apri popup elimina
   const openDeleteStory = (story) => {
     setStoryToDelete(story);
   };
 
-  // chiudi popup elimina
+  //chiudi popup elimina 
   const closeDeleteStory = () => {
     setStoryToDelete(null);
   };
 
-  // conferma eliminazione -> DELETE /rimuovi
+  //conferma eliminazione 
   const handleDeleteConfirm = async () => {
     if (!storyToDelete) return;
     try {
@@ -137,7 +135,6 @@ const StoriesBoard = () => {
 
       <div className="stories-page" id="storie">
         <div className="stories-container">
-          {/* Header pagina */}
           <header className="stories-header">
             <div>
               <h1 className="stories-title">Storie</h1>
@@ -154,15 +151,12 @@ const StoriesBoard = () => {
             </button>
           </header>
 
-          {/* Messaggi di stato */}
           {loading && (
             <p className="stories-loading">Caricamento storie...</p>
           )}
           {error && <p className="stories-error">{error}</p>}
 
-          {/* Layout a due colonne */}
           <div className="stories-layout">
-            {/* Colonna sinistra: feed principale */}
             <section className="stories-main">
               {stories.map((story) => (
                 <article key={story.id} className="story-card">
@@ -187,6 +181,18 @@ const StoriesBoard = () => {
 
                   <h2 className="story-card-title">{story.title}</h2>
                   <p className="story-card-content">{story.content}</p>
+
+                  {/*aggiunta immagine*/}
+                  {story.imageBase64 && (
+                    <div className="story-image-wrapper">
+                      <img
+                        src={story.imageBase64}
+                        className="story-image"
+                        alt="story"
+                      />
+                    </div>
+                  )}
+                  {/* - */}
 
                   <div className="story-card-footer">
                     <span className="story-date">
@@ -224,7 +230,6 @@ const StoriesBoard = () => {
               )}
             </section>
 
-            {/* Colonna destra: ultime storie */}
             <aside className="stories-sidebar">
               <h3 className="sidebar-title">Ultime storie</h3>
 
@@ -266,7 +271,7 @@ const StoriesBoard = () => {
         </div>
       </div>
 
-      {/* POPUP NUOVO RACCONTO */}
+     {/* POPUP NUOVO RACCONTO */}
       {isAddStoryOpen && (
         <AddStory
           onSubmit={handleSubmitStory}
@@ -283,8 +288,7 @@ const StoriesBoard = () => {
           onSave={handleSaveEditedStory}
         />
       )}
-
-      {/* POPUP ELIMINA RACCONT0 */}
+     {/* POPUP ELIMINA RACCONT0 */}
       {storyToDelete && (
         <DeleteStory
           story={storyToDelete}

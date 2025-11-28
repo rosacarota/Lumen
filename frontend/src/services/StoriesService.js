@@ -26,8 +26,8 @@ function mapStoryFromApi(apiStory) {
     imageBase64: apiStory.immagine || null,
     createdAt: apiStory.dataPubblicazione,
 
-    authorName: apiStory.autoreNome || "Anonimo",
-    authorRole: apiStory.autoreRuolo || "utente",
+    authorName: apiStory.autoreNome,  
+    authorRole: apiStory.autoreRuolo,
     type: apiStory.immagine ? "photo" : "text",
   };
 }
