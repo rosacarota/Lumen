@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { ArrowRight, Heart, Users, ShieldCheck } from 'lucide-react';
+import { ArrowRight, Heart, Users, ShieldCheck, BookOpen } from 'lucide-react';
 import '../stylesheets/Home.css';
 
 const Home = () => {
@@ -99,9 +99,9 @@ const Home = () => {
             </div>
 
             <div className="feature-card">
-              <div className="icon-box"><Heart size={24} /></div>
-              <h3>Dona</h3>
-              <p>Supporta le cause che ti stanno a cuore con donazioni semplici e tracciate.</p>
+              <div className="icon-box"><BookOpen size={24} /></div>
+              <h3>Racconta</h3>
+              <p>Condividi la tua esperienza e ispira la community.</p>
             </div>
 
           </div>
