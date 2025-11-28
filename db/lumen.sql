@@ -99,30 +99,3 @@
     FOREIGN KEY (Volontario) REFERENCES Utente(Email) ON DELETE CASCADE,
     UNIQUE(Evento, Volontario)
     );
-
-    -- Tabella Donazione
-    CREATE TABLE Donazione (
-    IDDonazione SERIAL PRIMARY KEY,
-    Utente VARCHAR(255) NOT NULL,
-    IDRaccolta INTEGER NOT NULL,
-    Importo DECIMAL(10, 2) NOT NULL,
-    DataDonazione DATE NOT NULL,
-    FOREIGN KEY (Utente) REFERENCES Utente(Email) ON DELETE CASCADE,
-    FOREIGN KEY (IDRaccolta) REFERENCES RaccoltaFondi(IDRaccolta) ON DELETE CASCADE
-    );
-
--- Trigger per aggiornare il totale della raccolta fondi
-CREATE FUNCTION aggiorna_totale_raccolta()
-    RETURNS TRIGGER AS $$
-BEGIN
-    UPDATE RaccoltaFondi
-    SET TotaleRaccolto = TotaleRaccolto + NEW.Importo
-    WHERE IDRaccolta = NEW.IDRaccolta;
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER trigger_aggiorna_totale
-    AFTER INSERT ON Donazione
-    FOR EACH ROW
-EXECUTE FUNCTION aggiorna_totale_raccolta();
