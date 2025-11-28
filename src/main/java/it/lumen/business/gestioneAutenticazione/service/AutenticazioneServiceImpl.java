@@ -38,13 +38,7 @@ public class AutenticazioneServiceImpl implements AutenticazioneService {
 
     @Override
     public Utente getUtente(String email){
-       Utente utente = utenteDAO.findByEmail(email);
-       try {
-            utente.setImmagine(recuperaImmagine(utente.getImmagine()));
-       } catch (IOException e) {
-           throw new RuntimeException(e);
-       }
-        return utente;
+       return utenteDAO.findByEmail(email);
     }
 
     public String recuperaImmagine(String pathImmagine) throws IOException {

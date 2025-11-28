@@ -31,13 +31,18 @@ public class GestioneAccountControl {
         this.registrazioneService = registrazioneService;
     }
 
-    @PostMapping("/datiUtente")
-    public ResponseEntity<?> datiUtente(@RequestBody SessionUser sessionUser) {
+    @GetMapping("/datiUtente")
+    public ResponseEntity<?> datiUtente(@RequestParam String token) {
 
-        String token= sessionUser.getToken();
         String email = jwtUtil.extractEmail(token);
 
         Utente utente = autenticazioneService.getUtente(email);
+
+        try {
+            utente.setImmagine(autenticazioneService.recuperaImmagine(utente.getImmagine()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         return  ResponseEntity.status(HttpStatus.OK).body(utente);
     }
