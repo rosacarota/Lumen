@@ -3,7 +3,7 @@ const API_BASE_URL = "http://localhost:8080";
 // Recupera token dalla sessione (o localStorage se ti serve)
 /* Se usi localStorage, sostituisci la funzione */
 function getAuthToken() {
-  return "eyJhbGciOiJIUzI1NiJ9.eyJydW9sbyI6IkVudGUiLCJzdWIiOiJtaWNoZWxlY2hpZXJjaGlhMkBnbWFpbC5jb20iLCJpYXQiOjE3NjQyNDMwMzQsImV4cCI6MTc2NDg0MzAzNH0.ZvtouV1-w8PmJxREqhyjY36Hb-T_HQTBlbmfz2hiWwY";
+  return localStorage.getItem("token");
 }
 
 // Converte un file immagine in Base64

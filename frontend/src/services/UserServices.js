@@ -77,12 +77,12 @@ export async function fetchUserProfile() {
   }
 
   try {
-    const response = await fetch(`${API_BASE_URL}/account/datiUtente`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ token: token })
+    const response = await fetch(`${API_BASE_URL}/account/datiUtente?token=${token}`, {
+      method: "GET",
+     // headers: {
+       // "Content-Type": "application/json"
+      //},
+      //body: JSON.stringify({ token: token })
     });
 
     if (!response.ok) {
