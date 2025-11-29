@@ -1,6 +1,7 @@
 package it.lumen.data.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import it.lumen.data.entity.Utente;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonPropertyOrder({ "nome", "cognome", "email", "ruolo", "immagine" })
 public class UtenteDTO {
 
     @Email(message = "Email non valida")
