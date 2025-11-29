@@ -36,7 +36,7 @@
 .ra-container {
     position: relative;
     width: 100%;
-    max-width: 780px;
+    max-width: 900px;
     min-height: 480px;
     display: flex;
     border-radius: 24px;
@@ -156,7 +156,7 @@
 
 .ra-form-container {
     width: 100%;
-    max-width: 420px;
+    max-width: 480px;
 }
 
 /* Logo & Testi */
@@ -330,7 +330,7 @@
 }
 
 .ra-page-modal .ra-container {
-    max-width: 900px;
+    max-width: 1050px;
     width: 100%;
     min-height: auto;
 }
