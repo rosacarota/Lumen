@@ -162,7 +162,7 @@ public class DBPopulator implements CommandLineRunner { // 1. Implementa questa 
         Affiliazione affiliazione = new Affiliazione();
         affiliazione.setDescrizione("Richiesta di adesione standard");
         affiliazione.setDataInizio(Date.valueOf(LocalDate.now()));
-        affiliazione.setStato(Affiliazione.StatoAffiliazione.InAttesa);
+        affiliazione.setStato(Affiliazione.StatoAffiliazione.Accettata);
         affiliazione.setEnte(ente);
         affiliazione.setVolontario(volontario);
 

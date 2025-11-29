@@ -1,5 +1,6 @@
 package it.lumen.data.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import it.lumen.data.entity.Utente;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UtenteDTO {
 
     @Email(message = "Email non valida")
