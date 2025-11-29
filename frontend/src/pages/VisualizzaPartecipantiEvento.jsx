@@ -1,62 +1,83 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom'; // Serve per leggere l'ID dall'URL
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import SchedaVolontario from '../components/SchedaVolontario'; // <--- Assicurati che questo file esista!
-import '../stylesheets/EventsPage.css'; // Usiamo lo stesso CSS della griglia eventi
+import SchedaVolontario from '../components/SchedaVolontario';
+import '../stylesheets/EventsPage.css'; 
+
+// Importiamo la nuova funzione dal service
+import { fetchPartecipanti } from '../services/PartecipazioneEventiService';
 
 export default function VisualizzaPartecipantiEvento() {
   
-  // DATI FINTI (Mock) basati sul tuo Utente.java
-  const listaVolontari = [
-    {
-      email: "mario.rossi@test.com",
-      nome: "Mario",
-      cognome: "Rossi",
-      ruolo: "Volontario",
-      descrizione: "Sono un appassionato di ecologia.",
-      recapitoTelefonico: "3331234567",
-      immagine: null 
-    },
-    {
-      email: "luigi.verdi@test.com",
-      nome: "Luigi",
-      cognome: "Verdi",
-      ruolo: "Volontario",
-      descrizione: "Esperto in primo soccorso.",
-      recapitoTelefonico: "3339876543",
-      immagine: null
-    }
-  ];
+  // Legge l'id dall'URL (es. se sei su /partecipanti/1, idEvento sarà 1)
+  const { idEvento } = useParams(); 
+  
+  const [listaVolontari, setListaVolontari] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadData = async () => {
+      // Se non c'è ID (es. test manuale), fermati o usa un default
+      if (!idEvento) return; 
+
+      setLoading(true);
+      const data = await fetchPartecipanti(idEvento);
+      setListaVolontari(data);
+      setLoading(false);
+    };
+
+    loadData();
+  }, [idEvento]); // Ricarica se cambia l'ID evento
 
   return (
-    <>
-      <div className="page-wrapper">
-        <Navbar />
+    <div className="page-wrapper">
+      <Navbar />
 
-        <div className="main-container">
-          <div className="content-box">
+      <div className="main-container">
+        <div className="content-box">
+          
+          <div className="box-header">
+            <div className="header-text">
+              <h1>Partecipanti</h1>
+              <p>Volontari iscritti all'evento #{idEvento}</p>
+            </div>
             
-            <div className="box-header">
-              <div className="header-text">
-                <h1>Partecipanti</h1>
-                <p>Volontari iscritti all'evento</p>
-              </div>
-            </div>
-
-            {/* Griglia Volontari */}
-            <div className="events-grid">
-              {listaVolontari.map((volontario) => (
-                <SchedaVolontario 
-                  key={volontario.email} 
-                  utente={volontario} 
-                />
-              ))}
-            </div>
-
+            {/* Contatore Iscritti */}
+            {!loading && (
+                <div style={{
+                    backgroundColor: '#ecfdf5', 
+                    color: '#0e7490', 
+                    padding: '8px 16px', 
+                    borderRadius: '20px', 
+                    fontWeight: 'bold'
+                }}>
+                    {listaVolontari.length} Iscritti
+                </div>
+            )}
           </div>
+
+          {/* Griglia Volontari */}
+          <div className="events-grid">
+            
+            {loading && <p>Caricamento partecipanti...</p>}
+            
+            {!loading && listaVolontari.length === 0 && (
+                <p>Nessun volontario iscritto a questo evento.</p>
+            )}
+
+            {!loading && listaVolontari.map((volontario) => (
+              <SchedaVolontario 
+                key={volontario.email} // L'email è chiave primaria in Utente.java
+                utente={volontario} 
+              />
+            ))}
+          </div>
+
         </div>
-        <Footer />
       </div>
-    </>
+      
+      <Footer />
+    </div>
   );
 }

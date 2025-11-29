@@ -89,3 +89,39 @@ export const rimuoviIscrizione = async (idPartecipazione) => {
     return { success: false, message: "Errore connessione" };
   }
 };
+
+// --- 5. RECUPERA LISTA PARTECIPANTI DI UN EVENTO ---
+// Chiama: POST /partecipazione/visualizzaPartecipazioniEvento
+export const fetchPartecipanti = async (idEvento) => {
+  const token = getToken();
+  
+  try {
+    // Nota: Ho aggiunto encodeURIComponent(token) come hai fatto nelle altre funzioni per sicurezza
+    const response = await fetch(`${API_BASE_URL}/partecipazione/visualizzaPartecipazioniEvento?token=${encodeURIComponent(token)}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ idEvento: idEvento })
+    });
+
+    if (!response.ok) {
+      console.error("Errore recupero partecipanti:", response.status);
+      return [];
+    }
+
+    /* 
+       Il backend restituisce una lista di oggetti "Partecipazione".
+       Ogni Partecipazione contiene l'oggetto "Volontario".
+       Noi estraiamo solo quello per passarlo alla card.
+    */
+    const listaPartecipazioni = await response.json();
+    
+    // Mappiamo per ottenere solo l'array di Utenti
+    const listaVolontari = listaPartecipazioni.map(p => p.volontario);
+    
+    return listaVolontari;
+
+  } catch (error) {
+    console.error("Errore fetchPartecipanti:", error);
+    return [];
+  }
+};
