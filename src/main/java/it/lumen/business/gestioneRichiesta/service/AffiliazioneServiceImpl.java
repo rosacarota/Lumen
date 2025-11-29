@@ -50,5 +50,14 @@ public class AffiliazioneServiceImpl implements AffiliazioneService {
         affiliazioneDAO.removeByIdAffiliazione(id);
     }
 
+    @Override
+    public List<Affiliazione> getRichiesteInAttesa(Utente ente) {
+        return affiliazioneDAO.findAffiliazioneByStato_InAttesa(ente);
+    }
+
+    @Override
+    public boolean checkAffiliazione(String ente, String volontario) {
+        return affiliazioneDAO.existsByEnte_EmailAndVolontario_Email(ente, volontario);
+    }
 
 }

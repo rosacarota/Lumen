@@ -13,6 +13,12 @@ public interface AffiliazioneDAO extends JpaRepository<Affiliazione, Integer> {
     @Query("SELECT a.volontario FROM Affiliazione a WHERE a.ente = :ente AND a.stato = 'Accettata'")
     List<Utente> findVolontariAffiliati(@Param("ente") Utente ente);
 
+    @Query("SELECT a FROM Affiliazione a WHERE a.ente = :ente AND a.stato = 'InAttesa'")
+    List<Affiliazione> findAffiliazioneByStato_InAttesa(@Param("ente") Utente ente);
+
+    boolean existsByEnte_EmailAndVolontario_Email(String emailEnte, String emailVolontario);
+
+
     Affiliazione findByIdAffiliazione(int id);
 
     void removeByIdAffiliazione(int id);

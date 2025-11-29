@@ -11,9 +11,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -31,6 +35,18 @@ public class AffiliazioneControl {
         this.autenticazioneService = autenticazioneService;
     }
 
+    @GetMapping("/check")
+    public ResponseEntity<Boolean> checkAffiliazione(@RequestParam String emailEnte, @RequestParam String token) {
+
+        String emailVolontario = jwtUtil.extractEmail(token);
+
+        if (emailVolontario == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+        }
+
+         return ResponseEntity.status(HttpStatus.OK).body( affiliazioneService.checkAffiliazione(emailEnte, emailVolontario));
+    }
+
     @PostMapping("/richiedi")
     public ResponseEntity<String> richiediAffiliazione(@RequestBody Affiliazione affiliazione, @RequestParam String token) {
         String email = jwtUtil.extractEmail(token);
@@ -43,22 +59,27 @@ public class AffiliazioneControl {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Utente non trovato");
         }
 
-        // Solo i volontari possono fare richiesta
         if (richiedente.getRuolo() != Utente.Ruolo.Volontario) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Solo i volontari possono richiedere l'affiliazione");
         }
 
-        // Imposta il volontario richiedente automaticamente
         affiliazione.setVolontario(richiedente);
 
-        // Verifica che l'ente target sia presente nel JSON
         if (affiliazione.getEnte() == null || affiliazione.getEnte().getEmail() == null) {
             return ResponseEntity.badRequest().body("Ente destinatario mancante");
         }
 
-        // Imposta i valori di default
         affiliazione.setStato(Affiliazione.StatoAffiliazione.InAttesa);
         affiliazione.setDataInizio(Date.valueOf(LocalDate.now()));
+
+        String emailEnte = affiliazione.getEnte().getEmail();
+        Utente ente = autenticazioneService.getUtente(emailEnte);
+
+        affiliazione.setEnte(ente);
+
+        if(affiliazioneService.checkAffiliazione(emailEnte, email)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("la richiesta è già presente");
+        }
 
         try {
             affiliazioneService.richiediAffiliazione(affiliazione);
@@ -69,7 +90,6 @@ public class AffiliazioneControl {
     }
 
 
-    // ACCETTA RICHIESTA (Cambia stato a Accettata)
     @PostMapping("/accetta")
     public ResponseEntity<String> accettaAffiliazione(@RequestParam Integer idAffiliazione, @RequestParam String token) {
         String email = jwtUtil.extractEmail(token);
@@ -85,8 +105,6 @@ public class AffiliazioneControl {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Affiliazione non trovata");
             }
 
-            // Verifica permessi: solo il destinatario della richiesta può accettare
-            // Se l'iniziatore non è tracciato esplicitamente, controlliamo che chi accetta sia coinvolto
             boolean isCoinvolto = utenteLoggato.getEmail().equals(affiliazione.getEnte().getEmail()) ||
                     utenteLoggato.getEmail().equals(affiliazione.getVolontario().getEmail());
 
@@ -117,7 +135,6 @@ public class AffiliazioneControl {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Affiliazione non trovata");
             }
 
-            // Controllo permessi: deve essere uno dei due attori coinvolti
             boolean isCoinvolto = utenteLoggato.getEmail().equals(affiliazione.getEnte().getEmail()) ||
                     utenteLoggato.getEmail().equals(affiliazione.getVolontario().getEmail());
 
@@ -159,7 +176,11 @@ public class AffiliazioneControl {
                         dto.setNome(utente.getNome());
                         dto.setCognome(utente.getCognome());
                         dto.setAmbito(utente.getAmbito());
-                        dto.setImmagine(utente.getImmagine());
+                        try {
+                            dto.setImmagine(autenticazioneService.recuperaImmagine(utente.getImmagine()));
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
                         return dto;
                     })
                     .collect(Collectors.toList());
@@ -168,6 +189,58 @@ public class AffiliazioneControl {
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Errore nel recupero affiliati: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/richiesteInAttesa")
+    public ResponseEntity<?> getRichiesteInAttesa(@RequestParam String token) {
+        String email = jwtUtil.extractEmail(token);
+        if (email == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token non valido");
+        }
+
+        Utente ente = autenticazioneService.getUtente(email);
+        if (ente == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Utente non trovato");
+        }
+
+        if (ente.getRuolo() != Utente.Ruolo.Ente) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Solo gli Enti possono visualizzare le richieste");
+        }
+
+        try {
+            List<Affiliazione> listaRichieste = affiliazioneService.getRichiesteInAttesa(ente);
+
+            List<Map<String, Object>> rispostaCompleta = new ArrayList<>();
+
+            for (Affiliazione aff : listaRichieste) {
+                Map<String, Object> elemento = new HashMap<>();
+
+                Map<String, Object> datiRichiesta = new HashMap<>();
+                datiRichiesta.put("idAffiliazione", aff.getIdAffiliazione());
+                datiRichiesta.put("descrizione", aff.getDescrizione());
+                datiRichiesta.put("dataInizio", aff.getDataInizio());
+                datiRichiesta.put("stato", aff.getStato());
+
+                elemento.put("richiesta", datiRichiesta);
+
+                Utente v = aff.getVolontario();
+                UtenteDTO volontarioDTO = new UtenteDTO();
+                volontarioDTO.setNome(v.getNome());
+                volontarioDTO.setCognome(v.getCognome());
+                volontarioDTO.setAmbito(v.getAmbito());
+                volontarioDTO.setImmagine(v.getImmagine());
+
+                elemento.put("volontario", volontarioDTO);
+
+                // Aggiungi alla lista finale
+                rispostaCompleta.add(elemento);
+            }
+
+            return ResponseEntity.ok(rispostaCompleta);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Errore nel recupero richieste: " + e.getMessage());
         }
     }
 

@@ -17,4 +17,7 @@ public interface AffiliazioneService {
 
     public void rifiutaAffiliazione(int id);
 
+    public List<Affiliazione> getRichiesteInAttesa(Utente ente);
+
+    public boolean checkAffiliazione(String ente, String volontario);
 }
