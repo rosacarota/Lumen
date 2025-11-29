@@ -324,7 +324,7 @@
 }
 
 .stories-section {
-  background-color: var(--bg-soft);
+  background-color: #f8f9fa;
   /* Alternating background */
 }
 
@@ -356,11 +356,13 @@
   /* Center button */
   width: fit-content;
 }
+
 /* --- SCROLL ANIMATIONS --- */
 .reveal {
   opacity: 0;
   transition: all 1s ease-out;
-  visibility: hidden; /* Prevents interaction before reveal */
+  visibility: hidden;
+  /* Prevents interaction before reveal */
 }
 
 .reveal.active {
