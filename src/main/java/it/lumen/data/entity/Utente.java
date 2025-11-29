@@ -61,6 +61,8 @@ public class Utente implements Serializable {
     private String ambito;
 
     @Column(name="immagine", nullable=true)
+    @Pattern(regexp = "^[a-zA-Z0-9\\s._/\\\\:-]*\\.(jpg|jpeg|png|gif|webp)$",
+            message = "Formato immagine non supportato. Usa jpg, jpeg, png, gif o webp")
     private String immagine;
 
 }

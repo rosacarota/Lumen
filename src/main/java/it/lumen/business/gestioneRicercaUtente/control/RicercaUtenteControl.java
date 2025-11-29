@@ -26,13 +26,11 @@ public class RicercaUtenteControl {
 
 
     private final RicercaUtenteService ricercaUtenteService;
-    private final JwtUtil jwtUtil;
     private final AutenticazioneService autenticazioneService;
 
     @Autowired
     public RicercaUtenteControl(RicercaUtenteService ricercaUtenteService, JwtUtil jwtUtil, AutenticazioneService autenticazioneService) {
         this.ricercaUtenteService = ricercaUtenteService;
-        this.jwtUtil = jwtUtil;
         this.autenticazioneService = autenticazioneService;
     }
 
