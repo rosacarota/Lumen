@@ -1,32 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import Navbar from '../components/Navbar.jsx';
-import AccessoInfoProfilo from '../components/AccessoInfoProfilo.jsx'; 
+import AccessoInfoProfilo from '../components/AccessoInfoProfilo.jsx';
 import AddEvento from '../components/AddEvento.jsx';
 import AddRaccoltaFondi from '../components/AddRaccoltaFondi.jsx';
 import Footer from '../components/Footer.jsx';
 import '../stylesheets/ProfiloEnte.css';
 import { fetchUserProfile } from '../services/UserServices.js';
+import RichiestaAffiliazione from '../components/RichiestaAffiliazione.jsx';
+import AffiliazioneService from '../services/AffiliazioneService.js';
 
 const ModalWrapper = ({ children, onClose }) => {
   return (
     <div style={{
-        position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-        zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center'
-      }}>
+      position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+      zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center'
+    }}>
       <div onClick={onClose} style={{
-          position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.6)', cursor: 'pointer'
-        }} />
+        position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.6)', cursor: 'pointer'
+      }} />
       <div style={{
-          position: 'relative', zIndex: 10, backgroundColor: 'white',
-          borderRadius: '12px', padding: '20px', width: '90%', maxWidth: '500px',
-          maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 10px 25px rgba(0,0,0,0.3)'
-        }}>
+        position: 'relative', zIndex: 10, backgroundColor: 'white',
+        borderRadius: '12px', padding: '20px', width: '90%', maxWidth: '500px',
+        maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 10px 25px rgba(0,0,0,0.3)'
+      }}>
         <button onClick={onClose} style={{
-            position: 'absolute', top: '10px', right: '15px', background: 'none',
-            border: 'none', fontSize: '24px', cursor: 'pointer', color: '#666', zIndex: 20
-          }}>&times;</button>
+          position: 'absolute', top: '10px', right: '15px', background: 'none',
+          border: 'none', fontSize: '24px', cursor: 'pointer', color: '#666', zIndex: 20
+        }}>&times;</button>
         {children}
       </div>
     </div>
@@ -38,6 +40,8 @@ const ProfiloEnte = () => {
   const [isOwner, setIsOwner] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
   const [isFollowing, setIsFollowing] = useState(false);
+  const [isVolunteer, setIsVolunteer] = useState(false);
+  const [showAffiliazioneModal, setShowAffiliazioneModal] = useState(false);
   const [activeTab, setActiveTab] = useState('futuri');
   const [activeSideTab, setActiveSideTab] = useState('storie');
   const [filters, setFilters] = useState({ data: '', orario: '', tipologia: '' });
@@ -70,6 +74,11 @@ const ProfiloEnte = () => {
         } else {
           setIsOwner(false);
         }
+        if (currentUser.ruolo === 'volontario') {
+          setIsVolunteer(true);
+        } else {
+          setIsVolunteer(false);
+        }
       } catch (error) {
         console.error("Errore parsing user", error);
         setIsOwner(false);
@@ -77,13 +86,36 @@ const ProfiloEnte = () => {
     } else {
       // Se non c'è utente loggato ma stiamo sviluppando, forziamo owner per test grafico
       // (Rimuovi questo else in produzione)
-      setIsOwner(true); 
+      setIsOwner(true);
       loadData();
     }
   }, [id]);
   const handleFollowClick = () => setIsFollowing(!isFollowing);
   const handleFilterChange = (e) => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
+  };
+
+  const handleRichiestaAffiliazione = async () => {
+    const token = localStorage.getItem('token');
+    // Assuming userProfile contains the Ente's data.
+    const emailEnte = userProfile?.email;
+
+    if (!emailEnte) {
+      alert("Impossibile recuperare l'email dell'ente. Assicurati che il profilo sia caricato correttamente.");
+      return;
+    }
+
+    try {
+      const isAffiliated = await AffiliazioneService.checkAffiliazione(emailEnte, token);
+      if (isAffiliated) {
+        alert("Non puoi effettuare la richiesta di affiliazione perché hai già un ente affiliato.");
+      } else {
+        setShowAffiliazioneModal(true);
+      }
+    } catch (error) {
+      console.error("Errore check affiliazione:", error);
+      alert("Errore durante il controllo dell'affiliazione.");
+    }
   };
   const profileProps = userProfile ? {
     title: userProfile.nome || "Nome Ente",
@@ -97,10 +129,10 @@ const ProfiloEnte = () => {
     <div className="ente-page-wrapper">
       <Navbar />
       <div className="main-container">
-        <AccessoInfoProfilo 
+        <AccessoInfoProfilo
           {...profileProps} // Passa i dati scaricati
-          // Se non è owner, nascondiamo i tasti modifica nel componente figlio (se gestito internamente)
-          // Oppure, se AccessoInfoProfilo gestisce l'essere owner, passagli una prop isOwner={isOwner}
+        // Se non è owner, nascondiamo i tasti modifica nel componente figlio (se gestito internamente)
+        // Oppure, se AccessoInfoProfilo gestisce l'essere owner, passagli una prop isOwner={isOwner}
         />
         <section className="event-section">
           <div className="controll">
@@ -120,9 +152,16 @@ const ProfiloEnte = () => {
                   </button>
                 </>
               ) : (
-                <button className="btn-action" onClick={handleFollowClick}>
-                  {isFollowing ? 'SEGUITO' : 'SEGUI'}
-                </button>
+                <>
+                  <button className="btn-action" onClick={handleFollowClick}>
+                    {isFollowing ? 'SEGUITO' : 'SEGUI'}
+                  </button>
+                  {isVolunteer && (
+                    <button className="btn-action btn-affiliation" onClick={handleRichiestaAffiliazione}>
+                      Richiedi affiliazione all'ente
+                    </button>
+                  )}
+                </>
               )}
             </div>
           </div>
@@ -183,6 +222,14 @@ const ProfiloEnte = () => {
       {showRaccoltaModal && (
         <ModalWrapper onClose={() => setShowRaccoltaModal(false)}>
           <AddRaccoltaFondi onClose={() => setShowRaccoltaModal(false)} isModal={true} />
+        </ModalWrapper>
+      )}
+      {showAffiliazioneModal && (
+        <ModalWrapper onClose={() => setShowAffiliazioneModal(false)}>
+          <RichiestaAffiliazione
+            onClose={() => setShowAffiliazioneModal(false)}
+            emailEnte={userProfile?.email}
+          />
         </ModalWrapper>
       )}
 

@@ -1,16 +1,17 @@
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-:root {
+/* Scoped variables for this page only */
+.ente-page-wrapper {
   --bg-main: #F7FBFB;
   --bg-soft: #E9FBE7;
   --first-color: #087886;
   --second-color: #4AAFB8;
   --third-color: #7CCE6B;
   --max-width: 1400px;
+}
+
+.ente-page-wrapper *,
+.ente-page-wrapper *::before,
+.ente-page-wrapper *::after {
+  box-sizing: border-box;
 }
 
 .ente-page-wrapper {
@@ -20,9 +21,10 @@
   background-color: var(--bg-soft);
   font-family: 'Segoe UI', sans-serif;
   overflow-x: hidden;
+  color: var(--first-color);
 }
 
-.main-container {
+.ente-page-wrapper .main-container {
   flex: 1 0 auto;
   width: 100%;
   max-width: 100%;
@@ -41,20 +43,14 @@
   height: auto;
 }
 
-/* body selector removed to avoid global pollution */
-.ente-page-wrapper {
-  background-color: var(--bg-soft);
-  color: var(--first-color);
-}
-
-.follow-btn.following {
+.ente-page-wrapper .follow-btn.following {
   background: rgba(0, 0, 0, 0.6);
   color: white;
   border: 1px solid white;
   box-shadow: none;
 }
 
-.event-section {
+.ente-page-wrapper .event-section {
   width: 100%;
   max-width: var(--max-width);
   margin: 0 auto;
@@ -63,7 +59,7 @@
   flex-direction: column;
 }
 
-.controll {
+.ente-page-wrapper .controll {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -75,12 +71,12 @@
   padding-bottom: 10px;
 }
 
-.tabs-left {
+.ente-page-wrapper .tabs-left {
   display: flex;
   gap: 20px;
 }
 
-.tabs-left button {
+.ente-page-wrapper .tabs-left button {
   background: none;
   border: none;
   color: #999;
@@ -93,16 +89,16 @@
   transition: all 0.3s ease;
 }
 
-.tabs-left button.active {
+.ente-page-wrapper .tabs-left button.active {
   border-bottom-color: var(--first-color);
   color: var(--first-color);
 }
 
-.tabs-left button:hover {
+.ente-page-wrapper .tabs-left button:hover {
   color: var(--first-color);
 }
 
-.btn-action {
+.ente-page-wrapper .btn-action {
   padding: 9px 23px;
   background: var(--second-color);
   color: white;
@@ -114,31 +110,43 @@
   box-shadow: 0 4px 12px rgba(8, 120, 134, 0.3);
   text-transform: uppercase;
   margin-left: 10px;
-  transition: transform 0.2s;
+  transition: transform 0.2s, background-color 0.3s;
 }
 
-.btn-action:hover {
+.ente-page-wrapper .btn-action:hover {
   transform: translateY(-2px);
 }
 
-.split-layout {
+.ente-page-wrapper .btn-affiliation {
+  background-color: var(--first-color);
+  /* Darker teal for emphasis */
+  border: 1px solid transparent;
+}
+
+.ente-page-wrapper .btn-affiliation:hover {
+  background-color: #065f6a;
+  /* Slightly darker on hover */
+  box-shadow: 0 6px 15px rgba(8, 120, 134, 0.4);
+}
+
+.ente-page-wrapper .split-layout {
   display: flex;
   gap: 30px;
   align-items: flex-start;
   width: 100%;
 }
 
-.left-column {
+.ente-page-wrapper .left-column {
   flex: 2;
   min-width: 0;
 }
 
-.right-column {
+.ente-page-wrapper .right-column {
   flex: 1;
   min-width: 300px;
 }
 
-.event-search {
+.ente-page-wrapper .event-search {
   background-color: var(--second-color);
   padding: 12px 20px;
   border-radius: 20px;
@@ -152,7 +160,7 @@
   box-sizing: border-box;
 }
 
-.search-title {
+.ente-page-wrapper .search-title {
   color: var(--bg-main);
   font-weight: 700;
   text-transform: uppercase;
@@ -162,7 +170,7 @@
   white-space: nowrap;
 }
 
-.search-inputs {
+.ente-page-wrapper .search-inputs {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
@@ -171,7 +179,7 @@
   justify-content: flex-end;
 }
 
-.input-group {
+.ente-page-wrapper .input-group {
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -179,14 +187,14 @@
   max-width: 180px;
 }
 
-.input-group label {
+.ente-page-wrapper .input-group label {
   color: var(--bg-main);
   font-weight: 700;
   font-size: 0.65rem;
   margin-left: 8px;
 }
 
-.custom-input {
+.ente-page-wrapper .custom-input {
   background-color: rgba(255, 255, 255, 0.7);
   border: none;
   border-radius: 20px;
@@ -199,7 +207,7 @@
   box-sizing: border-box;
 }
 
-.event-grid {
+.ente-page-wrapper .event-grid {
   background-color: rgba(255, 255, 255, 0.5);
   border: 1px solid white;
   padding: 30px;
@@ -211,7 +219,7 @@
   color: #999;
 }
 
-.sidebar-header {
+.ente-page-wrapper .sidebar-header {
   background-color: var(--second-color);
   padding: 19px;
   border-radius: 20px;
@@ -221,7 +229,7 @@
   box-sizing: border-box;
 }
 
-.side-tab-btn {
+.ente-page-wrapper .side-tab-btn {
   flex: 1;
   background: transparent;
   border: none;
@@ -235,17 +243,17 @@
   text-align: center;
 }
 
-.side-tab-btn:hover {
+.ente-page-wrapper .side-tab-btn:hover {
   background-color: rgba(255, 255, 255, 0.2);
 }
 
-.side-tab-btn.active {
+.ente-page-wrapper .side-tab-btn.active {
   background-color: rgba(255, 255, 255, 0.9);
   color: var(--first-color);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.sidebar-content {
+.ente-page-wrapper .sidebar-content {
   background-color: rgba(255, 255, 255, 0.5);
   border: 1px solid white;
   border-radius: 20px;
@@ -259,14 +267,14 @@
   color: #999;
 }
 
-.placeholder-content {
+.ente-page-wrapper .placeholder-content {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 15px;
 }
 
-.story-circle {
+.ente-page-wrapper .story-circle {
   width: 60px;
   height: 60px;
   border-radius: 50%;
@@ -274,38 +282,38 @@
 }
 
 @media (max-width: 900px) {
-  .main-container {
+  .ente-page-wrapper .main-container {
     padding: 0 10px;
   }
 
-  .event-section {
+  .ente-page-wrapper .event-section {
     padding: 0;
   }
 
-  .split-layout {
+  .ente-page-wrapper .split-layout {
     flex-direction: column;
     gap: 40px;
   }
 
-  .left-column,
-  .right-column {
+  .ente-page-wrapper .left-column,
+  .ente-page-wrapper .right-column {
     width: 100%;
     flex: none;
     min-width: auto;
   }
 
-  .event-search {
+  .ente-page-wrapper .event-search {
     flex-direction: column;
     align-items: stretch;
     height: auto;
   }
 
-  .search-inputs {
+  .ente-page-wrapper .search-inputs {
     width: 100%;
     justify-content: space-between;
   }
 
-  .input-group {
+  .ente-page-wrapper .input-group {
     max-width: none;
     flex-basis: 48%;
   }
