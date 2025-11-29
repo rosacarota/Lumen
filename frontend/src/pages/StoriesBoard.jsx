@@ -192,10 +192,7 @@ const StoriesBoard = () => {
                   )}
 
                   <div className="story-card-footer">
-                    <span className="story-date">
-                      {story.createdAt ? formatDate(story.createdAt) : "N/D"}
-                    </span>
-
+                    
                     <button
                       type="button"
                       className="story-edit-button"
