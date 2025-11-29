@@ -18,43 +18,43 @@ const StoriesBoard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  //popup "nuovo racconto"
+  // popup "nuovo racconto"
   const [isAddStoryOpen, setIsAddStoryOpen] = useState(false);
-  //popup "modifica racconto"
+
+  // popup "modifica racconto"
   const [editingStory, setEditingStory] = useState(null);
-  //popup "elimina racconto"
+
+  // popup "elimina racconto"
   const [storyToDelete, setStoryToDelete] = useState(null);
 
-  //carica le storie dal backend
-  useEffect(() => {
-    const loadStories = async () => {
-      try {
-        setLoading(true);
-        const data = await fetchStories();
-        setStories(data);
-      } catch (err) {
-        console.error(err);
-        setError("Impossibile caricare le storie");
-      } finally {
-        setLoading(false);
-      }
-    };
+  // funzione riutilizzabile che carica le storie dal backend
+  const loadStories = async () => {
+    try {
+      setLoading(true);
+      const data = await fetchStories();
+      setStories(data);
+      setError(null);
+    } catch (err) {
+      console.error(err);
+      setError("Impossibile caricare le storie");
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  // carica le storie al mount
+  useEffect(() => {
     loadStories();
   }, []);
 
   const openAddStory = () => setIsAddStoryOpen(true);
   const closeAddStory = () => setIsAddStoryOpen(false);
 
-  //crea nuovo racconto, post/aggiungi
+  // crea nuovo racconto -> POST /aggiungi + ricarica lista
   const handleSubmitStory = async (newStory) => {
     try {
-      const created = await addStory({
-        ...newStory,
-        image: null,
-      });
-
-      setStories((prev) => [created, ...prev]);
+      await addStory(newStory);
+      await loadStories(); // ricarica dal backend
       setIsAddStoryOpen(false);
     } catch (err) {
       console.error(err);
@@ -62,24 +62,21 @@ const StoriesBoard = () => {
     }
   };
 
-  //apri popup modifica 
+  // apri popup modifica
   const openEditStory = (story) => {
     setEditingStory(story);
   };
 
-  //chiudi popup modifica
+  // chiudi popup modifica
   const closeEditStory = () => {
     setEditingStory(null);
   };
 
-  //salva modifica
+  // salva modifiche -> POST /modifica + ricarica lista
   const handleSaveEditedStory = async (updatedStory) => {
     try {
-      const saved = await editStory(updatedStory);
-
-      setStories((prev) =>
-        prev.map((s) => (s.id === saved.id ? saved : s))
-      );
+      await editStory(updatedStory);
+      await loadStories(); 
       setEditingStory(null);
     } catch (err) {
       console.error(err);
@@ -87,25 +84,22 @@ const StoriesBoard = () => {
     }
   };
 
-  //apri popup elimina
+  // apri popup elimina
   const openDeleteStory = (story) => {
     setStoryToDelete(story);
   };
 
-  //chiudi popup elimina 
+  // chiudi popup elimina
   const closeDeleteStory = () => {
     setStoryToDelete(null);
   };
 
-  //conferma eliminazione 
+  // conferma eliminazione -> DELETE /rimuovi
   const handleDeleteConfirm = async () => {
     if (!storyToDelete) return;
     try {
       await deleteStory(storyToDelete.id);
-
-      setStories((prev) =>
-        prev.filter((s) => s.id !== storyToDelete.id)
-      );
+      await loadStories(); 
       setStoryToDelete(null);
     } catch (err) {
       console.error(err);
@@ -135,6 +129,7 @@ const StoriesBoard = () => {
 
       <div className="stories-page" id="storie">
         <div className="stories-container">
+          {/* Header pagina */}
           <header className="stories-header">
             <div>
               <h1 className="stories-title">Storie</h1>
@@ -151,12 +146,15 @@ const StoriesBoard = () => {
             </button>
           </header>
 
+          {/* Messaggi di stato */}
           {loading && (
             <p className="stories-loading">Caricamento storie...</p>
           )}
           {error && <p className="stories-error">{error}</p>}
 
+          {/* Layout a due colonne */}
           <div className="stories-layout">
+            {/* Colonna sinistra: feed principale */}
             <section className="stories-main">
               {stories.map((story) => (
                 <article key={story.id} className="story-card">
@@ -168,7 +166,7 @@ const StoriesBoard = () => {
                     </div>
                     <div className="story-author-info">
                       <span className="story-author-name">
-                        {story.authorName}
+                        {story.authorName || "Anonimo"}
                       </span>
                       <span className="story-author-role">
                         {story.authorRole}
@@ -182,17 +180,16 @@ const StoriesBoard = () => {
                   <h2 className="story-card-title">{story.title}</h2>
                   <p className="story-card-content">{story.content}</p>
 
-                  {/*aggiunta immagine*/}
+                  {/* Immagine, se presente */}
                   {story.imageBase64 && (
                     <div className="story-image-wrapper">
                       <img
                         src={story.imageBase64}
+                        alt={story.title || "Immagine racconto"}
                         className="story-image"
-                        alt="story"
                       />
                     </div>
                   )}
-                  {/* - */}
 
                   <div className="story-card-footer">
                     <span className="story-date">
@@ -230,6 +227,7 @@ const StoriesBoard = () => {
               )}
             </section>
 
+            {/* Colonna destra: ultime storie */}
             <aside className="stories-sidebar">
               <h3 className="sidebar-title">Ultime storie</h3>
 
@@ -243,7 +241,7 @@ const StoriesBoard = () => {
                     </div>
                     <div className="sidebar-author-info">
                       <span className="sidebar-author-name">
-                        {story.authorName}
+                        {story.authorName || "Anonimo"}
                       </span>
                       <span className="sidebar-author-role">
                         {story.authorRole}
@@ -271,7 +269,7 @@ const StoriesBoard = () => {
         </div>
       </div>
 
-     {/* POPUP NUOVO RACCONTO */}
+      {/* POPUP NUOVO RACCONTO */}
       {isAddStoryOpen && (
         <AddStory
           onSubmit={handleSubmitStory}
@@ -288,7 +286,8 @@ const StoriesBoard = () => {
           onSave={handleSaveEditedStory}
         />
       )}
-     {/* POPUP ELIMINA RACCONT0 */}
+
+      {/* POPUP ELIMINA RACCONT0 */}
       {storyToDelete && (
         <DeleteStory
           story={storyToDelete}
