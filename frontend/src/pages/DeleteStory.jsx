@@ -4,15 +4,6 @@ import "../stylesheets/DeleteStory.css";
 const DeleteStory = ({ story, onCancel, onConfirm }) => {
   if (!story) return null;
 
-  const formatDate = (iso) =>
-    new Date(iso).toLocaleString("it-IT", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-
   return (
     <div className="delete-story-overlay">
       <div className="delete-story-modal">
@@ -41,16 +32,11 @@ const DeleteStory = ({ story, onCancel, onConfirm }) => {
                 {story.title || "Senza titolo"}
               </span>
             </p>
+
             <p className="delete-meta-row">
               <span className="delete-meta-label">Autore</span>
               <span className="delete-meta-value">
                 {story.authorName || "Anonimo"}
-              </span>
-            </p>
-            <p className="delete-meta-row">
-              <span className="delete-meta-label">Data</span>
-              <span className="delete-meta-value">
-                {story.createdAt ? formatDate(story.createdAt) : "N/D"}
               </span>
             </p>
           </div>
