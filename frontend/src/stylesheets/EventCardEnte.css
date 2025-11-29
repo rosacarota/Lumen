@@ -1,21 +1,17 @@
 :root {
   /* -- Sfondi -- */
-  --bg-main: #F7FBFB;
+  --bg-main: #F7FBFB; 
   --bg-soft: #F0F5F5;
 
   /* -- Colori Principali -- */
-  --first-color: #087886;
-  /* Turchese */
-  --second-color: #4AAFB8;
-  /* Azzurro */
-  --third-color: #7CCE6B;
-  /* Verde */
-  --danger-color: #ef4444;
-  /* Rosso per annullare iscrizione */
-
+  --first-color: #087886; /* Turchese */
+  --second-color: #4AAFB8; /* Azzurro */
+  --third-color: #7CCE6B;  /* Verde */
+  --danger-color: #ef4444; /* Rosso per annullare iscrizione */
+  
   /* -- Colori Testo -- */
-  --text-dark: #1e293b;
-  --text-light: #64748b;
+  --text-dark: #1e293b;    
+  --text-light: #64748b;   
   --text-lighter: #94a3b8;
 }
 
@@ -23,40 +19,14 @@
   background-color: white;
   border: 1px solid rgba(8, 120, 134, 0.1);
   border-radius: 16px;
-  padding: 0;
-  /* Padding moved to .event-content */
+  padding: 24px;
   min-width: 320px;
   max-width: 350px;
   display: flex;
   flex-direction: column;
-  /* gap: 16px;  Moved to .event-content */
+  gap: 16px;
   box-shadow: 0 10px 30px -10px rgba(8, 120, 134, 0.15);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  overflow: hidden;
-  /* Ensures image respects border radius */
-}
-
-.event-cover {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  background-color: var(--bg-soft);
-}
-
-.placeholder-cover {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-  color: #cbd5e1;
-}
-
-.event-content {
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  flex: 1;
 }
 
 .event-card:hover {
@@ -159,7 +129,7 @@
   align-items: center;
 }
 
-/* --- Footer: Pulsanti --- */
+/* --- Footer e Bottoni --- */
 .event-footer {
   margin-top: auto;
   display: flex;
@@ -168,55 +138,43 @@
 }
 
 .event-btn {
-  flex: 1;
-  padding: 10px;
-  font-size: 14px;
-  font-weight: 600;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
+  flex: 1; /* Grandezza uguale */
+  display: flex; /* Per allineare icona e testo */
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  /* Spazio tra icona e testo */
-}
-
-/* 1. Stile "Partecipa"  */
-.btn-primary {
-  background-color: var(--first-color);
-  color: white;
+  padding: 12px 2px;
+  min-height: 48px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
   border: 1px solid transparent;
-  box-shadow: 0 4px 6px -1px rgba(8, 120, 134, 0.2);
 }
 
-.btn-primary:hover {
-  background-color: var(--second-color);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 10px -2px rgba(8, 120, 134, 0.3);
-}
-
-/* Variante se l'utente è già iscritto */
-.btn-primary.btn-active {
-  background-color: white;
-  color: var(--first-color);
-  border: 1px solid var(--first-color);
-  box-shadow: none;
-}
-
-.btn-primary.btn-active:hover {
-  background-color: #fef2f2;
-  color: var(--danger-color);
-  border-color: var(--danger-color);
-}
-
-/* 2. Stile "Dettagli"  */
+/* Stile Tasto MODIFICA (Grigio/Neutro) */
 .btn-secondary {
-  background-color: transparent;
-  color: var(--first-color);
-  border: 1px solid var(--first-color);
+  background-color: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
 }
 
 .btn-secondary:hover {
-  background-color: var(--bg-soft);
+  background-color: #e5e7eb;
+  border-color: #9ca3af;
+}
+
+/* Stile Tasto ELIMINA (Rosso/Danger) */
+.btn-danger {
+  background-color: #fee2e2; /* Rosso molto chiaro di sfondo */
+  color: #dc2626; /* Testo rosso scuro */
+  border: 1px solid #fecaca;
+}
+
+.btn-danger:hover {
+  background-color: #dc2626; /* Diventa rosso pieno al passaggio */
+  color: white; /* Testo bianco */
+  border-color: #dc2626;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(220, 38, 38, 0.2);
 }

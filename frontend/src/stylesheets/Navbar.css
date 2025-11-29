@@ -1,12 +1,12 @@
 :root {
   /* -- Sfondi -- */
-  --bg-main: #F7FBFB; 
-  --bg-soft: #E9FBE7; 
+  --bg-main: #F7FBFB;
+  --bg-soft: #E9FBE7;
 
   /* -- Colori Principali -- */
-  --first-color: #087886; 
-  --second-color: #4AAFB8; 
-  --third-color: #7CCE6B; 
+  --first-color: #087886;
+  --second-color: #4AAFB8;
+  --third-color: #7CCE6B;
 
   /* -- Colori Testo & Utility -- */
   --text-main: #333333;
@@ -14,7 +14,8 @@
   --danger: #e74c3c;
 
   /* -- Ombre -- */
-  --shadow-nav: 0 2px 15px rgba(0, 0, 0, 0.05); /* Ombra piÃ¹ adatta a un header full-width */
+  --shadow-nav: 0 2px 15px rgba(0, 0, 0, 0.05);
+  /* Ombra piÃ¹ adatta a un header full-width */
   --shadow-drop: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
@@ -22,38 +23,44 @@ body {
   margin: 0;
   font-family: 'Segoe UI', 'Roboto', sans-serif;
   background-color: var(--bg-main);
-  padding-top: 80px; /* Aggiunto per evitare che il contenuto finisca sotto l'header fisso (opzionale) */
+  padding-top: 80px;
+  /* Aggiunto per evitare che il contenuto finisca sotto l'header fisso (opzionale) */
 }
 
 /* --- HEADER WRAPPER (Full Width) --- */
 .navbar-wrapper {
   width: 100%;
   height: 80px;
-  background-color: #ffffff; /* Il bianco ora Ã¨ qui */
-  box-shadow: var(--shadow-nav); /* L'ombra ora Ã¨ qui */
+  background-color: #ffffff;
+  /* Il bianco ora Ã¨ qui */
+  box-shadow: var(--shadow-nav);
+  /* L'ombra ora Ã¨ qui */
   display: flex;
   justify-content: center;
   align-items: center;
-  
+
   /* Opzionale: rende l'header fisso in alto mentre scrolli */
-  position: fixed; 
+  position: fixed;
   top: 0;
   left: 0;
-  z-index: 1000; 
+  z-index: 1000;
 }
 
 /* --- NAVBAR CONTAINER (Contenuto centrato) --- */
 .navbar {
   width: 100%;
-  max-width: 1280px; /* Mantiene il contenuto allineato al centro */
-  height: 100%;      /* Occupa tutta l'altezza del wrapper */
-  padding: 0 32px;   /* Spaziatura laterale */
+  max-width: 1500px;
+  /* Mantiene il contenuto allineato al centro */
+  height: 100%;
+  /* Occupa tutta l'altezza del wrapper */
+  padding: 0 32px;
+  /* Spaziatura laterale */
   display: flex;
   align-items: center;
   justify-content: space-between;
-  
+
   /* Rimossi rispetto a prima: background-color, border-radius, margin, shadow */
-  background-color: transparent; 
+  background-color: transparent;
 }
 
 /* --- SEZIONE SINISTRA (Logo + Divider + Links) --- */
@@ -71,15 +78,17 @@ body {
 }
 
 .logo-circle {
-  width: 48px; /* Leggermente ridotto per header classico */
+  width: 48px;
+  /* Leggermente ridotto per header classico */
   height: 48px;
-  background-color: var(--bg-main); /* Contrasto grigio su header bianco */
+  background-color: var(--bg-main);
+  /* Contrasto grigio su header bianco */
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  border: 1px solid rgba(0,0,0,0.08);
+  border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .logo-circle img {
@@ -90,7 +99,8 @@ body {
 
 .nav-divider {
   width: 1px;
-  height: 24px; /* Adattato */
+  height: 24px;
+  /* Adattato */
   background-color: #e0e0e0;
   margin: 0 5px;
 }
@@ -108,7 +118,8 @@ body {
   font-size: 1rem;
   letter-spacing: 0.3px;
   position: relative;
-  padding: 26px 0; /* Padding verticale per estendere l'area cliccabile all'altezza header */
+  padding: 26px 0;
+  /* Padding verticale per estendere l'area cliccabile all'altezza header */
   transition: color 0.3s ease;
   display: flex;
   align-items: center;
@@ -123,8 +134,9 @@ body {
   content: '';
   position: absolute;
   width: 0;
-  height: 3px; 
-  bottom: 0; /* Attaccato al fondo dell'header */
+  height: 3px;
+  bottom: 0;
+  /* Attaccato al fondo dell'header */
   left: 0;
   background-color: var(--first-color);
   transition: width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -139,31 +151,38 @@ body {
 .navbar-right {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 10px;
 }
 
 .search-box {
   display: flex;
   align-items: center;
-  background-color: var(--bg-main); /* Grigio chiaro per fondersi */
+  background-color: var(--bg-main);
+  /* Grigio chiaro per fondersi */
   border: 1px solid transparent;
-  border-radius: 20px; /* Arrotondata a pillola */
+  border-radius: 20px;
+  /* Arrotondata a pillola */
   padding: 8px 16px;
-  width: 220px; /* Larghezza fissa per ordine */
+  width: 220px;
+  /* Larghezza fissa per ordine */
   transition: all 0.3s ease;
-  margin-right: 8px; /* Spazio dalle altre icone */
+  margin-right: 0;
+  /* Spazio dalle altre icone rimosso */
 }
 
 /* Effetto Focus: quando clicchi l'input, il contenitore cambia */
 .search-box:focus-within {
   background-color: #ffffff;
-  border-color: var(--first-color); /* Bordo turchese */
-  box-shadow: 0 0 0 3px rgba(8, 120, 134, 0.1); /* Alone leggero */
+  border-color: var(--first-color);
+  /* Bordo turchese */
+  box-shadow: 0 0 0 3px rgba(8, 120, 134, 0.1);
+  /* Alone leggero */
 }
 
 .search-icon {
   color: var(--text-sub);
-  min-width: 18px; /* Evita che si schiacci */
+  min-width: 18px;
+  /* Evita che si schiacci */
 }
 
 .search-input {
@@ -197,7 +216,8 @@ body {
 }
 
 .icon-btn:hover {
-  background-color: var(--bg-main); /* Usa bg-main invece di soft per contrasto su bianco */
+  background-color: var(--bg-main);
+  /* Usa bg-main invece di soft per contrasto su bianco */
   color: var(--first-color);
 }
 
@@ -210,18 +230,21 @@ body {
 .profile-pill {
   display: flex;
   align-items: center;
-  padding: 4px 12px 4px 4px; /* Padding ottimizzato */
+  padding: 4px 12px 4px 4px;
+  /* Padding ottimizzato */
   border-radius: 40px;
   cursor: pointer;
   transition: all 0.2s ease;
   border: 1px solid transparent;
-  background-color: var(--bg-main); /* Sfondo grigio chiaro per staccare dall'header bianco */
+  background-color: var(--bg-main);
+  /* Sfondo grigio chiaro per staccare dall'header bianco */
 }
 
-.profile-pill:hover, .profile-pill.active {
+.profile-pill:hover,
+.profile-pill.active {
   background-color: #fff;
   border-color: #e0e0e0;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .profile-avatar {
@@ -237,10 +260,11 @@ body {
   font-size: 1rem;
   margin-right: 10px;
 }
+
 /* Nascondi margin se non c'Ã¨ nome (mobile/guest compact) */
 .profile-pill:has(.user-name:empty) .profile-avatar,
 .profile-pill:not(:has(.user-name)) .profile-avatar {
-    margin-right: 0;
+  margin-right: 0;
 }
 
 .profile-details {
@@ -275,7 +299,8 @@ body {
 /* --- DROPDOWN --- */
 .dropdown-box {
   position: absolute;
-  top: calc(100% + 10px); /* Distanza dal profilo */
+  top: calc(100% + 10px);
+  /* Distanza dal profilo */
   right: 0;
   background-color: #ffffff;
   border-radius: 12px;
@@ -288,8 +313,15 @@ body {
 }
 
 @keyframes slideIn {
-  from { opacity: 0; transform: translateY(-8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .dropdown-row {
@@ -332,4 +364,56 @@ body {
 
 .dropdown-row.danger .row-icon {
   color: var(--danger);
+}
+
+/* --- RESPONSIVE SEARCH BAR --- */
+@media (max-width: 768px) {
+  .search-box {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    justify-content: center;
+    background-color: transparent;
+    cursor: pointer;
+    border-radius: 50%;
+    position: relative;
+    /* Needed for absolute positioning if used, or just z-index */
+    z-index: 10;
+  }
+
+  .search-input {
+    /* display: none; REMOVED to allow focus */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 20;
+    /* Above icon */
+  }
+
+  .search-icon {
+    color: var(--text-main);
+  }
+
+  /* Expand ONLY on focus (click) */
+  .search-box:focus-within {
+    width: 220px;
+    background-color: #ffffff;
+    border: 1px solid var(--first-color);
+    padding: 8px 16px;
+    border-radius: 20px;
+    justify-content: flex-start;
+  }
+
+  .search-box:focus-within .search-input {
+    position: relative;
+    opacity: 1;
+    width: 100%;
+    height: auto;
+    z-index: auto;
+    cursor: text;
+  }
 }

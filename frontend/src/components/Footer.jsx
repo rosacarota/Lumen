@@ -1,12 +1,12 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import '../stylesheets/Footer.css';
-import LogoLumen from '../assets/logo-lumen.png';
 
 const Footer = () => {
   return (
     <footer className="footer-minimal">
-      <div className="container footer-content">
-        
+      <div className="footer-content">
+
         <div className="footer-brand">
           <div className="brand-group">
             <div className="logo-circle-mini">
@@ -20,9 +20,9 @@ const Footer = () => {
         </div>
 
         <nav className="footer-nav">
-          <a href="#chi-siamo">Chi Siamo</a>
-          <a href="#storie">Storie</a>
-          <a href="#eventi">Eventi</a>
+          <Link to="/chisiamo">Chi siamo</Link>
+          <Link to="/storie">Storie</Link>
+          <Link to="/eventi">Eventi</Link>
         </nav>
 
       </div>

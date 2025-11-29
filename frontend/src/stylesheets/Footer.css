@@ -1,9 +1,10 @@
-
 .footer-minimal {
   width: 100%;
-  background-color: var(--first-color); 
-  padding: 20px 0; 
+  background-color: var(--first-color);
+  /* Sfondo Turchese */
+  padding: 20px 80px;
   margin-top: auto;
+  /* Spinge il footer in basso se il contenitore è flex */
   font-size: 0.9rem;
   color: #ffffff;
 }
@@ -11,10 +12,11 @@
 .footer-content {
   display: flex;
   align-items: center;
-  justify-content: space-between; 
-  flex-wrap: wrap; 
+  justify-content: space-between;
+  flex-wrap: wrap;
   gap: 20px;
 }
+
 
 .footer-brand {
   display: flex;
@@ -52,6 +54,7 @@
   color: rgba(255, 255, 255, 0.7);
 }
 
+
 .footer-nav {
   display: flex;
   gap: 24px;
@@ -71,33 +74,11 @@
   text-underline-offset: 4px;
 }
 
-.footer-social {
-  display: flex;
-  gap: 12px;
-}
 
-.footer-social a {
-  color: rgba(255, 255, 255, 0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-.footer-social a:hover {
-  background-color: #ffffff;
-  color: var(--first-color);
-  transform: translateY(-2px);
-}
-
-
+/* --- RESPONSIVE MOBILE --- */
 @media (max-width: 768px) {
   .footer-content {
-    flex-direction: column; 
+    flex-direction: column;
     text-align: center;
     padding: 10px 0;
   }

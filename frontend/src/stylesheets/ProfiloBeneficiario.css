@@ -1,0 +1,44 @@
+:root {
+  --bg-soft: #E9FBE7;
+}
+
+.beneficiary-page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--bg-soft);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.beneficiary-container {
+  flex: 1 0 auto;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding-top: 50px;
+  display: flex;
+  flex-direction: column;
+}
+
+.beneficiary-page-wrapper>footer,
+.beneficiary-page-wrapper>div:last-child {
+  flex-shrink: 0;
+  flex-grow: 0;
+  height: auto;
+}
+
+.profile-section-full {
+  width: 100%;
+}
+
+.beneficiary-stories-section {
+  width: 50%;
+  margin: 5px 0 45px 40px;
+}
+
+@media (max-width: 768px) {
+  .voluntary-container {
+    gap: 20px;
+    padding: 0 10px;
+  }
+}

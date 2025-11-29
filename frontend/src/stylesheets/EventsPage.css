@@ -1,93 +1,77 @@
-/* Layout Generale */
-.eventi-page {
-  background-color: #f3f4f6;
+/* --- LAYOUT GENERALE --- */
+.page-wrapper {
   min-height: 100vh;
-  font-family: Arial, sans-serif;
-  display: flex;
-  justify-content: center;
-  padding: 20px;
+  background-color: #F0F5F5;
+  padding-bottom: 60px;
+  font-family: 'Inter', sans-serif;
 }
 
-.page-container {
+.main-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  display: flex;
   width: 100%;
-  max-width: 900px;
-  background-color: white;
-  border-radius: 20px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-  overflow: hidden;
-  padding-bottom: 40px;
-}
-
-/* Titolo Pagina "EVENTI" */
-.main-title-box {
-  background-color: #d1d5db; /* Grigio chiaro */
-  margin: 20px 25px;
-  padding: 15px;
-  border-radius: 12px;
-  text-align: center;
-}
-
-.main-title-box h1 {
-  margin: 0;
-  color: #4b5563;
-  font-size: 24px;
-  font-weight: bold;
-  letter-spacing: 1px;
-}
-
-/* Sezioni Grigie (Contenitori) */
-.grey-section {
-  background-color: #e5e7eb; /* Sfondo grigio della sezione */
-  margin: 0 25px 20px 25px;
-  padding: 20px;
-  border-radius: 20px;
-  text-align: center;
-}
-
-.section-title {
-  margin: 0 0 20px 0;
-  color: #4b5563;
-  text-transform: uppercase;
-  font-size: 16px;
-  font-weight: bold;
-}
-
-/* Layout "I TUOI EVENTI" (Flex Row) */
-.dashboard-row {
-  display: flex;
-  gap: 20px;
-  justify-content: space-between;
-  flex-wrap: wrap; /* Va a capo su cellulare */
-}
-
-/* Tabs */
-.tabs-bar {
-  margin: 0 25px 20px 25px;
-  font-weight: bold;
-  color: #6b7280;
-  font-size: 14px;
-  padding-left: 10px;
-}
-
-.tab-link {
-  cursor: pointer;
-}
-
-.tab-link.active {
-  color: #374151; /* Più scuro */
-}
-
-.tab-link.underline {
-  text-decoration: underline;
-}
-
-.tab-separator {
-  margin: 0 10px;
-  color: #9ca3af;
-}
-
-/* Eventi Consigliati */
-.recommended-container {
-  display: flex;
+  box-sizing: border-box;
   justify-content: center;
+}
+
+/* --- IL RIQUADRO BIANCO (Il "Container" dello screenshot) --- */
+.content-box {
+  background-color: white;
+  width: 100%;
+  border-radius: 24px; /* Angoli molto arrotondati */
+  padding: 40px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  border: 1px solid #e5e7eb;
+}
+
+/* --- INTESTAZIONE (Titolo + Bottone) --- */
+.box-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  border-bottom: 1px solid #f3f4f6;
+  padding-bottom: 20px;
+}
+
+.header-text h1 {
+  font-size: 2rem;
+  color: #0e7490; /* Teal Scuro */
+  margin: 0 0 8px 0;
+  font-weight: 800;
+}
+
+.header-text p {
+  color: #6b7280; /* Grigio testo */
+  margin: 0;
+  font-size: 1rem;
+}
+
+.btn-new:hover {
+  background-color: #059669;
+  transform: translateY(-2px);
+}
+
+/* --- GRIGLIA DELLE CARD --- */
+.events-grid {
+  display: grid;
+  /* Crea colonne automatiche (minimo 300px larghezza) */
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
+  gap: 30px;
+  justify-items: center; /* Centra le card nella loro cella */
+}
+
+/* Adattamento per cellulari */
+@media (max-width: 768px) {
+  .content-box {
+    padding: 20px;
+  }
+  .box-header {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+    align-items: center;
+  }
 }
