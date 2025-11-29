@@ -8,5 +8,7 @@ public interface UtenteDAO extends JpaRepository<Utente,String>{
 
     Utente findByEmail(String email);
 
+    List<Utente> findUtentiByNome(String nome);
+
     boolean existsByEmail(String email);
 }
