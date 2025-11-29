@@ -15,11 +15,17 @@ const Navbar = () => {
 
   // RIMOSSO: const navigate = useNavigate();
 
+  // Definisco gli elementi base della navbar
   const navItems = [
     { label: 'Chi siamo', path: '/chisiamo' },
     { label: 'Storie', path: '/storie' },
     { label: 'Eventi', path: '/eventi' }
   ];
+
+  // AGGIUNTA: Se il ruolo è 'ente', aggiungo la voce "Affiliazione"
+  if (currentUser.role === 'ente') {
+    navItems.push({ label: 'Affiliati', path: '/DashboardAffiliazione' });
+  }
 
   useEffect(() => {
     const token = localStorage.getItem('token');

@@ -10,7 +10,7 @@ import ChiSiamo from './pages/ChiSiamo';
 import ProfiloEnte from './pages/ProfiloEnte';
 import ProfiloVolontario from './pages/ProfiloVolontario';
 import ProfiloBeneficiario from './pages/ProfiloBeneficiario';
-
+import DashboardAffiliazione from './pages/DashboardAffiliazione';
 
 function App() {
   return (
@@ -29,6 +29,7 @@ function App() {
         <Route path="/chisiamo" element={<ChiSiamo />} />
         <Route path="/storie" element={<StoriesBoard />} />
         <Route path="/eventi" element={<EventsPage />} />
+        <Route path="/DashboardAffiliazione" element={<DashboardAffiliazione />} />
 
         {/* Rotta AccessoInfoProfilo*/}
         <Route path="/AccessoInfoProfilo" element={<AccessoInfoProfilo />} />
@@ -43,6 +44,5 @@ function App() {
       </Routes>
     </div>
   );
-}
 
 export default App;
