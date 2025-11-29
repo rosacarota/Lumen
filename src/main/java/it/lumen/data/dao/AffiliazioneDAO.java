@@ -2,6 +2,7 @@ package it.lumen.data.dao;
 
 import it.lumen.data.entity.Affiliazione;
 import it.lumen.data.entity.Utente;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -21,5 +22,6 @@ public interface AffiliazioneDAO extends JpaRepository<Affiliazione, Integer> {
 
     Affiliazione findByIdAffiliazione(int id);
 
+    @Transactional
     void removeByIdAffiliazione(int id);
 }

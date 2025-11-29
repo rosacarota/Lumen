@@ -90,7 +90,7 @@ public class AffiliazioneControl {
     }
 
 
-    @PostMapping("/accetta")
+    @GetMapping("/accetta")
     public ResponseEntity<String> accettaAffiliazione(@RequestParam Integer idAffiliazione, @RequestParam String token) {
         String email = jwtUtil.extractEmail(token);
         Utente utenteLoggato = autenticazioneService.getUtente(email);
@@ -120,7 +120,7 @@ public class AffiliazioneControl {
         }
     }
 
-    @PostMapping("/rifiuta")
+    @GetMapping("/rifiuta")
     public ResponseEntity<String> rifiutaAffiliazione(@RequestParam Integer idAffiliazione, @RequestParam String token) {
         String email = jwtUtil.extractEmail(token);
         Utente utenteLoggato = autenticazioneService.getUtente(email);
