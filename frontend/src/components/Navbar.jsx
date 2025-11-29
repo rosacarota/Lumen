@@ -157,7 +157,7 @@ const DropdownMenu = ({ role, onLogout }) => {
           { label: 'Area Personale', icon: <Settings size={16} />, href: '/profiloente' },
           { label: 'Gestione eventi', icon: <Calendar size={16} />, href: '/eventi-gestione' },
           { label: 'Gestione raccolte fondi', icon: <Heart size={16} />, href: '/raccolte-fondi' },
-          { label: 'Gestione affiliati', icon: <Users size={16} />, href: '/affiliati' },
+          { label: 'Gestione affiliati', icon: <Users size={16} />, href: '/DashboardAffiliazione' },
           { label: 'Logout', icon: <LogOut size={16} />, action: onLogout, type: 'danger' }
         ];
       case 'guest':
