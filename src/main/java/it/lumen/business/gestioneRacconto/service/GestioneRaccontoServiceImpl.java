@@ -1,7 +1,9 @@
 package it.lumen.business.gestioneRacconto.service;
 
+import it.lumen.business.gestioneAutenticazione.service.AutenticazioneService;
 import it.lumen.data.dao.RaccontoDAO;
 import it.lumen.data.entity.Racconto;
+import it.lumen.data.entity.Utente;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,12 +22,14 @@ import java.util.UUID;
 public class GestioneRaccontoServiceImpl implements GestioneRaccontoService {
 
     private final RaccontoDAO raccontoDAO;
+    private final AutenticazioneService autenticazioneService;
     private static final String UPLOAD_DIR = Paths.get("uploads/stories").toAbsolutePath().toString();
 
 
     @Autowired
-    public GestioneRaccontoServiceImpl(RaccontoDAO raccontoDAO) {
+    public GestioneRaccontoServiceImpl(RaccontoDAO raccontoDAO, AutenticazioneService autenticazioneService) {
         this.raccontoDAO = raccontoDAO;
+        this.autenticazioneService = autenticazioneService;
     }
 
     // ========================= CRUD =========================
@@ -126,13 +130,19 @@ public class GestioneRaccontoServiceImpl implements GestioneRaccontoService {
     public List<Racconto> listaRaccontiUtente(String email) {
         List<Racconto> racconti = raccontoDAO.findAllByUtente_Email(email);
         for (Racconto racconto : racconti) {
-            if (racconto.getImmagine() != null) {
-                try {
-                    racconto.setImmagine(recuperaImmagine(racconto.getImmagine()));
-                } catch (IOException e) {
-                    System.out.println("Errore nel recupero immagine: " + e.getMessage());
-                }
+
+            try {
+                racconto.setImmagine(recuperaImmagine(racconto.getImmagine()));
+                Utente utente=racconto.getUtente();
+
+
+               // utente.setImmagine(autenticazioneService.recuperaImmagine(utente.getImmagine()));
+               // racconto.setUtente(utente);
+
+            } catch (IOException e) {
+                System.out.println("Errore nel recupero immagine: " + e.getMessage());
             }
+
         }
         return racconti;
     }
@@ -159,20 +169,39 @@ public class GestioneRaccontoServiceImpl implements GestioneRaccontoService {
         return fileName; // salvo solo il nome
     }
 
-    public String recuperaImmagine(String fileName) throws IOException {
-        if (fileName == null || fileName.trim().isEmpty()) return null;
+    public String recuperaImmagine(String pathImmagine) throws IOException {
 
-        Path path = Paths.get(UPLOAD_DIR).resolve(fileName);
-        if (!Files.exists(path)) throw new FileNotFoundException(path.toString());
-        if (Files.isDirectory(path)) throw new AccessDeniedException(path.toString());
-        if (!Files.isReadable(path)) throw new AccessDeniedException(path.toString());
+        if (pathImmagine == null || pathImmagine.trim().isEmpty()) {
+            return null;
+        }
 
-        byte[] bytes = Files.readAllBytes(path);
-        String mime = "image/jpeg";
-        if (fileName.toLowerCase().endsWith(".png")) mime = "image/png";
-        else if (fileName.toLowerCase().endsWith(".gif")) mime = "image/gif";
+        String fileName = pathImmagine.substring(pathImmagine.lastIndexOf("/") + 1);
 
-        return "data:" + mime + ";base64," + Base64.getEncoder().encodeToString(bytes);
+        if (fileName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Nome file non valido estratto dal percorso: " + pathImmagine);
+        }
+
+
+        Path filePath = Paths.get(UPLOAD_DIR).resolve(fileName);
+
+        if (!Files.exists(filePath)) {
+            throw new FileNotFoundException("File non trovato: " + filePath.toString());
+        }
+        if (Files.isDirectory(filePath)) {
+            throw new AccessDeniedException("Il percorso punta a una directory, non a un file: " + filePath.toString());
+        }
+        if (!Files.isReadable(filePath)) {
+            throw new AccessDeniedException("Permessi di lettura mancanti per il file: " + filePath.toString());
+        }
+
+        byte[] imageBytes = Files.readAllBytes(filePath);
+
+        String mimeType = "image/jpeg";
+        if (fileName.toLowerCase().endsWith(".png")) mimeType = "image/png";
+        else if (fileName.toLowerCase().endsWith(".gif")) mimeType = "image/gif";
+
+        String base64Content = Base64.getEncoder().encodeToString(imageBytes);
+        return "data:" + mimeType + ";base64," + base64Content;
     }
 
     /*

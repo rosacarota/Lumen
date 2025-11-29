@@ -1,6 +1,7 @@
 package it.lumen.data.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -10,6 +11,7 @@ import lombok.Setter;
 
 import java.sql.Date;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @Table(name = "Racconto")
 @Getter
@@ -39,7 +41,7 @@ public class Racconto {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "utente")
-    @JsonIgnoreProperties({"nome", "cognome", "password", "ambito", "descrizione", "indirizzo", "recapitoTelefonico", "immagine", "ruolo", "hibernateLazyInitializer"})
+    @JsonIgnoreProperties({"indirizzo", "password", "ruolo", "ambito", "recapitoTelefonico", "descrizione", "hibernateLazyInitializer"})
     private Utente utente;
 
 
