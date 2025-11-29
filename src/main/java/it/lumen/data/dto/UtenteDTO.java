@@ -42,6 +42,8 @@ public class UtenteDTO {
 
     private String immagine;
 
+    private int idAffiliazione;
+
 }
 
 

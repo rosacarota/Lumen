@@ -1,19 +1,22 @@
 package it.lumen.data;
 
-import it.lumen.business.gestioneRegistrazione.service.RegistrazioneService; // Adatta il package se necessario
+import it.lumen.business.gestioneRegistrazione.service.RegistrazioneService;
 import it.lumen.data.entity.*;
 import it.lumen.data.dao.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.jdbc.core.JdbcTemplate; // IMPORTANTE
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional; // IMPORTANTE
 
-import jakarta.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.time.LocalDate;
 
 @Component
-public class DBPopulator implements CommandLineRunner { // 1. Implementa questa interfaccia
+public class DBPopulator implements CommandLineRunner {
+
+    @Autowired private JdbcTemplate jdbcTemplate; // Usiamo questo per le query native
 
     @Autowired private RegistrazioneService registrazioneService;
     @Autowired private EventoDAO eventoDAO;
@@ -26,14 +29,34 @@ public class DBPopulator implements CommandLineRunner { // 1. Implementa questa 
 
     @Override
     public void run(String... args) throws Exception {
+        pulisciDatabase(); // Pulisce tutto prima di riempire
         popolaDatabase();
+    }
+
+    @Transactional
+    public void pulisciDatabase() {
+        System.out.println("Pulizia database in corso...");
+
+        String sql = """
+            TRUNCATE TABLE 
+                Partecipazione, 
+                RichiestaServizio, 
+                Affiliazione, 
+                RaccoltaFondi, 
+                Evento, 
+                Racconto, 
+                Utente, 
+                Indirizzo 
+            RESTART IDENTITY CASCADE
+        """;
+
+        jdbcTemplate.execute(sql);
+        System.out.println("Database pulito con successo.");
     }
 
     public void popolaDatabase(){
         System.out.println("Inizio popolamento database...");
 
-        // --- 1. Creazione Indirizzi ---
-        // Nota: Se i tuoi DAO non hanno la save automatica a cascata, salviamo prima gli indirizzi
         Indirizzo indEnte = new Indirizzo(null, "Roma", "RM", "00100", "Via Roma", 10);
         indirizzoDAO.save(indEnte);
 
@@ -43,48 +66,33 @@ public class DBPopulator implements CommandLineRunner { // 1. Implementa questa 
         Indirizzo indVolontario = new Indirizzo(null, "Napoli", "NA", "80100", "Via Napoli", 20);
         indirizzoDAO.save(indVolontario);
 
-
-        // --- 2. Creazione Utenti (Tramite RegistrazioneService come richiesto) ---
-
-        // ENTE: No cognome (""), Ha ambito
         Utente ente = new Utente();
         ente.setEmail("ente@lumen.it");
         ente.setPassword("password");
         ente.setNome("Croce Rossa");
-        ente.setCognome(""); // Vincolo: Ente senza cognome
+        ente.setCognome("");
         ente.setRuolo(Utente.Ruolo.Ente);
-        ente.setAmbito("Sanitario"); // Vincolo: Ente ha ambito
+        ente.setAmbito("Sanitario");
         ente.setDescrizione("Ente benefico internazionale");
         ente.setRecapitoTelefonico("1234567890");
         ente.setIndirizzo(indEnte);
 
-        try {
-            registrazioneService.registraUtente(ente);
-        } catch (Exception e) {
-            System.out.println("Nota: Utente Ente già presente o errore: " + e.getMessage());
-        }
+        try { registrazioneService.registraUtente(ente); } catch (Exception e) { e.printStackTrace(); }
 
-
-        // BENEFICIARIO: Ha cognome, No ambito (null)
+        // BENEFICIARIO
         Utente beneficiario = new Utente();
         beneficiario.setEmail("beneficiario@lumen.it");
         beneficiario.setPassword("password");
         beneficiario.setNome("Mario");
         beneficiario.setCognome("Rossi");
         beneficiario.setRuolo(Utente.Ruolo.Beneficiario);
-        beneficiario.setAmbito(null); // Vincolo: Beneficiario non ha ambito
-        beneficiario.setDescrizione("Ho bisogno di assistenza per la spesa");
+        beneficiario.setAmbito(null);
+        beneficiario.setDescrizione("Ho bisogno di assistenza");
         beneficiario.setRecapitoTelefonico("0987654321");
         beneficiario.setIndirizzo(indBeneficiario);
+        try { registrazioneService.registraUtente(beneficiario); } catch (Exception e) { e.printStackTrace(); }
 
-        try {
-            registrazioneService.registraUtente(beneficiario);
-        } catch (Exception e) {
-            System.out.println("Nota: Utente Beneficiario già presente o errore: " + e.getMessage());
-        }
-
-
-        // VOLONTARIO: Ha cognome, Può avere ambito
+        // VOLONTARIO
         Utente volontario = new Utente();
         volontario.setEmail("volontario@lumen.it");
         volontario.setPassword("password");
@@ -92,82 +100,73 @@ public class DBPopulator implements CommandLineRunner { // 1. Implementa questa 
         volontario.setCognome("Verdi");
         volontario.setRuolo(Utente.Ruolo.Volontario);
         volontario.setAmbito("Sociale");
-        volontario.setDescrizione("Voglio aiutare nel tempo libero");
+        volontario.setDescrizione("Voglio aiutare");
         volontario.setRecapitoTelefonico("1122334455");
         volontario.setIndirizzo(indVolontario);
-
-        try {
-            registrazioneService.registraUtente(volontario);
-        } catch (Exception e) {
-            System.out.println("Nota: Utente Volontario già presente o errore: " + e.getMessage());
-        }
+        try { registrazioneService.registraUtente(volontario); } catch (Exception e) { e.printStackTrace(); }
 
 
-        // --- 3. Creazione Evento (Solo ENTE) ---
+        // RI-RECUPERA GLI UTENTI DAL DB PER ESSERE SICURI DI AVERE LE ENTITÀ MANAGED
+        // (Questo evita problemi di "detached entity" se il service chiude la transazione)
+        // Se usi i repository direttamente questo passaggio è cruciale
+        // Ma dato che hai gli oggetti in memoria e gli ID sono stringhe (email), potrebbe funzionare.
+        // Per sicurezza è meglio ricaricarli se Hibernate si lamenta.
+
+        // --- 3. Creazione Evento ---
         Evento evento = new Evento();
         evento.setTitolo("Raccolta Alimentare");
-        evento.setDescrizione("Raccolta cibo per i bisognosi in piazza");
+        evento.setDescrizione("Raccolta cibo");
         evento.setDataInizio(Date.valueOf(LocalDate.now().plusDays(5)));
         evento.setDataFine(Date.valueOf(LocalDate.now().plusDays(5)));
         evento.setMaxPartecipanti(50);
         evento.setIndirizzo(indEnte);
-        evento.setUtente(ente); // L'organizzatore è l'Ente
-
+        evento.setUtente(ente);
         eventoDAO.save(evento);
 
-
-        // --- 4. Creazione Richiesta Servizio (Solo BENEFICIARIO) ---
+        // --- 4. Creazione Richiesta Servizio ---
         RichiestaServizio richiesta = new RichiestaServizio();
-        richiesta.setTesto("Ho bisogno di qualcuno che mi porti la spesa il martedì");
+        richiesta.setTesto("Spesa a domicilio");
         richiesta.setDataRichiesta(Date.valueOf(LocalDate.now()));
         richiesta.setStato(RichiestaServizio.StatoRichiestaServizio.InAttesa);
-        richiesta.setBeneficiario(beneficiario); // Il richiedente è il Beneficiario
-        richiesta.setEnteVolontraio(ente); // Esempio: assegnata all'ente, o null se ancora non presa in carico
-
+        richiesta.setBeneficiario(beneficiario);
+        richiesta.setEnteVolontraio(ente);
         richiestaServizioDAO.save(richiesta);
 
-
-        // --- 5. Creazione Partecipazione (VOLONTARIO partecipa a Evento) ---
+        // --- 5. Partecipazione ---
         Partecipazione partecipazione = new Partecipazione();
         partecipazione.setEvento(evento);
         partecipazione.setVolontario(volontario);
         partecipazione.setData(Date.valueOf(LocalDate.now()));
-
         partecipazioneDAO.save(partecipazione);
 
-
-        // --- 6. Creazione Raccolta Fondi (Solo ENTE) ---
+        // --- 6. Raccolta Fondi ---
         RaccoltaFondi raccolta = new RaccoltaFondi();
         raccolta.setTitolo("Nuova Ambulanza");
-        raccolta.setDescrizione("Fondi per l'acquisto di un nuovo mezzo di soccorso");
+        raccolta.setDescrizione("Fondi ambulanza");
         raccolta.setObiettivo(new BigDecimal("50000.00"));
         raccolta.setTotaleRaccolto(new BigDecimal("1250.50"));
         raccolta.setDataApertura(Date.valueOf(LocalDate.now()));
         raccolta.setDataChiusura(Date.valueOf(LocalDate.now().plusMonths(6)));
         raccolta.setEnte(ente);
-
         raccoltaFondiDAO.save(raccolta);
 
-
-        // --- 7. Creazione Racconto (VOLONTARIO) ---
+        // --- 7. Racconto ---
         Racconto racconto = new Racconto();
-        racconto.setTitolo("La mia giornata alla mensa");
-        racconto.setDescrizione("Oggi è stata una giornata fantastica aiutando gli altri...");
+        racconto.setTitolo("Esperienza Mensa");
+        racconto.setDescrizione("Bellissima giornata");
         racconto.setDataPubblicazione(Date.valueOf(LocalDate.now()));
         racconto.setUtente(volontario);
-
         raccontoDAO.save(racconto);
 
-
+        // --- 8. Affiliazione ---
         Affiliazione affiliazione = new Affiliazione();
-        affiliazione.setDescrizione("Richiesta di adesione standard");
+        affiliazione.setDescrizione("Adesione standard");
         affiliazione.setDataInizio(Date.valueOf(LocalDate.now()));
         affiliazione.setStato(Affiliazione.StatoAffiliazione.Accettata);
         affiliazione.setEnte(ente);
         affiliazione.setVolontario(volontario);
-
         affiliazioneDAO.save(affiliazione);
 
-        System.out.println("Popolamento database completato con successo!");
+        System.out.println("Popolamento completato!");
     }
 }

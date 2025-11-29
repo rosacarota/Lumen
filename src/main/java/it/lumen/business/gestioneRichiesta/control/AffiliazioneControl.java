@@ -153,26 +153,24 @@ public class AffiliazioneControl {
     @GetMapping("/listaAffiliati")
     public ResponseEntity<?> getListaAffiliati(@RequestParam String token) {
         String email = jwtUtil.extractEmail(token);
-        if (email == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token non valido");
-        }
+        if (email == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token non valido");
 
         Utente ente = autenticazioneService.getUtente(email);
-
-        if (ente == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Utente non trovato");
-        }
+        if (ente == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Utente non trovato");
 
         if (ente.getRuolo() != Utente.Ruolo.Ente) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Solo gli Enti possono visualizzare i propri affiliati");
         }
 
         try {
-            List<Utente> listaUtenti = affiliazioneService.getAffiliazioni(email);
+            List<Affiliazione> affiliazioni = affiliazioneService.getAffiliazioni(ente);
 
-            List<UtenteDTO> listaDTO = listaUtenti.stream()
-                    .map(utente -> {
+            List<UtenteDTO> listaDTO = affiliazioni.stream()
+                    .map(aff -> {
+                        Utente utente = aff.getVolontario();
+
                         UtenteDTO dto = new UtenteDTO();
+                        dto.setIdAffiliazione(aff.getIdAffiliazione());
                         dto.setNome(utente.getNome());
                         dto.setCognome(utente.getCognome());
                         dto.setAmbito(utente.getAmbito());
@@ -188,7 +186,7 @@ public class AffiliazioneControl {
             return ResponseEntity.ok(listaDTO);
 
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Errore nel recupero affiliati: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Errore: " + e.getMessage());
         }
     }
 

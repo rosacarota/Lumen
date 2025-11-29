@@ -11,7 +11,9 @@ public interface AffiliazioneService {
 
     public Affiliazione getAffiliazione(int id);
 
-    public List<Utente> getAffiliazioni(String email);
+    public List<Utente> getAffiliati(String email);
+
+    public List<Affiliazione> getAffiliazioni(Utente ente);
 
     public void accettaAffiliazione(int id);
 

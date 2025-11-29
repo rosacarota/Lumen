@@ -33,9 +33,14 @@ public class AffiliazioneServiceImpl implements AffiliazioneService {
 
 
     @Override
-    public List<Utente> getAffiliazioni(String email) {
+    public List<Utente> getAffiliati(String email) {
        Utente ente = utenteDAO.findByEmail(email);
        return affiliazioneDAO.findVolontariAffiliati(ente);
+    }
+
+    @Override
+    public List<Affiliazione> getAffiliazioni(Utente ente) {
+        return affiliazioneDAO.findAffiliatibyEnte(ente);
     }
 
     @Override
