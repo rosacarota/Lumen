@@ -186,6 +186,9 @@ public class GestioneEventoControl {
 
     public String salvaImmagine(String base64String) throws IOException {
 
+        if (base64String == null) {
+            return null;
+        }
         String[] parts = base64String.split(",");
         String header = parts[0];
         String content = parts[1];

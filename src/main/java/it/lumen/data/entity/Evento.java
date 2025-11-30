@@ -28,8 +28,8 @@ public class Evento {
     @Column(name="descrizione", nullable= true)
     private String descrizione;
 
-    @ManyToOne
-    @JoinColumn(name = "Luogo")
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "Luogo", nullable = false)
     private Indirizzo indirizzo;
 
     @Column(name="datainizio", nullable= false)
