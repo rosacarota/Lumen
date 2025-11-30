@@ -1,8 +1,8 @@
 import React from 'react';
-import { CalendarRange, Target, Heart, Coins } from 'lucide-react';
+import { CalendarRange, Ban } from 'lucide-react'; // Rimosso Heart che non serve più
 import '../stylesheets/RaccoltafondiCard.css';
 
-export default function RaccoltafondiCard({ 
+export default function RaccoltaFondiCard({ 
   id_raccolta,
   titolo, 
   descrizione, 
@@ -10,7 +10,9 @@ export default function RaccoltafondiCard({
   totale_raccolto = 0, 
   data_apertura, 
   data_chiusura, 
-  ente 
+  ente, // Qui arriva il nome dell'Ente
+  isOwner = false,
+  onTerminate = () => {} 
 }) {
 
   const percentuale = obiettivo > 0 
@@ -33,11 +35,14 @@ export default function RaccoltafondiCard({
   return (
     <div className="fund-card" id={`fund-${id_raccolta}`}>
       
+      {/* HEADER: Qui compare il nome dell'ente */}
       <div className="fund-header">
         <div className="fund-avatar">
+           {/* Iniziale del nome ente */}
            {ente ? ente.charAt(0).toUpperCase() : 'E'}
         </div>
         <div className="fund-meta">
+          {/* Nome completo dell'ente */}
           <span className="fund-brand">{ente || "Ente Promotore"}</span>
           <span className="fund-role">Raccolta Fondi</span>
         </div>
@@ -52,14 +57,12 @@ export default function RaccoltafondiCard({
         </p>
       </div>
 
-
       <div className="fund-progress-section">
         <div className="fund-stats">
             <span className="current-amount">{formatCurrency(totale_raccolto)}</span>
             <span className="goal-amount">di {formatCurrency(obiettivo)}</span>
         </div>
         
-
         <div className="progress-bar-container">
             <div 
                 className="progress-bar-fill" 
@@ -72,7 +75,6 @@ export default function RaccoltafondiCard({
         </div>
       </div>
 
-
       <div className="fund-details">
         <div className="fund-detail-row">
           <span className="fund-icon"><CalendarRange size={16} /></span>
@@ -80,11 +82,21 @@ export default function RaccoltafondiCard({
         </div>
       </div>
       
+      {/* LOGICA BOTTONI AGGIORNATA: 
+          Mostra il bottone SOLO se isOwner è true. 
+          Altrimenti non mostra nulla (il tasto Dona è stato rimosso). 
+      */}
+      {isOwner && (
+        <button 
+          className="terminate-btn" 
+          onClick={() => onTerminate(id_raccolta)}
+          title="Chiudi anticipatamente questa raccolta"
+        >
+          <Ban size={18} className="btn-icon" />
+          Termina Raccolta
+        </button>
+      )}
 
-      <button className="donate-btn">
-        <Heart size={18} className="btn-icon" />
-        Dona Ora
-      </button>
     </div>
   );
 }
