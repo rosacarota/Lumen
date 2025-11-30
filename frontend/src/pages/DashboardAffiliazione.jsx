@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { Trash2, Search, MapPin, Briefcase, User, Loader2 } from 'lucide-react';
-import AffiliazioneService from '../services/affiliazioneService'; // Assicurati del percorso corretto
+import AffiliazioneService from '../services/AffiliazioneService'; // Assicurati del percorso corretto
 import { useNavigate } from 'react-router-dom';
 
 export default function VolontariEnte() {
