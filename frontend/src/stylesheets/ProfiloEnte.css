@@ -119,13 +119,11 @@
 
 .ente-page-wrapper .btn-affiliation {
   background-color: var(--first-color);
-  /* Darker teal for emphasis */
   border: 1px solid transparent;
 }
 
 .ente-page-wrapper .btn-affiliation:hover {
   background-color: #065f6a;
-  /* Slightly darker on hover */
   box-shadow: 0 6px 15px rgba(8, 120, 134, 0.4);
 }
 
@@ -144,6 +142,8 @@
 .ente-page-wrapper .right-column {
   flex: 1;
   min-width: 300px;
+  display: flex;
+  flex-direction: column;
 }
 
 .ente-page-wrapper .event-search {
@@ -253,25 +253,66 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+/* === MODIFICHE PER LO SCROLL E LA SPAZIATURA === */
+
 .ente-page-wrapper .sidebar-content {
   background-color: rgba(255, 255, 255, 0.5);
   border: 1px solid white;
   border-radius: 20px;
   padding: 20px;
   min-height: 400px;
+  color: #999;
+  
+  /* Imposta un'altezza massima e attiva lo scroll verticale */
+  max-height: 400px; /* Regola questo valore in base a quanto alta vuoi la sidebar prima che scrolli */
+  overflow-y: auto;
+  display: block;
+
+  /* Stile scrollbar per Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: var(--second-color) rgba(255, 255, 255, 0.3);
+}
+
+/* === STILE SCROLLBAR PERSONALIZZATO (Chrome, Edge, Safari) === */
+.ente-page-wrapper .sidebar-content::-webkit-scrollbar {
+  width: 8px; /* Larghezza della barra */
+}
+
+.ente-page-wrapper .sidebar-content::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.3); /* Colore sfondo barra (trasparente/bianco) */
+  border-radius: 10px;
+  margin: 10px 0; /* Un po' di margine sopra e sotto */
+}
+
+.ente-page-wrapper .sidebar-content::-webkit-scrollbar-thumb {
+  background-color: var(--second-color); /* Colore del "manico" della barra */
+  border-radius: 10px;
+  border: 2px solid transparent; /* Trucco per renderla meno tozza */
+  background-clip: content-box;
+}
+
+.ente-page-wrapper .sidebar-content::-webkit-scrollbar-thumb:hover {
+  background-color: var(--first-color); /* Colore più scuro quando ci passi sopra */
+}
+
+/* Container per le card delle raccolte */
+.ente-page-wrapper .raccolte-list-container {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  gap: 20px; /* Spaziatura tra le card */
+  width: 100%;
   align-items: center;
-  text-align: center;
-  color: #999;
+  justify-content: flex-start; /* Inizia dall'alto, non dal centro */
 }
 
 .ente-page-wrapper .placeholder-content {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 15px;
+  height: 100%;
+  min-height: 360px;
 }
 
 .ente-page-wrapper .story-circle {
@@ -300,6 +341,12 @@
     width: 100%;
     flex: none;
     min-width: auto;
+  }
+
+  /* Quando siamo su mobile, rimuoviamo la max-height fissa per non avere doppio scroll scomodo */
+  .ente-page-wrapper .sidebar-content {
+    max-height: none;
+    overflow-y: visible;
   }
 
   .ente-page-wrapper .event-search {

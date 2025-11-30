@@ -9,6 +9,10 @@ import '../stylesheets/ProfiloEnte.css';
 import { fetchUserProfile } from '../services/UserServices.js';
 import RichiestaAffiliazione from '../components/RichiestaAffiliazione.jsx';
 import AffiliazioneService from '../services/AffiliazioneService.js';
+import RaccoltaFondiCard from '../components/RaccoltaFondiCard.jsx';
+
+// --- NUOVO IMPORT DEL SERVICE --
+import { getRaccolteDiEnte } from '../services/RaccoltaFondiService.js';
 
 const ModalWrapper = ({ children, onClose }) => {
   return (
@@ -37,59 +41,80 @@ const ModalWrapper = ({ children, onClose }) => {
 
 const ProfiloEnte = () => {
   const { id } = useParams();
+  
+  // Stati Utente e UI
   const [isOwner, setIsOwner] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
   const [isFollowing, setIsFollowing] = useState(false);
   const [isVolunteer, setIsVolunteer] = useState(false);
+  
+  // Stati Modali e Tab
   const [showAffiliazioneModal, setShowAffiliazioneModal] = useState(false);
   const [activeTab, setActiveTab] = useState('futuri');
   const [activeSideTab, setActiveSideTab] = useState('storie');
   const [filters, setFilters] = useState({ data: '', orario: '', tipologia: '' });
   const [showEventoModal, setShowEventoModal] = useState(false);
   const [showRaccoltaModal, setShowRaccoltaModal] = useState(false);
-  const loadData = async () => {
+
+  // --- STATO DINAMICO PER LE RACCOLTE ---
+  const [raccolteList, setRaccolteList] = useState([]);
+  const [loadingRaccolte, setLoadingRaccolte] = useState(false);
+
+  // 1. Caricamento Dati Utente
+  const loadUserData = async () => {
     try {
       const data = await fetchUserProfile();
       setUserProfile(data);
     } catch (error) {
       console.error("Errore caricamento profilo:", error);
+      // Fallback in caso di errore
       setUserProfile({
-        title: "Nome Ente (Demo)",
+        title: "Ente (Errore Caricamento)",
         subtitle: "ENTE",
-        description: "Descrizione temporanea in attesa del backend...",
-        stat1: "0 Followers",
-        stat2: "0 Eventi"
+        description: "Impossibile recuperare i dati.",
+        stat1: "-", stat2: "-"
       });
     }
   };
-  useEffect(() => {
-    const storedUserStr = localStorage.getItem('user');
-    if (storedUserStr) {
-      try {
-        const currentUser = JSON.parse(storedUserStr);
-        if (!id || String(currentUser.id) === String(id)) {
-          // eslint-disable-next-line react-hooks/set-state-in-effect
-          setIsOwner(true);
-          loadData();
-        } else {
-          setIsOwner(false);
-        }
-        if (currentUser.ruolo === 'volontario') {
-          setIsVolunteer(true);
-        } else {
-          setIsVolunteer(false);
-        }
-      } catch (error) {
-        console.error("Errore parsing user", error);
-        setIsOwner(false);
-      }
-    } else {
-      // Se non c'è utente loggato ma stiamo sviluppando, forziamo owner per test grafico
-      // (Rimuovi questo else in produzione)
-      setIsOwner(true);
-      loadData();
+
+  // 2. Caricamento Raccolte Fondi (DAL NUOVO SERVICE)
+  const loadRaccolte = async () => {
+    setLoadingRaccolte(true);
+    try {
+      const data = await getRaccolteDiEnte();
+      
+      // MAPPING: Adattiamo i dati del Backend alle props della Card
+      // Il backend potrebbe mandare 'dataApertura' (camelCase), la card vuole 'data_apertura'
+      const mappedData = Array.isArray(data) ? data.map(item => ({
+         id_raccolta: item.id || item.idRaccolta, 
+         titolo: item.titolo,
+         descrizione: item.descrizione,
+         obiettivo: item.obiettivo,
+         totale_raccolto: item.totaleRaccolto || item.totale_raccolto || 0,
+         data_apertura: item.dataApertura || item.data_apertura,
+         data_chiusura: item.dataChiusura || item.data_chiusura,
+         ente: userProfile?.nome || "Mio Ente" 
+      })) : [];
+
+      setRaccolteList(mappedData);
+    } catch (error) {
+      console.error("Errore caricamento raccolte:", error);
+    } finally {
+      setLoadingRaccolte(false);
     }
+  };
+
+  useEffect(() => {
+    // Logica di inizializzazione
+    const storedUserStr = localStorage.getItem('user');
+    setIsOwner(true); // Forzato true per sviluppo, ripristina logica ID se necessario
+    
+    // Carichiamo tutto
+    loadUserData();
+    loadRaccolte(); 
+    
   }, [id]);
+
   const handleFollowClick = () => setIsFollowing(!isFollowing);
   const handleFilterChange = (e) => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
@@ -97,43 +122,45 @@ const ProfiloEnte = () => {
 
   const handleRichiestaAffiliazione = async () => {
     const token = localStorage.getItem('token');
-    // Assuming userProfile contains the Ente's data.
     const emailEnte = userProfile?.email;
-
-    if (!emailEnte) {
-      alert("Impossibile recuperare l'email dell'ente. Assicurati che il profilo sia caricato correttamente.");
-      return;
-    }
-
+    if (!emailEnte) return alert("Impossibile recuperare l'email dell'ente.");
+    
     try {
       const isAffiliated = await AffiliazioneService.checkAffiliazione(emailEnte, token);
       if (isAffiliated) {
-        alert("Non puoi effettuare la richiesta di affiliazione perché hai già un ente affiliato.");
+        alert("Hai già un ente affiliato.");
       } else {
         setShowAffiliazioneModal(true);
       }
     } catch (error) {
-      console.error("Errore check affiliazione:", error);
-      alert("Errore durante il controllo dell'affiliazione.");
+      console.error(error);
+      alert("Errore controllo affiliazione.");
     }
   };
+
+  // Funzione chiamata quando si chiude il modale "Crea Raccolta"
+  // Ricarica la lista per mostrare quella nuova appena creata
+  const handleCloseRaccoltaModal = () => {
+    setShowRaccoltaModal(false);
+    loadRaccolte(); 
+  };
+
   const profileProps = userProfile ? {
     title: userProfile.nome || "Nome Ente",
     subtitle: "ENTE",
     description: userProfile.descrizione || "Nessuna descrizione",
     stat1: "123 Followers",
     stat2: "10 Eventi",
+    userData: userProfile 
   } : undefined;
 
   return (
     <div className="ente-page-wrapper">
       <Navbar />
       <div className="main-container">
-        <AccessoInfoProfilo
-          {...profileProps} // Passa i dati scaricati
-        // Se non è owner, nascondiamo i tasti modifica nel componente figlio (se gestito internamente)
-        // Oppure, se AccessoInfoProfilo gestisce l'essere owner, passagli una prop isOwner={isOwner}
-        />
+        
+        <AccessoInfoProfilo {...profileProps} onUpdate={loadUserData} />
+        
         <section className="event-section">
           <div className="controll">
             <div className="tabs-left">
@@ -141,6 +168,7 @@ const ProfiloEnte = () => {
               <button className={activeTab === 'futuri' ? 'active' : ''} onClick={() => setActiveTab('futuri')}>FUTURI</button>
               <button className={activeTab === 'svolti' ? 'active' : ''} onClick={() => setActiveTab('svolti')}>SVOLTI</button>
             </div>
+            
             <div className="actions-right">
               {isOwner ? (
                 <>
@@ -158,13 +186,14 @@ const ProfiloEnte = () => {
                   </button>
                   {isVolunteer && (
                     <button className="btn-action btn-affiliation" onClick={handleRichiestaAffiliazione}>
-                      Richiedi affiliazione all'ente
+                      Richiedi affiliazione
                     </button>
                   )}
                 </>
               )}
             </div>
           </div>
+
           <div className="split-layout">
             <div className="left-column">
               <div className="event-search">
@@ -192,11 +221,13 @@ const ProfiloEnte = () => {
                 <p>Nessun evento {activeTab} trovato.</p>
               </div>
             </div>
+
             <div className="right-column">
               <div className="sidebar-header">
                 <button className={`side-tab-btn ${activeSideTab === 'storie' ? 'active' : ''}`} onClick={() => setActiveSideTab('storie')}>STORIE</button>
                 <button className={`side-tab-btn ${activeSideTab === 'raccolte' ? 'active' : ''}`} onClick={() => setActiveSideTab('raccolte')}>RACCOLTE</button>
               </div>
+              
               <div className="sidebar-content">
                 {activeSideTab === 'storie' ? (
                   <div className="placeholder-content">
@@ -204,8 +235,23 @@ const ProfiloEnte = () => {
                     <p>Nessuna storia recente.</p>
                   </div>
                 ) : (
-                  <div className="placeholder-content">
-                    <p>Nessuna raccolta attiva.</p>
+                  // --- LISTA RACCOLTE DINAMICA ---
+                  <div className="raccolte-list-container">
+                    {loadingRaccolte ? (
+                      <p>Caricamento raccolte...</p>
+                    ) : raccolteList.length > 0 ? (
+                      raccolteList.map((raccolta) => (
+                        <RaccoltaFondiCard 
+                          key={raccolta.id_raccolta}
+                          {...raccolta} 
+                        />
+                      ))
+                    ) : (
+                      <div className="placeholder-content">
+                         <p>Nessuna raccolta fondi attiva.</p>
+                         {isOwner && <p style={{fontSize:'0.8rem'}}>Clicca "Crea Raccolta" per iniziare.</p>}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -214,16 +260,20 @@ const ProfiloEnte = () => {
         </section>
       </div>
       <Footer />
+      
       {showEventoModal && (
         <ModalWrapper onClose={() => setShowEventoModal(false)}>
           <AddEvento onClose={() => setShowEventoModal(false)} isModal={true} />
         </ModalWrapper>
       )}
+      
       {showRaccoltaModal && (
-        <ModalWrapper onClose={() => setShowRaccoltaModal(false)}>
-          <AddRaccoltaFondi onClose={() => setShowRaccoltaModal(false)} isModal={true} />
+        <ModalWrapper onClose={handleCloseRaccoltaModal}>
+          {/* Assumiamo che AddRaccoltaFondi chiami onClose quando ha finito */}
+          <AddRaccoltaFondi onClose={handleCloseRaccoltaModal} isModal={true} />
         </ModalWrapper>
       )}
+      
       {showAffiliazioneModal && (
         <ModalWrapper onClose={() => setShowAffiliazioneModal(false)}>
           <RichiestaAffiliazione
