@@ -1,17 +1,50 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+
+// 1. IMPORT DI SWEETALERT2
+import Swal from 'sweetalert2';
+
+// Componenti
 import Navbar from '../components/Navbar.jsx';
 import AccessoInfoProfilo from '../components/AccessoInfoProfilo.jsx';
 import AddEvento from '../components/AddEvento.jsx';
 import AddRaccoltaFondi from '../components/AddRaccoltaFondi.jsx';
 import Footer from '../components/Footer.jsx';
-import '../stylesheets/ProfiloEnte.css';
-import { fetchUserProfile } from '../services/UserServices.js';
 import RichiestaAffiliazione from '../components/RichiestaAffiliazione.jsx';
-import AffiliazioneService from '../services/AffiliazioneService.js';
 import RaccoltaFondiCard from '../components/RaccoltaFondiCard.jsx';
+
+// Servizi
+import { fetchUserProfile } from '../services/UserServices.js';
+import AffiliazioneService from '../services/AffiliazioneService.js';
 import { getRaccolteDiEnte, terminaRaccolta } from '../services/RaccoltaFondiService.js';
 
+// Stili
+import '../stylesheets/ProfiloEnte.css';
+
+// --- CONFIGURAZIONE STILI E COLORI ---
+// Definiamo qui i colori presi dalle tue variabili CSS per usarli in JS
+const THEME_COLORS = {
+  primary: '#087886', // --first-color
+  secondary: '#4AAFB8', // --second-color
+  text: '#1A2B3C',    // --text-main
+  danger: '#d33',     // Rosso per azioni distruttive
+  bg: '#ffffff'       // Sfondo modale
+};
+
+// Configurazione base per SweetAlert2 per mantenere lo stile coerente
+const MySwal = Swal.mixin({
+  customClass: {
+    popup: 'custom-swal-popup',
+    title: 'custom-swal-title',
+    content: 'custom-swal-content'
+  },
+  background: THEME_COLORS.bg,
+  color: THEME_COLORS.text,
+  buttonsStyling: true // Lasciamo true per usare i colori inline, o false se usi classi CSS complete
+});
+
+
+// --- ModalWrapper ---
 const ModalWrapper = ({ children, onClose }) => {
   return (
     <div style={{
@@ -37,29 +70,36 @@ const ModalWrapper = ({ children, onClose }) => {
   );
 };
 
+// --- Componente Principale ---
 const ProfiloEnte = () => {
   const { id } = useParams();
   
+  // Stati Utente
   const [isOwner, setIsOwner] = useState(false);
-  const [userProfile, setUserProfile] = useState(null); // Contiene i dati dell'Ente
+  const [userProfile, setUserProfile] = useState(null);
   const [isFollowing, setIsFollowing] = useState(false);
   const [isVolunteer, setIsVolunteer] = useState(false);
   
+  // Stati UI
   const [showAffiliazioneModal, setShowAffiliazioneModal] = useState(false);
-  const [activeTab, setActiveTab] = useState('futuri');
-  const [activeSideTab, setActiveSideTab] = useState('storie');
-  const [filters, setFilters] = useState({ data: '', orario: '', tipologia: '' });
   const [showEventoModal, setShowEventoModal] = useState(false);
   const [showRaccoltaModal, setShowRaccoltaModal] = useState(false);
-
+  
+  // Tabs
+  const [activeTab, setActiveTab] = useState('futuri');
+  const [activeSideTab, setActiveSideTab] = useState('storie');
+  
+  // Dati
+  const [filters, setFilters] = useState({ data: '', orario: '', tipologia: '' });
   const [raccolteList, setRaccolteList] = useState([]);
   const [loadingRaccolte, setLoadingRaccolte] = useState(false);
 
-  // 1. Carica Utente
+  // 1. Caricamento Dati Utente
   const loadUserData = async () => {
     try {
       const data = await fetchUserProfile();
       setUserProfile(data);
+      setIsOwner(true); 
       return data; 
     } catch (error) {
       console.error("Errore caricamento profilo:", error);
@@ -67,7 +107,7 @@ const ProfiloEnte = () => {
     }
   };
 
-  // 2. Carica Raccolte
+  // 2. Caricamento Raccolte
   const loadRaccolte = async (profileData = userProfile) => {
     setLoadingRaccolte(true);
     try {
@@ -82,7 +122,7 @@ const ProfiloEnte = () => {
          totale_raccolto: item.totaleRaccolto || 0,
          data_apertura: item.dataApertura,
          data_chiusura: item.dataChiusura,
-         ente: profileData?.nome || "Nome Ente"
+         ente: item.enteNome || profileData?.nome || "Nome Ente"
       }));
 
       setRaccolteList(mappedData);
@@ -93,61 +133,118 @@ const ProfiloEnte = () => {
     }
   };
 
-  // 3. GESTIONE TERMINA (Fix Frontend per soddisfare il Backend)
-  const handleTerminate = async (idRaccolta) => {
-    if (!idRaccolta) return alert("Errore ID");
-
-    // Troviamo i dati della raccolta
-    const raccoltaCompleta = raccolteList.find(r => r.id_raccolta === idRaccolta);
-    if (!raccoltaCompleta) return alert("Dati mancanti.");
-
-    // Se userProfile non è caricato, non possiamo terminare perché serve l'Ente
-    if (!userProfile) return alert("Profilo ente non caricato, impossibile terminare.");
-
-    const confirm = window.confirm(`Vuoi terminare: "${raccoltaCompleta.titolo}"?`);
-    if (!confirm) return;
-
-    try {
-      // PREPARIAMO IL PACCHETTO COMPLETO
-      // Uniamo i dati della raccolta con i dati dell'utente (Ente)
-      const datiPerIlBackend = {
-        ...raccoltaCompleta,
-        enteObj: userProfile // Passiamo tutto il profilo utente come "ente"
-      };
-
-      await terminaRaccolta(datiPerIlBackend);
-      
-      alert("Raccolta terminata con successo.");
-      loadRaccolte(userProfile);
-    } catch (error) {
-      console.error("Errore terminazione:", error);
-      alert("Errore: " + error.message);
-    }
-  };
-
   useEffect(() => {
     const init = async () => {
-      setIsOwner(true); 
       const profile = await loadUserData();
       await loadRaccolte(profile);
     };
     init();
   }, [id]);
 
+  // 3. GESTIONE TERMINA CON STYLE CUSTOM
+  const handleTerminate = async (idRaccolta) => {
+    if (!idRaccolta) return;
+
+    const raccoltaCompleta = raccolteList.find(r => r.id_raccolta === idRaccolta);
+    
+    if (!raccoltaCompleta) {
+      return MySwal.fire({
+        icon: 'error',
+        title: 'Errore',
+        text: 'Dati della raccolta non trovati.',
+        confirmButtonColor: THEME_COLORS.primary
+      });
+    }
+
+    if (!userProfile) {
+      return MySwal.fire({
+        icon: 'error',
+        title: 'Errore',
+        text: 'Profilo ente non caricato.',
+        confirmButtonColor: THEME_COLORS.primary
+      });
+    }
+
+    // Popup di conferma STILIZZATO
+    const result = await MySwal.fire({
+      title: 'Terminare la raccolta?',
+      text: `Sei sicuro di voler chiudere anticipatamente "${raccoltaCompleta.titolo}"?`,
+      icon: 'warning',
+      showCancelButton: true,
+      
+      // STILI PULSANTI RICHIESTI
+      confirmButtonColor: THEME_COLORS.danger,   // Rosso per "Sì, termina"
+      cancelButtonColor: THEME_COLORS.primary,   // Teal (#087886) per "Annulla"
+      
+      confirmButtonText: 'Sì, termina',
+      cancelButtonText: 'Annulla',
+      reverseButtons: true // Opzionale: mette Annulla a sinistra e Termina a destra
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      const datiPerIlBackend = {
+        ...raccoltaCompleta,
+        enteObj: userProfile 
+      };
+
+      await terminaRaccolta(datiPerIlBackend);
+      
+      // Popup Successo STILIZZATO
+      await MySwal.fire({
+        icon: 'success',
+        title: 'Terminata!',
+        text: 'La raccolta fondi è stata chiusa correttamente.',
+        confirmButtonColor: THEME_COLORS.primary // Teal per ok
+      });
+      
+      await loadRaccolte(userProfile);
+      
+    } catch (error) {
+      console.error("Errore terminazione:", error);
+      MySwal.fire({
+        icon: 'error',
+        title: 'Errore!',
+        text: error.message || "Impossibile terminare la raccolta.",
+        confirmButtonColor: THEME_COLORS.primary
+      });
+    }
+  };
+
+  // 4. Handlers UI
   const handleFollowClick = () => setIsFollowing(!isFollowing);
+  
   const handleFilterChange = (e) => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
   };
+
   const handleRichiestaAffiliazione = async () => {
     const token = localStorage.getItem('token');
     const emailEnte = userProfile?.email;
-    if (!emailEnte) return alert("Impossibile recuperare l'email.");
+    
+    if (!emailEnte) {
+        return MySwal.fire('Errore', "Impossibile recuperare l'email dell'ente.", 'error');
+    }
+
     try {
       const isAffiliated = await AffiliazioneService.checkAffiliazione(emailEnte, token);
-      if (isAffiliated) alert("Hai già un ente affiliato.");
-      else setShowAffiliazioneModal(true);
-    } catch (error) { console.error(error); }
+      if (isAffiliated) {
+        MySwal.fire({
+          icon: 'info',
+          title: 'Info',
+          text: 'Hai già un ente affiliato.',
+          confirmButtonColor: THEME_COLORS.primary
+        });
+      } else {
+        setShowAffiliazioneModal(true);
+      }
+    } catch (error) { 
+        console.error(error);
+        MySwal.fire('Errore', 'Errore durante la verifica affiliazione.', 'error');
+    }
   };
+
   const handleCloseRaccoltaModal = () => {
     setShowRaccoltaModal(false);
     loadRaccolte(userProfile); 
@@ -162,11 +259,14 @@ const ProfiloEnte = () => {
     userData: userProfile 
   } : undefined;
 
+  // --- Render JSX ---
   return (
     <div className="ente-page-wrapper">
       <Navbar />
       <div className="main-container">
+        
         <AccessoInfoProfilo {...profileProps} onUpdate={loadUserData} />
+        
         <section className="event-section">
           <div className="controll">
             <div className="tabs-left">
@@ -192,6 +292,7 @@ const ProfiloEnte = () => {
           </div>
 
           <div className="split-layout">
+            {/* Colonna Sinistra */}
             <div className="left-column">
                <div className="event-search">
                 <h3 className="search-title">CERCA</h3>
@@ -204,6 +305,7 @@ const ProfiloEnte = () => {
               <div className="event-grid"><p>Nessun evento {activeTab} trovato.</p></div>
             </div>
 
+            {/* Colonna Destra (Sidebar) */}
             <div className="right-column">
               <div className="sidebar-header">
                 <button className={`side-tab-btn ${activeSideTab === 'storie' ? 'active' : ''}`} onClick={() => setActiveSideTab('storie')}>STORIE</button>
@@ -220,7 +322,7 @@ const ProfiloEnte = () => {
                           key={raccolta.id_raccolta || index} 
                           {...raccolta}
                           isOwner={isOwner}
-                          onTerminate={handleTerminate}
+                          onTerminate={handleTerminate} // Passaggio funzione al figlio
                         />
                       ))
                     ) : (
@@ -234,6 +336,8 @@ const ProfiloEnte = () => {
         </section>
       </div>
       <Footer />
+      
+      {/* Modali */}
       {showEventoModal && <ModalWrapper onClose={() => setShowEventoModal(false)}><AddEvento onClose={() => setShowEventoModal(false)} isModal={true} /></ModalWrapper>}
       {showRaccoltaModal && <ModalWrapper onClose={handleCloseRaccoltaModal}><AddRaccoltaFondi onClose={handleCloseRaccoltaModal} isModal={true} /></ModalWrapper>}
       {showAffiliazioneModal && <ModalWrapper onClose={() => setShowAffiliazioneModal(false)}><RichiestaAffiliazione onClose={() => setShowAffiliazioneModal(false)} emailEnte={userProfile?.email} /></ModalWrapper>}

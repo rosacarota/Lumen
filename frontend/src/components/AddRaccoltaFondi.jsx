@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Coins, SendHorizontal, ArrowLeft } from "lucide-react";
+import Swal from 'sweetalert2'; 
 
-// IMPORTANTE: Importa la funzione dal file di servizio esterno che abbiamo creato prima.
-// Aggiusta il percorso "../..." in base a dove hai salvato quel file.
+// Importa la funzione dal service
 import { createRaccolta } from "../services/RaccoltaFondiService"; 
 
 const cssStyles = `
@@ -202,7 +202,8 @@ const cssStyles = `
 `;
 
 // --- COMPONENTE PRINCIPALE ---
-const AddRaccoltaFondi = ({ onSubmit, onBack, isModal = false }) => {
+// IMPORTANTE: Abbiamo aggiunto 'onClose' alle props per gestire la chiusura dal padre
+const AddRaccoltaFondi = ({ onSubmit, onBack, onClose, isModal = false }) => {
   const [titolo, setTitolo] = useState("");
   const [descrizione, setDescrizione] = useState("");
   const [obiettivo, setObiettivo] = useState("");
@@ -211,7 +212,7 @@ const AddRaccoltaFondi = ({ onSubmit, onBack, isModal = false }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // 1. Recupera l'Ente dal LocalStorage al caricamento per allegare l'oggetto utente al JSON
+  // Recupera l'Ente dal LocalStorage
   useEffect(() => {
     const storedUser = localStorage.getItem("user"); 
     if (storedUser) {
@@ -240,16 +241,13 @@ const AddRaccoltaFondi = ({ onSubmit, onBack, isModal = false }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Validazione base
-
     if (parseFloat(obiettivo) <= 0) {
-      alert("L'obiettivo deve essere maggiore di zero.");
+      Swal.fire('Attenzione', "L'obiettivo deve essere maggiore di zero.", 'warning');
       return;
     }
 
     setIsLoading(true);
 
-    // Costruzione dell'oggetto JSON
     const nuovaRaccoltaPayload = {
       titolo: titolo.trim(),
       descrizione: descrizione.trim(),
@@ -258,34 +256,51 @@ const AddRaccoltaFondi = ({ onSubmit, onBack, isModal = false }) => {
       dataApertura: new Date().toISOString().split("T")[0],
       dataChiusura: dataChiusura,
       stato: "ATTIVA",
-      ente: currentUser, // L'oggetto utente recuperato dal localStorage
+      ente: currentUser,
     };
 
     try {
-      console.log("Invio dati tramite il service esterno...", nuovaRaccoltaPayload);
+      console.log("Invio dati...", nuovaRaccoltaPayload);
       
-      // Chiamata alla funzione importata
       const responseMessage = await createRaccolta(nuovaRaccoltaPayload);
       
-      console.log("Risposta backend:", responseMessage);
-      alert("Successo: " + responseMessage);
+      // 1. Alert temporizzato elegante (senza blocco utente)
+      await Swal.fire({
+        icon: 'success',
+        title: 'Pubblicata!',
+        text: 'La tua raccolta fondi è ora online.',
+        timer: 500, // Si chiude da solo dopo 1.5 secondi
+        showConfirmButton: false
+      });
 
+      // 2. Notifica eventuali handler esterni (opzionale)
       if (onSubmit) {
         onSubmit(responseMessage);
       }
       
-      if (onBack) {
-        onBack(); 
+      // 3. CHIUSURA E RICARICA
+      // Questa è la parte fondamentale: chiamando onClose (passato dal padre ProfiloEnte)
+      // il padre chiuderà il modale e ricaricherà i dati.
+      if (onClose) {
+        onClose(); 
+      } else if (onBack) {
+        onBack();
       } else {
         resetForm();
       }
 
     } catch (error) {
-      console.error("Errore componente AddRaccoltaFondi:", error);
-      alert("Errore: " + error.message);
+      console.error("Errore creazione:", error);
+      Swal.fire('Errore', error.message || "Errore sconosciuto", 'error');
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Funzione per gestire il click sulla freccia "indietro" in alto
+  const handleCloseOrBack = () => {
+    if (onClose) onClose();
+    else if (onBack) onBack();
   };
 
   return (
@@ -293,13 +308,14 @@ const AddRaccoltaFondi = ({ onSubmit, onBack, isModal = false }) => {
       <style>{cssStyles}</style>
       <div className={`arf-page ${isModal ? "arf-page-modal" : ""}`}>
         <div className="arf-container">
-          {/* Freccia indietro */}
-          {onBack && (
+          
+          {/* Freccia indietro / Chiudi */}
+          {(onBack || onClose) && (
             <button
               type="button"
               className="arf-close-back-button"
-              onClick={onBack}
-              title="Torna indietro"
+              onClick={handleCloseOrBack}
+              title="Chiudi"
               disabled={isLoading}
             >
               <ArrowLeft size={20} />
@@ -324,7 +340,7 @@ const AddRaccoltaFondi = ({ onSubmit, onBack, isModal = false }) => {
             </div>
           </div>
 
-          {/* Pannello destro (Form) */}
+          {/* Pannello destro */}
           <div className="arf-right-panel">
             <div className="arf-form-container">
               
@@ -342,7 +358,6 @@ const AddRaccoltaFondi = ({ onSubmit, onBack, isModal = false }) => {
                 <form onSubmit={handleSubmit} className="arf-story-form">
                   <div className="arf-fields-container">
                     
-                    {/* Titolo */}
                     <div className="arf-input-group">
                       <input
                         className="arf-input-field"
@@ -356,7 +371,6 @@ const AddRaccoltaFondi = ({ onSubmit, onBack, isModal = false }) => {
                       />
                     </div>
 
-                    {/* Riga Doppia: Obiettivo e Data */}
                     <div className="arf-row-split">
                       <div className="arf-input-group">
                         <input
@@ -386,7 +400,6 @@ const AddRaccoltaFondi = ({ onSubmit, onBack, isModal = false }) => {
                       </div>
                     </div>
 
-                    {/* Descrizione */}
                     <div className="arf-input-group">
                       <textarea
                         className="arf-text-area"
