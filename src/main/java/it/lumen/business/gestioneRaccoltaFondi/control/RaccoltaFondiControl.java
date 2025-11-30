@@ -80,9 +80,8 @@ public class RaccoltaFondiControl {
         return ResponseEntity.ok("Raccolta fondi " + raccoltaFondi.getTitolo() + " avviata con successo");
     }
 
-    @PostMapping("/terminaRaccoltaFondi")
-    public ResponseEntity<String> terminaRaccoltaFondi(@Valid @RequestBody RaccoltaFondi raccoltaFondi, BindingResult result, @RequestParam String token) {
-        if (result.hasErrors()) return ResponseEntity.badRequest().body("Dati non validi");
+    @GetMapping("/terminaRaccoltaFondi")
+    public ResponseEntity<String> terminaRaccoltaFondi(@RequestParam int idRaccolta, @RequestParam String token) {
 
         String email = jwtUtil.extractEmail(token);
         if (email == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token non valido");
@@ -92,9 +91,10 @@ public class RaccoltaFondiControl {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Non autorizzato");
         }
 
-        raccoltaFondiService.terminaRaccoltaFondi(raccoltaFondi);
+        raccoltaFondiService.terminaRaccoltaFondi(idRaccolta);
         return ResponseEntity.ok("Raccolta terminata");
     }
+
 
     @GetMapping("/ottieniRaccolteDiEnte")
     public ResponseEntity<?> ottieniRaccolteDiEnte(@RequestParam String token) {

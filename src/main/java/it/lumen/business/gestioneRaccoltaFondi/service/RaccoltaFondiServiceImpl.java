@@ -24,7 +24,7 @@ public class RaccoltaFondiServiceImpl implements RaccoltaFondiService {
 
     @Override
     @Transactional
-    public void terminaRaccoltaFondi(RaccoltaFondi raccoltaFondi){raccoltaFondiDAO.save(raccoltaFondi);}
+    public void terminaRaccoltaFondi(int idRaccolta){raccoltaFondiDAO.removeRaccoltaFondiByIdRaccoltaFondi(idRaccolta);}
 
     @Override
     public List <RaccoltaFondi> ottieniRaccolteDiEnte(Utente utente){
