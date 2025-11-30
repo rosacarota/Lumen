@@ -55,6 +55,10 @@ public class RegistrazioneServiceImpl implements RegistrazioneService {
 
     public String salvaImmagine(String base64String) throws IOException {
 
+        if(base64String == null || base64String.isEmpty()) {
+            return null;
+        }
+
         String[] parts = base64String.split(",");
         String header = parts[0];
         String content = parts[1];
