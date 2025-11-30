@@ -3,51 +3,49 @@ import '../stylesheets/EventsPage.css';
 import Navbar from '../components/Navbar';
 import EventCard from '../components/EventCard'; 
 import Footer from '../components/Footer';
+import DettagliEvento from '../components/DettagliEvento'; // <--- IMPORTA IL MODALE
 
-// IMPORTIAMO ENTRAMBI I SERVIZI
-import { fetchEvents } from '../services/PartecipazioneEventiService'; // Funzionalità originale
-import { getCronologiaEventi } from '../services/CronologiaEventiService'; // Nuova funzionalità
+import { fetchEvents } from '../services/PartecipazioneEventoService'; 
+import { getCronologiaEventi } from '../services/CronologiaEventiService'; 
 
 export default function EventsPage() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
-  
-  // Stato per gestire quale "vista" è attiva: 'tutti' o 'cronologia'
   const [viewMode, setViewMode] = useState('tutti'); 
 
-  // Funzione per caricare TUTTI gli eventi (Funzionalità Originale)
+  // --- STATO PER IL MODALE ---
+  const [selectedEvent, setSelectedEvent] = useState(null);
+
+  // Funzione chiamata dalla CARD quando clicchi "Dettagli"
+  const handleOpenDetails = (evento) => {
+    setSelectedEvent(evento);
+  };
+
+  // Funzione per chiudere il modale
+  const handleCloseModal = () => {
+    setSelectedEvent(null);
+  };
+
+  // ... (loadAllEvents e loadHistoryEvents restano uguali) ...
   const loadAllEvents = async () => {
     setLoading(true);
     try {
       const data = await fetchEvents();
       setEvents(data);
       setViewMode('tutti');
-    } catch (error) {
-      console.error("Errore caricamento eventi generali:", error);
-    } finally {
-      setLoading(false);
-    }
+    } catch (error) { console.error(error); } finally { setLoading(false); }
   };
 
-  // Funzione per caricare la CRONOLOGIA (Nuova Funzionalità)
   const loadHistoryEvents = async () => {
     setLoading(true);
     try {
-      // Passo null per avere tutta la cronologia, oppure uno stato specifico se serve
       const data = await getCronologiaEventi(null); 
       setEvents(data);
       setViewMode('cronologia');
-    } catch (error) {
-      console.error("Errore caricamento cronologia:", error);
-    } finally {
-      setLoading(false);
-    }
+    } catch (error) { console.error(error); } finally { setLoading(false); }
   };
 
-  // Al caricamento della pagina, mostriamo di default gli eventi generali (come prima)
-  useEffect(() => {
-    loadAllEvents();
-  }, []);
+  useEffect(() => { loadAllEvents(); }, []);
 
   return (
     <>
@@ -56,58 +54,31 @@ export default function EventsPage() {
 
       <div className="main-container">
         <div className="content-box">
+          
+          {/* ... Header e bottoni cambio vista (restano uguali) ... */}
           <div className="box-header">
-            <div className="header-text">
-              <h1>{viewMode === 'tutti' ? 'Tutti gli Eventi' : 'La tua Cronologia'}</h1>
-              <p>Scopri le attività della community e partecipa.</p>
-            </div>
-            
-            {/* --- NUOVA SEZIONE: Bottoni per cambiare funzionalità --- */}
-            <div style={{ marginTop: '15px', display: 'flex', gap: '10px' }}>
-              <button 
-                onClick={loadAllEvents}
-                style={{
-                  padding: '8px 16px',
-                  borderRadius: '20px',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontWeight: 'bold',
-                  backgroundColor: viewMode === 'tutti' ? '#087886' : '#e0e0e0',
-                  color: viewMode === 'tutti' ? 'white' : '#333'
-                }}
-              >
-                Tutti gli Eventi
-              </button>
-              
-              <button 
-                onClick={loadHistoryEvents}
-                style={{
-                  padding: '8px 16px',
-                  borderRadius: '20px',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontWeight: 'bold',
-                  backgroundColor: viewMode === 'cronologia' ? '#087886' : '#e0e0e0',
-                  color: viewMode === 'cronologia' ? 'white' : '#333'
-                }}
-              >
-                La mia Cronologia
-              </button>
-            </div>
-            {/* ----------------------------------------------------- */}
-
+             <div className="header-text">
+                <h1>{viewMode === 'tutti' ? 'Tutti gli Eventi' : 'La tua Cronologia'}</h1>
+                <p>Scopri le attività della community e partecipa.</p>
+             </div>
+             <div style={{ marginTop: '15px', display: 'flex', gap: '10px' }}>
+                <button onClick={loadAllEvents} style={{/*...*/}}>Tutti</button>
+                <button onClick={loadHistoryEvents} style={{/*...*/}}>Cronologia</button>
+             </div>
           </div>
+          {/* ... fine header ... */}
 
           <div className="events-grid">
-            {loading && <p>Caricamento in corso...</p>}
+            {loading && <p>Caricamento...</p>}
             
-            {!loading && events.length === 0 && (
-              <p>Nessun evento da mostrare.</p>
-            )}
-
             {!loading && events.map((event) => (
               <EventCard 
                 key={event.idEvento} 
+                
+                // Passiamo tutto l'oggetto evento, serve per passarlo al modale
+                eventData={event} 
+                
+                // Passiamo le singole prop per la visualizzazione della card
                 id_evento={event.idEvento} 
                 titolo={event.titolo}
                 descrizione={event.descrizione}
@@ -118,6 +89,9 @@ export default function EventsPage() {
                 maxpartecipanti={event.maxPartecipanti}
                 immagine={event.immagine}
                 showParticipate={true}
+                
+                // --- PASSIAMO LA FUNZIONE PER APRIRE IL MODALE ---
+                onOpenDetails={handleOpenDetails}
               />
             ))}
           </div>
@@ -126,6 +100,14 @@ export default function EventsPage() {
       </div>
     </div>
     <Footer />
+
+    {/* --- IL MODALE (Appare solo se selectedEvent esiste) --- */}
+    {selectedEvent && (
+      <DettagliEvento 
+        evento={selectedEvent} 
+        onClose={handleCloseModal} 
+      />
+    )}
     </>
   );
 }

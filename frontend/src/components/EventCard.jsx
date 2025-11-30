@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { CalendarDays, MapPin, Users, Clock, Info, UserPlus, UserCheck, Image as ImageIcon } from 'lucide-react';
+import { CalendarDays, MapPin, Users, Info, UserPlus, UserCheck, Image as ImageIcon } from 'lucide-react';
 import '../stylesheets/EventCard.css';
 
-// Importiamo i servizi aggiornati
-import { iscrivitiEvento, rimuoviIscrizione, checkUserParticipation } from '../services/PartecipazioneEventiService';
+import { 
+  iscrivitiEvento, 
+  rimuoviIscrizione, 
+  checkUserParticipation, 
+  fetchDatiUtente 
+} from '../services/PartecipazioneEventoService';
 
 export default function EventCard({
-  id_evento,  // IMPORTANTE: Assicurati che dal backend arrivi come "idEvento" o "id_evento"
+  id_evento,
   titolo,
   descrizione,
   luogo,
@@ -15,75 +19,121 @@ export default function EventCard({
   maxpartecipanti,
   immagine,
   ente,
-  showParticipate = true
+  showParticipate = true,
+  eventData,      
+  onOpenDetails   
 }) {
 
-  // Stati locali
   const [isParticipating, setIsParticipating] = useState(false);
-  const [participationId, setParticipationId] = useState(null); // Serve per la cancellazione
+  const [participationId, setParticipationId] = useState(null);
   const [loadingBtn, setLoadingBtn] = useState(false);
+  const [userRole, setUserRole] = useState("");
 
-  // Formattazione Date (rimasta uguale)
-  const formatDateRange = (start, end) => {
-    if (!start || !end) return { fullDate: "Data da definire", timeRange: "--:--" };
-    const s = new Date(start);
-    const e = new Date(end);
+  // Formattazione data
+  const formatDate = (dateString) => {
+    if (!dateString) return "Data da definire";
+    const date = new Date(dateString);
     const dateOpts = { day: 'numeric', month: 'short', year: 'numeric' };
-    const timeOpts = { hour: '2-digit', minute: '2-digit' };
-    return {
-      fullDate: s.toLocaleDateString('it-IT', dateOpts),
-      timeRange: `${s.toLocaleTimeString('it-IT', timeOpts)} - ${e.toLocaleTimeString('it-IT', timeOpts)}`
-    };
+    return date.toLocaleDateString('it-IT', dateOpts);
   };
 
-  const { fullDate, timeRange } = formatDateRange(data_inizio, data_fine);
+  const fullDate = formatDate(data_inizio);
 
-  // --- CONTROLLO INIZIALE ---
-  // Appena appare la card, controlliamo se l'utente è già iscritto
+  // --- CONTROLLO INIZIALE (Ruolo + Partecipazione) ---
+ // --- CONTROLLO INIZIALE (RUOLO + PARTECIPAZIONE) ---
   useEffect(() => {
-    const checkStatus = async () => {
-      if (showParticipate) {
+    // AGGIUNGI LA PAROLA 'async' QUI SOTTO vvv
+    const initializeCard = async () => {
+      
+      let ruoloFinale = "";
+
+      try {
+        const datiUtente = await fetchDatiUtente();
+        if (datiUtente && datiUtente.ruolo) {
+          ruoloFinale = datiUtente.ruolo;
+        }
+      } catch (error) {
+        console.warn("Impossibile recuperare dati utente dal server");
+      }
+
+      if (!ruoloFinale) {
+        ruoloFinale = localStorage.getItem("ruolo") || localStorage.getItem("userRole");
+      }
+      
+      setUserRole(ruoloFinale);
+
+      const isVolontario = ruoloFinale && ruoloFinale.toLowerCase() === "volontario";
+
+      if (showParticipate && isVolontario) {
+        // Ora 'await' funzionerà perché la funzione initializeCard è 'async'
         const status = await checkUserParticipation(id_evento);
         setIsParticipating(status.isParticipating);
         setParticipationId(status.idPartecipazione);
       }
     };
-    checkStatus();
+
+    initializeCard();
   }, [id_evento, showParticipate]);
 
+  // --- APERTURA DETTAGLI ---
+  const handleDettagliClick = (e) => {
+    e.stopPropagation(); 
+    if (onOpenDetails) {
+        const eventoPerModale = eventData || {
+            idEvento: id_evento, id_evento, 
+            titolo, descrizione, luogo, 
+            dataInizio: data_inizio, dataFine: data_fine,
+            ente, maxPartecipanti: maxpartecipanti, immagine
+        };
+        onOpenDetails(eventoPerModale);
+    }
+  };
 
-  // --- GESTIONE CLICK ---
+  // --- GESTIONE ISCRIZIONE / CANCELLAZIONE (CON FIX ID) ---
   const handleToggleParticipation = async (e) => {
     e.stopPropagation();
     if (loadingBtn) return;
     setLoadingBtn(true);
 
     if (!isParticipating) {
-      // --- CASO 1: VOGLIO ISCRIVERMI ---
+      // CASO 1: ISCRIZIONE
       const result = await iscrivitiEvento(id_evento);
-
+      
       if (result.success) {
         alert("Iscrizione avvenuta con successo!");
         setIsParticipating(true);
-        // Ricarichiamo lo stato per ottenere il nuovo ID partecipazione
+        // Recuperiamo subito l'ID della nuova partecipazione
         const status = await checkUserParticipation(id_evento);
-        setParticipationId(status.idPartecipazione);
+        if (status.idPartecipazione) setParticipationId(status.idPartecipazione);
       } else {
         alert("Errore: " + (result.message || "Impossibile iscriversi"));
       }
 
     } else {
-      // --- CASO 2: VOGLIO CANCELLARMI ---
-      if (!participationId) {
-        alert("Errore: ID partecipazione mancante.");
+      // CASO 2: CANCELLAZIONE (Logica "Smart")
+      let idDaCancellare = participationId;
+
+      // Se l'ID manca, proviamo a recuperarlo ADESSO
+      if (!idDaCancellare) {
+        console.log("ID mancante, tentativo di recupero al volo...");
+        const status = await checkUserParticipation(id_evento);
+        if (status.isParticipating && status.idPartecipazione) {
+            idDaCancellare = status.idPartecipazione;
+            setParticipationId(status.idPartecipazione); // Lo salviamo anche nello stato
+        }
+      }
+
+      // Se ancora non lo abbiamo, non possiamo fare nulla
+      if (!idDaCancellare) {
+        alert("Errore tecnico: Impossibile recuperare i dati della tua iscrizione. Ricarica la pagina.");
         setLoadingBtn(false);
         return;
       }
 
       const conferma = window.confirm("Vuoi davvero annullare la partecipazione?");
       if (conferma) {
-        const result = await rimuoviIscrizione(participationId);
-
+        const result = await rimuoviIscrizione(idDaCancellare);
+        
         if (result.success) {
           alert("Partecipazione annullata.");
           setIsParticipating(false);
@@ -93,13 +143,11 @@ export default function EventCard({
         }
       }
     }
-
     setLoadingBtn(false);
   };
 
   return (
     <div className="event-card" id={`event-${id_evento}`}>
-
       {immagine ? (
         <img src={immagine} alt={titolo} className="event-cover" />
       ) : (
@@ -138,10 +186,6 @@ export default function EventCard({
             <span>{fullDate}</span>
           </div>
           <div className="event-detail-row">
-            <span className="event-icon"><Clock size={18} /></span>
-            <span>{timeRange}</span>
-          </div>
-          <div className="event-detail-row">
             <span className="event-icon"><MapPin size={18} /></span>
             <span>{luogo || "Luogo da definire"}</span>
           </div>
@@ -154,12 +198,12 @@ export default function EventCard({
         </div>
 
         <div className="event-footer">
-          <button className="event-btn btn-secondary">
+          <button className="event-btn btn-secondary" onClick={handleDettagliClick}>
             <Info size={18} />
             Dettagli
           </button>
 
-          {showParticipate && (
+          {showParticipate && userRole && userRole.toLowerCase() === "volontario" && (
             <button
               className={`event-btn btn-primary ${isParticipating ? 'btn-active' : ''}`}
               onClick={handleToggleParticipation}
@@ -181,7 +225,6 @@ export default function EventCard({
           )}
         </div>
       </div>
-
     </div>
   );
 }
