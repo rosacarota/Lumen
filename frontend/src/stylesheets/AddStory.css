@@ -232,7 +232,7 @@
 
 .input-field-no-icon,
 .text-area {
-  width: 200%; /* Corretto a 100% per evitare scroll orizzontali */
+  width: 100%; 
   padding: 12px 16px;
   border: 2px solid #e5e7eb;
   border-radius: 25px;
