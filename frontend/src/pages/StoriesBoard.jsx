@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import AddStory from "./AddStory";
-import EditStory from "./EditStory";
-import DeleteStory from "./DeleteStory";
+import AddStory from "../components/AddStory";
+import EditStory from "../components/EditStory";
+import DeleteStory from "../components/DeleteStory";
 import "../stylesheets/StoriesBoard.css";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
