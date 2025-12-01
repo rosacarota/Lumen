@@ -3,34 +3,34 @@ import { useNavigate } from 'react-router-dom';
 import { X, Calendar, MapPin, Users, Image as ImageIcon } from 'lucide-react';
 import '../stylesheets/DettagliEvento.css';
 
-// Importiamo il servizio per sapere chi è loggato
 import { fetchDatiUtente } from '../services/PartecipazioneEventoService';
 
 export default function DettagliEvento({ evento, onClose }) {
   const navigate = useNavigate();
   
-  // Stato per salvare i dati dell'utente loggato
   const [currentUser, setCurrentUser] = useState(null);
 
-  // Al caricamento del modale, recuperiamo l'utente
+  // --- 1. RECUPERO UTENTE ---
   useEffect(() => {
     const loadUser = async () => {
+      let user = null;
       try {
-        const user = await fetchDatiUtente();
-        // Se user è null (non loggato), lo stato rimane null
-        if (user) setCurrentUser(user);
-      } catch (error) {
-        console.error("Impossibile recuperare utente corrente");
+        user = await fetchDatiUtente();
+      } catch (error) { console.warn("API dati utente non disponibile"); }
+
+      if (!user) {
+        const emailLocal = localStorage.getItem("userEmail");
+        const ruoloLocal = localStorage.getItem("ruolo") || localStorage.getItem("userRole");
+        if (emailLocal) user = { email: emailLocal, ruolo: ruoloLocal };
       }
+      setCurrentUser(user);
     };
     loadUser();
   }, []);
 
-  // Se l'evento è nullo, non mostriamo nulla (evita crash)
   if (!evento) return null; 
 
   const handleVediPartecipanti = () => {
-    // Recuperiamo l'ID in modo sicuro
     const id = evento.id_evento || evento.idEvento;
     navigate(`/partecipanti/${id}`);
   };
@@ -42,31 +42,64 @@ export default function DettagliEvento({ evento, onClose }) {
     });
   };
 
-  // --- LOGICA ROBUSTA PER RECUPERARE L'EMAIL DELL'ENTE ---
-  // A volte dal backend arriva l'oggetto Ente, a volte solo la stringa email.
+  // --- LOGICA ENTE ---
   const getEnteEmail = () => {
-    if (!evento.ente) return "";
-    if (typeof evento.ente === 'string') return evento.ente; // È solo la stringa email
-    return evento.ente.email || ""; // È un oggetto
+    if (evento.ente) {
+        if (typeof evento.ente === 'string') return evento.ente;
+        return evento.ente.email || "";
+    }
+    if (evento.utente) {
+        if (typeof evento.utente === 'string') return evento.utente;
+        return evento.utente.email || "";
+    }
+    return "";
   };
 
-  // --- LOGICA ROBUSTA PER RECUPERARE IL NOME DELL'ENTE (per visualizzazione) ---
   const getEnteName = () => {
-    if (!evento.ente) return "Ente Sconosciuto";
-    if (typeof evento.ente === 'string') return evento.ente; 
-    return evento.ente.nome || evento.ente.email || "Ente Sconosciuto";
+    if (evento.ente) {
+        if (typeof evento.ente === 'string') return evento.ente;
+        return evento.ente.nome || evento.ente.email || "Ente Sconosciuto";
+    }
+    if (evento.utente) {
+        if (typeof evento.utente === 'string') return evento.utente;
+        return evento.utente.nome || evento.utente.email || "Ente Sconosciuto";
+    }
+    return "Ente Sconosciuto";
   };
 
+  // --- NUOVA LOGICA INDIRIZZO ---
+  const getIndirizzoCompleto = () => {
+    // 1. Se il backend manda l'oggetto "indirizzo"
+    if (evento.indirizzo && typeof evento.indirizzo === 'object') {
+        const { strada, nCivico, citta, provincia } = evento.indirizzo;
+        
+        // Costruiamo la stringa: "Via Roma 10, Milano (MI)"
+        let fullAddress = "";
+        
+        if (strada) fullAddress += strada;
+        if (nCivico) fullAddress += ` ${nCivico}`;
+        if (citta) fullAddress += fullAddress ? `, ${citta}` : citta;
+        if (provincia) fullAddress += ` (${provincia})`;
+
+        return fullAddress || "Indirizzo non specificato";
+    }
+
+    // 2. Fallback: se manda una stringa semplice "luogo"
+    if (evento.luogo && typeof evento.luogo === 'string') {
+        return evento.luogo;
+    }
+
+    return "Luogo da definire";
+  };
+
+  // --- CONTROLLO PROPRIETARIO ---
   const emailEnteEvento = getEnteEmail();
   const emailUtenteLoggato = currentUser?.email || "";
+  const normalize = (str) => str ? str.trim().toLowerCase() : "";
 
-  // --- LOGICA DI CONTROLLO PROPRIETARIO ---
   const isOwner = currentUser && 
-                  currentUser.ruolo && 
-                  currentUser.ruolo.toLowerCase() === 'ente' &&
-                  emailEnteEvento &&
-                  emailUtenteLoggato &&
-                  emailEnteEvento.toLowerCase() === emailUtenteLoggato.toLowerCase();
+                  normalize(currentUser.ruolo) === 'ente' &&
+                  normalize(emailEnteEvento) === normalize(emailUtenteLoggato);
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -89,7 +122,6 @@ export default function DettagliEvento({ evento, onClose }) {
           
           <div className="modal-ente-badge">
             <span>Organizzato da:</span>
-            {/* Usiamo la funzione sicura per il nome */}
             <strong>{getEnteName()}</strong>
           </div>
         </div>
@@ -113,7 +145,8 @@ export default function DettagliEvento({ evento, onClose }) {
               <MapPin className="info-icon" size={20} />
               <div>
                 <span className="label">Luogo</span>
-                <p>{evento.luogo || "Luogo da definire"}</p>
+                {/* QUI USIAMO LA NUOVA FUNZIONE */}
+                <p>{getIndirizzoCompleto()}</p>
               </div>
             </div>
           </div>
@@ -132,7 +165,6 @@ export default function DettagliEvento({ evento, onClose }) {
             <div className="modal-actions">
               <button className="btn-secondary" onClick={onClose}>Chiudi</button>
               
-              {/* MOSTRA IL TASTO SOLO SE SEI IL PROPRIETARIO */}
               {isOwner && (
                 <button className="btn-primary" onClick={handleVediPartecipanti}>
                   Vedi Partecipanti

@@ -18,9 +18,10 @@ export default function EventCard({
   data_fine,
   maxpartecipanti,
   immagine,
-  ente,
+  ente, // Questa prop potrebbe arrivare vuota, ci affidiamo a eventData
+  
   showParticipate = true,
-  eventData,      
+  eventData, // Qui dentro c'è l'oggetto completo dal backend
   onOpenDetails   
 }) {
 
@@ -29,7 +30,6 @@ export default function EventCard({
   const [loadingBtn, setLoadingBtn] = useState(false);
   const [userRole, setUserRole] = useState("");
 
-  // Formattazione data
   const formatDate = (dateString) => {
     if (!dateString) return "Data da definire";
     const date = new Date(dateString);
@@ -39,12 +39,41 @@ export default function EventCard({
 
   const fullDate = formatDate(data_inizio);
 
-  // --- CONTROLLO INIZIALE (Ruolo + Partecipazione) ---
- // --- CONTROLLO INIZIALE (RUOLO + PARTECIPAZIONE) ---
+  // --- LOGICA PER RECUPERARE IL NOME ENTE ---
+  const getOrganizerName = () => {
+    // 1. Controlliamo dentro 'eventData.utente' (Struttura attuale del tuo Backend)
+    if (eventData && eventData.utente) {
+        if (typeof eventData.utente === 'object') {
+            // Se c'è il nome, restituiamo quello. Altrimenti l'email.
+            return eventData.utente.nome || eventData.utente.email || "Ente Sconosciuto";
+        }
+        return eventData.utente; // Se è solo una stringa
+    }
+
+    // 2. Controlliamo dentro 'eventData.ente' (Caso alternativo)
+    if (eventData && eventData.ente) {
+        if (typeof eventData.ente === 'object') {
+            return eventData.ente.nome || eventData.ente.email || "Ente Sconosciuto";
+        }
+        return eventData.ente;
+    }
+
+    // 3. Fallback sulla prop 'ente' passata direttamente
+    if (ente) {
+        if (typeof ente === 'object') return ente.nome || ente.email;
+        return ente;
+    }
+
+    return "Ente Sconosciuto";
+  };
+
+  // Calcoliamo il nome da visualizzare (es. "Lumen Organization")
+  const organizerName = getOrganizerName();
+
+
+  // --- CONTROLLO INIZIALE ---
   useEffect(() => {
-    // AGGIUNGI LA PAROLA 'async' QUI SOTTO vvv
     const initializeCard = async () => {
-      
       let ruoloFinale = "";
 
       try {
@@ -52,9 +81,7 @@ export default function EventCard({
         if (datiUtente && datiUtente.ruolo) {
           ruoloFinale = datiUtente.ruolo;
         }
-      } catch (error) {
-        console.warn("Impossibile recuperare dati utente dal server");
-      }
+      } catch (error) { console.warn("Impossibile recuperare dati utente"); }
 
       if (!ruoloFinale) {
         ruoloFinale = localStorage.getItem("ruolo") || localStorage.getItem("userRole");
@@ -65,7 +92,6 @@ export default function EventCard({
       const isVolontario = ruoloFinale && ruoloFinale.toLowerCase() === "volontario";
 
       if (showParticipate && isVolontario) {
-        // Ora 'await' funzionerà perché la funzione initializeCard è 'async'
         const status = await checkUserParticipation(id_evento);
         setIsParticipating(status.isParticipating);
         setParticipationId(status.idPartecipazione);
@@ -75,7 +101,7 @@ export default function EventCard({
     initializeCard();
   }, [id_evento, showParticipate]);
 
-  // --- APERTURA DETTAGLI ---
+  // --- HANDLERS ---
   const handleDettagliClick = (e) => {
     e.stopPropagation(); 
     if (onOpenDetails) {
@@ -89,43 +115,33 @@ export default function EventCard({
     }
   };
 
-  // --- GESTIONE ISCRIZIONE / CANCELLAZIONE (CON FIX ID) ---
   const handleToggleParticipation = async (e) => {
     e.stopPropagation();
     if (loadingBtn) return;
     setLoadingBtn(true);
 
     if (!isParticipating) {
-      // CASO 1: ISCRIZIONE
       const result = await iscrivitiEvento(id_evento);
-      
       if (result.success) {
         alert("Iscrizione avvenuta con successo!");
         setIsParticipating(true);
-        // Recuperiamo subito l'ID della nuova partecipazione
         const status = await checkUserParticipation(id_evento);
         if (status.idPartecipazione) setParticipationId(status.idPartecipazione);
       } else {
         alert("Errore: " + (result.message || "Impossibile iscriversi"));
       }
-
     } else {
-      // CASO 2: CANCELLAZIONE (Logica "Smart")
       let idDaCancellare = participationId;
-
-      // Se l'ID manca, proviamo a recuperarlo ADESSO
       if (!idDaCancellare) {
-        console.log("ID mancante, tentativo di recupero al volo...");
         const status = await checkUserParticipation(id_evento);
         if (status.isParticipating && status.idPartecipazione) {
             idDaCancellare = status.idPartecipazione;
-            setParticipationId(status.idPartecipazione); // Lo salviamo anche nello stato
+            setParticipationId(status.idPartecipazione);
         }
       }
 
-      // Se ancora non lo abbiamo, non possiamo fare nulla
       if (!idDaCancellare) {
-        alert("Errore tecnico: Impossibile recuperare i dati della tua iscrizione. Ricarica la pagina.");
+        alert("Errore tecnico: ID partecipazione non trovato.");
         setLoadingBtn(false);
         return;
       }
@@ -133,7 +149,6 @@ export default function EventCard({
       const conferma = window.confirm("Vuoi davvero annullare la partecipazione?");
       if (conferma) {
         const result = await rimuoviIscrizione(idDaCancellare);
-        
         if (result.success) {
           alert("Partecipazione annullata.");
           setIsParticipating(false);
@@ -160,13 +175,15 @@ export default function EventCard({
         <div className="event-header">
           <div className="event-avatar">
             {immagine ? (
-              <img src={immagine} alt={ente} className="event-avatar-img" />
+              <img src={immagine} alt={organizerName} className="event-avatar-img" />
             ) : (
-              <span>{ente ? ente.charAt(0).toUpperCase() : 'E'}</span>
+              // Mostra la prima lettera del nome dell'ente
+              <span>{organizerName.charAt(0).toUpperCase()}</span>
             )}
           </div>
           <div className="event-meta">
-            <span className="event-brand">{ente || "Ente Sconosciuto"}</span>
+            {/* QUI ORA ESCE IL NOME (es. "Lumen Organization") */}
+            <span className="event-brand">{organizerName}</span>
             <span className="event-role">Organizzatore</span>
           </div>
         </div>
