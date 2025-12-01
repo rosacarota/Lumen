@@ -1,6 +1,6 @@
 import React from 'react';
 import { CalendarRange, Ban } from 'lucide-react';
-import '../stylesheets/RaccoltafondiCard.css';
+import '../stylesheets/RaccoltaFondiCard.css';
 
 // Rimuovi l'import del service da qui, ci pensa il padre (ProfiloEnte)
 // import { terminaRaccolta } from '../services/RaccoltaFondiService'; 

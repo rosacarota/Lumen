@@ -293,7 +293,7 @@ const ProfiloEnte = () => {
               {isOwner ? (
                 <>
                   <button className="btn-action" onClick={() => setShowEventoModal(true)}>CREA EVENTO</button>
-                  <button className="btn-action" onClick={() => setShowRaccoltaModal(true)}>CREA RACCOLTA</button>
+                  <button className="btn-action" onClick={() => setShowRaccoltaModal(true)}>CREA RACCOLTA FONDI</button>
                 </>
               ) : (
                 <>
@@ -309,14 +309,6 @@ const ProfiloEnte = () => {
           <div className="split-layout">
             {/* Colonna Sinistra */}
             <div className="left-column">
-               <div className="event-search">
-                <h3 className="search-title">CERCA</h3>
-                <div className="search-inputs">
-                  <div className="input-group"><label>DATA</label><input type="date" name="data" className="custom-input" onChange={handleFilterChange} /></div>
-                  <div className="input-group"><label>ORARIO</label><input type="time" name="orario" className="custom-input" onChange={handleFilterChange} /></div>
-                  <div className="input-group"><label>TIPO</label><select name="tipologia" className="custom-input" onChange={handleFilterChange}><option value="">Tutti</option><option value="conf">Conferenza</option></select></div>
-                </div>
-              </div>
               <div className="event-grid"><p>Nessun evento {activeTab} trovato.</p></div>
             </div>
 
@@ -324,7 +316,7 @@ const ProfiloEnte = () => {
             <div className="right-column">
               <div className="sidebar-header">
                 <button className={`side-tab-btn ${activeSideTab === 'storie' ? 'active' : ''}`} onClick={() => setActiveSideTab('storie')}>STORIE</button>
-                <button className={`side-tab-btn ${activeSideTab === 'raccolte' ? 'active' : ''}`} onClick={() => setActiveSideTab('raccolte')}>RACCOLTE</button>
+                <button className={`side-tab-btn ${activeSideTab === 'raccolte' ? 'active' : ''}`} onClick={() => setActiveSideTab('raccolte')}>RACCOLTE FONDI</button>
               </div>
               <div className="sidebar-content">
                 {activeSideTab === 'storie' ? (
