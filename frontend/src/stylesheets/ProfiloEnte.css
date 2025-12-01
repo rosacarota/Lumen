@@ -207,18 +207,56 @@
   box-sizing: border-box;
 }
 
-.ente-page-wrapper .event-grid {
+/* --- GRIGLIA EVENTI (Left Column) --- */
+
+.ente-page-wrapper .left-column {
+
+  /* Impostazioni Contenitore Scrollabile */
   background-color: rgba(255, 255, 255, 0.5);
   border: 1px solid white;
-  padding: 30px;
-  border-radius: 20px;
-  min-height: 400px;
-  display: flex;
-  justify-content: center;
+  padding: 50px;
+    height: 500px; /* Puoi usare max-height se preferisci che si accorci se vuoto */
   align-items: center;
-  color: #999;
+  align-content: center;
+  /* Altezza fissa o max-height per attivare lo scroll */
+
+  overflow-y: auto; /* Scroll verticale attivo */
+  align-self: center;
+  /* Scrollbar Custom (Firefox) */
+  scrollbar-width: thin;
+  scrollbar-color: var(--second-color) rgba(255, 255, 255, 0.3);
+}
+.ente-page-wrapper .event-grid{
+   display: grid;
+  grid-template-columns: repeat(2, 1fr); /* ESATTAMENTE 2 COLONNE */
+  gap: 20px; 
+  
+}
+/* Scrollbar Custom (Chrome, Edge, Safari) */
+.ente-page-wrapper .event-grid::-webkit-scrollbar {
+  width: 8px;
+}
+.ente-page-wrapper .event-grid::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  margin: 6px 0;
+}
+.ente-page-wrapper .event-grid::-webkit-scrollbar-thumb {
+  background-color: var(--second-color);
+  border-radius: 10px;
+}
+.ente-page-wrapper .event-grid::-webkit-scrollbar-thumb:hover {
+  background-color: var(--first-color);
 }
 
+/* --- RESPONSIVE MOBILE --- */
+@media (max-width: 900px) {
+  .ente-page-wrapper .event-grid {
+    grid-template-columns: 1fr; /* 1 colonna su schermi piccoli */
+    height: auto; /* Rimuovi altezza fissa su mobile per scroll pagina naturale */
+    max-height: 500px; /* Opzionale: limite altezza su mobile */
+  }
+}
 .ente-page-wrapper .sidebar-header {
   background-color: var(--second-color);
   padding: 19px;

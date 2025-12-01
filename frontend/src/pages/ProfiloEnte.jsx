@@ -1,118 +1,140 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-
-// 1. IMPORT DI SWEETALERT2
 import Swal from 'sweetalert2';
 
-// Componenti
+// COMPONENTI
 import Navbar from '../components/Navbar.jsx';
 import AccessoInfoProfilo from '../components/AccessoInfoProfilo.jsx';
-import AddEvento from '../components/AddEvento.jsx'; 
-import AddRaccoltaFondi from '../components/AddRaccoltaFondi.jsx';
 import Footer from '../components/Footer.jsx';
-import RichiestaAffiliazione from '../components/RichiestaAffiliazione.jsx';
+
+// Card
+import EventCard from '../components/EventCard.jsx';
+import EventCardEnte from '../components/EventCardEnte.jsx';
 import RaccoltaFondiCard from '../components/RaccoltaFondiCard.jsx';
 
-// Servizi
-import { fetchUserProfile } from '../services/UserServices.js';
-import AffiliazioneService from '../services/AffiliazioneService.js';
-import { getRaccolteDiEnte, terminaRaccolta } from '../services/RaccoltaFondiService.js';
+// Modali e Form
+import AddEvento from '../components/AddEvento.jsx'; 
+import ModifyEvento from '../components/ModifyEvento.jsx'; 
+import AddRaccoltaFondi from '../components/AddRaccoltaFondi.jsx';
+import RichiestaAffiliazione from '../components/RichiestaAffiliazione.jsx';
 
-// Stili
+// SERVIZI
+import { fetchUserProfile } from '../services/UserServices.js';
+import { getRaccolteDiEnte, terminaRaccolta } from '../services/RaccoltaFondiService.js';
+// AGGIUNTO 'rimuoviEvento' all'import
+import { getCronologiaEventi, rimuoviEvento } from '../services/EventoService.js'; 
+import { fetchEvents } from '../services/PartecipazioneEventoService.js';
+
 import '../stylesheets/ProfiloEnte.css';
 
-// --- CONFIGURAZIONE STILI E COLORI ---
-const THEME_COLORS = {
-  primary: '#087886', 
-  secondary: '#4AAFB8', 
-  text: '#1A2B3C',    
-  danger: '#d33',     
-  bg: '#ffffff'       
-};
+const THEME_COLORS = { primary: '#087886', secondary: '#4AAFB8', bg: '#ffffff', danger: '#d33' };
 
-// Configurazione base per SweetAlert2
-const MySwal = Swal.mixin({
-  customClass: {
-    popup: 'custom-swal-popup',
-    title: 'custom-swal-title',
-    content: 'custom-swal-content'
-  },
-  background: THEME_COLORS.bg,
-  color: THEME_COLORS.text,
-  buttonsStyling: true 
+const MySwal = Swal.mixin({ 
+  customClass: { popup: 'custom-swal-popup' },
+  buttonsStyling: true
 });
 
-
-// --- ModalWrapper (Usato per RaccoltaFondi e Affiliazione) ---
-const ModalWrapper = ({ children, onClose }) => {
-  return (
-    <div style={{
-      position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-      zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center'
-    }}>
-      <div onClick={onClose} style={{
-        position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.6)', cursor: 'pointer'
-      }} />
-      <div style={{
-        position: 'relative', zIndex: 10, backgroundColor: 'white',
-        borderRadius: '12px', padding: '20px', width: '90%', maxWidth: '500px',
-        maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 10px 25px rgba(0,0,0,0.3)'
-      }}>
-        <button onClick={onClose} style={{
-          position: 'absolute', top: '10px', right: '15px', background: 'none',
-          border: 'none', fontSize: '24px', cursor: 'pointer', color: '#666', zIndex: 20
-        }}>&times;</button>
-        {children}
-      </div>
+const ModalWrapper = ({ children, onClose }) => (
+  <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div onClick={onClose} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.6)', cursor: 'pointer' }} />
+    <div style={{ position: 'relative', zIndex: 10, backgroundColor: 'white', borderRadius: '12px', padding: '20px', width: '90%', maxWidth: '900px', maxHeight: '95vh', overflowY: 'auto', boxShadow: '0 10px 25px rgba(0,0,0,0.3)' }}>
+      <button onClick={onClose} style={{ position: 'absolute', top: '10px', right: '15px', border: 'none', background: 'none', fontSize: '24px', cursor: 'pointer', zIndex:20, color:'#666' }}>&times;</button>
+      {children}
     </div>
-  );
-};
+  </div>
+);
 
-// --- Componente Principale ---
 const ProfiloEnte = () => {
   const { id } = useParams();
   
-  // Stati Utente
   const [isOwner, setIsOwner] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
   const [isFollowing, setIsFollowing] = useState(false);
-  const [isVolunteer, setIsVolunteer] = useState(false);
-  
-  // Stati UI Modali
-  const [showAffiliazioneModal, setShowAffiliazioneModal] = useState(false);
+
   const [showEventoModal, setShowEventoModal] = useState(false);
+  const [showModifyModal, setShowModifyModal] = useState(false); 
+  const [selectedEventForEdit, setSelectedEventForEdit] = useState(null); 
+  
   const [showRaccoltaModal, setShowRaccoltaModal] = useState(false);
+  const [showAffiliazioneModal, setShowAffiliazioneModal] = useState(false);
+
+  const [activeTab, setActiveTab] = useState('futuri'); 
+  const [activeSideTab, setActiveSideTab] = useState('storie'); 
   
-  // Tabs
-  const [activeTab, setActiveTab] = useState('futuri');
-  const [activeSideTab, setActiveSideTab] = useState('storie');
-  
-  // Dati
-  const [filters, setFilters] = useState({ data: '', orario: '', tipologia: '' });
+  const [eventsList, setEventsList] = useState([]);
+  const [loadingEvents, setLoadingEvents] = useState(false);
   const [raccolteList, setRaccolteList] = useState([]);
   const [loadingRaccolte, setLoadingRaccolte] = useState(false);
 
-  // 1. Caricamento Dati Utente
+  // 1. CARICAMENTO DATI UTENTE
   const loadUserData = async () => {
     try {
       const data = await fetchUserProfile();
-      setUserProfile(data);
-      setIsOwner(true); 
-      return data; 
+      if (data) {
+        setUserProfile(data);
+        if (!id || parseInt(id) === data.id) {
+           setIsOwner(true);
+        }
+      }
+      return data;
     } catch (error) {
-      console.error("Errore caricamento profilo:", error);
+      console.error("Errore profilo:", error);
       return null;
     }
   };
 
-  // 2. Caricamento Raccolte
+  // 2. CARICAMENTO EVENTI
+  const loadEvents = async () => {
+    setLoadingEvents(true);
+    setEventsList([]);
+    try {
+      let rawData = [];
+      if (isOwner) {
+        rawData = await getCronologiaEventi(null);
+      } else {
+        const allEvents = await fetchEvents();
+        if (Array.isArray(allEvents)) {
+           const targetId = userProfile?.id;
+           rawData = allEvents.filter(e => e.ente && e.ente.id === targetId);
+        }
+      }
+
+      const safeArray = Array.isArray(rawData) ? rawData : [];
+
+      const mapped = safeArray.map(evt => {
+        let luogo = "Da definire";
+        if (evt.indirizzo) {
+            luogo = `${evt.indirizzo.citta || ''} (${evt.indirizzo.provincia || ''})`;
+        }
+
+        return {
+          id_evento: evt.idEvento || evt.id,
+          titolo: evt.titolo || "Senza Titolo",
+          descrizione: evt.descrizione || "",
+          data_inizio: evt.dataInizio,
+          data_fine: evt.dataFine,
+          maxpartecipanti: evt.maxPartecipanti,
+          immagine: evt.immagine,
+          ente: evt.ente?.nome || "Ente",
+          luogo: luogo,
+          eventData: evt 
+        };
+      });
+
+      setEventsList(mapped);
+    } catch (e) {
+      console.error("Errore loadEvents:", e);
+    } finally {
+      setLoadingEvents(false);
+    }
+  };
+
+  // 3. CARICAMENTO RACCOLTE
   const loadRaccolte = async (profileData = userProfile) => {
     setLoadingRaccolte(true);
     try {
       const responseData = await getRaccolteDiEnte();
       const listaVera = Array.isArray(responseData) ? responseData : (responseData.content || []);
-
       const mappedData = listaVera.map(item => ({
          id_raccolta: item.id || item.idRaccolta || item.idRaccoltaFondi, 
          titolo: item.titolo,
@@ -123,7 +145,6 @@ const ProfiloEnte = () => {
          data_chiusura: item.dataChiusura,
          ente: item.enteNome || profileData?.nome || "Nome Ente"
       }));
-
       setRaccolteList(mappedData);
     } catch (error) {
       console.error("Errore caricamento raccolte:", error);
@@ -134,236 +155,220 @@ const ProfiloEnte = () => {
 
   useEffect(() => {
     const init = async () => {
-      const profile = await loadUserData();
-      await loadRaccolte(profile);
+        const profile = await loadUserData();
+        await loadRaccolte(profile);
     };
     init();
   }, [id]);
 
-  // 3. GESTIONE TERMINA RACCOLTA
-  const handleTerminate = async (idRaccolta) => {
-    if (!idRaccolta) return;
+  useEffect(() => {
+    if (userProfile) loadEvents();
+  }, [userProfile, isOwner, activeTab]); 
 
-    const raccoltaCompleta = raccolteList.find(r => r.id_raccolta === idRaccolta);
-    
-    if (!raccoltaCompleta) {
-      return MySwal.fire({
-        icon: 'error',
-        title: 'Errore',
-        text: 'Dati della raccolta non trovati.',
-        confirmButtonColor: THEME_COLORS.primary
-      });
-    }
 
-    if (!userProfile) {
-      return MySwal.fire({
-        icon: 'error',
-        title: 'Errore',
-        text: 'Profilo ente non caricato.',
-        confirmButtonColor: THEME_COLORS.primary
-      });
-    }
-
-    const result = await MySwal.fire({
-      title: 'Terminare la raccolta?',
-      text: `Sei sicuro di voler chiudere anticipatamente "${raccoltaCompleta.titolo}"?`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: THEME_COLORS.danger,   
-      cancelButtonColor: THEME_COLORS.primary,   
-      confirmButtonText: 'Sì, termina',
-      cancelButtonText: 'Annulla',
-      reverseButtons: true 
-    });
-
-    if (!result.isConfirmed) return;
-
-    try {
-      const datiPerIlBackend = {
-        ...raccoltaCompleta,
-        enteObj: userProfile 
-      };
-
-      await terminaRaccolta(datiPerIlBackend);
-      
-      await MySwal.fire({
-        icon: 'success',
-        title: 'Terminata!',
-        text: 'La raccolta fondi è stata chiusa correttamente.',
-        confirmButtonColor: THEME_COLORS.primary 
-      });
-      
-      await loadRaccolte(userProfile);
-      
-    } catch (error) {
-      console.error("Errore terminazione:", error);
-      MySwal.fire({
-        icon: 'error',
-        title: 'Errore!',
-        text: error.message || "Impossibile terminare la raccolta.",
-        confirmButtonColor: THEME_COLORS.primary
-      });
-    }
+  // --- HANDLER MODIFICA ---
+  const handleOpenModify = (eventData) => {
+    setSelectedEventForEdit(eventData);
+    setShowModifyModal(true);
   };
 
-  // 4. Handlers UI
-  const handleFollowClick = () => setIsFollowing(!isFollowing);
-  
-  const handleFilterChange = (e) => {
-    setFilters({ ...filters, [e.target.name]: e.target.value });
+  const handleModifySuccess = () => {
+    setShowModifyModal(false);
+    setSelectedEventForEdit(null);
+    MySwal.fire('Successo', 'L\'evento è stato modificato correttamente.', 'success');
+    loadEvents(); 
   };
 
-  const handleRichiestaAffiliazione = async () => {
-    const token = localStorage.getItem('token');
-    const emailEnte = userProfile?.email;
-    
-    if (!emailEnte) {
-        return MySwal.fire('Errore', "Impossibile recuperare l'email dell'ente.", 'error');
-    }
+  // --- HANDLER ELIMINA (NUOVO) ---
+  const handleDeleteEvento = async (idEvento) => {
+      // 1. Chiedi conferma
+      const result = await MySwal.fire({
+          title: 'Sei sicuro?',
+          text: "L'evento verrà eliminato definitivamente. Non potrai tornare indietro.",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: THEME_COLORS.danger,
+          cancelButtonColor: THEME_COLORS.primary,
+          confirmButtonText: 'Sì, elimina',
+          cancelButtonText: 'Annulla'
+      });
 
-    try {
-      const isAffiliated = await AffiliazioneService.checkAffiliazione(emailEnte, token);
-      if (isAffiliated) {
-        MySwal.fire({
-          icon: 'info',
-          title: 'Info',
-          text: 'Hai già un ente affiliato.',
-          confirmButtonColor: THEME_COLORS.primary
-        });
-      } else {
-        setShowAffiliazioneModal(true);
+      // 2. Se confermato, chiama il service
+      if (result.isConfirmed) {
+          try {
+              await rimuoviEvento(idEvento);
+              
+              await MySwal.fire(
+                  'Eliminato!',
+                  'L\'evento è stato rimosso.',
+                  'success'
+              );
+              
+              // 3. Ricarica la lista
+              loadEvents();
+
+          } catch (error) {
+              console.error(error);
+              MySwal.fire(
+                  'Errore!',
+                  'Non è stato possibile eliminare l\'evento.',
+                  'error'
+              );
+          }
       }
-    } catch (error) { 
-        console.error(error);
-        MySwal.fire('Errore', 'Errore durante la verifica affiliazione.', 'error');
-    }
   };
 
-  const handleCloseRaccoltaModal = () => {
-    setShowRaccoltaModal(false);
-    loadRaccolte(userProfile); 
-  };
-
-  // --- HANDLER EVENTO ---
-
-  const handleCloseEventoModal = () => {
+  // --- ALTRI HANDLER ---
+  const handleSuccessEvento = () => {
     setShowEventoModal(false);
+    loadEvents();
+    MySwal.fire('Ottimo!', 'Il tuo evento è stato pubblicato.', 'success');
   };
 
-  // Questa funzione viene chiamata da AddEvento DOPO che il service ha salvato tutto con successo
-  const handleEventoSucceess = () => {
-    setShowEventoModal(false);
-    
-    MySwal.fire({
-        icon: 'success',
-        title: 'Evento Creato!',
-        text: 'Il tuo evento è stato pubblicato correttamente.',
-        confirmButtonColor: THEME_COLORS.primary
-    });
-
-    // Qui potresti aggiungere una chiamata per ricaricare la lista eventi
-    // es: loadEventi(); 
+  const handleTerminateRaccolta = async (idRaccolta) => {
+      const confirm = await MySwal.fire({
+          title: 'Sei sicuro?',
+          text: "Vuoi terminare questa raccolta fondi anticipatamente?",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: THEME_COLORS.danger,
+          confirmButtonText: 'Sì, termina'
+      });
+      if(confirm.isConfirmed) {
+         try {
+             await terminaRaccolta({ id: idRaccolta, enteObj: userProfile }); 
+             MySwal.fire('Terminata!', 'La raccolta è stata chiusa.', 'success');
+             loadRaccolte(userProfile);
+         } catch(e) {
+             MySwal.fire('Errore', 'Impossibile terminare la raccolta.', 'error');
+         }
+      }
   };
+
+  const handleFollowClick = () => setIsFollowing(!isFollowing);
+  const handleRichiestaAffiliazione = () => { if(userProfile?.email) setShowAffiliazioneModal(true); };
+  const handleCloseRaccoltaModal = () => { setShowRaccoltaModal(false); loadRaccolte(userProfile); };
 
   const profileProps = userProfile ? {
-    title: userProfile.nome || "Nome Ente",
+    title: userProfile.nome || "Ente",
     subtitle: "ENTE",
-    description: userProfile.descrizione || "Nessuna descrizione",
-    stat1: "123 Followers",
-    stat2: "10 Eventi",
-    userData: userProfile 
-  } : undefined;
+    description: userProfile.descrizione || "Nessuna descrizione disponibile.",
+    stat1: "123 Followers", 
+    stat2: `${eventsList.length} Eventi`,
+    userData: userProfile
+  } : null;
 
-  // --- Render JSX ---
   return (
     <div className="ente-page-wrapper">
       <Navbar />
       <div className="main-container">
         
-        <AccessoInfoProfilo {...profileProps} onUpdate={loadUserData} />
+        {profileProps && <AccessoInfoProfilo {...profileProps} onUpdate={loadUserData} />}
         
         <section className="event-section">
           <div className="controll">
             <div className="tabs-left">
-              <button className={activeTab === 'corso' ? 'active' : ''} onClick={() => setActiveTab('corso')}>IN CORSO</button>
-              <button className={activeTab === 'futuri' ? 'active' : ''} onClick={() => setActiveTab('futuri')}>FUTURI</button>
-              <button className={activeTab === 'svolti' ? 'active' : ''} onClick={() => setActiveTab('svolti')}>SVOLTI</button>
+              {['corso', 'futuri', 'svolti'].map(t => (
+                  <button key={t} className={activeTab === t ? 'active' : ''} onClick={() => setActiveTab(t)}>
+                    {t.toUpperCase()}
+                  </button>
+              ))}
             </div>
             <div className="actions-right">
               {isOwner ? (
                 <>
-                  <button className="btn-action" onClick={() => setShowEventoModal(true)}>CREA EVENTO</button>
-                  <button className="btn-action" onClick={() => setShowRaccoltaModal(true)}>CREA RACCOLTA FONDI</button>
+                  <button className="btn-action" onClick={() => setShowEventoModal(true)}>Crea Evento</button>
+                  <button className="btn-action" onClick={() => setShowRaccoltaModal(true)}>Crea Raccolta</button>
                 </>
               ) : (
                 <>
-                  <button className="btn-action" onClick={handleFollowClick}>
-                    {isFollowing ? 'SEGUITO' : 'SEGUI'}
-                  </button>
-                  {isVolunteer && <button className="btn-action btn-affiliation" onClick={handleRichiestaAffiliazione}>Richiedi affiliazione</button>}
+                   <button className="btn-action" onClick={handleFollowClick}>
+                     {isFollowing ? 'SEGUITO' : 'SEGUI'}
+                   </button>
+                   <button className="btn-action btn-affiliation" onClick={handleRichiestaAffiliazione}>Richiedi affiliazione</button>
                 </>
               )}
             </div>
           </div>
 
           <div className="split-layout">
-            {/* Colonna Sinistra */}
             <div className="left-column">
-              <div className="event-grid"><p>Nessun evento {activeTab} trovato.</p></div>
-            </div>
-
-            {/* Colonna Destra (Sidebar) */}
-            <div className="right-column">
-              <div className="sidebar-header">
-                <button className={`side-tab-btn ${activeSideTab === 'storie' ? 'active' : ''}`} onClick={() => setActiveSideTab('storie')}>STORIE</button>
-                <button className={`side-tab-btn ${activeSideTab === 'raccolte' ? 'active' : ''}`} onClick={() => setActiveSideTab('raccolte')}>RACCOLTE FONDI</button>
-              </div>
-              <div className="sidebar-content">
-                {activeSideTab === 'storie' ? (
-                  <div className="placeholder-content"><div className="story-circle"></div><p>Nessuna storia recente.</p></div>
+              <div className="event-grid">
+                {loadingEvents ? <p style={{padding:'20px', textAlign:'center'}}>Caricamento eventi...</p> : eventsList.length > 0 ? (
+                    eventsList.map(evt => (
+                        isOwner ? (
+                            <EventCardEnte 
+                                key={evt.id_evento} 
+                                {...evt} 
+                                eventData={evt.eventData} 
+                                onModifica={handleOpenModify} 
+                                // Qui colleghiamo la funzione di eliminazione vera
+                                onElimina={handleDeleteEvento} 
+                            />
+                        ) : (
+                            <EventCard key={evt.id_evento} {...evt} showParticipate={false} />
+                        )
+                    ))
                 ) : (
-                  <div className="raccolte-list-container">
-                    {loadingRaccolte ? <p>Caricamento...</p> : raccolteList.length > 0 ? (
-                      raccolteList.map((raccolta, index) => (
-                        <RaccoltaFondiCard 
-                          key={raccolta.id_raccolta || index} 
-                          {...raccolta}
-                          isOwner={isOwner}
-                          onTerminate={handleTerminate} 
-                        />
-                      ))
-                    ) : (
-                      <div className="placeholder-content"><p>Nessuna raccolta.</p></div>
-                    )}
-                  </div>
+                    <p style={{ gridColumn: '1 / -1', textAlign: 'center', padding:'20px' }}>Nessun evento trovato in questa categoria.</p>
                 )}
               </div>
             </div>
+
+            <div className="right-column">
+              <div className="sidebar-header">
+                 <button className={`side-tab-btn ${activeSideTab === 'storie' ? 'active' : ''}`} onClick={() => setActiveSideTab('storie')}>STORIE</button>
+                 <button className={`side-tab-btn ${activeSideTab === 'raccolte' ? 'active' : ''}`} onClick={() => setActiveSideTab('raccolte')}>RACCOLTE FONDI</button>
+              </div>
+              
+              <div className="sidebar-content">
+                 {activeSideTab === 'storie' && (
+                    <div className="placeholder-content">
+                        <div className="story-circle"></div>
+                        <p>Nessuna storia recente.</p>
+                    </div>
+                 )}
+                 {activeSideTab === 'raccolte' && (
+                    <div className="raccolte-list-container">
+                        {loadingRaccolte ? <p>Caricamento...</p> : raccolteList.length > 0 ? (
+                            raccolteList.map((r, idx) => (
+                                <RaccoltaFondiCard 
+                                    key={r.id_raccolta || idx} 
+                                    {...r} 
+                                    isOwner={isOwner}
+                                    onTerminate={handleTerminateRaccolta}
+                                />
+                            ))
+                        ) : (
+                            <div className="placeholder-content"><p>Nessuna raccolta attiva.</p></div>
+                        )}
+                    </div>
+                 )}
+              </div>
+            </div>
+
           </div>
         </section>
       </div>
       <Footer />
       
-      {/* --- MODALI --- */}
-      
-      {/* MODAL EVENTO */}
+      {/* MODALI */}
       {showEventoModal && (
-        <AddEvento 
-            onBack={handleCloseEventoModal} 
-            onSubmit={handleEventoSucceess} // Passiamo la funzione che gestisce il successo
-            isModal={true} 
-            enteId={userProfile?.id}
-        />
+        <AddEvento isModal={true} onBack={() => setShowEventoModal(false)} onSubmit={handleSuccessEvento} enteId={userProfile?.id} />
       )}
 
-      {/* MODAL RACCOLTA FONDI */}
+      {showModifyModal && selectedEventForEdit && (
+        <ModalWrapper onClose={() => setShowModifyModal(false)}>
+            <ModifyEvento isModal={true} initialData={selectedEventForEdit} onBack={() => setShowModifyModal(false)} onSubmit={handleModifySuccess} />
+        </ModalWrapper>
+      )}
+
       {showRaccoltaModal && (
         <ModalWrapper onClose={handleCloseRaccoltaModal}>
             <AddRaccoltaFondi onClose={handleCloseRaccoltaModal} isModal={true} />
         </ModalWrapper>
       )}
 
-      {/* MODAL AFFILIAZIONE */}
       {showAffiliazioneModal && (
         <ModalWrapper onClose={() => setShowAffiliazioneModal(false)}>
             <RichiestaAffiliazione onClose={() => setShowAffiliazioneModal(false)} emailEnte={userProfile?.email} />

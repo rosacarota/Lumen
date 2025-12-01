@@ -1,6 +1,6 @@
 /* =========================================
    MODIFY EVENTO STYLESHEET (me-)
-   Layout: Form Sinistra (40%) | Decor Destra (60%)
+   Layout: Compact Mode
    ========================================= */
 
 @keyframes fadeInUp {
@@ -19,29 +19,36 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px 20px;
+  padding: 20px; /* Ridotto padding esterno */
   font-family: 'Inter', sans-serif;
+}
+
+/* Modale: sfondo scuro */
+.me-page-modal {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+  padding: 10px; /* Padding minimo su mobile/modale */
 }
 
 .me-container {
   position: relative;
   width: 100%;
-  max-width: 1100px; /* Largo */
-  min-height: 620px;
+  max-width: 850px; /* Molto più stretto (era 1100px) */
+  height: auto;
+  max-height: 90vh; /* Non supera il 90% dell'altezza schermo */
   display: flex;
-  /* Flex direction è row di default: Primo div a sx, Secondo div a dx */
   flex-direction: row; 
-  border-radius: 24px;
+  border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 25px 80px rgba(8, 120, 134, 0.2);
+  box-shadow: 0 20px 60px rgba(8, 120, 134, 0.25);
   background: white;
 }
 
-/* Bottone Indietro (Posizionato a sinistra sopra il form bianco) */
+/* Bottone Indietro */
 .me-close-back-button {
   position: absolute;
-  top: 20px; left: 20px; z-index: 50;
-  width: 36px; height: 36px;
+  top: 15px; left: 15px; z-index: 50;
+  width: 32px; height: 32px; /* Più piccolo */
   border-radius: 50%; border: none;
   background: #f3f4f6;
   color: #374151;
@@ -55,39 +62,43 @@
    LATO SINISTRO (FORM)
    ========================================= */
 .me-left-panel-form {
-  /* Più piccolo del lato decorativo */
-  flex: 1; 
+  flex: 1.2; /* Diamo un po' più spazio al form rispetto al decor */
   background: white;
-  padding: 40px 50px;
-  display: flex; align-items: center; justify-content: center;
+  padding: 25px 30px; /* Padding ridotto drasticamente */
+  display: flex; flex-direction: column;
   position: relative;
   z-index: 20;
+  overflow-y: auto; /* Abilita scroll se lo schermo è bassissimo */
 }
 
-.me-form-wrapper { width: 100%; max-width: 400px; margin-top: 20px; }
+/* Nascondi scrollbar brutta */
+.me-left-panel-form::-webkit-scrollbar { width: 6px; }
+.me-left-panel-form::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+
+.me-form-wrapper { width: 100%; margin-top: 10px; }
 
 /* Header Form */
-.me-header-section { margin-bottom: 24px; }
-.me-header-title-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
-.me-header-icon { color: #087886; width: 24px; height: 24px; }
-.me-header-text { font-size: 24px; font-weight: 800; color: #111827; }
-.me-header-subtitle { font-size: 14px; color: #6b7280; }
+.me-header-section { margin-bottom: 15px; padding-left: 35px; /* Spazio per bottone back */ }
+.me-header-title-row { display: flex; align-items: center; gap: 8px; margin-bottom: 2px; }
+.me-header-icon { color: #087886; width: 20px; height: 20px; }
+.me-header-text { font-size: 20px; font-weight: 800; color: #111827; } /* Font ridotto */
+.me-header-subtitle { font-size: 12px; color: #6b7280; }
 
 /* Campi */
-.me-story-form { display: flex; flex-direction: column; gap: 20px; }
-.me-fields-scrollable { display: flex; flex-direction: column; gap: 14px; }
+.me-story-form { display: flex; flex-direction: column; gap: 10px; /* Gap ridotto */ }
+.me-fields-scrollable { display: flex; flex-direction: column; gap: 10px; }
 
 .me-label {
-  display: block; font-size: 11px; font-weight: 700; 
-  color: #4b5563; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;
+  display: block; font-size: 10px; font-weight: 700; 
+  color: #4b5563; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.5px;
 }
 
 .me-input-field, .me-text-area {
   width: 100%;
-  padding: 10px 14px;
-  border: 2px solid #e5e7eb;
-  border-radius: 12px; /* Un po' più squadrato per l'editing */
-  font-size: 14px; outline: none;
+  padding: 8px 10px; /* Input più compatti */
+  border: 1px solid #e5e7eb; /* Bordo più sottile */
+  border-radius: 8px;
+  font-size: 13px; outline: none;
   transition: border-color 0.2s;
   background: #fff;
   color: #1f2937;
@@ -95,60 +106,60 @@
 
 .me-input-field:focus, .me-text-area:focus {
   border-color: #087886;
+  box-shadow: 0 0 0 3px rgba(8, 120, 134, 0.1);
 }
 
-.me-row-split { display: flex; gap: 12px; }
+.me-row-split { display: flex; gap: 10px; }
 
-/* Image Upload Edit Style */
+/* Image Upload Edit Style - Molto più piccolo */
 .me-image-upload-box {
   position: relative;
-  width: 100%; height: 140px;
-  border-radius: 16px;
+  width: 100%; height: 100px; /* Altezza ridotta */
+  border-radius: 12px;
   overflow: hidden;
-  background: #f3f4f6;
+  background: #f9fafb;
   border: 2px dashed #d1d5db;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 .me-image-preview { width: 100%; height: 100%; object-fit: cover; }
-.me-image-placeholder { display: flex; flex-direction: column; align-items: center; gap: 5px; color: #6b7280; font-size: 12px; }
-.me-upload-icon { width: 24px; height: 24px; }
+.me-image-placeholder { display: flex; flex-direction: row; align-items: center; gap: 8px; color: #6b7280; font-size: 12px; }
+.me-upload-icon { width: 18px; height: 18px; }
 
-/* Overlay "Cambia" sull'immagine */
 .me-image-overlay {
   position: absolute; inset: 0;
-  background: rgba(0,0,0,0.4);
-  color: white; font-weight: bold;
+  background: rgba(0,0,0,0.5);
+  color: white; font-size: 12px; font-weight: bold;
   display: flex; align-items: center; justify-content: center;
   opacity: 0; transition: opacity 0.2s;
 }
 .me-image-upload-box:hover .me-image-overlay { opacity: 1; }
 
 /* Bottone Salva */
-.me-footer { margin-top: 10px; display: flex; justify-content: flex-end; }
+.me-footer { margin-top: 15px; display: flex; justify-content: flex-end; padding-bottom: 10px;}
 .me-submit-button {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 12px 30px;
-  border: none; border-radius: 99px;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 10px 24px;
+  border: none; border-radius: 8px;
   background: #087886; color: white;
+  font-size: 13px;
   font-weight: 700; cursor: pointer;
-  box-shadow: 0 4px 15px rgba(8, 120, 134, 0.3);
+  box-shadow: 0 4px 10px rgba(8, 120, 134, 0.2);
   transition: all 0.2s;
 }
-.me-submit-button:hover { background: #06606b; transform: translateY(-2px); }
+.me-submit-button:hover { background: #06606b; transform: translateY(-1px); }
 
 /* =========================================
-   LATO DESTRO (DECORATIVO - GRANDE)
+   LATO DESTRO (DECORATIVO)
    ========================================= */
 .me-right-panel-decor {
-  /* Lato destro più grande (60%) */
-  flex: 1.5; 
-  background: linear-gradient(135deg, #2c3e50 0%, #087886 100%); /* Gradiente leggermente più serio/dark per l'edit */
+  flex: 1; /* Ridotto rispetto a prima (era 1.5) */
+  background: linear-gradient(135deg, #2c3e50 0%, #087886 100%);
   position: relative;
   overflow: hidden;
   display: flex; align-items: center; justify-content: center;
-  padding: 60px;
+  padding: 30px; /* Padding ridotto */
 }
 
 .me-gradient-overlay {
@@ -157,35 +168,27 @@
 }
 
 .me-blur-circle {
-  position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.4;
+  position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.4;
   animation: pulse 8s infinite;
 }
-.me-circle-1 { width: 400px; height: 400px; background: #4aafb8; top: -50px; right: -50px; }
-.me-circle-2 { width: 500px; height: 500px; background: #7cce6b; bottom: -50px; left: -50px; animation-delay: 2s; }
+.me-circle-1 { width: 250px; height: 250px; background: #4aafb8; top: -30px; right: -30px; }
+.me-circle-2 { width: 300px; height: 300px; background: #7cce6b; bottom: -30px; left: -30px; animation-delay: 2s; }
 
 .me-welcome-content {
-  position: relative; z-index: 10; color: white; text-align: right; /* Allineato a destra per estetica */
-  max-width: 500px;
+  position: relative; z-index: 10; color: white; text-align: right;
+  max-width: 100%;
   animation: fadeInUp 0.8s ease-out;
 }
 
-.me-welcome-title { font-size: 42px; font-weight: 800; margin-bottom: 20px; line-height: 1.1; }
-.me-welcome-subtitle { font-size: 16px; line-height: 1.6; opacity: 0.9; margin-bottom: 30px; font-style: italic; }
-.me-welcome-footer { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7; }
+.me-welcome-title { font-size: 28px; font-weight: 800; margin-bottom: 10px; line-height: 1.1; }
+.me-welcome-subtitle { font-size: 13px; line-height: 1.5; opacity: 0.9; margin-bottom: 0; font-style: italic; }
 
 /* =========================================
    RESPONSIVE
    ========================================= */
-@media (max-width: 960px) {
-  .me-right-panel-decor { display: none; } /* Nascondi la parte decorativa */
-  .me-container { max-width: 550px; min-height: auto; }
-  .me-left-panel-form { width: 100%; padding: 40px 20px; }
+@media (max-width: 800px) {
+  .me-right-panel-decor { display: none; } /* Nasconde il decor su tablet/mobile */
+  .me-container { max-width: 500px; height: auto; max-height: 95vh; }
+  .me-left-panel-form { width: 100%; padding: 20px; }
   .me-welcome-content { text-align: center; }
-}
-
-/* Modale */
-.me-page-modal {
-  position: fixed; inset: 0; z-index: 100;
-  background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
-  padding: 20px;
 }

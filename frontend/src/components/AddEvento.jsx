@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Calendar, Image as ImageIcon, ArrowLeft, SendHorizontal, MapPin } from "lucide-react";
+import { Calendar, Image as ImageIcon, ArrowLeft, SendHorizontal, MapPin, Clock } from "lucide-react";
 import "../stylesheets/AddEvento.css";
 import { addEvento, toBase64 } from "../services/EventoService"; 
 
@@ -11,7 +11,7 @@ const AddEvento = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE_DEFAUL
   const [titolo, setTitolo] = useState("");
   const [descrizione, setDescrizione] = useState("");
   
-  // MODIFICA: L'indirizzo ora è un oggetto strutturato
+  // Indirizzo
   const [indirizzo, setIndirizzo] = useState({
       strada: '',
       ncivico: '',
@@ -20,8 +20,12 @@ const AddEvento = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE_DEFAUL
       cap: ''
   });
 
+  // Gestione Date e Ore
   const [dataInizio, setDataInizio] = useState("");
+  const [oraInizio, setOraInizio] = useState(""); // Nuovo stato
   const [dataFine, setDataFine] = useState("");
+  const [oraFine, setOraFine] = useState("");     // Nuovo stato
+  
   const [maxPartecipanti, setMaxPartecipanti] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -36,7 +40,7 @@ const AddEvento = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE_DEFAUL
     }
   };
 
-  // MODIFICA: Gestione campi indirizzo
+  // Gestione campi indirizzo
   const handleAddressChange = (e) => {
     const { name, value } = e.target;
     setIndirizzo(prev => ({
@@ -48,8 +52,13 @@ const AddEvento = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE_DEFAUL
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (new Date(dataFine) < new Date(dataInizio)) {
-      alert("La data di fine non può essere precedente alla data di inizio.");
+    // 1. Combinazione Data + Ora in formato ISO (YYYY-MM-DDTHH:mm)
+    const fullInizio = `${dataInizio}T${oraInizio}`;
+    const fullFine = `${dataFine}T${oraFine}`;
+
+    // 2. Validazione Temporale
+    if (new Date(fullFine) <= new Date(fullInizio)) {
+      alert("La data/ora di fine deve essere successiva alla data/ora di inizio.");
       return;
     }
 
@@ -69,9 +78,9 @@ const AddEvento = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE_DEFAUL
         const eventoData = {
             titolo: titolo.trim(),
             descrizione: descrizione.trim(),
-            indirizzo, // Passiamo l'oggetto completo { strada, citta... }
-            dataInizio,
-            dataFine,
+            indirizzo, 
+            dataInizio: fullInizio, // Inviamo la stringa completa data+ora
+            dataFine: fullFine,     // Inviamo la stringa completa data+ora
             maxPartecipanti: parseInt(maxPartecipanti),
             immagineBase64, 
             ente: enteId,
@@ -154,21 +163,40 @@ const AddEvento = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE_DEFAUL
                     />
                   </div>
 
-                  {/* Date e Partecipanti (3 colonne) */}
+                  {/* --- SEZIONE DATE E ORE --- */}
+                  <div className="ae-section-label" style={{marginTop:'10px', fontSize:'0.9rem', color:'#666', display:'flex', alignItems:'center', gap:'5px'}}>
+                      <Clock size={14}/> Date e Orari
+                  </div>
+
+                  {/* RIGA 1: Data e Ora INIZIO */}
                   <div className="ae-row-split">
-                    <div className="ae-input-group">
-                        <label className="ae-label-over">Inizio</label>
+                    <div className="ae-input-group" style={{flex: 2}}>
+                        <label className="ae-label-over">Data Inizio</label>
                         <input className="ae-input-field ae-date-input" type="date" value={dataInizio} onChange={(e) => setDataInizio(e.target.value)} required />
                     </div>
-                    <div className="ae-input-group">
-                      <label className="ae-label-over">Fine</label>
-                      <input className="ae-input-field ae-date-input" type="date" value={dataFine} onChange={(e) => setDataFine(e.target.value)} min={dataInizio} required />
-                    </div>
-                    <div className="ae-input-group">
-                        <label className="ae-label-over">Max Part.</label>
-                        <input className="ae-input-field" type="number" value={maxPartecipanti} onChange={(e) => setMaxPartecipanti(e.target.value)} placeholder="0" min="1" required />
+                    <div className="ae-input-group" style={{flex: 1}}>
+                        <label className="ae-label-over">Ora Inizio</label>
+                        <input className="ae-input-field" type="time" value={oraInizio} onChange={(e) => setOraInizio(e.target.value)} required />
                     </div>
                   </div>
+
+                  {/* RIGA 2: Data e Ora FINE */}
+                  <div className="ae-row-split">
+                    <div className="ae-input-group" style={{flex: 2}}>
+                      <label className="ae-label-over">Data Fine</label>
+                      <input className="ae-input-field ae-date-input" type="date" value={dataFine} onChange={(e) => setDataFine(e.target.value)} min={dataInizio} required />
+                    </div>
+                    <div className="ae-input-group" style={{flex: 1}}>
+                      <label className="ae-label-over">Ora Fine</label>
+                      <input className="ae-input-field" type="time" value={oraFine} onChange={(e) => setOraFine(e.target.value)} required />
+                    </div>
+                  </div>
+
+                  {/* Max Partecipanti (Spostato in riga singola per pulizia) */}
+                   <div className="ae-input-group">
+                        <label className="ae-label-over">Max Partecipanti</label>
+                        <input className="ae-input-field" type="number" value={maxPartecipanti} onChange={(e) => setMaxPartecipanti(e.target.value)} placeholder="Es. 50" min="1" required />
+                   </div>
 
                   {/* --- SEZIONE INDIRIZZO DETTAGLIATO --- */}
                   <div className="ae-section-label" style={{marginTop:'10px', fontSize:'0.9rem', color:'#666', display:'flex', alignItems:'center', gap:'5px'}}>

@@ -6,7 +6,7 @@ const API_BASE_URL = "http://localhost:8080";
 // Funzione di utilità per prendere il token
 function getAuthToken() {
  return localStorage.getItem("token");
- }
+}
 
 // ==========================================
 // 1. MAPPER: DA BACKEND A FRONTEND
