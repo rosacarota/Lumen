@@ -1,312 +1,168 @@
+/* --- ANIMAZIONI --- */
+@keyframes ae-fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes ae-slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes ae-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
 
-/* --- Animazioni --- */
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+/* --- MODALE OVERLAY --- */
+.ae-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px); /* Effetto sfocato sfondo pagina */
+  z-index: 20000;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+  animation: ae-fadeIn 0.3s ease-out;
 }
 
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-}
-
-/* --- Pagina Principale --- */
+/* Pagina normale (non modale) */
 .ae-page {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #f7fbfb 0%, #e9fbe7 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 20px;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif; /* Assicurati di avere un font moderno */
+  display: flex; align-items: center; justify-content: center;
+  min-height: 100vh; padding: 20px;
 }
 
-/* --- Container Card (Il cuore del layout) --- */
+/* --- CONTENITORE CARD --- */
 .ae-container {
   position: relative;
-  width: 100%;
-  /* AUMENTATO: Larghezza totale per accomodare il layout sbilanciato */
-  max-width: 1100px; 
-  min-height: 620px; /* Più alto per dare respiro */
-  
+  width: 100%; max-width: 980px;
   display: flex;
   border-radius: 24px;
   overflow: hidden;
-  
-  /* Ombra profonda per effetto "sospeso" */
-  box-shadow: 0 25px 80px rgba(8, 120, 134, 0.2);
+  box-shadow: 0 20px 60px rgba(8, 120, 134, 0.25);
   background: white;
+  min-height: 550px;
+  max-height: 90vh; /* Importante per scroll su schermi piccoli */
+  z-index: 20001;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-/* --- Bottone Indietro --- */
+/* --- PULSANTE INDIETRO (STILE SFUMATO) --- */
 .ae-close-back-button {
   position: absolute;
-  top: 24px; left: 24px; z-index: 20;
+  top: 20px; left: 20px;
+  z-index: 20005;
   width: 40px; height: 40px;
   border-radius: 50%;
   border: none;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(4px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  /* Sfondo bianco semi-trasparente per effetto sfumato */
+  background: rgba(255, 255, 255, 0.95); 
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   display: flex; align-items: center; justify-content: center;
   cursor: pointer;
-  transition: all 0.2s ease;
-  color: #087886;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
 .ae-close-back-button:hover {
   transform: translateY(-2px);
-  background: white;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+  background: #ffffff; /* Bianco pieno al passaggio mouse */
 }
 
-/* =========================================
-   PANNELLO SINISTRO (DECORATIVO - GRANDE)
-   ========================================= */
+.ae-close-back-button svg {
+  color: #087886;
+  width: 20px; height: 20px;
+}
+
+/* --- PANNELLO SINISTRO --- */
 .ae-left-panel {
-  /* ASIMMETRIA: Occupa il 60% dello spazio (1.5 parti vs 1 parte) */
-  flex: 1.5; 
-  
-  background: linear-gradient(135deg, #087886 0%, #4aafb8 60%, #7cce6b 100%);
+  flex: 1;
+  background: linear-gradient(135deg, #087886 0%, #4aafb8 50%, #7cce6b 100%);
   position: relative;
   overflow: hidden;
-  display: flex; 
-  align-items: center; 
-  justify-content: center;
-  padding: 60px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 50px;
 }
-
-/* Overlay sfumato per profondità */
 .ae-gradient-overlay {
   position: absolute; inset: 0;
-  background: linear-gradient(135deg, rgba(8, 120, 134, 0.8) 0%, rgba(74, 175, 184, 0.4) 100%);
-  z-index: 1;
+  background: linear-gradient(135deg, rgba(8, 120, 134, 0.8) 0%, rgba(74, 175, 184, 0.6) 50%, rgba(124, 206, 107, 0.4) 100%);
 }
-
-/* Cerchi decorativi animati (Resi più grandi per riempire lo spazio) */
 .ae-blur-circle {
-  position: absolute; 
-  border-radius: 50%; 
-  filter: blur(90px); 
-  opacity: 0.6;
-  animation: pulse 6s ease-in-out infinite;
+  position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.5;
+  animation: ae-pulse 5s ease-in-out infinite;
 }
-.ae-circle-1 { width: 500px; height: 500px; background: #7cce6b; top: -10%; left: -10%; animation-duration: 5s; }
-.ae-circle-2 { width: 600px; height: 600px; background: #2c8a96; bottom: -15%; right: -15%; animation-duration: 7s; }
+.ae-circle-1 { width: 300px; height: 300px; background: #7cce6b; top: 10%; left: 10%; }
+.ae-circle-2 { width: 400px; height: 400px; background: #4aafb8; bottom: 10%; right: 10%; }
 
-/* Contenuto Testuale Sinistro */
 .ae-welcome-content {
-  position: relative; z-index: 10; 
-  color: white; 
-  text-align: center;
-  max-width: 480px; /* Limita la larghezza del testo per leggibilità */
-  animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+  position: relative; z-index: 10; color: white; text-align: center;
+  animation: ae-slideUp 0.6s ease-out;
 }
+.ae-welcome-title { font-size: 40px; font-weight: 700; margin-bottom: 24px; text-shadow: 0 2px 20px rgba(0,0,0,0.2); }
+.ae-welcome-subtitle { font-size: 16px; line-height: 1.6; opacity: 0.95; margin-bottom: 32px; }
+.ae-welcome-footer { font-size: 14px; opacity: 0.9; }
 
-.ae-welcome-title { 
-  font-size: 48px; /* Molto grande */
-  font-weight: 800; 
-  line-height: 1.1;
-  margin-bottom: 24px; 
-  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.15); 
-}
-
-.ae-welcome-subtitle { 
-  font-size: 18px; 
-  line-height: 1.7; 
-  opacity: 0.95; 
-  margin-bottom: 40px; 
-  font-weight: 300;
-}
-
-.ae-welcome-footer { 
-  font-size: 14px; 
-  font-weight: 600; 
-  opacity: 0.8; 
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-
-/* =========================================
-   PANNELLO DESTRO (FORM)
-   ========================================= */
+/* --- PANNELLO DESTRO --- */
 .ae-right-panel {
-  /* Occupa il restante spazio (circa 40%) */
-  flex: 1; 
-  
+  flex: 1.2;
   background: white;
   padding: 40px 50px;
-  display: flex; 
-  align-items: center; 
-  justify-content: center;
-  position: relative;
+  display: flex; align-items: center; justify-content: center;
+  overflow-y: auto; /* Permette scroll se il form è lungo */
 }
+.ae-form-container { width: 100%; max-width: 600px; }
 
-.ae-form-container { 
-  width: 100%; 
-  max-width: 400px; /* Mantiene il form compatto e centrato */
-}
-
-/* Header del Form */
 .ae-logo-section { margin-bottom: 24px; }
-.ae-logo-wrapper { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
-.ae-logo-icon { width: 28px; height: 28px; color: #087886; }
-.ae-logo-text { font-size: 26px; font-weight: 700; color: #1f2937; letter-spacing: -0.5px; }
-.ae-logo-subtitle { font-size: 14px; color: #6b7280; margin: 0; }
+.ae-logo-wrapper { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.ae-logo-icon { width: 30px; height: 30px; color: #087886; }
+.ae-logo-text { font-size: 24px; font-weight: 700; color: #087886; }
+.ae-logo-subtitle { font-size: 14px; color: #6b7280; }
 
-/* Struttura Form */
-.ae-story-form { display: flex; flex-direction: column; gap: 24px; }
 .ae-fields-container { display: flex; flex-direction: column; gap: 16px; }
 .ae-input-group { position: relative; width: 100%; }
 
-/* --- UPLOAD IMMAGINE BOX --- */
-.ae-image-upload-box {
-  width: 100%;
-  height: 160px; /* Altezza fissa */
-  background-color: #f9fafb;
-  border: 2px dashed #d1d5db;
-  border-radius: 20px;
-  
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  overflow: hidden;
-  position: relative;
-  transition: all 0.3s ease;
-}
-
-.ae-image-upload-box:hover {
-  border-color: #4aafb8;
-  background-color: #f0fdfa;
-  transform: translateY(-1px);
-}
-
-.ae-image-placeholder {
-  display: flex; flex-direction: column; align-items: center; gap: 10px;
-  color: #6b7280; font-size: 13px; font-weight: 500;
-}
-.ae-upload-icon { width: 28px; height: 28px; color: #087886; opacity: 0.8; }
-.ae-image-preview { width: 100%; height: 100%; object-fit: cover; }
-
-/* --- INPUT FIELDS --- */
-.ae-label-over {
-  display: block; font-size: 11px; color: #6b7280; 
-  margin-bottom: 4px; margin-left: 12px; font-weight: 700; text-transform: uppercase;
-}
-
-.ae-row-split { display: flex; gap: 12px; }
-
 .ae-input-field, .ae-text-area {
-  width: 100%;
-  padding: 12px 18px;
-  border: 2px solid #e5e7eb;
-  border-radius: 16px; /* Meno arrotondato della pillola, più moderno */
-  font-size: 14px; 
-  color: #1f2937;
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  background: #fff;
+  width: 100%; padding: 12px 16px;
+  border: 2px solid #e5e7eb; border-radius: 12px;
+  font-size: 15px; outline: none;
+  transition: all 0.3s ease; box-sizing: border-box;
 }
-
-.ae-date-input { 
-  font-family: inherit; 
-  color: #374151; 
-  cursor: text;
-}
-
-.ae-text-area {
-  min-height: 90px;
-  resize: none; /* Blocca il resize per non rompere il layout */
-}
-
-/* Stati Focus */
+.ae-text-area { min-height: 100px; resize: vertical; }
 .ae-input-field:focus, .ae-text-area:focus {
-  border-color: #087886;
-  box-shadow: 0 0 0 4px rgba(8, 120, 134, 0.1);
+  border-color: #4aafb8; box-shadow: 0 0 0 3px rgba(74, 175, 184, 0.1);
 }
 
-.ae-input-field::placeholder, .ae-text-area::placeholder {
-  color: #9ca3af;
+.ae-label-over {
+  font-size: 12px; color: #6b7280; font-weight: 600;
+  margin-bottom: 4px; display: block; margin-left: 4px;
 }
 
-/* --- FOOTER E BOTTONE --- */
-.ae-footer {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-top: 10px; gap: 10px;
-}
+.ae-row-split { display: flex; gap: 12px; width: 100%; }
 
-.ae-helper-text { 
-  font-size: 12px; color: #9ca3af; margin: 0; max-width: 150px; line-height: 1.3; 
+/* --- UPLOAD BOX --- */
+.ae-image-upload-box {
+  width: 100%; height: 140px;
+  border: 2px dashed #4aafb8;
+  background: #f0faff; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; overflow: hidden; position: relative;
+  transition: all 0.2s ease;
 }
+.ae-image-upload-box:hover { background: #e9fbe7; border-color: #7cce6b; }
+.ae-image-preview { width: 100%; height: 100%; object-fit: cover; }
+.ae-image-placeholder {
+  display: flex; flex-direction: column; align-items: center; gap: 8px; color: #087886;
+}
+.ae-upload-icon { width: 24px; height: 24px; }
 
+/* --- FOOTER --- */
+.ae-footer { margin-top: 24px; display: flex; justify-content: center; }
 .ae-submit-button {
-  display: inline-flex; align-items: center; justify-content: center;
-  gap: 8px;
-  padding: 12px 28px;
-  border: none;
-  border-radius: 99px; /* Pillola completa */
-  
-  background: linear-gradient(135deg, #087886 0%, #2c8a96 100%);
-  color: white;
-  
-  font-size: 14px; font-weight: 700; letter-spacing: 0.5px;
-  cursor: pointer;
-  box-shadow: 0 8px 20px rgba(8, 120, 134, 0.3);
-  transition: all 0.3s ease;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 14px 40px; border: none; border-radius: 25px;
+  background: linear-gradient(135deg, #087886 0%, #7cce6b 120%);
+  color: white; font-size: 15px; font-weight: 700;
+  cursor: pointer; box-shadow: 0 4px 12px rgba(8, 120, 134, 0.3);
+  transition: all 0.3s ease; width: 100%;
 }
-
 .ae-submit-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 25px rgba(8, 120, 134, 0.4);
-  background: linear-gradient(135deg, #066570 0%, #247580 100%);
+  transform: translateY(-2px); box-shadow: 0 6px 20px rgba(8, 120, 134, 0.4);
 }
-.ae-submit-button:active { transform: translateY(0); }
 
-/* =========================================
-   RESPONSIVE DESIGN
-   ========================================= */
-
-/* Tablet e Schermi Medi (< 960px) */
-@media (max-width: 960px) {
-  /* Nascondiamo il pannello decorativo quando lo spazio non basta più */
+/* --- RESPONSIVE --- */
+@media (max-width: 900px) {
   .ae-left-panel { display: none; }
-  
-  .ae-container { 
-    max-width: 500px; /* Card centrale singola */
-    min-height: auto;
-  }
-  
-  .ae-right-panel { 
-    width: 100%; 
-    padding: 40px 30px; 
-  }
-}
-
-/* Mobile (< 500px) */
-@media (max-width: 500px) {
-  .ae-page { padding: 10px; align-items: flex-start; } /* Top align su mobile */
-  .ae-container { border-radius: 20px; box-shadow: none; }
-  
-  .ae-right-panel { padding: 30px 20px; }
-  
-  .ae-row-split { flex-direction: column; gap: 16px; }
-  
-  .ae-footer { flex-direction: column-reverse; gap: 20px; }
-  .ae-submit-button { width: 100%; padding: 16px; }
-  .ae-helper-text { text-align: center; max-width: 100%; }
-}
-
-
-.ae-page-modal {
-  position: fixed; inset: 0; z-index: 100;
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(5px);
-  padding: 20px;
-}
-
-.ae-page-modal .ae-container {
-  /* In modale manteniamo il layout, ma riduciamo leggermente se necessario */
-  max-width: 1100px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  .ae-right-panel { padding: 40px 20px; }
+  .ae-container { max-height: 95vh; min-height: auto; }
 }
