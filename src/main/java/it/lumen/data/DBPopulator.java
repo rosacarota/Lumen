@@ -137,7 +137,7 @@ public class DBPopulator implements CommandLineRunner {
         richiesta.setDataRichiesta(Date.valueOf(LocalDate.now()));
         richiesta.setStato(RichiestaServizio.StatoRichiestaServizio.InAttesa);
         richiesta.setBeneficiario(beneficiario);
-        richiesta.setEnteVolontraio(ente);
+        richiesta.setEnteVolontario(ente);
         richiestaServizioDAO.save(richiesta);
 
         Partecipazione partecipazione = new Partecipazione();
