@@ -7,7 +7,7 @@ import Swal from 'sweetalert2';
 // Componenti
 import Navbar from '../components/Navbar.jsx';
 import AccessoInfoProfilo from '../components/AccessoInfoProfilo.jsx';
-import AddEvento from '../components/AddEvento.jsx';
+import AddEvento from '../components/AddEvento.jsx'; // Make sure this path is correct
 import AddRaccoltaFondi from '../components/AddRaccoltaFondi.jsx';
 import Footer from '../components/Footer.jsx';
 import RichiestaAffiliazione from '../components/RichiestaAffiliazione.jsx';
@@ -22,16 +22,15 @@ import { getRaccolteDiEnte, terminaRaccolta } from '../services/RaccoltaFondiSer
 import '../stylesheets/ProfiloEnte.css';
 
 // --- CONFIGURAZIONE STILI E COLORI ---
-// Definiamo qui i colori presi dalle tue variabili CSS per usarli in JS
 const THEME_COLORS = {
-  primary: '#087886', // --first-color
-  secondary: '#4AAFB8', // --second-color
-  text: '#1A2B3C',    // --text-main
-  danger: '#d33',     // Rosso per azioni distruttive
-  bg: '#ffffff'       // Sfondo modale
+  primary: '#087886', 
+  secondary: '#4AAFB8', 
+  text: '#1A2B3C',    
+  danger: '#d33',     
+  bg: '#ffffff'       
 };
 
-// Configurazione base per SweetAlert2 per mantenere lo stile coerente
+// Configurazione base per SweetAlert2
 const MySwal = Swal.mixin({
   customClass: {
     popup: 'custom-swal-popup',
@@ -40,11 +39,11 @@ const MySwal = Swal.mixin({
   },
   background: THEME_COLORS.bg,
   color: THEME_COLORS.text,
-  buttonsStyling: true // Lasciamo true per usare i colori inline, o false se usi classi CSS complete
+  buttonsStyling: true 
 });
 
 
-// --- ModalWrapper ---
+// --- ModalWrapper (Used for other modals like RaccoltaFondi) ---
 const ModalWrapper = ({ children, onClose }) => {
   return (
     <div style={{
@@ -171,14 +170,11 @@ const ProfiloEnte = () => {
       text: `Sei sicuro di voler chiudere anticipatamente "${raccoltaCompleta.titolo}"?`,
       icon: 'warning',
       showCancelButton: true,
-      
-      // STILI PULSANTI RICHIESTI
-      confirmButtonColor: THEME_COLORS.danger,   // Rosso per "Sì, termina"
-      cancelButtonColor: THEME_COLORS.primary,   // Teal (#087886) per "Annulla"
-      
+      confirmButtonColor: THEME_COLORS.danger,   
+      cancelButtonColor: THEME_COLORS.primary,   
       confirmButtonText: 'Sì, termina',
       cancelButtonText: 'Annulla',
-      reverseButtons: true // Opzionale: mette Annulla a sinistra e Termina a destra
+      reverseButtons: true 
     });
 
     if (!result.isConfirmed) return;
@@ -196,7 +192,7 @@ const ProfiloEnte = () => {
         icon: 'success',
         title: 'Terminata!',
         text: 'La raccolta fondi è stata chiusa correttamente.',
-        confirmButtonColor: THEME_COLORS.primary // Teal per ok
+        confirmButtonColor: THEME_COLORS.primary 
       });
       
       await loadRaccolte(userProfile);
@@ -249,6 +245,17 @@ const ProfiloEnte = () => {
     setShowRaccoltaModal(false);
     loadRaccolte(userProfile); 
   };
+
+  // --- Handler per Evento ---
+  const handleCloseEventoModal = () => {
+    setShowEventoModal(false);
+    // Qui potresti ricaricare la lista eventi se necessario
+  };
+
+  const handleSubmitEvento = (nuovoEvento) => {
+      
+  };
+
 
   const profileProps = userProfile ? {
     title: userProfile.nome || "Nome Ente",
@@ -338,7 +345,17 @@ const ProfiloEnte = () => {
       <Footer />
       
       {/* Modali */}
-      {showEventoModal && <ModalWrapper onClose={() => setShowEventoModal(false)}><AddEvento onClose={() => setShowEventoModal(false)} isModal={true} /></ModalWrapper>}
+      
+      {/* MODAL EVENTO: Renderizzato direttamente senza ModalWrapper perché ha il suo overlay */}
+      {showEventoModal && (
+        <AddEvento 
+            onBack={handleCloseEventoModal} 
+            onSubmit={handleSubmitEvento}
+            isModal={true} 
+            enteId={userProfile?.id} // Passa l'ID dell'ente se serve
+        />
+      )}
+
       {showRaccoltaModal && <ModalWrapper onClose={handleCloseRaccoltaModal}><AddRaccoltaFondi onClose={handleCloseRaccoltaModal} isModal={true} /></ModalWrapper>}
       {showAffiliazioneModal && <ModalWrapper onClose={() => setShowAffiliazioneModal(false)}><RichiestaAffiliazione onClose={() => setShowAffiliazioneModal(false)} emailEnte={userProfile?.email} /></ModalWrapper>}
     </div>
