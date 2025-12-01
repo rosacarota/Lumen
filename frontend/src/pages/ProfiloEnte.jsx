@@ -7,7 +7,7 @@ import Swal from 'sweetalert2';
 // Componenti
 import Navbar from '../components/Navbar.jsx';
 import AccessoInfoProfilo from '../components/AccessoInfoProfilo.jsx';
-import AddEvento from '../components/AddEvento.jsx'; // Make sure this path is correct
+import AddEvento from '../components/AddEvento.jsx'; 
 import AddRaccoltaFondi from '../components/AddRaccoltaFondi.jsx';
 import Footer from '../components/Footer.jsx';
 import RichiestaAffiliazione from '../components/RichiestaAffiliazione.jsx';
@@ -43,7 +43,7 @@ const MySwal = Swal.mixin({
 });
 
 
-// --- ModalWrapper (Used for other modals like RaccoltaFondi) ---
+// --- ModalWrapper (Usato per RaccoltaFondi e Affiliazione) ---
 const ModalWrapper = ({ children, onClose }) => {
   return (
     <div style={{
@@ -79,7 +79,7 @@ const ProfiloEnte = () => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [isVolunteer, setIsVolunteer] = useState(false);
   
-  // Stati UI
+  // Stati UI Modali
   const [showAffiliazioneModal, setShowAffiliazioneModal] = useState(false);
   const [showEventoModal, setShowEventoModal] = useState(false);
   const [showRaccoltaModal, setShowRaccoltaModal] = useState(false);
@@ -140,7 +140,7 @@ const ProfiloEnte = () => {
     init();
   }, [id]);
 
-  // 3. GESTIONE TERMINA CON STYLE CUSTOM
+  // 3. GESTIONE TERMINA RACCOLTA
   const handleTerminate = async (idRaccolta) => {
     if (!idRaccolta) return;
 
@@ -164,7 +164,6 @@ const ProfiloEnte = () => {
       });
     }
 
-    // Popup di conferma STILIZZATO
     const result = await MySwal.fire({
       title: 'Terminare la raccolta?',
       text: `Sei sicuro di voler chiudere anticipatamente "${raccoltaCompleta.titolo}"?`,
@@ -187,7 +186,6 @@ const ProfiloEnte = () => {
 
       await terminaRaccolta(datiPerIlBackend);
       
-      // Popup Successo STILIZZATO
       await MySwal.fire({
         icon: 'success',
         title: 'Terminata!',
@@ -246,16 +244,26 @@ const ProfiloEnte = () => {
     loadRaccolte(userProfile); 
   };
 
-  // --- Handler per Evento ---
+  // --- HANDLER EVENTO ---
+
   const handleCloseEventoModal = () => {
     setShowEventoModal(false);
-    // Qui potresti ricaricare la lista eventi se necessario
   };
 
-  const handleSubmitEvento = (nuovoEvento) => {
-      
-  };
+  // Questa funzione viene chiamata da AddEvento DOPO che il service ha salvato tutto con successo
+  const handleEventoSucceess = () => {
+    setShowEventoModal(false);
+    
+    MySwal.fire({
+        icon: 'success',
+        title: 'Evento Creato!',
+        text: 'Il tuo evento è stato pubblicato correttamente.',
+        confirmButtonColor: THEME_COLORS.primary
+    });
 
+    // Qui potresti aggiungere una chiamata per ricaricare la lista eventi
+    // es: loadEventi(); 
+  };
 
   const profileProps = userProfile ? {
     title: userProfile.nome || "Nome Ente",
@@ -329,7 +337,7 @@ const ProfiloEnte = () => {
                           key={raccolta.id_raccolta || index} 
                           {...raccolta}
                           isOwner={isOwner}
-                          onTerminate={handleTerminate} // Passaggio funzione al figlio
+                          onTerminate={handleTerminate} 
                         />
                       ))
                     ) : (
@@ -344,20 +352,31 @@ const ProfiloEnte = () => {
       </div>
       <Footer />
       
-      {/* Modali */}
+      {/* --- MODALI --- */}
       
-      {/* MODAL EVENTO: Renderizzato direttamente senza ModalWrapper perché ha il suo overlay */}
+      {/* MODAL EVENTO */}
       {showEventoModal && (
         <AddEvento 
             onBack={handleCloseEventoModal} 
-            onSubmit={handleSubmitEvento}
+            onSubmit={handleEventoSucceess} // Passiamo la funzione che gestisce il successo
             isModal={true} 
-            enteId={userProfile?.id} // Passa l'ID dell'ente se serve
+            enteId={userProfile?.id}
         />
       )}
 
-      {showRaccoltaModal && <ModalWrapper onClose={handleCloseRaccoltaModal}><AddRaccoltaFondi onClose={handleCloseRaccoltaModal} isModal={true} /></ModalWrapper>}
-      {showAffiliazioneModal && <ModalWrapper onClose={() => setShowAffiliazioneModal(false)}><RichiestaAffiliazione onClose={() => setShowAffiliazioneModal(false)} emailEnte={userProfile?.email} /></ModalWrapper>}
+      {/* MODAL RACCOLTA FONDI */}
+      {showRaccoltaModal && (
+        <ModalWrapper onClose={handleCloseRaccoltaModal}>
+            <AddRaccoltaFondi onClose={handleCloseRaccoltaModal} isModal={true} />
+        </ModalWrapper>
+      )}
+
+      {/* MODAL AFFILIAZIONE */}
+      {showAffiliazioneModal && (
+        <ModalWrapper onClose={() => setShowAffiliazioneModal(false)}>
+            <RichiestaAffiliazione onClose={() => setShowAffiliazioneModal(false)} emailEnte={userProfile?.email} />
+        </ModalWrapper>
+      )}
     </div>
   );
 };
