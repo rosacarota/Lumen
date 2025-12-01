@@ -6,7 +6,7 @@ import SchedaVolontario from '../components/SchedaVolontario';
 import '../stylesheets/EventsPage.css'; 
 
 // Importiamo la nuova funzione dal service
-import { fetchPartecipanti } from '../services/PartecipazioneEventiService';
+import { fetchPartecipanti } from '../services/PartecipazioneEventoService';
 
 export default function VisualizzaPartecipantiEvento() {
   
