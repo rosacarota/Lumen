@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Calendar, MapPin, Users, Image as ImageIcon, ArrowLeft, SendHorizontal } from "lucide-react";
+import { Calendar, Image as ImageIcon, ArrowLeft, SendHorizontal } from "lucide-react";
 import "../stylesheets/AddEvento.css";
 
 const AddEvento = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE_DEFAULT" }) => {
@@ -22,17 +22,6 @@ const AddEvento = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE_DEFAUL
       setImmagine(file);
       setPreviewUrl(URL.createObjectURL(file));
     }
-  };
-
-  const resetForm = () => {
-    setTitolo("");
-    setDescrizione("");
-    setIndirizzo("");
-    setDataInizio("");
-    setDataFine("");
-    setMaxPartecipanti("");
-    setImmagine(null);
-    setPreviewUrl(null);
   };
 
   const handleSubmit = (event) => {
@@ -65,14 +54,19 @@ const AddEvento = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE_DEFAUL
     } else {
       console.log("Nuovo Evento:", nuovoEvento);
     }
-
-    resetForm();
+    
+    // Non resetto il form qui se sto per chiudere il modale, 
+    // ma se serve puoi riabilitarlo: resetForm();
   };
 
   return (
-    <div className={`ae-page ${isModal ? "ae-page-modal" : ""}`}>
-      <div className="ae-container">
-        {/* Freccia indietro */}
+    // Se è modale, aggiungiamo l'overlay scuro
+    <div className={isModal ? "ae-modal-overlay" : "ae-page"} onClick={isModal ? onBack : undefined}>
+      
+      {/* Contenitore principale Card */}
+      <div className="ae-container" onClick={(e) => e.stopPropagation()}>
+        
+        {/* --- PULSANTE INDIETRO --- */}
         {onBack && (
           <button
             type="button"
@@ -84,7 +78,7 @@ const AddEvento = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE_DEFAUL
           </button>
         )}
 
-        {/* Pannello sinistro (Stile invariato) */}
+        {/* Pannello sinistro (Gradiente) */}
         <div className="ae-left-panel">
           <div className="ae-gradient-overlay"></div>
           <div className="ae-blur-circle ae-circle-1"></div>
@@ -120,7 +114,7 @@ const AddEvento = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE_DEFAUL
               <form onSubmit={handleSubmit} className="ae-story-form">
                 <div className="ae-fields-container">
                   
-                  {/* Upload Immagine (Nuovo Campo) */}
+                  {/* Upload Immagine */}
                   <div 
                     className="ae-image-upload-box"
                     onClick={() => fileInputRef.current.click()}
@@ -158,8 +152,8 @@ const AddEvento = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE_DEFAUL
                   {/* Riga Doppia: Date */}
                   <div className="ae-row-split">
                     <div className="ae-input-group">
-                       <label className="ae-label-over">Inizio</label>
-                       <input
+                        <label className="ae-label-over">Inizio</label>
+                        <input
                         className="ae-input-field ae-date-input"
                         type="datetime-local"
                         value={dataInizio}
