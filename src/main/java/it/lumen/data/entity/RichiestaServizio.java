@@ -1,5 +1,6 @@
 package it.lumen.data.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -49,7 +50,8 @@ public class RichiestaServizio {
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull(message = "Il destinatario della richiesta è sbagliato")
     @JoinColumn(name = "entevolontario")
-    Utente enteVolontraio;
+    @JsonIgnoreProperties({"nome", "cognome", "password", "ambito", "descrizione", "indirizzo", "recapitoTelefonico", "immagine", "ruolo", "hibernateLazyInitializer"})
+    Utente enteVolontario;
 
 
 }

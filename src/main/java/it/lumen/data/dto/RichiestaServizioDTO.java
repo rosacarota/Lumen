@@ -16,7 +16,6 @@ import java.sql.Date;
 @AllArgsConstructor
 public class RichiestaServizioDTO {
 
-    @NotNull(message = "Un id è obbligatorio")
     private Integer idRichiestaServizio;
 
     @NotBlank(message = "Il messaggio della richiesta è obbligatorio")
@@ -26,7 +25,6 @@ public class RichiestaServizioDTO {
     @JsonFormat(pattern = "dd-MM-yyyy")
     private Date dataRichiesta;
 
-    @NotBlank(message = "Lo stato della richiesta è obbligatorio")
     private RichiestaServizio.StatoRichiestaServizio stato;
 
     @NotBlank(message = "L'email del beneficiario è obbligatoria")

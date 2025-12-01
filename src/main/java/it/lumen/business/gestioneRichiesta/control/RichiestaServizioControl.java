@@ -1,14 +1,15 @@
 package it.lumen.business.gestioneRichiesta.control;
 
+import it.lumen.business.gestioneAutenticazione.service.AutenticazioneService;
 import it.lumen.business.gestioneRichiesta.service.RichiestaServizioService;
+import it.lumen.data.dto.RichiestaServizioDTO;
 import it.lumen.data.entity.RichiestaServizio;
+import it.lumen.data.entity.Utente;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 @RestController
@@ -17,20 +18,37 @@ public class RichiestaServizioControl {
 
     @Autowired
     private final RichiestaServizioService richiestaServizioService;
+    @Autowired
+    private AutenticazioneService autenticazioneService;
 
     @Autowired
-    public RichiestaServizioControl(RichiestaServizioService richiestaServizioService) {this.richiestaServizioService = richiestaServizioService;}
+    public RichiestaServizioControl(RichiestaServizioService richiestaServizioService, AutenticazioneService autenticazioneService) {
+        this.richiestaServizioService = richiestaServizioService;
+        this.autenticazioneService = autenticazioneService;
+    }
 
     //CREA RICHIESTA DI SERVIZIO
     @PostMapping("/creaRichiestaServizio")
-    public ResponseEntity<String> creaRichiestaServizio(@Valid @RequestBody RichiestaServizio richiestaServizio, BindingResult result) {
-        if (result.hasErrors()) {
-            StringBuilder errorMsg = new StringBuilder("Errori di validazione: ");
-            result.getAllErrors().forEach(error -> errorMsg.append(error.getDefaultMessage()));
-            return ResponseEntity.badRequest().body(errorMsg.toString());
+    public ResponseEntity<String> creaRichiestaServizio(@Valid @RequestBody RichiestaServizioDTO richiestaServizioDTO, BindingResult result) {
+
+        if(result.hasErrors()) {
+            StringBuilder errors = new StringBuilder("Errore di validazione");
+            result.getAllErrors().forEach(error -> errors.append(error.getDefaultMessage()));
+            return new ResponseEntity<>(errors.toString(), HttpStatus.BAD_REQUEST);
         }
-        richiestaServizioService.creaRichiestaServizio(richiestaServizio);
-        return ResponseEntity.ok("Richiesta servizio creato");
+        richiestaServizioService.creaRichiestaServizio(richiestaServizioDTO);
+        return ResponseEntity.ok("Richiesta di servizio creata con successo");
+
+
+
+
+//        if (result.hasErrors()) {
+//            StringBuilder errorMsg = new StringBuilder("Errori di validazione: ");
+//            result.getAllErrors().forEach(error -> errorMsg.append(error.getDefaultMessage()));
+//            return ResponseEntity.badRequest().body(errorMsg.toString());
+//        }
+//        richiestaServizioService.creaRichiestaServizio(richiestaServizio);
+//        return ResponseEntity.ok("Richiesta servizio creato");
     }
 
     //ACCETTA RICHIESTA DI SERVIZIO
