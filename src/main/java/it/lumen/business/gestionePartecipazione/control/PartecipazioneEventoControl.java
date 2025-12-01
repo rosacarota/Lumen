@@ -151,17 +151,27 @@ public class PartecipazioneEventoControl {
     public ResponseEntity<?> visualizzaPartecipazioniEvento(@RequestBody Evento eventoInput, @RequestParam String token) {
 
         String email = util.extractEmail(token);
+        String ruolo = util.extractRuolo(token);
 
         if (email == null) {
             return new ResponseEntity<>("Token non valido", HttpStatus.UNAUTHORIZED);
         }
 
+		if (!"ente".equalsIgnoreCase(ruolo)) {
+			return new ResponseEntity<>("Utente deve essere ente per visualizzare le partecipazioni evento", HttpStatus.BAD_REQUEST);
+		}
+
         try {
             Evento evento = partecipazioneEventoService.getEventoById(eventoInput.getIdEvento());
+			Utente ente = autenticazioneService.getUtente(email);
 
             if (evento == null) {
                 return new ResponseEntity<>("Evento non trovato", HttpStatus.BAD_REQUEST);
             }
+
+			if (!evento.getUtente().equals(ente)){
+                return new ResponseEntity<>("Impossibile visualizzare partecipazioni di eventi non propri", HttpStatus.UNAUTHORIZED);
+			}
 
             List<Partecipazione> lista = partecipazioneEventoService.listaPartecipazioni(evento.getIdEvento());
             return ResponseEntity.ok(lista);
