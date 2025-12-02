@@ -72,6 +72,48 @@
     gap: 30px;
 }
 
+/* --- BOX DATI PERSONALI (Visibile solo all'Owner) --- */
+.owner-details-grid {
+    display: flex;
+    flex-wrap: wrap; /* Se lo spazio manca, va a capo */
+    gap: 15px;       /* Spazio tra gli elementi */
+    margin-top: 15px;
+    margin-bottom: 20px;
+    
+    /* Stile "Vetro" per staccare dal fondo sfumato */
+    background-color: rgba(255, 255, 255, 0.2); 
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 12px;
+    padding: 12px 18px;
+    
+    /* Larghezza dinamica: si adatta al contenuto ma non supera il genitore */
+    width: fit-content; 
+    max-width: 100%;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: white; /* Testo bianco per contrasto col banner scuro */
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Icone leggermente più evidenti */
+.detail-item svg {
+    opacity: 0.9;
+}
+
+/* SU MOBILE: Metti i dati uno sotto l'altro per leggere meglio */
+@media (max-width: 768px) {
+    .owner-details-grid {
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+    }
+}
+
 .avatar-container {
     width: 160px;
     height: 160px;
