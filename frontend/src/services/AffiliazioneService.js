@@ -1,127 +1,166 @@
 const API_URL = 'http://localhost:8080/affiliazione';
+const MOCK = false;
 
 class AffiliazioneService {
-
-    //1. Verifica se esiste già un'affiliazione e ritorna JSON (true/false)
-    async checkAffiliazione(emailEnte, token) {
-        const params = new URLSearchParams({ 
-            emailEnte: emailEnte, 
-            token: token 
-        });
-
-        const response = await fetch(`${API_URL}/check?${params}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error(`Errore check affiliazione: ${response.status}`);
-        }
-
-        return await response.json(); // Il backend restituisce un booleano
+  async checkAffiliazione(emailEnte, token) {
+    if (MOCK) {
+      console.log("[MOCK] checkAffiliazione chiamato");
+      return false;
     }
 
-    //2. Invia una richiesta di affiliazione e ritorna Stringa (messaggio di successo/errore)
-    async richiediAffiliazione(descrizione, emailEnte, token) {
-        const params = new URLSearchParams({ token: token });
-        
-        const body = {
-            descrizione: descrizione,
-            ente: {
-                email: emailEnte
-            }
-        };
+    const params = new URLSearchParams({ emailEnte, token });
 
-        const response = await fetch(`${API_URL}/richiedi?${params}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(body)
-        });
+    const response = await fetch(`${API_URL}/check?${params}`);
+    if (!response.ok) throw new Error("Errore check affiliazione");
 
-        // Gestione specifica per leggere il messaggio di errore dal backend (es. "Richiesta già presente")
-        if (!response.ok) {
-            const errorMessage = await response.text(); 
-            throw new Error(errorMessage || `Errore nella richiesta: ${response.status}`);
-        }
+    return await response.json(); // boolean
+  }
 
-        return await response.text(); // Il backend restituisce una stringa semplice
+  // INVIA RICHIESTA DI AFFILIAZIONE
+  async richiediAffiliazione(descrizione, emailEnte, token) {
+    if (MOCK) {
+      console.log("[MOCK] richiediAffiliazione:", descrizione, emailEnte);
+      return "Richiesta di affiliazione inviata con successo (mock)";
     }
 
-    //3. Visualizza Richieste in Attesa e ritorna JSON (Lista oggetti complessi)
-    async getRichiesteInAttesa(token) {
-        const params = new URLSearchParams({ token: token });
+    const params = new URLSearchParams({ token });
+    const body = {
+      descrizione,
+      ente: { email: emailEnte }
+    };
 
-        const response = await fetch(`${API_URL}/richiesteInAttesa?${params}`, {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' }
-        });
+    const response = await fetch(`${API_URL}/richiedi?${params}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
 
-        if (!response.ok) {
-            throw new Error(`Errore recupero richieste: ${response.status}`);
-        }
-
-        return await response.json();
+    const text = await response.text();
+    if (!response.ok) {
+      throw new Error(text || `Errore nella richiesta: ${response.status}`);
     }
 
-    //4. Accetta una richiesta e ritorna Stringa
-    async accettaAffiliazione(idAffiliazione, token) {
-        const params = new URLSearchParams({ 
-            idAffiliazione: idAffiliazione, 
-            token: token 
-        });
+    return text; 
+  }
 
-        const response = await fetch(`${API_URL}/accetta?${params}`, {
-            method: 'GET', // Il tuo controller usa @GetMapping anche per accettare
-            headers: { 'Content-Type': 'application/json' }
-        });
-
-        if (!response.ok) {
-            const errorMessage = await response.text();
-            throw new Error(errorMessage);
+  // RICHIESTE IN ATTESA
+  async getRichiesteInAttesa(token) {
+    if (MOCK) {
+      console.log("[MOCK] getRichiesteInAttesa chiamato");
+      return [
+        {
+          idAffiliazione: 11,
+          nome: "Giorgia",
+          cognome: "Neri",
+          ambito: "Sociale",
+          descrizione: "Vorrei collaborare con il vostro Ente",
+          immagine: null
+        },
+        {
+          idAffiliazione: 12,
+          nome: "Simone",
+          cognome: "Russo",
+          ambito: "Logistica",
+          descrizione: "Disponibile weekend",
+          immagine: null
         }
-
-        return await response.text();
+      ];
     }
 
-    //5. Rifiuta una richiesta e ritorna Stringa
-    async rifiutaAffiliazione(idAffiliazione, token) {
-        const params = new URLSearchParams({ 
-            idAffiliazione: idAffiliazione, 
-            token: token 
-        });
+    const params = new URLSearchParams({ token });
+    const response = await fetch(`${API_URL}/richiesteInAttesa?${params}`);
 
-        const response = await fetch(`${API_URL}/rifiuta?${params}`, {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' }
-        });
-
-        if (!response.ok) {
-            const errorMessage = await response.text();
-            throw new Error(errorMessage);
-        }
-
-        return await response.text();
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(`Errore richieste: ${response.status} - ${text}`);
     }
 
-    //6. Lista Affiliati e ritorna JSON (Lista DTO)
-    async getListaAffiliati(token) {
-        const params = new URLSearchParams({ token: token });
+    const raw = await response.json();
+    const mapped = raw.map((item) => ({
+      idAffiliazione: item.richiesta.idAffiliazione,
+      descrizione: item.richiesta.descrizione,
+      dataInizio: item.richiesta.dataInizio,
+      stato: item.richiesta.stato,
+      nome: item.volontario.nome,
+      cognome: item.volontario.cognome,
+      ambito: item.volontario.ambito,
+      immagine: item.volontario.immagine
+    }));
 
-        const response = await fetch(`${API_URL}/listaAffiliati?${params}`, {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' }
-        });
+    return mapped;
+  }
 
-        if (!response.ok) {
-            throw new Error(`Errore recupero lista affiliati: ${response.status}`);
-        }
-
-        return await response.json();
+  // ACCETTA AFFILIAZIONE
+  async accettaAffiliazione(idAffiliazione, token) {
+    if (MOCK) {
+      console.log("[MOCK] accettaAffiliazione:", idAffiliazione);
+      return "Affiliazione accettata (mock)";
     }
+
+    const params = new URLSearchParams({ idAffiliazione, token });
+
+    const response = await fetch(`${API_URL}/accetta?${params}`, {
+      method: "POST"
+    });
+
+    const text = await response.text();
+    if (!response.ok) {
+      throw new Error(text || "Errore durante l'accettazione");
+    }
+
+    return text;
+  }
+
+  // RIFIUTA AFFILIAZIONE
+  async rifiutaAffiliazione(idAffiliazione, token) {
+    if (MOCK) {
+      console.log("[MOCK] rifiutaAffiliazione:", idAffiliazione);
+      return "Affiliazione rifiutata (mock)";
+    }
+
+    const params = new URLSearchParams({ idAffiliazione, token });
+
+    const response = await fetch(`${API_URL}/rifiuta?${params}`, {
+      method: "POST"
+    });
+
+    const text = await response.text();
+    if (!response.ok) {
+      throw new Error(text || "Errore durante il rifiuto");
+    }
+
+    return text;
+  }
+
+  // LISTA AFFILIATI
+  async getListaAffiliati(token) {
+    if (MOCK) {
+      console.log("[MOCK] getListaAffiliati chiamato");
+      return [
+        {
+          nome: "Marco",
+          cognome: "Bianchi",
+          ambito: "Logistica",
+          immagine: null
+        },
+        {
+          nome: "Elena",
+          cognome: "Verdi",
+          ambito: "Sanitario",
+          immagine: null
+        }
+      ];
+    }
+
+    const params = new URLSearchParams({ token });
+
+    const response = await fetch(`${API_URL}/listaAffiliati?${params}`);
+    if (!response.ok) {
+      throw new Error(`Errore lista affiliati: ${response.status}`);
+    }
+
+    return await response.json(); // lista UtenteDTO (nome, cognome, ambito, immagine)
+  }
 }
 
 export default new AffiliazioneService();

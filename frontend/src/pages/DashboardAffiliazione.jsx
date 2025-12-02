@@ -1,227 +1,334 @@
-import React, { useState, useEffect } from 'react';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
-import { Trash2, Search, MapPin, Briefcase, User, Loader2 } from 'lucide-react';
-import AffiliazioneService from '../services/AffiliazioneService'; // Assicurati del percorso corretto
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import "../stylesheets/DashboardAffiliazione.css";
+import {
+  Trash2,
+  Search,
+  MapPin,
+  Briefcase,
+  User,
+  Loader2,
+  Check,
+  Clock
+} from "lucide-react";
+import AffiliazioneService from "../services/AffiliazioneService";
+import { useNavigate } from "react-router-dom";
 
-export default function VolontariEnte() {
+export default function DashboardAffiliazione() {
   const [volontari, setVolontari] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [error, setError] = useState(null);
-  
+  const [richieste, setRichieste] = useState([]);
+
+  const [loadingAffiliati, setLoadingAffiliati] = useState(true);
+  const [loadingRichieste, setLoadingRichieste] = useState(true);
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [errorAffiliati, setErrorAffiliati] = useState(null);
+  const [errorRichieste, setErrorRichieste] = useState(null);
+
+  const [activeTab, setActiveTab] = useState("affiliati");
+
   const navigate = useNavigate();
 
-  // 1. CARICAMENTO DATI DAL BACKEND
-  useEffect(() => {
-    const fetchAffiliati = async () => {
-      try {
-        const token = localStorage.getItem('token');
+  // ---------------- CARICA AFFILIATI ----------------
+  const loadAffiliati = async () => {
+    setLoadingAffiliati(true);
+    setErrorAffiliati(null);
 
-        // Chiama il service punto 6: getListaAffiliati
-        const data = await AffiliazioneService.getListaAffiliati(token);
-        
-        // Assumo che il backend restituisca una lista di oggetti con i campi necessari
-        // Se i nomi dei campi sono diversi (es. "nomeVolontario" invece di "nome"), adattali qui.
-        setVolontari(data);
-      } catch (err) {
-        console.error("Errore caricamento affiliati:", err);
-        setError("Impossibile caricare la lista degli affiliati.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAffiliati();
-  }, [navigate]);
-
-  // 2. LOGICA RIMOZIONE (Punto 5 del Service: Rifiuta/Rimuovi)
-  const handleRemove = async (idAffiliazione) => {
-    const confirm = window.confirm("Sei sicuro di voler rimuovere questo volontario dai tuoi affiliati?");
-    
-    if (confirm) {
-      try {
-        const token = localStorage.getItem('token');
-        
-        // Chiama il service punto 5: rifiutaAffiliazione
-        // NOTA: Assicurati che l'ID passato sia l'ID dell'Affiliazione, non del Volontario!
-        // Il backend si aspetta "idAffiliazione".
-        const responseMessage = await AffiliazioneService.rifiutaAffiliazione(idAffiliazione, token);
-        
-        alert(responseMessage); // Mostra messaggio di successo del backend
-
-        // Aggiorna la lista rimuovendo l'elemento
-        setVolontari(prev => prev.filter(v => v.idAffiliazione !== idAffiliazione));
-        
-      } catch (err) {
-        alert("Errore durante la rimozione: " + err.message);
-      }
+    try {
+      const token = localStorage.getItem("token");
+      const data = await AffiliazioneService.getListaAffiliati(token);
+      setVolontari(Array.isArray(data) ? data : []);
+    } catch (err) {
+      setErrorAffiliati("Impossibile caricare i volontari affiliati.");
+    } finally {
+      setLoadingAffiliati(false);
     }
   };
 
-  // 3. FILTRO RICERCA
-  const filteredVolontari = volontari.filter(v => {
-    // Adatta questi campi in base al JSON reale del tuo DTO
-    const nomeCompleto = `${v.nome || ''} ${v.cognome || ''}`.toLowerCase();
-    return nomeCompleto.includes(searchTerm.toLowerCase());
+  // ---------------- CARICA RICHIESTE ----------------
+  const loadRichieste = async () => {
+    setLoadingRichieste(true);
+    setErrorRichieste(null);
+
+    try {
+      const token = localStorage.getItem("token");
+      const data = await AffiliazioneService.getRichiesteInAttesa(token);
+      // data = [
+      //   { idAffiliazione, descrizione, dataInizio, stato, nome, cognome, ambito, immagine }
+      // ]
+      setRichieste(Array.isArray(data) ? data : []);
+    } catch (err) {
+      setErrorRichieste("Impossibile caricare le richieste in attesa.");
+    } finally {
+      setLoadingRichieste(false);
+    }
+  };
+
+  useEffect(() => {
+    loadAffiliati();
+    loadRichieste();
+  }, [navigate]);
+
+  // ----RIMUOVI AFFILIATO----
+  const handleRemove = async (idAffiliazione) => {
+    if (!window.confirm("Confermi la rimozione?")) return;
+
+    try {
+      const token = localStorage.getItem("token");
+      await AffiliazioneService.rifiutaAffiliazione(idAffiliazione, token);
+
+      setVolontari(prev =>
+        prev.filter(v => v.idAffiliazione !== idAffiliazione)
+      );
+    } catch (err) {
+      alert("Errore durante la rimozione: " + err.message);
+    }
+  };
+
+  // ---------------- ACCETTA  ----------------
+  const handleAccettaRichiesta = async (idAffiliazione) => {
+    if (!window.confirm("Confermi l’accettazione?")) return;
+
+    try {
+      const token = localStorage.getItem("token");
+      await AffiliazioneService.accettaAffiliazione(idAffiliazione, token);
+
+      // rimuovo dalla lista richieste
+      setRichieste(prev =>
+        prev.filter(r => r.idAffiliazione !== idAffiliazione)
+      );
+
+      // ricarico gli affiliati aggiornati
+      loadAffiliati();
+    } catch (err) {
+      alert("Errore durante l'accettazione: " + err.message);
+    }
+  };
+
+  // ---------------- RIFIUTA  ----------------
+  const handleRifiutaRichiesta = async (idAffiliazione) => {
+    if (!window.confirm("Confermi il rifiuto?")) return;
+
+    try {
+      const token = localStorage.getItem("token");
+      await AffiliazioneService.rifiutaAffiliazione(idAffiliazione, token);
+
+      // rimuovo dalla lista richieste
+      setRichieste(prev =>
+        prev.filter(r => r.idAffiliazione !== idAffiliazione)
+      );
+    } catch (err) {
+      alert("Errore durante il rifiuto: " + err.message);
+    }
+  };
+
+  // ---------------- FILTRO AFFILIATI  ----------------
+  const filteredVolontari = volontari.filter(v =>
+    `${v.nome} ${v.cognome}`.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // ---------------- RICHIESTE ORDINATE ----------------
+  const richiesteOrdinate = [...richieste].sort((a, b) => {
+    const d1 = a.dataInizio ? new Date(a.dataInizio) : new Date(0);
+    const d2 = b.dataInizio ? new Date(b.dataInizio) : new Date(0);
+    return d2 - d1; // più recenti prima
   });
 
+  // ---------------- ULTIME 2 PER SIDEBAR  ----------------
+  const ultimeRichieste = richiesteOrdinate.slice(0, 2);
+
   return (
-    <div style={styles.pageWrapper}>
+    <div className="dashaff-page">
       <Navbar />
-      
-      <div style={styles.container}>
+
+      <div className="dashaff-container">
+
         {/* HEADER */}
-        <div style={styles.header}>
-          <div>
-            <h1 style={styles.title}>I tuoi Affiliati</h1>
-            <p style={styles.subtitle}>Gestisci il team di volontari che collabora con il tuo Ente.</p>
-          </div>
-          
-          {/* Barra di Ricerca */}
-          <div style={styles.searchWrapper}>
-            <Search size={20} color="#087886" style={{ marginRight: '10px' }} />
-            <input 
-              type="text" 
-              placeholder="Cerca volontario..." 
-              style={styles.searchInput}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+        <div className="dashaff-header">
+          <h1>Gestione Affiliazioni</h1>
+
+          <div className="dashaff-tabs">
+            <button
+              className={activeTab === "affiliati" ? "active" : ""}
+              onClick={() => setActiveTab("affiliati")}
+            >
+              Affiliati
+            </button>
+            <button
+              className={activeTab === "richieste" ? "active" : ""}
+              onClick={() => setActiveTab("richieste")}
+            >
+              Richieste in attesa
+            </button>
           </div>
         </div>
 
-        {/* CONTENUTO */}
-        {loading ? (
-          <div style={styles.loadingContainer}>
-            <Loader2 className="animate-spin" size={40} color="#087886" />
-            <p>Caricamento affiliati...</p>
-          </div>
-        ) : error ? (
-          <div style={styles.errorContainer}>{error}</div>
-        ) : (
-          <div style={styles.listContainer}>
-            {filteredVolontari.length > 0 ? (
-              filteredVolontari.map((volontario) => (
-                // Usa idAffiliazione come key se disponibile, altrimenti id
-                <div key={volontario.idAffiliazione || volontario.id} style={styles.card}>
-                  
-                  {/* Avatar */}
-                  <div style={styles.avatarContainer}>
-                    {volontario.immagine ? (
-                      <img src={volontario.immagine} alt={volontario.nome} style={styles.avatarImg} />
-                    ) : (
-                      <User size={24} color="#087886" />
-                    )}
-                  </div>
+        <div className="dashaff-layout">
+          {/* ---------------- SINISTRA ---------------- */}
+          <div className="dashaff-left">
 
-                  {/* Info */}
-                  <div style={styles.infoContainer}>
-                    <h3 style={styles.nameText}>{volontario.nome} {volontario.cognome}</h3>
-                    <div style={styles.badgesWrapper}>
-                      {volontario.ambito && (
-                        <div style={styles.badge}>
-                            <Briefcase size={14} style={{marginRight: 4}}/> {volontario.ambito}
-                        </div>
-                      )}
-                      {volontario.citta && (
-                        <div style={styles.badgeSecondary}>
-                            <MapPin size={14} style={{marginRight: 4}}/> {volontario.citta}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Tasto Rimuovi */}
-                  <button 
-                    // Importante: passa idAffiliazione qui
-                    onClick={() => handleRemove(volontario.idAffiliazione)} 
-                    style={styles.removeButton}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = '#FFF5F5';
-                      e.currentTarget.style.borderColor = '#FF4444';
-                      e.currentTarget.style.color = '#FF4444';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = 'transparent';
-                      e.currentTarget.style.borderColor = '#E5E7EB';
-                      e.currentTarget.style.color = '#6B7280';
-                    }}
-                  >
-                    <Trash2 size={18} style={{ marginRight: '5px' }} />
-                    Rimuovi
-                  </button>
-
-                </div>
-              ))
-            ) : (
-              <div style={styles.emptyState}>
-                <p>Nessun volontario trovato.</p>
+            {/* Barra ricerca affiliati */}
+            {activeTab === "affiliati" && (
+              <div className="dashaff-search">
+                <Search size={20} color="#087886" />
+                <input
+                  type="text"
+                  placeholder="Cerca volontario..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
               </div>
             )}
+
+            {/* LISTA AFFILIATI  */}
+            {activeTab === "affiliati" && (
+              <>
+                {loadingAffiliati ? (
+                  <div className="dashaff-loading">
+                    <Loader2 className="animate-spin" size={40} />
+                  </div>
+                ) : (
+                  <div className="dashaff-list">
+                    {filteredVolontari.map(v => (
+                      <div className="dashaff-card" key={v.idAffiliazione}>
+                        <div className="dashaff-avatar">
+                          {v.immagine ? (
+                            <img src={v.immagine} alt="" />
+                          ) : (
+                            <User size={24} color="#087886" />
+                          )}
+                        </div>
+
+                        <div className="dashaff-info">
+                          <h3>{v.nome} {v.cognome}</h3>
+                          <div className="dashaff-badges">
+                            {v.ambito && (
+                              <span><Briefcase size={14}/> {v.ambito}</span>
+                            )}
+                            {v.citta && (
+                              <span className="gray"><MapPin size={14}/> {v.citta}</span>
+                            )}
+                          </div>
+                        </div>
+
+                        <button
+                          className="dashaff-remove"
+                          onClick={() => handleRemove(v.idAffiliazione)}
+                        >
+                          <Trash2 size={16}/> Rimuovi
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* ======== LISTA RICHIESTE ======== */}
+            {activeTab === "richieste" && (
+              <>
+                {loadingRichieste ? (
+                  <div className="dashaff-loading">
+                    <Loader2 className="animate-spin" size={40}/>
+                  </div>
+                ) : errorRichieste ? (
+                  <div className="dashaff-error">{errorRichieste}</div>
+                ) : (
+                  <div className="dashaff-list">
+                    {richiesteOrdinate.map(r => (
+                      <div className="dashaff-card" key={r.idAffiliazione}>
+                        <div className="dashaff-avatar">
+                          {r.immagine ? (
+                            <img src={r.immagine} alt="" />
+                          ) : (
+                            <User size={24} color="#087886"/>
+                          )}
+                        </div>
+
+                        <div className="dashaff-info">
+                          <h3>{r.nome} {r.cognome}</h3>
+                          <p className="dashaff-desc">{r.descrizione}</p>
+                          {r.ambito && (
+                            <div className="dashaff-badges">
+                              <span><Briefcase size={14}/> {r.ambito}</span>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="dashaff-actions">
+                          <button
+                            className="dashaff-accept"
+                            onClick={() => handleAccettaRichiesta(r.idAffiliazione)}
+                          >
+                            <Check size={16}/> Accetta
+                          </button>
+
+                          <button
+                            className="dashaff-remove"
+                            onClick={() => handleRifiutaRichiesta(r.idAffiliazione)}
+                          >
+                            <Trash2 size={16}/> Rifiuta
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+
           </div>
-        )}
+
+          {/* ======== SIDEBAR ULTIME RICHIESTE ======== */}
+          <div className="dashaff-right">
+            <div className="dashaff-sidebar">
+              <h3>Ultime richieste</h3>
+              <p className="subtitle">Le richieste di affiliazione più recenti.</p>
+
+              {loadingRichieste ? (
+                <div className="dashaff-loading small">
+                  <Loader2 className="animate-spin" size={30}/>
+                </div>
+              ) : ultimeRichieste.length > 0 ? (
+                <div className="dashaff-sidebar-list">
+                  {ultimeRichieste.map(r => (
+                    <div className="dashaff-sidebar-item" key={r.idAffiliazione}>
+                      <div className="dashaff-sidebar-avatar">
+                        {r.immagine ? (
+                          <img src={r.immagine} alt="" />
+                        ) : (
+                          <User size={18} color="#087886"/>
+                        )}
+                      </div>
+
+                      <div className="dashaff-sidebar-info">
+                        <strong>{r.nome} {r.cognome}</strong>
+                        <div className="dashaff-sidebar-meta">
+                          <Clock size={12}/> In attesa
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p>Nessuna richiesta recente.</p>
+              )}
+
+              <button
+                className="dashaff-sidebar-btn"
+                onClick={() => setActiveTab("richieste")}
+              >
+                Gestisci tutte
+              </button>
+            </div>
+          </div>
+
+        </div>
+
       </div>
+
       <Footer />
     </div>
   );
 }
-
-// --- STILI (Invariati, aggiunto solo loadingContainer) ---
-const styles = {
-  pageWrapper: {
-    minHeight: '100vh',
-    background: 'linear-gradient(135deg, #F7FBFB 0%, #E9FBE7 100%)',
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  container: {
-    maxWidth: '1000px',
-    margin: '0 auto',
-    padding: '40px 20px',
-    width: '100%',
-    flex: 1, 
-  },
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '40px',
-    flexWrap: 'wrap',
-    gap: '20px'
-  },
-  title: { fontSize: '32px', fontWeight: '700', color: '#087886', marginBottom: '8px' },
-  subtitle: { fontSize: '16px', color: '#6B7280' },
-  searchWrapper: {
-    display: 'flex', alignItems: 'center', background: 'white', padding: '12px 20px',
-    borderRadius: '30px', boxShadow: '0 4px 15px rgba(8, 120, 134, 0.1)',
-    border: '1px solid #E5E7EB', width: '300px'
-  },
-  searchInput: { border: 'none', outline: 'none', fontSize: '14px', width: '100%', color: '#374151' },
-  listContainer: { display: 'flex', flexDirection: 'column', gap: '16px' },
-  card: {
-    display: 'flex', alignItems: 'center', background: 'white', padding: '20px',
-    borderRadius: '20px', border: '1px solid #E5E7EB',
-    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.02)', transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-  },
-  avatarContainer: {
-    width: '60px', height: '60px', borderRadius: '50%', backgroundColor: '#E9FBE7',
-    display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden',
-    border: '2px solid #087886', marginRight: '20px', flexShrink: 0
-  },
-  avatarImg: { width: '100%', height: '100%', objectFit: 'cover' },
-  infoContainer: { flex: 1 },
-  nameText: { fontSize: '18px', fontWeight: '600', color: '#1F2937', marginBottom: '6px' },
-  badgesWrapper: { display: 'flex', gap: '10px' },
-  badge: { display: 'flex', alignItems: 'center', fontSize: '12px', backgroundColor: '#F0FDFA', color: '#087886', padding: '4px 10px', borderRadius: '12px', fontWeight: '500' },
-  badgeSecondary: { display: 'flex', alignItems: 'center', fontSize: '12px', backgroundColor: '#F3F4F6', color: '#6B7280', padding: '4px 10px', borderRadius: '12px', fontWeight: '500' },
-  removeButton: {
-    display: 'flex', alignItems: 'center', padding: '10px 16px', background: 'transparent',
-    border: '1px solid #E5E7EB', borderRadius: '12px', color: '#6B7280', cursor: 'pointer',
-    fontSize: '14px', fontWeight: '500', transition: 'all 0.3s ease', marginLeft: '20px'
-  },
-  emptyState: { textAlign: 'center', color: '#6B7280', padding: '40px', background: 'white', borderRadius: '20px', border: '1px dashed #E5E7EB' },
-  loadingContainer: { display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '200px', color: '#087886' },
-  errorContainer: { textAlign: 'center', color: '#FF4444', padding: '20px', background: '#FFF5F5', borderRadius: '10px' }
-};
