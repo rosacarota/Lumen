@@ -109,7 +109,7 @@ export const fetchDatiUtente = async () => {
   const token = getToken();
   if (!token) return null;
   try {
-    const response = await fetch(`${API_BASE_URL}/datiUtente?token=${encodeURIComponent(token)}`, {
+    const response = await fetch(`${API_BASE_URL}/account/datiUtente?token=${encodeURIComponent(token)}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' }
     });
