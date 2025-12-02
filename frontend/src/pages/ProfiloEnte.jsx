@@ -70,13 +70,15 @@ const ModalWrapper = ({ children, onClose }) => {
 
 // --- Componente Principale ---
 const ProfiloEnte = () => {
-  const { id } = useParams(); // ID dell'ente visualizzato (se presente nell'URL)
+  const { id } = useParams(); 
   
   // Stati
   const [isOwner, setIsOwner] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
-  const [isFollowing, setIsFollowing] = useState(false);
-  const [isVolunteer, setIsVolunteer] = useState(false);
+  
+  // NOTA: isVolunteer dovrebbe essere settato controllando il ruolo dell'utente loggato.
+  // Per ora lo inizializziamo a true per farti vedere il bottone affiliazione.
+  const [isVolunteer, setIsVolunteer] = useState(true); 
   
   // Modali
   const [showAffiliazioneModal, setShowAffiliazioneModal] = useState(false);
@@ -95,13 +97,12 @@ const ProfiloEnte = () => {
   const [loadingRaccolte, setLoadingRaccolte] = useState(false);
   const [loadingEventi, setLoadingEventi] = useState(false);
 
-  // --- FUNZIONE CRUCIALE: Verifica se chi naviga è il proprietario ---
+  // --- Verifica Proprietario ---
   const checkOwnership = (profileData) => {
     const token = localStorage.getItem('token');
     if (!token || !profileData) return false;
 
     try {
-        // Decodifica manuale token per ottenere l'email dell'utente loggato
         const base64Url = token.split('.')[1];
         const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
         const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
@@ -109,9 +110,8 @@ const ProfiloEnte = () => {
         }).join(''));
         
         const payload = JSON.parse(jsonPayload);
-        const loggedInEmail = payload.sub; // Email nel token
+        const loggedInEmail = payload.sub; 
 
-        // Confronto: Email Token == Email Profilo Ente Visualizzato?
         return loggedInEmail === profileData.email;
     } catch (error) {
         console.error("Errore verifica token:", error);
@@ -122,13 +122,9 @@ const ProfiloEnte = () => {
   // 1. Caricamento Profilo Ente
   const loadUserData = async () => {
     try {
-      // NOTA: Qui dovresti usare una chiamata che prende l'ID dall'URL se esiste,
-      // altrimenti fetchUserProfile (se è la dashboard personale).
-      // Per ora assumiamo che fetchUserProfile ritorni i dati corretti per la pagina.
       const data = await fetchUserProfile(); 
       setUserProfile(data);
 
-      // Verifichiamo se siamo i proprietari
       const ownerStatus = checkOwnership(data);
       setIsOwner(ownerStatus);
       
@@ -139,7 +135,7 @@ const ProfiloEnte = () => {
     }
   };
 
-  // 2. Caricamento Eventi (Backend)
+  // 2. Caricamento Eventi
   const loadEventi = async (profileData = userProfile) => {
     setLoadingEventi(true);
     try {
@@ -149,7 +145,6 @@ const ProfiloEnte = () => {
 
         const data = await getCronologiaEventi(statoBackend);
         
-        // Mappatura dati
         const mappedEventi = Array.isArray(data) ? data.map(ev => ({
             id_evento: ev.id || ev.idEvento,
             titolo: ev.titolo,
@@ -203,7 +198,7 @@ const ProfiloEnte = () => {
     init();
   }, [id]);
 
-  // Ricarica eventi al cambio Tab
+  // Reload Eventi al cambio Tab
   useEffect(() => {
     if (userProfile) loadEventi(userProfile);
   }, [activeTab]);
@@ -240,7 +235,7 @@ const ProfiloEnte = () => {
       <Navbar />
       <div className="main-container">
         
-        {/* Componente Info Profilo (gestisce da solo il tasto Modifica se è owner) */}
+        {/* Info Profilo (con tasto Modifica se Owner) */}
         <AccessoInfoProfilo 
             userData={userProfile} 
             onUpdate={loadUserData} 
@@ -254,7 +249,7 @@ const ProfiloEnte = () => {
               <button className={activeTab === 'svolti' ? 'active' : ''} onClick={() => setActiveTab('svolti')}>SVOLTI</button>
             </div>
             
-            {/* LOGICA BOTTONI HEADER */}
+            {/* LOGICA BOTTONI HEADER (Senza Segui) */}
             <div className="actions-right">
               {isOwner ? (
                 /* VISTA PROPRIETARIO */
@@ -263,15 +258,13 @@ const ProfiloEnte = () => {
                   <button className="btn-action" onClick={() => setShowRaccoltaModal(true)}>CREA RACCOLTA FONDI</button>
                 </>
               ) : (
-                /* VISTA VISITATORE */
+                /* VISTA VISITATORE (Solo Affiliazione se volontario) */
                 <>
-                  <button className="btn-action" onClick={() => setIsFollowing(!isFollowing)}>
-                    {isFollowing ? 'SEGUITO' : 'SEGUI'}
-                  </button>
-                  {/* Il tasto Affiliazione lo vede solo chi può affiliarsi (es. volontari) */}
-                  <button className="btn-action btn-affiliation" onClick={() => setShowAffiliazioneModal(true)}>
-                    Richiedi affiliazione
-                  </button>
+                  {isVolunteer && (
+                    <button className="btn-action btn-affiliation" onClick={() => setShowAffiliazioneModal(true)}>
+                      Richiedi affiliazione
+                    </button>
+                  )}
                 </>
               )}
             </div>
@@ -342,7 +335,7 @@ const ProfiloEnte = () => {
       </div>
       <Footer />
       
-      {/* MODALI - Renderizzati condizionalmente */}
+      {/* MODALI - Owner */}
       {isOwner && showEventoModal && (
         <AddEvento 
             onBack={() => setShowEventoModal(false)} 
@@ -358,7 +351,7 @@ const ProfiloEnte = () => {
         </ModalWrapper>
       )}
 
-      {/* Il modale affiliazione serve solo ai visitatori */}
+      {/* MODALE - Visitatore */}
       {!isOwner && showAffiliazioneModal && (
         <ModalWrapper onClose={() => setShowAffiliazioneModal(false)}>
             <RichiestaAffiliazione onClose={() => setShowAffiliazioneModal(false)} emailEnte={userProfile?.email} />
