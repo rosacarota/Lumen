@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { MessageSquare, SendHorizontal, ArrowLeft, Calendar } from 'lucide-react';
 import { creaRichiestaServizio } from '../services/RichiestaServizioService';
-import '../stylesheets/RichiestaServizio.css';;
+import '../stylesheets/RichiestaServizio.css';
 
 const RichiestaServizio = ({ onClose, enteDestinatarioEmail, isModal = true }) => {
     const [testo, setTesto] = useState('');
