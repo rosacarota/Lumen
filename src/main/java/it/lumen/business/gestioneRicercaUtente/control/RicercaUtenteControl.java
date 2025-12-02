@@ -1,6 +1,7 @@
 package it.lumen.business.gestioneRicercaUtente.control;
 
 
+import it.lumen.business.gestioneRicercaUtente.service.GREGAdapterService;
 import it.lumen.business.gestioneRicercaUtente.service.RicercaUtenteService;
 import it.lumen.business.gestioneAutenticazione.service.AutenticazioneService;
 import it.lumen.data.dto.UtenteDTO;
@@ -9,10 +10,7 @@ import it.lumen.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
@@ -26,12 +24,16 @@ public class RicercaUtenteControl {
 
 
     private final RicercaUtenteService ricercaUtenteService;
+    private final GREGAdapterService GREGAdapterService;
     private final AutenticazioneService autenticazioneService;
+    private final JwtUtil jwtUtil;
 
     @Autowired
-    public RicercaUtenteControl(RicercaUtenteService ricercaUtenteService, JwtUtil jwtUtil, AutenticazioneService autenticazioneService) {
+    public RicercaUtenteControl(RicercaUtenteService ricercaUtenteService, GREGAdapterService GREGAdapterService, JwtUtil jwtUtil, AutenticazioneService autenticazioneService) {
         this.ricercaUtenteService = ricercaUtenteService;
+        this.GREGAdapterService=GREGAdapterService;
         this.autenticazioneService = autenticazioneService;
+        this.jwtUtil=jwtUtil;
     }
 
     @GetMapping("/cerca")
@@ -59,5 +61,24 @@ public class RicercaUtenteControl {
                 }).collect(Collectors.toList());
 
         return ResponseEntity.ok(listaUtentiDTO);
+    }
+
+    @PostMapping("/search")
+    public ResponseEntity<?> searchMatchingVolunteers(
+            @RequestBody GREGAdapterService.VolontarioMatchRequest request) {
+
+        // 1. Validazione base dei dati di input (es. il CAP non è nullo)
+        if (request.getCap() == null || request.getCap().isEmpty()) {
+            // Potresti lanciare un'eccezione custom o restituire un BAD_REQUEST
+            return ResponseEntity.badRequest().build();
+        }
+
+        // 2. Chiama l'Adapter per delegare la richiesta al servizio Python
+        GREGAdapterService.VolontarioMatchResponse response = GREGAdapterService.findMatchingVolunteers(request);
+
+        // 3. Restituisce il risultato con stato HTTP 200 OK
+        return ResponseEntity.ok(response);
+
+        // aggiungere conversione json in utenti
     }
 }
