@@ -1,100 +1,86 @@
-import { useState, useEffect, useRef } from "react";
-import { Calendar, MapPin, Clock, Image as ImageIcon, ArrowLeft, Save } from "lucide-react";
-import "../stylesheets/ModifyEvento.css"; 
-import { modificaEvento, toBase64 } from "../services/EventoService"; 
+import { useState, useRef, useEffect } from "react";
+import { Calendar, Image as ImageIcon, ArrowLeft, Save, MapPin } from "lucide-react";
+import Swal from "sweetalert2";
+import "../stylesheets/AddEvento.css"; 
+import { updateEvento, toBase64 } from "../services/EventoService";
 
-const ModifyEvento = ({ onSubmit, onBack, initialData, isModal = false }) => {
+const ModifyEvento = ({ isOpen, onClose, eventToEdit, onUpdate }) => {
   
-  // --- STATI ---
-  const [immagine, setImmagine] = useState(null); 
-  const [previewUrl, setPreviewUrl] = useState(null);
-  
+  // Stati Form
   const [titolo, setTitolo] = useState("");
   const [descrizione, setDescrizione] = useState("");
+  const [dataInizio, setDataInizio] = useState("");
+  const [dataFine, setDataFine] = useState("");
+  const [maxPartecipanti, setMaxPartecipanti] = useState("");
   
-  // Stato Indirizzo (Oggetto completo)
+  // Stati Immagine
+  const [immagineFile, setImmagineFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const [existingImageBase64, setExistingImageBase64] = useState(null);
+
+  // Stato Indirizzo
   const [indirizzo, setIndirizzo] = useState({
-      idIndirizzo: null,
-      strada: '',
-      ncivico: '',
-      citta: '',
-      provincia: '',
-      cap: ''
+    strada: '', ncivico: '', citta: '', provincia: '', cap: ''
   });
 
-  // Stati Date e Ore separati
-  const [dataInizio, setDataInizio] = useState("");
-  const [oraInizio, setOraInizio] = useState("");
-  const [dataFine, setDataFine] = useState("");
-  const [oraFine, setOraFine] = useState("");
-  
-  const [maxPartecipanti, setMaxPartecipanti] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
   const fileInputRef = useRef(null);
 
-  // --- EFFETTO: POPOLA I CAMPI ---
+  // --- POPOLA I DATI (CORRETTO) ---
   useEffect(() => {
-    if (initialData) {
-      setTitolo(initialData.titolo || "");
-      setDescrizione(initialData.descrizione || "");
-      setMaxPartecipanti(initialData.maxPartecipanti || "");
+    if (eventToEdit) {
+      setTitolo(eventToEdit.titolo || "");
+      setDescrizione(eventToEdit.descrizione || "");
+      
+      // FIX DATE: Prendo solo la parte YYYY-MM-DD se c'è l'ora (T)
+      const safeDate = (dateStr) => {
+          if (!dateStr) return "";
+          return dateStr.includes('T') ? dateStr.split('T')[0] : dateStr;
+      };
+
+      setDataInizio(safeDate(eventToEdit.dataInizio)); 
+      setDataFine(safeDate(eventToEdit.dataFine));
+
+      setMaxPartecipanti(eventToEdit.maxPartecipanti || "");
       
       // Immagine
-      if (initialData.immagine) {
-         setPreviewUrl(initialData.immagine);
+      if (eventToEdit.immagine) {
+          setExistingImageBase64(eventToEdit.immagine);
+          setPreviewUrl(eventToEdit.immagine);
+      } else {
+          setPreviewUrl(null);
+          setExistingImageBase64(null);
       }
-
-      // Indirizzo
-      if (initialData.indirizzo) {
+      
+      // FIX INDIRIZZO: Controllo più varianti per il civico
+      if (eventToEdit.indirizzo) {
+          const addr = eventToEdit.indirizzo;
           setIndirizzo({
-              idIndirizzo: initialData.indirizzo.id || initialData.indirizzo.idIndirizzo,
-              strada: initialData.indirizzo.strada || "",
-              ncivico: initialData.indirizzo.ncivico || "",
-              citta: initialData.indirizzo.citta || "",
-              provincia: initialData.indirizzo.provincia || "",
-              cap: initialData.indirizzo.cap || ""
+              id: addr.id || addr.idIndirizzo, 
+              strada: addr.strada || "",
+              // Controllo: nCivico (Java), ncivico (db), numeroCivico (alternativa)
+              ncivico: addr.nCivico || addr.ncivico || addr.numeroCivico || "", 
+              citta: addr.citta || "",
+              provincia: addr.provincia || "",
+              cap: addr.cap || ""
           });
       }
-
-      // Split Date ISO (YYYY-MM-DDTHH:mm)
-      if (initialData.dataInizio) {
-        const dt = initialData.dataInizio.split('T');
-        if (dt.length >= 2) {
-            setDataInizio(dt[0]);
-            setOraInizio(dt[1].substring(0, 5));
-        } else {
-             setDataInizio(initialData.dataInizio);
-        }
-      }
-
-      if (initialData.dataFine) {
-        const dt = initialData.dataFine.split('T');
-        if (dt.length >= 2) {
-            setDataFine(dt[0]);
-            setOraFine(dt[1].substring(0, 5));
-        } else {
-            setDataFine(initialData.dataFine);
-        }
-      }
     }
-  }, [initialData]);
+  }, [eventToEdit]);
 
-  // --- HANDLERS ---
+  if (!isOpen) return null;
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setImmagine(file);
+      setImmagineFile(file);
       setPreviewUrl(URL.createObjectURL(file));
     }
   };
 
   const handleAddressChange = (e) => {
     const { name, value } = e.target;
-    setIndirizzo(prev => ({
-        ...prev,
-        [name]: value
-    }));
+    setIndirizzo(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (event) => {
@@ -102,173 +88,139 @@ const ModifyEvento = ({ onSubmit, onBack, initialData, isModal = false }) => {
     setIsLoading(true);
 
     try {
-        const fullInizio = `${dataInizio}T${oraInizio}`;
-        const fullFine = `${dataFine}T${oraFine}`;
-
-        if (new Date(fullFine) <= new Date(fullInizio)) {
-            alert("La data di fine deve essere successiva all'inizio.");
-            setIsLoading(false);
-            return;
+        let immagineFinale = existingImageBase64;
+        if (immagineFile) {
+            immagineFinale = await toBase64(immagineFile);
         }
 
-        let immagineDaInviare = initialData.immagine; 
-        if (immagine) {
-            immagineDaInviare = await toBase64(immagine);
-        }
-
-        const eventoModificato = {
-            idEvento: initialData.idEvento || initialData.id, 
-            titolo: titolo.trim(),
-            descrizione: descrizione.trim(),
-            dataInizio: fullInizio,
-            dataFine: fullFine,
-            maxPartecipanti: parseInt(maxPartecipanti),
-            immagine: immagineDaInviare, 
+        const payload = {
+            idEvento: eventToEdit.id || eventToEdit.idEvento,
+            titolo,
+            descrizione,
+            dataInizio,
+            dataFine,
+            maxPartecipanti,
+            immagineBase64: immagineFinale,
             indirizzo: {
                 ...indirizzo,
-                idIndirizzo: indirizzo.idIndirizzo
-            }
+                // Assicuriamoci di mandare nCivico se il backend lo vuole CamelCase
+                nCivico: indirizzo.ncivico 
+            } 
         };
 
-        await modificaEvento(eventoModificato);
+        await updateEvento(payload);
 
-        if (onSubmit) onSubmit();
+        Swal.fire("Modificato!", "L'evento è stato aggiornato.", "success");
+        if (onUpdate) onUpdate(); 
+        onClose(); 
 
     } catch (error) {
-        console.error(error);
-        alert("Errore modifica: " + error.message);
+        Swal.fire("Errore", error.message, "error");
     } finally {
         setIsLoading(false);
     }
   };
 
   return (
-    <div className={`me-page ${isModal ? "me-page-modal" : ""}`}>
-      <div className="me-container">
+    <div className="ae-modal-overlay" onClick={onClose}>
+      <div className="ae-container" onClick={(e) => e.stopPropagation()}>
         
-        {onBack && (
-          <button type="button" className="me-close-back-button" onClick={onBack} title="Annulla">
+        <button type="button" className="ae-close-back-button" onClick={onClose}>
             <ArrowLeft size={20} />
-          </button>
-        )}
+        </button>
 
-        {/* --- FORM PANEL --- */}
-        <div className="me-left-panel-form">
-          <div className="me-form-wrapper">
-            
-            <div className="me-header-section">
-              <div className="me-header-title-row">
-                <Calendar className="me-header-icon" />
-                <span className="me-header-text">Modifica Evento</span>
-              </div>
-              <p className="me-header-subtitle">Aggiorna i dettagli qui sotto.</p>
-            </div>
-
-            <form onSubmit={handleSubmit} className="me-story-form">
-              <div className="me-fields-scrollable">
-                
-                {/* Upload Immagine */}
-                <div className="me-image-upload-box" onClick={() => fileInputRef.current.click()}>
-                  <input type="file" ref={fileInputRef} onChange={handleImageChange} style={{ display: 'none' }} accept="image/*"/>
-                  {previewUrl ? (
-                    <img src={previewUrl} alt="Preview" className="me-image-preview" />
-                  ) : (
-                    <div className="me-image-placeholder">
-                      <ImageIcon className="me-upload-icon" />
-                      <span>Cambia immagine</span>
-                    </div>
-                  )}
-                  {previewUrl && <div className="me-image-overlay">Cambia</div>}
-                </div>
-
-                {/* Titolo */}
-                <div className="me-input-group">
-                  <label className="me-label">Titolo</label>
-                  <input className="me-input-field" type="text" value={titolo} onChange={(e) => setTitolo(e.target.value)} required maxLength={100} />
-                </div>
-
-                {/* Date e Orari */}
-                <div className="me-section-label" style={{marginTop:'10px', fontSize:'0.85rem', color:'#555', display:'flex', alignItems:'center', gap:'5px', fontWeight:600}}>
-                     <Clock size={14}/> Date e Orari
-                </div>
-
-                <div className="me-row-split">
-                    <div className="me-input-group" style={{flex: 2}}>
-                        <label className="me-label">Data Inizio</label>
-                        <input className="me-input-field me-date-input" type="date" value={dataInizio} onChange={(e) => setDataInizio(e.target.value)} required />
-                    </div>
-                    <div className="me-input-group" style={{flex: 1}}>
-                        <label className="me-label">Ora</label>
-                        <input className="me-input-field" type="time" value={oraInizio} onChange={(e) => setOraInizio(e.target.value)} required />
-                    </div>
-                </div>
-
-                <div className="me-row-split">
-                    <div className="me-input-group" style={{flex: 2}}>
-                        <label className="me-label">Data Fine</label>
-                        <input className="me-input-field me-date-input" type="date" value={dataFine} onChange={(e) => setDataFine(e.target.value)} min={dataInizio} required />
-                    </div>
-                    <div className="me-input-group" style={{flex: 1}}>
-                        <label className="me-label">Ora</label>
-                        <input className="me-input-field" type="time" value={oraFine} onChange={(e) => setOraFine(e.target.value)} required />
-                    </div>
-                </div>
-
-                {/* Max Partecipanti */}
-                <div className="me-input-group">
-                    <label className="me-label">Max Partecipanti</label>
-                    <input className="me-input-field" type="number" value={maxPartecipanti} onChange={(e) => setMaxPartecipanti(e.target.value)} min="1" required />
-                </div>
-
-                {/* Indirizzo */}
-                <div className="me-section-label" style={{marginTop:'10px', fontSize:'0.85rem', color:'#555', display:'flex', alignItems:'center', gap:'5px', fontWeight:600}}>
-                      <MapPin size={14}/> Luogo Evento
-                </div>
-                <div className="me-row-split">
-                    <div className="me-input-group" style={{ flex: 3 }}>
-                      <input className="me-input-field" type="text" name="strada" value={indirizzo.strada} onChange={handleAddressChange} placeholder="Via" required />
-                    </div>
-                    <div className="me-input-group" style={{ flex: 1 }}>
-                      <input className="me-input-field" type="text" name="ncivico" value={indirizzo.ncivico} onChange={handleAddressChange} placeholder="N." required />
-                    </div>
-                </div>
-                <div className="me-row-split">
-                     <div className="me-input-group" style={{ flex: 2 }}>
-                        <input className="me-input-field" type="text" name="citta" value={indirizzo.citta} onChange={handleAddressChange} placeholder="Città" required />
-                     </div>
-                     <div className="me-input-group" style={{ flex: 1 }}>
-                        <input className="me-input-field" type="text" name="provincia" value={indirizzo.provincia} onChange={handleAddressChange} placeholder="PR" maxLength={2} required />
-                     </div>
-                     <div className="me-input-group" style={{ flex: 1 }}>
-                        <input className="me-input-field" type="text" name="cap" value={indirizzo.cap} onChange={handleAddressChange} placeholder="CAP" required />
-                     </div>
-                </div>
-
-                {/* Descrizione */}
-                <div className="me-input-group" style={{marginTop: '10px'}}>
-                  <label className="me-label">Descrizione</label>
-                  <textarea className="me-text-area" value={descrizione} onChange={(e) => setDescrizione(e.target.value)} rows={4} required />
-                </div>
-              </div>
-
-              <div className="me-footer">
-                <button type="submit" className="me-submit-button" disabled={isLoading}>
-                  <Save className="me-submit-icon" />
-                  <span>{isLoading ? "SALVATAGGIO..." : "SALVA MODIFICHE"}</span>
-                </button>
-              </div>
-            </form>
+        <div className="ae-left-panel">
+          <div className="ae-gradient-overlay"></div>
+          <div className="ae-blur-circle ae-circle-1"></div>
+          <div className="ae-welcome-content">
+            <h1 className="ae-welcome-title">Modifica Evento.</h1>
+            <p className="ae-welcome-subtitle">Aggiorna i dettagli del tuo evento.</p>
           </div>
         </div>
 
-        {/* --- DECOR PANEL --- */}
-        <div className="me-right-panel-decor">
-          <div className="me-gradient-overlay"></div>
-          <div className="me-blur-circle me-circle-1"></div>
-          <div className="me-blur-circle me-circle-2"></div>
-          <div className="me-welcome-content">
-            <h1 className="me-welcome-title">Aggiorna il tuo Evento.</h1>
-            <p className="me-welcome-subtitle">Modifica i dettagli per informare i tuoi partecipanti.</p>
+        <div className="ae-right-panel">
+          <div className="ae-form-container">
+            <div className="ae-logo-section">
+              <div className="ae-logo-wrapper">
+                <Calendar className="ae-logo-icon" />
+                <span className="ae-logo-text">Modifica</span>
+              </div>
+            </div>
+
+            <div className="ae-form-content">
+              <form onSubmit={handleSubmit} className="ae-story-form">
+                <div className="ae-fields-container">
+                  
+                  {/* Immagine */}
+                  <div className="ae-image-upload-box" onClick={() => fileInputRef.current.click()}>
+                    <input type="file" ref={fileInputRef} onChange={handleImageChange} style={{ display: 'none' }} accept="image/*"/>
+                    {previewUrl ? (
+                      <img src={previewUrl} alt="Preview" className="ae-image-preview" />
+                    ) : (
+                      <div className="ae-image-placeholder">
+                        <ImageIcon className="ae-upload-icon" />
+                        <span>Cambia immagine</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Titolo */}
+                  <div className="ae-input-group">
+                    <input className="ae-input-field" type="text" value={titolo} onChange={(e) => setTitolo(e.target.value)} placeholder="Titolo" required />
+                  </div>
+
+                  {/* Date e MaxPart */}
+                  <div className="ae-row-split">
+                    <div className="ae-input-group">
+                        <label className="ae-label-over">Inizio</label>
+                        <input className="ae-input-field ae-date-input" type="date" value={dataInizio} onChange={(e) => setDataInizio(e.target.value)} required />
+                    </div>
+                    <div className="ae-input-group">
+                      <label className="ae-label-over">Fine</label>
+                      <input className="ae-input-field ae-date-input" type="date" value={dataFine} onChange={(e) => setDataFine(e.target.value)} required />
+                    </div>
+                    <div className="ae-input-group">
+                        <label className="ae-label-over">Max Part.</label>
+                        <input className="ae-input-field" type="number" value={maxPartecipanti} onChange={(e) => setMaxPartecipanti(e.target.value)} required />
+                    </div>
+                  </div>
+
+                  {/* Indirizzo */}
+                  <div className="ae-section-label" style={{marginTop:'10px', fontSize:'0.9rem', color:'#666'}}><MapPin size={14}/> Luogo</div>
+                  <div className="ae-row-split">
+                    <div className="ae-input-group" style={{ flex: 3 }}>
+                      <input className="ae-input-field" type="text" name="strada" value={indirizzo.strada} onChange={handleAddressChange} placeholder="Via" required />
+                    </div>
+                    <div className="ae-input-group" style={{ flex: 1 }}>
+                      <input className="ae-input-field" type="text" name="ncivico" value={indirizzo.ncivico} onChange={handleAddressChange} placeholder="N." required />
+                    </div>
+                  </div>
+                  <div className="ae-row-split">
+                     <div className="ae-input-group" style={{ flex: 2 }}>
+                        <input className="ae-input-field" type="text" name="citta" value={indirizzo.citta} onChange={handleAddressChange} placeholder="Città" required />
+                     </div>
+                     <div className="ae-input-group" style={{ flex: 1 }}>
+                        <input className="ae-input-field" type="text" name="provincia" value={indirizzo.provincia} onChange={handleAddressChange} placeholder="PR" maxLength={2} required />
+                     </div>
+                     <div className="ae-input-group" style={{ flex: 1 }}>
+                        <input className="ae-input-field" type="text" name="cap" value={indirizzo.cap} onChange={handleAddressChange} placeholder="CAP" required />
+                     </div>
+                  </div>
+
+                  {/* Descrizione */}
+                  <div className="ae-input-group">
+                    <textarea className="ae-text-area" value={descrizione} onChange={(e) => setDescrizione(e.target.value)} rows={3} required />
+                  </div>
+                </div>
+
+                <div className="ae-footer" style={{justifyContent: 'flex-end'}}>
+                  <button type="submit" className="ae-submit-button" disabled={isLoading}>
+                    <Save size={18} style={{marginRight: '5px'}}/>
+                    <span>{isLoading ? "Salvataggio..." : "Salva Modifiche"}</span>
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       </div>

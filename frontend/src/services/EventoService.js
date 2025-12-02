@@ -1,7 +1,8 @@
 const API_URL = "http://localhost:8080";
 
+// Funzione per recuperare il token (Usa localStorage per la produzione)
 function getAuthToken() {
-    return localStorage.getItem("token"); 
+    return localStorage.getItem("token");
 }
 
 export const toBase64 = (file) =>
@@ -65,7 +66,7 @@ export const addEvento = async (eventoInput) => {
 };
 
 // 3. MODIFICA EVENTO
-export const modificaEvento = async (eventoModificato) => {
+export const updateEvento = async (eventoModificato) => {
   const token = getAuthToken();
 
   const payload = {
@@ -75,11 +76,12 @@ export const modificaEvento = async (eventoModificato) => {
     dataInizio: eventoModificato.dataInizio, 
     dataFine: eventoModificato.dataFine,
     maxPartecipanti: parseInt(eventoModificato.maxPartecipanti),
-    immagine: eventoModificato.immagine || null, 
+    immagine: eventoModificato.immagineBase64 || null, 
     indirizzo: {
-        idIndirizzo: eventoModificato.indirizzo.idIndirizzo,
+        // Importante: se c'è un ID indirizzo va passato per aggiornare lo stesso record
+        id: eventoModificato.indirizzo.id || eventoModificato.indirizzo.idIndirizzo,
         strada: eventoModificato.indirizzo.strada,
-        ncivico: eventoModificato.indirizzo.ncivico,
+        nCivico: eventoModificato.indirizzo.ncivico, // Attenzione al case sensitive del Backend (nCivico vs ncivico)
         citta: eventoModificato.indirizzo.citta,
         provincia: eventoModificato.indirizzo.provincia,
         cap: eventoModificato.indirizzo.cap
@@ -92,24 +94,26 @@ export const modificaEvento = async (eventoModificato) => {
     body: JSON.stringify(payload),
   });
 
-  if (!response.ok) throw new Error("Errore modifica evento");
-  try { return JSON.parse(await response.text()); } catch (e) { return true; }
+  if (!response.ok) {
+     const text = await response.text();
+     throw new Error(text || "Errore modifica evento");
+  }
+  return true;
 };
 
-// --- 4. RIMUOVI EVENTO (NUOVO) ---
+// 4. RIMUOVI EVENTO (alias deleteEvento per compatibilità)
+export const deleteEvento = async (idEvento) => {
+    return rimuoviEvento(idEvento);
+};
+
 export const rimuoviEvento = async (idEvento) => {
     const token = getAuthToken();
-
-    // Payload richiesto: { "idEvento": 15 }
-    const payload = {
-        idEvento: idEvento
-    };
+    // Alcuni backend vogliono l'ID nel body, altri nel path. Qui lo mettiamo nel body come da tua richiesta.
+    const payload = { idEvento: idEvento };
 
     const response = await fetch(`${API_URL}/evento/rimuoviEvento?token=${encodeURIComponent(token)}`, {
-        method: "POST", // endpoint specifica POST
-        headers: {
-            "Content-Type": "application/json",
-        },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
     });
 
@@ -117,6 +121,5 @@ export const rimuoviEvento = async (idEvento) => {
         const errorText = await response.text();
         throw new Error(errorText || "Impossibile eliminare l'evento.");
     }
-
-    return true; // Successo
+    return true; 
 };

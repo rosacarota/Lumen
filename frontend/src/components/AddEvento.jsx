@@ -3,9 +3,8 @@ import { Calendar, Image as ImageIcon, ArrowLeft, SendHorizontal, MapPin, Clock 
 import "../stylesheets/AddEvento.css";
 import { addEvento, toBase64 } from "../services/EventoService"; 
 
-const AddEvento = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE_DEFAULT" }) => {
+const AddEvento = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE_DEFAULT", initialData }) => {
   
-  // Stati per i campi del form
   const [immagine, setImmagine] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [titolo, setTitolo] = useState("");
@@ -13,25 +12,18 @@ const AddEvento = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE_DEFAUL
   
   // Indirizzo
   const [indirizzo, setIndirizzo] = useState({
-      strada: '',
-      ncivico: '',
-      citta: '',
-      provincia: '',
-      cap: ''
+      strada: '', ncivico: '', citta: '', provincia: '', cap: ''
   });
 
-  // Gestione Date e Ore
+  // Date (Solo date, niente ore)
   const [dataInizio, setDataInizio] = useState("");
-  const [oraInizio, setOraInizio] = useState(""); // Nuovo stato
   const [dataFine, setDataFine] = useState("");
-  const [oraFine, setOraFine] = useState("");     // Nuovo stato
   
   const [maxPartecipanti, setMaxPartecipanti] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const fileInputRef = useRef(null);
 
-  // Gestione caricamento immagine
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -40,25 +32,17 @@ const AddEvento = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE_DEFAUL
     }
   };
 
-  // Gestione campi indirizzo
   const handleAddressChange = (e) => {
     const { name, value } = e.target;
-    setIndirizzo(prev => ({
-        ...prev,
-        [name]: value
-    }));
+    setIndirizzo(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // 1. Combinazione Data + Ora in formato ISO (YYYY-MM-DDTHH:mm)
-    const fullInizio = `${dataInizio}T${oraInizio}`;
-    const fullFine = `${dataFine}T${oraFine}`;
-
-    // 2. Validazione Temporale
-    if (new Date(fullFine) <= new Date(fullInizio)) {
-      alert("La data/ora di fine deve essere successiva alla data/ora di inizio.");
+    // Validazione Date
+    if (new Date(dataFine) < new Date(dataInizio)) {
+      alert("La data di fine deve essere uguale o successiva alla data di inizio.");
       return;
     }
 
@@ -79,8 +63,8 @@ const AddEvento = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE_DEFAUL
             titolo: titolo.trim(),
             descrizione: descrizione.trim(),
             indirizzo, 
-            dataInizio: fullInizio, // Inviamo la stringa completa data+ora
-            dataFine: fullFine,     // Inviamo la stringa completa data+ora
+            dataInizio, // Invia solo YYYY-MM-DD
+            dataFine,   // Invia solo YYYY-MM-DD
             maxPartecipanti: parseInt(maxPartecipanti),
             immagineBase64, 
             ente: enteId,
@@ -113,24 +97,18 @@ const AddEvento = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE_DEFAUL
           </button>
         )}
 
-        {/* Pannello sinistro */}
         <div className="ae-left-panel">
           <div className="ae-gradient-overlay"></div>
           <div className="ae-blur-circle ae-circle-1"></div>
           <div className="ae-blur-circle ae-circle-2"></div>
-
           <div className="ae-welcome-content">
             <h1 className="ae-welcome-title">Crea un Evento.</h1>
-            <p className="ae-welcome-subtitle">
-              Organizza momenti indimenticabili per la community.
-            </p>
+            <p className="ae-welcome-subtitle">Organizza momenti indimenticabili.</p>
           </div>
         </div>
 
-        {/* Pannello destro (Form) */}
         <div className="ae-right-panel">
           <div className="ae-form-container">
-            
             <div className="ae-logo-section">
               <div className="ae-logo-wrapper">
                 <Calendar className="ae-logo-icon" />
@@ -155,55 +133,36 @@ const AddEvento = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE_DEFAUL
                     )}
                   </div>
 
-                  {/* Titolo */}
                   <div className="ae-input-group">
-                    <input
-                      className="ae-input-field" type="text" value={titolo} onChange={(e) => setTitolo(e.target.value)}
-                      placeholder="Nome dell'evento" required maxLength={100}
-                    />
+                    <input className="ae-input-field" type="text" value={titolo} onChange={(e) => setTitolo(e.target.value)} placeholder="Nome dell'evento" required maxLength={100} />
                   </div>
 
-                  {/* --- SEZIONE DATE E ORE --- */}
+                  {/* DATE (Senza Ore) */}
                   <div className="ae-section-label" style={{marginTop:'10px', fontSize:'0.9rem', color:'#666', display:'flex', alignItems:'center', gap:'5px'}}>
-                      <Clock size={14}/> Date e Orari
+                      <Clock size={14}/> Periodo Svolgimento
                   </div>
 
-                  {/* RIGA 1: Data e Ora INIZIO */}
                   <div className="ae-row-split">
-                    <div className="ae-input-group" style={{flex: 2}}>
+                    <div className="ae-input-group" style={{flex: 1}}>
                         <label className="ae-label-over">Data Inizio</label>
                         <input className="ae-input-field ae-date-input" type="date" value={dataInizio} onChange={(e) => setDataInizio(e.target.value)} required />
                     </div>
                     <div className="ae-input-group" style={{flex: 1}}>
-                        <label className="ae-label-over">Ora Inizio</label>
-                        <input className="ae-input-field" type="time" value={oraInizio} onChange={(e) => setOraInizio(e.target.value)} required />
-                    </div>
-                  </div>
-
-                  {/* RIGA 2: Data e Ora FINE */}
-                  <div className="ae-row-split">
-                    <div className="ae-input-group" style={{flex: 2}}>
                       <label className="ae-label-over">Data Fine</label>
                       <input className="ae-input-field ae-date-input" type="date" value={dataFine} onChange={(e) => setDataFine(e.target.value)} min={dataInizio} required />
                     </div>
-                    <div className="ae-input-group" style={{flex: 1}}>
-                      <label className="ae-label-over">Ora Fine</label>
-                      <input className="ae-input-field" type="time" value={oraFine} onChange={(e) => setOraFine(e.target.value)} required />
-                    </div>
                   </div>
 
-                  {/* Max Partecipanti (Spostato in riga singola per pulizia) */}
                    <div className="ae-input-group">
                         <label className="ae-label-over">Max Partecipanti</label>
                         <input className="ae-input-field" type="number" value={maxPartecipanti} onChange={(e) => setMaxPartecipanti(e.target.value)} placeholder="Es. 50" min="1" required />
                    </div>
 
-                  {/* --- SEZIONE INDIRIZZO DETTAGLIATO --- */}
+                  {/* INDIRIZZO */}
                   <div className="ae-section-label" style={{marginTop:'10px', fontSize:'0.9rem', color:'#666', display:'flex', alignItems:'center', gap:'5px'}}>
                       <MapPin size={14}/> Luogo Evento
                   </div>
                   
-                  {/* Riga 1 Indirizzo: Via e Civico */}
                   <div className="ae-row-split">
                     <div className="ae-input-group" style={{ flex: 3 }}>
                       <input className="ae-input-field" type="text" name="strada" value={indirizzo.strada} onChange={handleAddressChange} placeholder="Via / Piazza" required />
@@ -213,7 +172,6 @@ const AddEvento = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE_DEFAUL
                     </div>
                   </div>
 
-                  {/* Riga 2 Indirizzo: Città, Prov, CAP */}
                   <div className="ae-row-split">
                      <div className="ae-input-group" style={{ flex: 2 }}>
                         <input className="ae-input-field" type="text" name="citta" value={indirizzo.citta} onChange={handleAddressChange} placeholder="Città" required />
@@ -225,14 +183,9 @@ const AddEvento = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE_DEFAUL
                         <input className="ae-input-field" type="text" name="cap" value={indirizzo.cap} onChange={handleAddressChange} placeholder="CAP" required />
                      </div>
                   </div>
-                  {/* --- FINE SEZIONE INDIRIZZO --- */}
 
-                  {/* Descrizione */}
                   <div className="ae-input-group">
-                    <textarea
-                      className="ae-text-area" value={descrizione} onChange={(e) => setDescrizione(e.target.value)}
-                      placeholder="Descrizione del programma..." rows={3} required
-                    />
+                    <textarea className="ae-text-area" value={descrizione} onChange={(e) => setDescrizione(e.target.value)} placeholder="Descrizione del programma..." rows={3} required />
                   </div>
                 </div>
 

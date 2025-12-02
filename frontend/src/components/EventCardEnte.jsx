@@ -1,5 +1,5 @@
 import React from 'react';
-import { CalendarDays, MapPin, Users, Clock, Edit, Trash2 } from 'lucide-react';
+import { CalendarDays, MapPin, Users, Edit, Trash2 } from 'lucide-react';
 import '../stylesheets/EventCardEnte.css';
 
 export default function EventCardEnte({ 
@@ -12,50 +12,30 @@ export default function EventCardEnte({
   maxpartecipanti, 
   immagine, 
   ente,
-  eventData,  // <--- DATI COMPLETI (Passati da ProfiloEnte)
-  onModifica, // <--- CALLBACK per aprire il modale
-  onElimina   // <--- CALLBACK per eliminare
+  eventData,  // Dati completi per la modifica
+  onModifica, 
+  onElimina   
 }) {
 
-  // --- FORMATTAZIONE DATA E ORA ---
+  // Formattazione Date
   const formatDateRange = (start, end) => {
-    if (!start) return { fullDate: "Data da definire", timeRange: "--:--" };
+    if (!start) return "Data da definire";
+    const safeStart = start.split('T')[0];
+    const safeEnd = end ? end.split('T')[0] : null;
 
-    const s = new Date(start);
-    const e = end ? new Date(end) : null;
+    const s = new Date(safeStart);
     const dateOpts = { day: 'numeric', month: 'short', year: 'numeric' };
-    const timeOpts = { hour: '2-digit', minute: '2-digit' };
-
     const dateStr = s.toLocaleDateString('it-IT', dateOpts);
-    const timeStart = s.toLocaleTimeString('it-IT', timeOpts);
-    
-    let timeRangeStr = timeStart;
-    if (e) {
-        const timeEnd = e.toLocaleTimeString('it-IT', timeOpts);
-        timeRangeStr = `${timeStart} - ${timeEnd}`;
-    }
 
-    return { fullDate: dateStr, timeRange: timeRangeStr };
+    if (safeEnd && safeStart !== safeEnd) {
+        const e = new Date(safeEnd);
+        const dateEndStr = e.toLocaleDateString('it-IT', dateOpts);
+        return `${dateStr} - ${dateEndStr}`;
+    }
+    return dateStr;
   };
 
-  const { fullDate, timeRange } = formatDateRange(data_inizio, data_fine);
-
-  // --- HANDLER MODIFICA ---
-  const handleModifica = (e) => {
-    e.stopPropagation(); // Evita di aprire i dettagli generici
-    if (onModifica) {
-        // Passiamo i dati grezzi al genitore per popolare il form
-        onModifica(eventData); 
-    }
-  };
-
-  // --- HANDLER ELIMINA ---
-  const handleElimina = (e) => {
-    e.stopPropagation();
-    if (onElimina) {
-        onElimina(id_evento);
-    }
-  };
+  const fullDate = formatDateRange(data_inizio, data_fine);
 
   return (
     <div className="event-card" id={`event-${id_evento}`}>
@@ -70,7 +50,7 @@ export default function EventCardEnte({
            )} 
         </div>
         <div className="event-meta">
-          <span className="event-brand">{ente || "Il tuo Ente"}</span>
+          <span className="event-brand">{ente || "Ente"}</span>
           <span className="event-role">Gestione</span>
         </div>
       </div>
@@ -92,10 +72,6 @@ export default function EventCardEnte({
           <span>{fullDate}</span>
         </div>
         <div className="event-detail-row">
-          <span className="event-icon"><Clock size={18} /></span>
-          <span>{timeRange}</span>
-        </div>
-        <div className="event-detail-row">
           <span className="event-icon"><MapPin size={18} /></span>
           <span>{luogo || "Luogo da definire"}</span>
         </div>
@@ -109,11 +85,11 @@ export default function EventCardEnte({
       
       {/* FOOTER - Bottoni Azione */}
       <div className="event-footer">
-        <button className="event-btn btn-secondary" onClick={handleModifica}>
+        <button className="event-btn btn-secondary" onClick={(e) => { e.stopPropagation(); onModifica(eventData); }}>
             <Edit size={16} style={{marginRight: '5px'}}/> Modifica
         </button>
 
-        <button className="event-btn btn-danger" onClick={handleElimina}>
+        <button className="event-btn btn-danger" onClick={(e) => { e.stopPropagation(); onElimina(id_evento); }}>
             <Trash2 size={16} style={{marginRight: '5px'}}/> Elimina
         </button>
       </div>
