@@ -1,70 +1,48 @@
-:root {
-  /* -- Sfondi -- */
-  --bg-main: #F7FBFB;
-  --bg-soft: #F0F5F5;
-
-  /* -- Colori Principali -- */
-  --first-color: #087886;
-  /* Turchese */
-  --second-color: #4AAFB8;
-  /* Azzurro */
-  --third-color: #7CCE6B;
-  /* Verde */
-  --danger-color: #ef4444;
-  /* Rosso per annullare iscrizione */
-
-  /* -- Colori Testo -- */
-  --text-dark: #1e293b;
-  --text-light: #64748b;
-  --text-lighter: #94a3b8;
-}
-
+/* --- CONTENITORE CARD --- */
 .event-card {
   background-color: white;
-  border: 1px solid rgba(8, 120, 134, 0.1);
-  border-radius: 16px;
-  padding: 0;
-  /* Padding moved to .event-content */
-  min-width: 320px;
-  max-width: 350px;
-  display: flex;
-  flex-direction: column;
-  /* gap: 16px;  Moved to .event-content */
-  box-shadow: 0 10px 30px -10px rgba(8, 120, 134, 0.15);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 24px; /* Bordi molto arrotondati come nello screen */
   overflow: hidden;
-  /* Ensures image respects border radius */
-}
-
-.event-cover {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  background-color: var(--bg-soft);
-}
-
-.placeholder-cover {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-  color: #cbd5e1;
-}
-
-.event-content {
-  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* Ombra morbida */
+  border: 1px solid #f1f5f9;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  flex: 1;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  height: 100%;
 }
 
 .event-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 20px 40px -10px rgba(8, 120, 134, 0.25);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
 }
 
-/* --- Header --- */
+/* --- IMMAGINE / PLACEHOLDER --- */
+.event-cover {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.placeholder-cover {
+  width: 100%;
+  height: 180px;
+  background-color: #f1f5f9; /* Grigio chiarissimo dello screen */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #cbd5e1; /* Icona grigia */
+}
+
+/* --- CONTENUTO INTERNO --- */
+.event-content {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 16px;
+}
+
+/* --- HEADER (Avatar e Nome) --- */
 .event-header {
   display: flex;
   align-items: center;
@@ -72,17 +50,17 @@
 }
 
 .event-avatar {
-  width: 42px;
-  height: 42px;
-  background-color: var(--bg-soft);
-  color: var(--first-color);
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  overflow: hidden;
+  /* Colore verde chiaro dello screen */
+  background-color: #dcfce7; 
+  color: #047857; /* Testo verde scuro */
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
-  font-size: 18px;
+  font-weight: 800;
+  font-size: 1.2rem;
   flex-shrink: 0;
 }
 
@@ -90,133 +68,132 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 50%;
 }
 
 .event-meta {
   display: flex;
   flex-direction: column;
+  gap: 2px;
 }
 
 .event-brand {
-  font-size: 14px;
+  font-size: 0.95rem;
   font-weight: 700;
-  color: var(--first-color);
+  color: #087886; /* Il tuo Teal */
 }
 
 .event-role {
-  font-size: 11px;
+  font-size: 0.7rem;
+  font-weight: 700;
   text-transform: uppercase;
+  color: #64748b;
+  background-color: #f1f5f9; /* Badge grigio/verde chiarissimo */
+  padding: 2px 8px;
+  border-radius: 6px;
+  width: fit-content;
   letter-spacing: 0.5px;
-  color: var(--text-light);
-  background-color: var(--bg-soft);
-  padding: 2px 6px;
-  border-radius: 4px;
-  align-self: flex-start;
-  margin-top: 2px;
+  /* Se vuoi il verde dello screen per il badge: */
+  /* background-color: #f0fdf4; color: #166534; */ 
 }
 
-/* --- Body --- */
+/* --- BODY (Titolo e Descrizione) --- */
 .event-body {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
 }
 
 .event-title {
-  font-size: 20px;
+  font-size: 1.4rem; /* Titolo grande */
   font-weight: 800;
-  color: var(--text-dark);
+  color: #0f172a; /* Quasi nero */
   margin: 0;
   line-height: 1.2;
 }
 
 .event-description {
-  font-size: 13px;
-  color: var(--text-lighter);
+  font-size: 0.9rem;
+  color: #64748b; /* Grigio testo */
   margin: 0;
-  line-height: 1.4;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-/* --- Details --- */
+/* --- DETTAGLI (Icone) --- */
 .event-details {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-top: 4px;
+  gap: 12px;
+  margin-top: 8px;
 }
 
 .event-detail-row {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 13px;
-  color: var(--text-light);
+  gap: 12px;
+  font-size: 0.9rem;
+  color: #475569;
+  font-weight: 500;
 }
 
 .event-icon {
-  color: var(--second-color);
-  display: flex;
-  align-items: center;
+  color: #087886; /* Colore icone */
+  flex-shrink: 0;
 }
 
-/* --- Footer: Pulsanti --- */
+/* --- FOOTER (Bottoni) --- */
 .event-footer {
   margin-top: auto;
+  padding-top: 20px;
   display: flex;
   gap: 12px;
-  width: 100%;
 }
 
+/* Stile Base Bottone */
 .event-btn {
   flex: 1;
-  padding: 10px;
-  font-size: 14px;
-  font-weight: 600;
-  border-radius: 8px;
+  padding: 12px;
+  border-radius: 12px; /* Arrotondato */
+  font-weight: 700;
+  font-size: 0.95rem;
   cursor: pointer;
-  transition: all 0.2s ease;
+  border: none;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  /* Spazio tra icona e testo */
+  transition: all 0.2s ease;
 }
 
-/* 1. Stile "Partecipa"  */
-.btn-primary {
-  background-color: var(--first-color);
-  color: white;
-  border: 1px solid transparent;
-  box-shadow: 0 4px 6px -1px rgba(8, 120, 134, 0.2);
-}
-
-.btn-primary:hover {
-  background-color: var(--second-color);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 10px -2px rgba(8, 120, 134, 0.3);
-}
-
-/* Variante se l'utente è già iscritto */
-.btn-primary.btn-active {
-  background-color: white;
-  color: var(--first-color);
-  border: 1px solid var(--first-color);
-  box-shadow: none;
-}
-
-.btn-primary.btn-active:hover {
-  background-color: #fef2f2;
-  color: var(--danger-color);
-  border-color: var(--danger-color);
-}
-
-/* 2. Stile "Dettagli"  */
+/* Bottone Dettagli (Grigio chiaro come nello screen) */
 .btn-secondary {
-  background-color: transparent;
-  color: var(--first-color);
-  border: 1px solid var(--first-color);
+  background-color: #f1f5f9;
+  color: #1e293b;
+}
+.btn-secondary:hover {
+  background-color: #e2e8f0;
 }
 
-.btn-secondary:hover {
-  background-color: var(--bg-soft);
+/* Bottone Partecipa (Teal) */
+.btn-primary {
+  background-color: #087886;
+  color: white;
+}
+.btn-primary:hover {
+  background-color: #0e7490;
+}
+
+/* Bottone Attivo/Rosso (Iscritto) */
+.btn-active {
+  background-color: #fff1f2;
+  color: #e11d48;
+  border: 1px solid #fecdd3;
+}
+.btn-active:hover {
+  background-color: #ffe4e6;
+  border-color: #e11d48;
 }

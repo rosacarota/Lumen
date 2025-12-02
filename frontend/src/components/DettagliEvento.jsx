@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+// Rimosso useNavigate perché usiamo la prop onOpenParticipants
 import { X, Calendar, MapPin, Users, Image as ImageIcon } from 'lucide-react';
 import '../stylesheets/DettagliEvento.css';
 
 import { fetchDatiUtente } from '../services/PartecipazioneEventoService';
 
-export default function DettagliEvento({ evento, onClose }) {
-  const navigate = useNavigate();
+export default function DettagliEvento({ 
+  evento, 
+  onClose,
+  onOpenParticipants 
+}) {
   
   const [currentUser, setCurrentUser] = useState(null);
 
@@ -31,8 +34,11 @@ export default function DettagliEvento({ evento, onClose }) {
   if (!evento) return null; 
 
   const handleVediPartecipanti = () => {
-    const id = evento.id_evento || evento.idEvento;
-    navigate(`/partecipanti/${id}`);
+    // Gestione ID sia snake_case che camelCase
+    const id = evento.idEvento || evento.id_evento;
+    if (onOpenParticipants) {
+        onOpenParticipants(id);
+    }
   };
 
   const formatDate = (dateString) => {
@@ -42,17 +48,20 @@ export default function DettagliEvento({ evento, onClose }) {
     });
   };
 
-  // --- LOGICA ENTE ---
+  // --- LOGICHE RECUPERO DATI (Con Log di Debug) ---
   const getEnteEmail = () => {
+    // Priorità: ente (oggetto) > ente (stringa) > utente (oggetto) > utente (stringa)
+    let emailTrovata = "";
+
     if (evento.ente) {
-        if (typeof evento.ente === 'string') return evento.ente;
-        return evento.ente.email || "";
+        if (typeof evento.ente === 'object') emailTrovata = evento.ente.email;
+        else emailTrovata = evento.ente;
+    } else if (evento.utente) {
+        if (typeof evento.utente === 'object') emailTrovata = evento.utente.email;
+        else emailTrovata = evento.utente;
     }
-    if (evento.utente) {
-        if (typeof evento.utente === 'string') return evento.utente;
-        return evento.utente.email || "";
-    }
-    return "";
+    
+    return emailTrovata || "";
   };
 
   const getEnteName = () => {
@@ -67,28 +76,17 @@ export default function DettagliEvento({ evento, onClose }) {
     return "Ente Sconosciuto";
   };
 
-  // --- NUOVA LOGICA INDIRIZZO ---
   const getIndirizzoCompleto = () => {
-    // 1. Se il backend manda l'oggetto "indirizzo"
     if (evento.indirizzo && typeof evento.indirizzo === 'object') {
         const { strada, nCivico, citta, provincia } = evento.indirizzo;
-        
-        // Costruiamo la stringa: "Via Roma 10, Milano (MI)"
         let fullAddress = "";
-        
         if (strada) fullAddress += strada;
         if (nCivico) fullAddress += ` ${nCivico}`;
         if (citta) fullAddress += fullAddress ? `, ${citta}` : citta;
         if (provincia) fullAddress += ` (${provincia})`;
-
         return fullAddress || "Indirizzo non specificato";
     }
-
-    // 2. Fallback: se manda una stringa semplice "luogo"
-    if (evento.luogo && typeof evento.luogo === 'string') {
-        return evento.luogo;
-    }
-
+    if (evento.luogo && typeof evento.luogo === 'string') return evento.luogo;
     return "Luogo da definire";
   };
 
@@ -100,6 +98,15 @@ export default function DettagliEvento({ evento, onClose }) {
   const isOwner = currentUser && 
                   normalize(currentUser.ruolo) === 'ente' &&
                   normalize(emailEnteEvento) === normalize(emailUtenteLoggato);
+
+  // --- DEBUG DETTAGLIATO ---
+  console.group(`🔎 DEBUG MODALE (ID: ${evento.idEvento})`);
+  console.log("CHI SONO IO (Browser):", emailUtenteLoggato);
+  console.log("CHI HA CREATO L'EVENTO (Evento):", emailEnteEvento);
+  console.log("IL MIO RUOLO:", currentUser?.ruolo);
+  console.log("MATCH:", isOwner ? "✅ SÌ (Mostro tasto)" : "❌ NO (Nascondo tasto)");
+  console.log("DATI GREZZI EVENTO:", evento);
+  console.groupEnd();
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -145,7 +152,6 @@ export default function DettagliEvento({ evento, onClose }) {
               <MapPin className="info-icon" size={20} />
               <div>
                 <span className="label">Luogo</span>
-                {/* QUI USIAMO LA NUOVA FUNZIONE */}
                 <p>{getIndirizzoCompleto()}</p>
               </div>
             </div>
@@ -153,7 +159,7 @@ export default function DettagliEvento({ evento, onClose }) {
 
           <div className="modal-description">
             <h3>Descrizione</h3>
-            <p>{evento.descrizione || "Nessuna descrizione disponibile per questo evento."}</p>
+            <p>{evento.descrizione || "Nessuna descrizione disponibile."}</p>
           </div>
 
           <div className="modal-footer">

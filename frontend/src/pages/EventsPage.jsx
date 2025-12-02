@@ -3,8 +3,8 @@ import '../stylesheets/EventsPage.css';
 import Navbar from '../components/Navbar';
 import EventCard from '../components/EventCard'; 
 import Footer from '../components/Footer';
-import DettagliEvento from '../components/DettagliEvento'; // <--- IMPORTA IL MODALE
 
+// Servizi
 import { fetchEvents } from '../services/PartecipazioneEventoService'; 
 import { getCronologiaEventi } from '../services/CronologiaEventiService'; 
 
@@ -13,39 +13,28 @@ export default function EventsPage() {
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState('tutti'); 
 
-  // --- STATO PER IL MODALE ---
-  const [selectedEvent, setSelectedEvent] = useState(null);
-
-  // Funzione chiamata dalla CARD quando clicchi "Dettagli"
-  const handleOpenDetails = (evento) => {
-    setSelectedEvent(evento);
-  };
-
-  // Funzione per chiudere il modale
-  const handleCloseModal = () => {
-    setSelectedEvent(null);
-  };
-
-  // ... (loadAllEvents e loadHistoryEvents restano uguali) ...
-  const loadAllEvents = async () => {
+  // Funzione unica per caricare i dati
+  const loadData = async (mode) => {
     setLoading(true);
     try {
-      const data = await fetchEvents();
+      let data = [];
+      if (mode === 'tutti') {
+        data = await fetchEvents();
+      } else {
+        data = await getCronologiaEventi(null);
+      }
       setEvents(data);
-      setViewMode('tutti');
-    } catch (error) { console.error(error); } finally { setLoading(false); }
+      setViewMode(mode);
+    } catch (error) {
+      console.error("Errore caricamento:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const loadHistoryEvents = async () => {
-    setLoading(true);
-    try {
-      const data = await getCronologiaEventi(null); 
-      setEvents(data);
-      setViewMode('cronologia');
-    } catch (error) { console.error(error); } finally { setLoading(false); }
-  };
-
-  useEffect(() => { loadAllEvents(); }, []);
+  useEffect(() => {
+    loadData('tutti');
+  }, []);
 
   return (
     <>
@@ -55,43 +44,52 @@ export default function EventsPage() {
       <div className="main-container">
         <div className="content-box">
           
-          {/* ... Header e bottoni cambio vista (restano uguali) ... */}
           <div className="box-header">
              <div className="header-text">
                 <h1>{viewMode === 'tutti' ? 'Tutti gli Eventi' : 'La tua Cronologia'}</h1>
                 <p>Scopri le attività della community e partecipa.</p>
              </div>
+             
              <div style={{ marginTop: '15px', display: 'flex', gap: '10px' }}>
-                <button onClick={loadAllEvents} style={{/*...*/}}>Tutti</button>
-                <button onClick={loadHistoryEvents} style={{/*...*/}}>Cronologia</button>
+                <button 
+                  onClick={() => loadData('tutti')} 
+                  className="btn-new"
+                  style={{ 
+                    backgroundColor: viewMode === 'tutti' ? '#087886' : '#e0e0e0', 
+                    color: viewMode === 'tutti' ? 'white' : '#333',
+                    border: 'none', cursor: 'pointer' 
+                  }}
+                >Tutti</button>
+                <button 
+                  onClick={() => loadData('cronologia')} 
+                  className="btn-new"
+                  style={{ 
+                    backgroundColor: viewMode === 'cronologia' ? '#087886' : '#e0e0e0', 
+                    color: viewMode === 'cronologia' ? 'white' : '#333',
+                    border: 'none', cursor: 'pointer'
+                  }}
+                >Cronologia</button>
              </div>
           </div>
-          {/* ... fine header ... */}
 
           <div className="events-grid">
-            {loading && <p>Caricamento...</p>}
+            {loading && <p style={{gridColumn:'1/-1', textAlign:'center', color:'#666'}}>Caricamento in corso...</p>}
             
-            {!loading && events.map((event) => (
+            {!loading && events.length === 0 && (
+              <p style={{gridColumn:'1/-1', textAlign:'center', color:'#666'}}>Nessun evento disponibile.</p>
+            )}
+
+            {!loading && events.map((event, index) => (
               <EventCard 
-                key={event.idEvento} 
+                // Usiamo l'ID se c'è, altrimenti l'indice come fallback per evitare errori di key
+                key={event.id || event.idEvento || index} 
                 
-                // Passiamo tutto l'oggetto evento, serve per passarlo al modale
-                eventData={event} 
+                // Passiamo l'intero oggetto "pulito" dal service
+                event={event}  
                 
-                // Passiamo le singole prop per la visualizzazione della card
-                id_evento={event.idEvento} 
-                titolo={event.titolo}
-                descrizione={event.descrizione}
-                luogo={event.luogo}
-                data_inizio={event.dataInizio}
-                data_fine={event.dataFine}
-                ente={event.ente}
-                maxpartecipanti={event.maxPartecipanti}
-                immagine={event.immagine}
                 showParticipate={true}
                 
-                // --- PASSIAMO LA FUNZIONE PER APRIRE IL MODALE ---
-                onOpenDetails={handleOpenDetails}
+                // NOTA: Ho rimosso onOpenDetails perché ora la Card si gestisce da sola!
               />
             ))}
           </div>
@@ -100,14 +98,6 @@ export default function EventsPage() {
       </div>
     </div>
     <Footer />
-
-    {/* --- IL MODALE (Appare solo se selectedEvent esiste) --- */}
-    {selectedEvent && (
-      <DettagliEvento 
-        evento={selectedEvent} 
-        onClose={handleCloseModal} 
-      />
-    )}
     </>
   );
 }
