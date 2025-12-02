@@ -1,10 +1,12 @@
 package it.lumen.data.entity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import lombok.*;
 
 import javax.validation.constraints.Pattern;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @Table(name="Indirizzo")
 @Getter

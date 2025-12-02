@@ -64,7 +64,7 @@ public class DBPopulator implements CommandLineRunner {
         Indirizzo indEnte = new Indirizzo(null, "Roma", "RM", "00100", "Via Roma", 10);
         indEnte = indirizzoDAO.save(indEnte);
 
-        Indirizzo indBeneficiario = new Indirizzo(null, "Milano", "MI", "20100", "Via Milano", 5);
+        Indirizzo indBeneficiario =new Indirizzo(null, "New York", "NY", "10012", "Broadway", 610);;
         indBeneficiario = indirizzoDAO.save(indBeneficiario);
 
         Indirizzo indVolontario = new Indirizzo(null, "Napoli", "NA", "80100", "Via Napoli", 20);
