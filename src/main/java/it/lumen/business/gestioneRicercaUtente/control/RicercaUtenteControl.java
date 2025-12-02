@@ -5,6 +5,7 @@ import it.lumen.business.gestioneRicercaUtente.service.GREGAdapterService;
 import it.lumen.business.gestioneRicercaUtente.service.RicercaUtenteService;
 import it.lumen.business.gestioneAutenticazione.service.AutenticazioneService;
 import it.lumen.data.dto.UtenteDTO;
+import it.lumen.data.entity.Indirizzo;
 import it.lumen.data.entity.Utente;
 import it.lumen.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -63,22 +66,66 @@ public class RicercaUtenteControl {
         return ResponseEntity.ok(listaUtentiDTO);
     }
 
-    @PostMapping("/search")
-    public ResponseEntity<?> searchMatchingVolunteers(
-            @RequestBody GREGAdapterService.VolontarioMatchRequest request) {
+    @PostMapping("/ricercaGeografica")
+    public ResponseEntity<List<Utente>> searchMatchingVolunteers(@RequestParam String token, @RequestBody SearchRequest frontendRequest) {
 
-        // 1. Validazione base dei dati di input (es. il CAP non è nullo)
-        if (request.getCap() == null || request.getCap().isEmpty()) {
-            // Potresti lanciare un'eccezione custom o restituire un BAD_REQUEST
-            return ResponseEntity.badRequest().build();
+        String emailUtente = jwtUtil.extractEmail(token);
+        Utente utenteLoggato = autenticazioneService.getUtente(emailUtente);
+
+        if (utenteLoggato == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        // 2. Chiama l'Adapter per delegare la richiesta al servizio Python
-        GREGAdapterService.VolontarioMatchResponse response = GREGAdapterService.findMatchingVolunteers(request);
+        Indirizzo indirizzo = utenteLoggato.getIndirizzo();
+        if (indirizzo == null) {
+            return ResponseEntity.badRequest().body(null);
+        }
 
-        // 3. Restituisce il risultato con stato HTTP 200 OK
-        return ResponseEntity.ok(response);
 
-        // aggiungere conversione json in utenti
+        GREGAdapterService.VolontarioMatchRequest gregRequest = new GREGAdapterService.VolontarioMatchRequest();
+
+        gregRequest.setStrada(indirizzo.getStrada());
+        gregRequest.setNCivico(indirizzo.getNCivico());
+        gregRequest.setCitta(indirizzo.getCitta());
+        gregRequest.setProvincia(indirizzo.getProvincia());
+        gregRequest.setCap(indirizzo.getCap());
+
+        gregRequest.setCategory(frontendRequest.getCategory());
+        gregRequest.setSubcategory(frontendRequest.getSubcategory());
+
+        try {
+            GREGAdapterService.VolontarioMatchResponse responseFromGreg =
+            GREGAdapterService.findMatchingVolunteers(gregRequest);
+
+            if (responseFromGreg == null || responseFromGreg.getVolunteerEmails() == null) {
+                return ResponseEntity.ok(new ArrayList<>());
+            }
+
+            List<String> emails = responseFromGreg.getVolunteerEmails();
+            System.out.println("GREG ha trovato: " + emails);
+
+            List<Utente> utentiTrovati = emails.stream()
+                    .map(autenticazioneService::getUtente)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.ok(utentiTrovati);
+
+        } catch (Exception e) {
+            System.err.println("Errore GREG: " + e.getMessage());
+            throw new ResponseStatusException(
+                    HttpStatus.SERVICE_UNAVAILABLE, "Errore nel servizio di ricerca", e);
+        }
+    }
+
+    public static class SearchRequest {
+        private String category;
+        private String subcategory;
+
+        public String getCategory() { return category; }
+        public void setCategory(String category) { this.category = category; }
+        public String getSubcategory() { return subcategory; }
+        public void setSubcategory(String subcategory) { this.subcategory = subcategory; }
     }
 }
+
