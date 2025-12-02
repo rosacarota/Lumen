@@ -46,7 +46,7 @@ public class Evento {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Ente")
-    @JsonIgnoreProperties({"nome", "cognome", "password", "ambito", "descrizione", "indirizzo", "recapitoTelefonico", "immagine", "ruolo", "hibernateLazyInitializer"})
+    @JsonIgnoreProperties({"cognome", "password", "ambito", "descrizione", "indirizzo", "recapitoTelefonico", "immagine", "ruolo", "hibernateLazyInitializer"})
     private Utente utente;
 
 }
