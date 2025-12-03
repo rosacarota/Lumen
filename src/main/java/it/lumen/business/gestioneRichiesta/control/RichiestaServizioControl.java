@@ -5,6 +5,7 @@ import it.lumen.business.gestioneRichiesta.service.RichiestaServizioService;
 import it.lumen.data.dto.RichiestaServizioDTO;
 import it.lumen.data.entity.RichiestaServizio;
 import it.lumen.data.entity.Utente;
+import it.lumen.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,17 +21,22 @@ public class RichiestaServizioControl {
     private final RichiestaServizioService richiestaServizioService;
     @Autowired
     private AutenticazioneService autenticazioneService;
+    @Autowired
+    private final JwtUtil util;
 
     @Autowired
-    public RichiestaServizioControl(RichiestaServizioService richiestaServizioService, AutenticazioneService autenticazioneService) {
+    public RichiestaServizioControl(RichiestaServizioService richiestaServizioService, AutenticazioneService autenticazioneService, JwtUtil util) {
         this.richiestaServizioService = richiestaServizioService;
         this.autenticazioneService = autenticazioneService;
+        this.util = util;
     }
 
     //CREA RICHIESTA DI SERVIZIO
     @PostMapping("/creaRichiestaServizio")
-    public ResponseEntity<String> creaRichiestaServizio(@Valid @RequestBody RichiestaServizioDTO richiestaServizioDTO, BindingResult result) {
+    public ResponseEntity<String> creaRichiestaServizio(@Valid @RequestBody RichiestaServizioDTO richiestaServizioDTO, BindingResult result, String token) {
 
+        String email = util.extractEmail(token);
+        richiestaServizioDTO.setBeneficiario(email);
         if(result.hasErrors()) {
             StringBuilder errors = new StringBuilder("Errore di validazione");
             result.getAllErrors().forEach(error -> errors.append(error.getDefaultMessage()));
