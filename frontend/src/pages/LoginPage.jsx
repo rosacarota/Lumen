@@ -1,9 +1,8 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-// 1. IMPORTA Eye e EyeOff
-import { User, Lock, Mail, Building2, Heart, Users, HeartHandshake, Pencil, Camera, Eye, EyeOff, PhoneCall, Phone } from 'lucide-react';
+import { User, Lock, Mail, Building2, Heart, Users, HeartHandshake, Pencil, Camera, Eye, EyeOff, Phone, AlertCircle } from 'lucide-react';
 import { registerUser, loginUser } from '../services/loginService';
-import { validateRegistration } from '../utils/loginValidation';
+import { validateForm } from '../utils/loginValidation';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
@@ -15,13 +14,16 @@ export default function LoginPage() {
   const [step, setStep] = useState(1);
   const fileInputRef = useRef(null);
 
-  // 2. NUOVI STATI PER LA VISIBILITÀ PASSWORD
+  // Visibilità Password
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  // Gestione Errori
+  const [errors, setErrors] = useState({});
+  const [apiError, setApiError] = useState(""); // Per errori generali (es. Login fallito)
+
   const navigate = useNavigate();
 
-  // STATO COMPLETO
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -41,9 +43,17 @@ export default function LoginPage() {
     ruolo: ''
   });
 
+  // Reset errori quando l'utente digita
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    
+    // Rimuovi l'errore specifico del campo se esiste
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: null }));
+    }
+    // Rimuovi errore API generale se l'utente prova a correggere
+    if (apiError) setApiError("");
   };
 
   const handleImageUpload = (e) => {
@@ -61,28 +71,73 @@ export default function LoginPage() {
     setUserType(type);
     const formattedRole = type.charAt(0).toUpperCase() + type.slice(1);
     setFormData(prev => ({ ...prev, ruolo: formattedRole }));
+    setErrors({}); // Pulisci errori precedenti
+    setApiError("");
   };
 
+  // Helper per lo stile condizionale degli input (Bordo Rosso)
+  const getInputStyle = (fieldName, extraStyle = {}) => {
+    const hasError = !!errors[fieldName];
+    return {
+      ...styles.inputField,
+      ...extraStyle,
+      borderColor: hasError ? '#EF4444' : '#E5E7EB', // Rosso se errore, altrimenti grigio
+      boxShadow: hasError ? '0 0 0 1px #EF4444' : 'none'
+    };
+  };
+  
+  // Helper per input senza icona
+  const getInputNoIconStyle = (fieldName, extraStyle = {}) => {
+    const hasError = !!errors[fieldName];
+    return {
+      ...styles.inputFieldNoIcon,
+      ...extraStyle,
+      borderColor: hasError ? '#EF4444' : '#E5E7EB',
+      boxShadow: hasError ? '0 0 0 1px #EF4444' : 'none'
+    };
+  };
+
+  // Gestione Next Step (Step 1 -> Step 2)
+  const handleNextStep = () => {
+    const validation = validateForm(formData, false, userType, 1);
+    if (!validation.isValid) {
+      setErrors(validation.errors);
+      return;
+    }
+    setStep(2);
+    setErrors({});
+  };
+
+  // Gestione Submit Finale (Login o Registrazione)
   const handleSubmit = async () => {
+    setApiError(""); // Reset errori API
+
     if (isLogin) {
-      try {
-        const resultMessage = await loginUser({ email: formData.email, password: formData.password });
-        console.log(resultMessage);
-        navigate('/home');
-      } catch (error) {
-        alert("Errore Login: " + error.message);
-      }
-    } else {
-      const validation = validateRegistration(formData);
+      // --- LOGIN ---
+      const validation = validateForm(formData, true, null, null);
       if (!validation.isValid) {
-        alert(Object.values(validation.errors)[0]);
-        return;
-      }
-      if (formData.password !== formData.confirmPassword) {
-        alert("Le password non coincidono!");
+        setErrors(validation.errors);
         return;
       }
 
+      try {
+        await loginUser({ email: formData.email, password: formData.password });
+        navigate('/home');
+      } catch (error) {
+        // Mostra errore API nel box rosso sopra
+        setApiError(error.message || "Credenziali non valide");
+      }
+
+    } else {
+      // --- REGISTRAZIONE ---
+      // Validiamo lo step corrente (Step 2) o tutto se necessario
+      const validation = validateForm(formData, false, userType, 2);
+      if (!validation.isValid) {
+        setErrors(validation.errors);
+        return;
+      }
+
+      // Preparazione Payload
       const hasAddress = formData.citta || formData.strada;
       const indirizzoObj = hasAddress ? {
         citta: formData.citta || "",
@@ -101,9 +156,7 @@ export default function LoginPage() {
       }
 
       let finalAmbito = formData.ambito;
-      if (userType === 'beneficiario') {
-        finalAmbito = null;
-      }
+      if (userType === 'beneficiario') finalAmbito = null;
 
       const payload = {
         email: formData.email,
@@ -120,84 +173,63 @@ export default function LoginPage() {
 
       try {
         await registerUser(payload);
-        alert("Registrazione completata! Effettua il login.");
+        // Reset e cambio stato
         setIsLogin(true);
         setStep(1);
         setUserType(null);
         setFormData(prev => ({ ...prev, password: '', confirmPassword: '' }));
+        setApiError("");
       } catch (error) {
-        alert("Errore registrazione: " + error.message);
+        setApiError(error.message || "Errore durante la registrazione");
       }
     }
   };
 
-  const handleNextStep = () => {
-    if (!formData.email || !formData.password) {
-      alert("Compila email e password per proseguire.");
-      return;
-    }
-    if (userType === 'ente' && !formData.nomeEnte) {
-       alert("Compila il nome dell'Ente per proseguire.");
-       return;
-    }
-    if ((userType === 'volontario' || userType === 'beneficiario') && (!formData.nome || !formData.cognome)) {
-        alert("Compila nome e cognome per proseguire.");
-        return;
-    }
-    setStep(2);
-  };
+  // Helper per renderizzare errori sotto i campi
+  const ErrorMsg = ({ field }) => errors[field] ? <span style={styles.errorText}>{errors[field]}</span> : null;
 
   const renderRegistrationFields = () => {
     const commonFields = (
       <>
-        <div style={styles.inputGroup}>
-          <Mail style={styles.inputIcon} />
-          <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Email" style={styles.inputField} onFocus={(e) => { e.target.style.borderColor = '#4AAFB8'; e.target.style.boxShadow = '0 0 0 3px rgba(74, 175, 184, 0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }} />
+        <div style={styles.inputGroupContainer}>
+          <div style={styles.inputGroup}>
+            <Mail style={styles.inputIcon} />
+            <input 
+              type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Email" 
+              style={getInputStyle('email')} 
+            />
+          </div>
+          <ErrorMsg field="email" />
         </div>
         
-        {/* PASSWORD FIELD REGISTRAZIONE */}
-        <div style={styles.inputGroup}>
-          <Lock style={styles.inputIcon} />
-          <input 
-            type={showPassword ? "text" : "password"} // Type dinamico
-            name="password" 
-            value={formData.password} 
-            onChange={handleChange} 
-            placeholder="Password" 
-            style={{...styles.inputField, paddingRight: '40px'}} // Padding extra a destra
-            onFocus={(e) => { e.target.style.borderColor = '#4AAFB8'; e.target.style.boxShadow = '0 0 0 3px rgba(74, 175, 184, 0.1)'; }} 
-            onBlur={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }} 
-          />
-          {/* Tasto Occhio */}
-          <button 
-            type="button" 
-            onClick={() => setShowPassword(!showPassword)} 
-            style={styles.passwordToggle}
-          >
-            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-          </button>
+        <div style={styles.inputGroupContainer}>
+          <div style={styles.inputGroup}>
+            <Lock style={styles.inputIcon} />
+            <input 
+              type={showPassword ? "text" : "password"} 
+              name="password" value={formData.password} onChange={handleChange} placeholder="Password" 
+              style={getInputStyle('password', { paddingRight: '40px' })} 
+            />
+            <button type="button" onClick={() => setShowPassword(!showPassword)} style={styles.passwordToggle}>
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
+          </div>
+          <ErrorMsg field="password" />
         </div>
 
-        {/* CONFERMA PASSWORD FIELD */}
-        <div style={styles.inputGroup}>
-          <Lock style={styles.inputIcon} />
-          <input 
-            type={showConfirmPassword ? "text" : "password"} 
-            name="confirmPassword" 
-            value={formData.confirmPassword} 
-            onChange={handleChange} 
-            placeholder="Conferma Password" 
-            style={{...styles.inputField, paddingRight: '40px'}}
-            onFocus={(e) => { e.target.style.borderColor = '#4AAFB8'; e.target.style.boxShadow = '0 0 0 3px rgba(74, 175, 184, 0.1)'; }} 
-            onBlur={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }} 
-          />
-          <button 
-            type="button" 
-            onClick={() => setShowConfirmPassword(!showConfirmPassword)} 
-            style={styles.passwordToggle}
-          >
-            {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-          </button>
+        <div style={styles.inputGroupContainer}>
+          <div style={styles.inputGroup}>
+            <Lock style={styles.inputIcon} />
+            <input 
+              type={showConfirmPassword ? "text" : "password"} 
+              name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} placeholder="Conferma Password" 
+              style={getInputStyle('confirmPassword', { paddingRight: '40px' })} 
+            />
+            <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} style={styles.passwordToggle}>
+              {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
+          </div>
+          <ErrorMsg field="confirmPassword" />
         </div>
       </>
     );
@@ -205,13 +237,26 @@ export default function LoginPage() {
     if (userType === 'ente') {
       return (
         <div style={styles.fieldsContainer}>
-          <div style={styles.inputGroup}>
-            <Building2 style={styles.inputIcon} />
-            <input type="text" name="nomeEnte" value={formData.nomeEnte} onChange={handleChange} placeholder="Nome Ente" style={styles.inputField} onFocus={(e) => { e.target.style.borderColor = '#4AAFB8'; e.target.style.boxShadow = '0 0 0 3px rgba(74, 175, 184, 0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }} />
+          <div style={styles.inputGroupContainer}>
+            <div style={styles.inputGroup}>
+              <Building2 style={styles.inputIcon} />
+              <input 
+                type="text" name="nomeEnte" value={formData.nomeEnte} onChange={handleChange} placeholder="Nome Ente" 
+                style={getInputStyle('nomeEnte')} 
+              />
+            </div>
+            <ErrorMsg field="nomeEnte" />
           </div>
-          <div style={styles.inputGroup}>
-            <Phone style={styles.inputIcon} />
-            <input type="text" name="telefono" value={formData.telefono} onChange={handleChange} placeholder="Telefono" style={styles.inputField} onFocus={(e) => { e.target.style.borderColor = '#4AAFB8'; e.target.style.boxShadow = '0 0 0 3px rgba(74, 175, 184, 0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }} />
+          
+          <div style={styles.inputGroupContainer}>
+            <div style={styles.inputGroup}>
+              <Phone style={styles.inputIcon} />
+              <input 
+                type="text" name="telefono" value={formData.telefono} onChange={handleChange} placeholder="Telefono" 
+                style={getInputStyle('telefono')} 
+              />
+            </div>
+            <ErrorMsg field="telefono" />
           </div>
           {commonFields}
         </div>
@@ -220,17 +265,37 @@ export default function LoginPage() {
 
     return (
       <div style={styles.fieldsContainer}>
-        <div style={styles.inputGroup}>
-          <User style={styles.inputIcon} />
-          <input type="text" name="nome" value={formData.nome} onChange={handleChange} placeholder="Nome" style={styles.inputField} onFocus={(e) => { e.target.style.borderColor = '#4AAFB8'; e.target.style.boxShadow = '0 0 0 3px rgba(74, 175, 184, 0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }} />
+        <div style={styles.inputGroupContainer}>
+          <div style={styles.inputGroup}>
+            <User style={styles.inputIcon} />
+            <input 
+              type="text" name="nome" value={formData.nome} onChange={handleChange} placeholder="Nome" 
+              style={getInputStyle('nome')} 
+            />
+          </div>
+          <ErrorMsg field="nome" />
         </div>
-        <div style={styles.inputGroup}>
-          <User style={styles.inputIcon} />
-          <input type="text" name="cognome" value={formData.cognome} onChange={handleChange} placeholder="Cognome" style={styles.inputField} onFocus={(e) => { e.target.style.borderColor = '#4AAFB8'; e.target.style.boxShadow = '0 0 0 3px rgba(74, 175, 184, 0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }} />
+
+        <div style={styles.inputGroupContainer}>
+          <div style={styles.inputGroup}>
+            <User style={styles.inputIcon} />
+            <input 
+              type="text" name="cognome" value={formData.cognome} onChange={handleChange} placeholder="Cognome" 
+              style={getInputStyle('cognome')} 
+            />
+          </div>
+          <ErrorMsg field="cognome" />
         </div>
-        <div style={styles.inputGroup}>
-          <Phone style={styles.inputIcon} />
-          <input type="text" name="telefono" value={formData.telefono} onChange={handleChange} placeholder="Telefono" style={styles.inputField} onFocus={(e) => { e.target.style.borderColor = '#4AAFB8'; e.target.style.boxShadow = '0 0 0 3px rgba(74, 175, 184, 0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }} />
+
+        <div style={styles.inputGroupContainer}>
+          <div style={styles.inputGroup}>
+            <Phone style={styles.inputIcon} />
+            <input 
+              type="text" name="telefono" value={formData.telefono} onChange={handleChange} placeholder="Telefono" 
+              style={getInputStyle('telefono')} 
+            />
+          </div>
+          <ErrorMsg field="telefono" />
         </div>
         {commonFields}
       </div>
@@ -254,7 +319,7 @@ export default function LoginPage() {
       <div style={styles.loginPage}>
         <style>{cssStyles}</style>
 
-        <div className="login-container" style={{ ...styles.container, height: (!isLogin && userType) ? 'min(800px, 80vh)' : 'min(700px, 75vh)' }}>
+        <div className="login-container" style={{ ...styles.container, height: (!isLogin && userType) ? 'min(850px, 85vh)' : 'min(700px, 75vh)' }}>
 
           {/* GRADIENT PANEL */}
           <div className="gradient-panel" style={{ ...styles.gradientPanel, transform: isSwapped ? 'translateX(100%)' : 'translateX(0%)' }}>
@@ -267,9 +332,9 @@ export default function LoginPage() {
               <div style={styles.welcomeFooter}>
                 {welcomeMsg.footer}{' '}
                 {step === 2 ? (
-                  <button onClick={() => setStep(1)} style={styles.linkButton} onMouseEnter={(e) => e.target.style.opacity = '0.8'} onMouseLeave={(e) => e.target.style.opacity = '1'}>Torna indietro</button>
+                  <button onClick={() => setStep(1)} style={styles.linkButton}>Torna indietro</button>
                 ) : (
-                  <button onClick={() => { setIsLogin(!isLogin); setUserType(null); setStep(1); }} style={styles.linkButton} onMouseEnter={(e) => e.target.style.opacity = '0.8'} onMouseLeave={(e) => e.target.style.opacity = '1'}>
+                  <button onClick={() => { setIsLogin(!isLogin); setUserType(null); setStep(1); setErrors({}); setApiError(""); }} style={styles.linkButton}>
                     {isLogin ? 'Iscriviti ora' : 'Accedi'}
                   </button>
                 )}
@@ -287,6 +352,14 @@ export default function LoginPage() {
                 </div>
                 <p style={styles.logoSubtitle}>Insieme, per un futuro luminoso</p>
               </div>
+
+              {/* BOX ERRORI API */}
+              {apiError && (
+                <div style={styles.apiErrorBox}>
+                  <AlertCircle size={18} />
+                  <span>{apiError}</span>
+                </div>
+              )}
 
               <div style={styles.formContent}>
 
@@ -317,7 +390,7 @@ export default function LoginPage() {
 
                 ) : !isLogin && userType && step === 1 ? (
                   <div style={styles.registrationForm}>
-                    <button onClick={() => setUserType(null)} style={styles.backButton}>← Indietro</button>
+                    <button onClick={() => { setUserType(null); setErrors({}); setApiError(""); }} style={styles.backButton}>← Indietro</button>
                     <h2 style={styles.formTitle}>Registrazione {userType.charAt(0).toUpperCase() + userType.slice(1)}</h2>
                     {renderRegistrationFields()}
                     <button onClick={handleNextStep} style={styles.submitButton}>CONTINUA</button>
@@ -325,7 +398,7 @@ export default function LoginPage() {
 
                 ) : !isLogin && userType && step === 2 ? (
                   <div style={styles.registrationForm}>
-                    <h2 style={styles.formTitle}>Personalizzazione del profilo</h2>
+                    <h2 style={styles.formTitle}>Personalizzazione</h2>
 
                     <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px', position: 'relative' }}>
                       <div style={{ width: '100px', height: '100px', borderRadius: '50%', background: '#F3F4F6', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #E5E7EB', position: 'relative' }}>
@@ -344,26 +417,33 @@ export default function LoginPage() {
                     <div style={styles.fieldsContainer}>
 
                       {(userType === 'ente' || userType === 'volontario') && (
-                        <div style={styles.inputGroup}>
-                          <input type="text" name="ambito" value={formData.ambito} onChange={handleChange} placeholder="Di cosa ti occupi? (es. Sociale)" style={styles.inputFieldNoIcon} />
+                        <div style={styles.inputGroupContainer}>
+                          <div style={styles.inputGroup}>
+                            <input type="text" name="ambito" value={formData.ambito} onChange={handleChange} placeholder="Di cosa ti occupi? (es. Sociale)" style={getInputNoIconStyle('ambito')} />
+                          </div>
                         </div>
                       )}
 
-                      <div style={styles.inputGroup}>
-                        <textarea name="descrizione" value={formData.descrizione} onChange={handleChange} placeholder="Parlaci di te / Bio" style={styles.textareaField} rows="3" />
+                      <div style={styles.inputGroupContainer}>
+                        <div style={styles.inputGroup}>
+                          <textarea name="descrizione" value={formData.descrizione} onChange={handleChange} placeholder="Parlaci di te / Bio" style={styles.textareaField} rows="3" />
+                        </div>
                       </div>
 
                       <div style={{ fontSize: '14px', fontWeight: '600', color: '#087886', marginTop: '10px' }}>Indirizzo (Opzionale)</div>
 
                       <div style={{ display: 'flex', gap: '10px' }}>
-                        <input type="text" name="strada" value={formData.strada} onChange={handleChange} placeholder="Via/Piazza" style={{ ...styles.inputFieldNoIcon, flex: 2 }} />
-                        <input type="text" name="nCivico" value={formData.nCivico} onChange={handleChange} placeholder="N." style={{ ...styles.inputFieldNoIcon, flex: 1 }} />
+                        <input type="text" name="strada" value={formData.strada} onChange={handleChange} placeholder="Via" style={{ ...getInputNoIconStyle('strada'), flex: 2 }} />
+                        <input type="text" name="nCivico" value={formData.nCivico} onChange={handleChange} placeholder="N." style={{ ...getInputNoIconStyle('nCivico'), flex: 1 }} />
                       </div>
                       <div style={{ display: 'flex', gap: '10px' }}>
-                        <input type="text" name="citta" value={formData.citta} onChange={handleChange} placeholder="Città" style={styles.inputFieldNoIcon} />
-                        <input type="text" name="cap" value={formData.cap} onChange={handleChange} placeholder="CAP" style={styles.inputFieldNoIcon} />
+                        <input type="text" name="citta" value={formData.citta} onChange={handleChange} placeholder="Città" style={getInputNoIconStyle('citta')} />
+                        <div style={{flex: 1}}>
+                           <input type="text" name="cap" value={formData.cap} onChange={handleChange} placeholder="CAP" style={getInputNoIconStyle('cap')} />
+                           <ErrorMsg field="cap" />
+                        </div>
                       </div>
-                      <input type="text" name="provincia" value={formData.provincia} onChange={handleChange} placeholder="Provincia (es. MI)" style={styles.inputFieldNoIcon} />
+                      <input type="text" name="provincia" value={formData.provincia} onChange={handleChange} placeholder="Provincia (es. MI)" style={getInputNoIconStyle('provincia')} />
 
                       <button onClick={handleSubmit} style={styles.submitButton}>COMPLETA REGISTRAZIONE</button>
                     </div>
@@ -375,38 +455,38 @@ export default function LoginPage() {
                       <User style={styles.avatarIcon} />
                     </div>
                     <div style={styles.fieldsContainer}>
-                      <div style={styles.inputGroup}>
-                        <User style={styles.inputIcon} />
-                        <input type="text" name="email" value={formData.email} onChange={handleChange} placeholder="USERNAME" style={styles.inputField} onFocus={(e) => { e.target.style.borderColor = '#4AAFB8'; e.target.style.boxShadow = '0 0 0 3px rgba(74, 175, 184, 0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }} />
+                      <div style={styles.inputGroupContainer}>
+                        <div style={styles.inputGroup}>
+                          <User style={styles.inputIcon} />
+                          <input 
+                            type="text" name="email" value={formData.email} onChange={handleChange} placeholder="USERNAME" 
+                            style={getInputStyle('email')} 
+                          />
+                        </div>
+                        <ErrorMsg field="email" />
                       </div>
-                      {/* PASSWORD FIELD LOGIN */}
-                      <div style={styles.inputGroup}>
-                        <Lock style={styles.inputIcon} />
-                        <input 
-                          type={showPassword ? "text" : "password"} 
-                          name="password" 
-                          value={formData.password} 
-                          onChange={handleChange} 
-                          placeholder="PASSWORD" 
-                          style={{...styles.inputField, paddingRight: '40px'}} 
-                          onFocus={(e) => { e.target.style.borderColor = '#4AAFB8'; e.target.style.boxShadow = '0 0 0 3px rgba(74, 175, 184, 0.1)'; }} 
-                          onBlur={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }} 
-                        />
-                        <button 
-                          type="button" 
-                          onClick={() => setShowPassword(!showPassword)} 
-                          style={styles.passwordToggle}
-                        >
-                          {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                        </button>
+
+                      <div style={styles.inputGroupContainer}>
+                        <div style={styles.inputGroup}>
+                          <Lock style={styles.inputIcon} />
+                          <input 
+                            type={showPassword ? "text" : "password"} 
+                            name="password" value={formData.password} onChange={handleChange} placeholder="PASSWORD" 
+                            style={getInputStyle('password', { paddingRight: '40px' })} 
+                          />
+                          <button type="button" onClick={() => setShowPassword(!showPassword)} style={styles.passwordToggle}>
+                            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                          </button>
+                        </div>
+                        <ErrorMsg field="password" />
                       </div>
                     </div>
-                    <button onClick={handleSubmit} style={styles.submitButton} onMouseEnter={(e) => { e.target.style.transform = 'translateY(-2px)'; e.target.style.boxShadow = '0 6px 20px rgba(8, 120, 134, 0.4)'; }} onMouseLeave={(e) => { e.target.style.transform = 'translateY(0)'; e.target.style.boxShadow = '0 4px 12px rgba(8, 120, 134, 0.3)'; }}>LOGIN</button>
+                    <button onClick={handleSubmit} style={styles.submitButton}>LOGIN</button>
                     <div style={styles.loginOptions}>
                       <label style={styles.rememberMe}>
                         <input type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} style={styles.checkbox} /> Ricordami
                       </label>
-                      <button style={styles.forgotPassword} onMouseEnter={(e) => e.target.style.color = '#4AAFB8'} onMouseLeave={(e) => e.target.style.color = '#6B7280'}>Password dimenticata?</button>
+                      <button style={styles.forgotPassword}>Password dimenticata?</button>
                     </div>
                   </div>
                 )}
@@ -421,9 +501,9 @@ export default function LoginPage() {
 
                 <div style={styles.toggleForm}>
                   {isLogin ? (
-                    <>Non hai un account? <button onClick={() => { setIsLogin(false); setUserType(null); setStep(1); }} style={styles.toggleButton}>Registrati ora</button></>
+                    <>Non hai un account? <button onClick={() => { setIsLogin(false); setUserType(null); setStep(1); setErrors({}); setApiError(""); }} style={styles.toggleButton}>Registrati ora</button></>
                   ) : !userType ? (
-                    <>Hai già un account? <button onClick={() => { setIsLogin(true); setUserType(null); setStep(1); }} style={styles.toggleButton}>Accedi</button></>
+                    <>Hai già un account? <button onClick={() => { setIsLogin(true); setUserType(null); setStep(1); setErrors({}); setApiError(""); }} style={styles.toggleButton}>Accedi</button></>
                   ) : null}
                 </div>
               </div>
@@ -441,32 +521,13 @@ const cssStyles = `
   @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
   @keyframes slideInFromLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
 
-  .hide-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-  .hide-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
+  .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  .hide-scrollbar::-webkit-scrollbar { display: none; }
 
   @media (max-width: 968px) {
-    .login-container {
-      flex-direction: column !important;
-      width: 100% !important;
-      height: auto !important;
-      max-height: 90vh !important;
-      border-radius: 20px !important;
-    }
-    .gradient-panel {
-      display: none !important;
-    }
-    .form-panel {
-      position: relative !important;
-      width: 100% !important;
-      height: auto !important;
-      transform: none !important; 
-      padding: 30px 20px !important;
-    }
+    .login-container { flex-direction: column !important; width: 100% !important; height: auto !important; max-height: 90vh !important; border-radius: 20px !important; }
+    .gradient-panel { display: none !important; }
+    .form-panel { position: relative !important; width: 100% !important; height: auto !important; transform: none !important; padding: 30px 20px !important; }
   }
 `;
 
@@ -508,6 +569,7 @@ const styles = {
   avatarWrapper: { width: '80px', height: '80px', borderRadius: '50%', border: '4px solid #E5E7EB', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' },
   avatarIcon: { width: '40px', height: '40px', color: '#9CA3AF' },
   fieldsContainer: { display: 'flex', flexDirection: 'column', gap: '16px' },
+  inputGroupContainer: { display: 'flex', flexDirection: 'column', gap: '4px' },
   inputGroup: { position: 'relative' },
   inputIcon: { position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', width: '20px', height: '20px', color: '#9CA3AF', pointerEvents: 'none' },
   inputField: { width: '100%', padding: '12px 16px 12px 44px', border: '2px solid #E5E7EB', borderRadius: '25px', fontSize: '14px', outline: 'none', transition: 'all 0.3s ease', boxSizing: 'border-box' },
@@ -519,19 +581,7 @@ const styles = {
   dotsIndicator: { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '16px 0' },
   dot: { width: '8px', height: '8px', borderRadius: '50%', background: '#E5E7EB', transition: 'background 0.3s ease' },
   dotActive: { width: '8px', height: '8px', borderRadius: '50%', background: '#087886' },
-  
-  // STILE AGGIUNTO PER IL TOGGLE PASSWORD
-  passwordToggle: {
-    position: 'absolute',
-    right: '12px',
-    top: '50%',
-    transform: 'translateY(-50%)',
-    background: 'none',
-    border: 'none',
-    cursor: 'pointer',
-    color: '#9CA3AF',
-    padding: 0,
-    display: 'flex',
-    alignItems: 'center'
-  }
+  passwordToggle: { position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#9CA3AF', padding: 0, display: 'flex', alignItems: 'center' },
+  errorText: { fontSize: '12px', color: '#EF4444', marginLeft: '12px', marginTop: '2px' },
+  apiErrorBox: { display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', backgroundColor: '#FEE2E2', border: '1px solid #FCA5A5', borderRadius: '8px', color: '#B91C1C', marginBottom: '20px', fontSize: '14px' }
 };
