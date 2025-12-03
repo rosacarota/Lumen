@@ -61,8 +61,8 @@ public class AffiliazioneServiceImpl implements AffiliazioneService {
     }
 
     @Override
-    public boolean checkAffiliazione(String ente, String volontario) {
-        return affiliazioneDAO.existsByEnte_EmailAndVolontario_Email(ente, volontario);
+    public boolean checkAffiliazione(String volontario) {
+        return affiliazioneDAO.existsByVolontario_Email(volontario);
     }
 
 }

@@ -21,5 +21,5 @@ public interface AffiliazioneService {
 
     public List<Affiliazione> getRichiesteInAttesa(Utente ente);
 
-    public boolean checkAffiliazione(String ente, String volontario);
+    public boolean checkAffiliazione(String volontario);
 }

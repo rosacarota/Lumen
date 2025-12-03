@@ -286,9 +286,8 @@ public class DBPopulator implements CommandLineRunner {
         Utente v11 = new Utente();
         v11.setEmail("filippoparisi@yahoo.it");
         v11.setPassword("password");
-        v11.setNome("Filippo");
-        v11.setCognome("Parisi");
-        v11.setRuolo(Utente.Ruolo.Volontario);
+        v11.setNome("Medici Senza Frontiere");
+        v11.setRuolo(Utente.Ruolo.Ente);
         v11.setAmbito("Strengthening Communities");
         v11.setRecapitoTelefonico("333000011");
         v11.setIndirizzo(indV11);
@@ -301,9 +300,8 @@ public class DBPopulator implements CommandLineRunner {
         Utente v12 = new Utente();
         v12.setEmail("serena.bianchi87@gmail.com");
         v12.setPassword("password");
-        v12.setNome("Serena");
-        v12.setCognome("Bianchi");
-        v12.setRuolo(Utente.Ruolo.Volontario);
+        v12.setNome("Oxfam");
+        v12.setRuolo(Utente.Ruolo.Ente);
         v12.setAmbito("Strengthening Communities");
         v12.setRecapitoTelefonico("333000012");
         v12.setIndirizzo(indV12);
@@ -316,9 +314,8 @@ public class DBPopulator implements CommandLineRunner {
         Utente v13 = new Utente();
         v13.setEmail("alessandro.mancini92@gmail.com");
         v13.setPassword("password");
-        v13.setNome("Alessandro");
-        v13.setCognome("Mancini");
-        v13.setRuolo(Utente.Ruolo.Volontario);
+        v13.setNome("Save the Children");
+        v13.setRuolo(Utente.Ruolo.Ente);
         v13.setAmbito("Environment");
         v13.setDescrizione("Lotto per il futuro dei nostri figli <3");
         v13.setRecapitoTelefonico("333000013");
@@ -332,9 +329,8 @@ public class DBPopulator implements CommandLineRunner {
         Utente v14 = new Utente();
         v14.setEmail("laura.villa85@yahoo.it");
         v14.setPassword("password");
-        v14.setNome("Laura");
-        v14.setCognome("Villa");
-        v14.setRuolo(Utente.Ruolo.Volontario);
+        v14.setNome("Caritas Internationalis");
+        v14.setRuolo(Utente.Ruolo.Ente);
         v14.setAmbito("Helping Neighbors in Need");
         v14.setRecapitoTelefonico("333000014");
         v14.setIndirizzo(indV14);
@@ -347,9 +343,8 @@ public class DBPopulator implements CommandLineRunner {
         Utente v15 = new Utente();
         v15.setEmail("tommaso.deluca@icloud.com");
         v15.setPassword("password");
-        v15.setNome("Tommaso");
-        v15.setCognome("Deluca");
-        v15.setRuolo(Utente.Ruolo.Volontario);
+        v15.setNome("Emergency");
+        v15.setRuolo(Utente.Ruolo.Ente);
         v15.setAmbito("Strengthening Communities");
         v15.setRecapitoTelefonico("333000015");
         v15.setIndirizzo(indV15);
@@ -362,9 +357,8 @@ public class DBPopulator implements CommandLineRunner {
         Utente v16 = new Utente();
         v16.setEmail("danielevilla@outlook.it");
         v16.setPassword("password");
-        v16.setNome("Daniele");
-        v16.setCognome("Villa");
-        v16.setRuolo(Utente.Ruolo.Volontario);
+        v16.setNome("Amnesty International");
+        v16.setRuolo(Utente.Ruolo.Ente);
         v16.setAmbito("Education");
         v16.setRecapitoTelefonico("333000016");
         v16.setIndirizzo(indV16);
@@ -377,9 +371,8 @@ public class DBPopulator implements CommandLineRunner {
         Utente v17 = new Utente();
         v17.setEmail("matteo_leone@libero.it");
         v17.setPassword("password");
-        v17.setNome("Matteo");
-        v17.setCognome("Leone");
-        v17.setRuolo(Utente.Ruolo.Volontario);
+        v17.setNome("Mezzaluna Rossa Internazionale");
+        v17.setRuolo(Utente.Ruolo.Ente);
         v17.setAmbito("Helping Neighbors in Need");
         v17.setRecapitoTelefonico("333000017");
         v17.setIndirizzo(indV17);
@@ -392,9 +385,8 @@ public class DBPopulator implements CommandLineRunner {
         Utente v18 = new Utente();
         v18.setEmail("simonefabbri@yahoo.it");
         v18.setPassword("password");
-        v18.setNome("Simone");
-        v18.setCognome("Fabbri");
-        v18.setRuolo(Utente.Ruolo.Volontario);
+        v18.setNome("ActionAid");
+        v18.setRuolo(Utente.Ruolo.Ente);
         v18.setAmbito("Education");
         v18.setRecapitoTelefonico("333000018");
         v18.setIndirizzo(indV18);
@@ -407,9 +399,8 @@ public class DBPopulator implements CommandLineRunner {
         Utente v19 = new Utente();
         v19.setEmail("giulia.barbieri@libero.it");
         v19.setPassword("password");
-        v19.setNome("Giulia");
-        v19.setCognome("Barbieri");
-        v19.setRuolo(Utente.Ruolo.Volontario);
+        v19.setNome("Project HOPE");
+        v19.setRuolo(Utente.Ruolo.Ente);
         v19.setAmbito("Helping Neighbors in Need");
         v19.setRecapitoTelefonico("333000019");
         v19.setIndirizzo(indV19);
@@ -548,12 +539,12 @@ public class DBPopulator implements CommandLineRunner {
         affiliazioneDAO.save(affiliazione);
 
         Affiliazione affiliazione2 = new Affiliazione();
-        affiliazione.setDescrizione("Adesione standard");
-        affiliazione.setDataInizio(Date.valueOf(LocalDate.now()));
-        affiliazione.setStato(Affiliazione.StatoAffiliazione.InAttesa);
-        affiliazione.setEnte(ente);
-        affiliazione.setVolontario(v9);
-        affiliazioneDAO.save(affiliazione);
+        affiliazione2.setDescrizione("Adesione standard");
+        affiliazione2.setDataInizio(Date.valueOf(LocalDate.now()));
+        affiliazione2.setStato(Affiliazione.StatoAffiliazione.InAttesa);
+        affiliazione2.setEnte(ente);
+        affiliazione2.setVolontario(v9);
+        affiliazioneDAO.save(affiliazione2);
 
         System.out.println("Popolamento completato!");
     }

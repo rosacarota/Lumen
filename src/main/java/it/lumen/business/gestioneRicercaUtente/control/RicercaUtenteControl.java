@@ -110,7 +110,6 @@ public class RicercaUtenteControl {
 
             for(Utente utente : utentiTrovati) {
                 utente.setPassword(null);
-                utente.setRuolo(null);
                 if(utente.getImmagine()!=null) {
                     utente.setImmagine(autenticazioneService.recuperaImmagine(utente.getImmagine()));
                 }

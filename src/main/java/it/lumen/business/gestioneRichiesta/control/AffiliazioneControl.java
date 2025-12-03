@@ -36,7 +36,7 @@ public class AffiliazioneControl {
     }
 
     @GetMapping("/check")
-    public ResponseEntity<Boolean> checkAffiliazione(@RequestParam String emailEnte, @RequestParam String token) {
+    public ResponseEntity<Boolean> checkAffiliazione(@RequestParam String token) {
 
         String emailVolontario = jwtUtil.extractEmail(token);
 
@@ -44,7 +44,7 @@ public class AffiliazioneControl {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
         }
 
-         return ResponseEntity.status(HttpStatus.OK).body( affiliazioneService.checkAffiliazione(emailEnte, emailVolontario));
+         return ResponseEntity.status(HttpStatus.OK).body(affiliazioneService.checkAffiliazione(emailVolontario));
     }
 
     @PostMapping("/richiedi")
@@ -75,9 +75,13 @@ public class AffiliazioneControl {
         String emailEnte = affiliazione.getEnte().getEmail();
         Utente ente = autenticazioneService.getUtente(emailEnte);
 
+        if (ente.getRuolo() != Utente.Ruolo.Ente) {
+            return ResponseEntity.badRequest().body("Puoi fare la richiesta solo ad un ente");
+        }
+
         affiliazione.setEnte(ente);
 
-        if(affiliazioneService.checkAffiliazione(emailEnte, email)){
+        if(affiliazioneService.checkAffiliazione(email)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("la richiesta è già presente");
         }
 
