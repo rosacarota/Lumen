@@ -1,0 +1,116 @@
+/* --- CARD STYLES --- */
+.vrg-card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 1px solid #f1f5f9;
+    max-width: 350px;
+    /* Limit width for single component usage */
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.vrg-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.vrg-card-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.vrg-avatar {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #4AAFB8, #087886);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    overflow: hidden;
+    /* Ensure image doesn't bleed */
+}
+
+.vrg-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.vrg-info-main {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.vrg-info-main h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #334155;
+}
+
+.vrg-badges {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.vrg-badge-role {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.vrg-badge-role.ente {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+.vrg-badge-role.volontario {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.vrg-badge-ambito {
+    background-color: #e0f2fe;
+    color: #0284c7;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    align-self: flex-start;
+}
+
+.vrg-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.vrg-info-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: #64748b;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.vrg-info-row svg {
+    min-width: 16px;
+    color: #94a3b8;
+    margin-top: 2px;
+}
