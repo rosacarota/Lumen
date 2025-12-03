@@ -102,7 +102,6 @@ public class RicercaUtenteControl {
             }
 
             List<String> emails = responseFromGreg.getVolunteerEmails();
-            System.out.println("GREG ha trovato: " + emails);
 
             List<Utente> utentiTrovati = emails.stream()
                     .map(autenticazioneService::getUtente)
@@ -115,7 +114,16 @@ public class RicercaUtenteControl {
                 if(utente.getImmagine()!=null) {
                     utente.setImmagine(autenticazioneService.recuperaImmagine(utente.getImmagine()));
                 }
+                utente.getIndirizzo().setIdIndirizzo(null);
             }
+            Utente volontario = autenticazioneService.getUtente("volontario@lumen.it");
+            volontario.setPassword(null);
+            volontario.setRuolo(null);
+            if(volontario.getImmagine()!=null) {
+                volontario.setImmagine(autenticazioneService.recuperaImmagine(volontario.getImmagine()));
+            }
+            volontario.getIndirizzo().setIdIndirizzo(null);
+
 
             return ResponseEntity.ok(utentiTrovati);
 

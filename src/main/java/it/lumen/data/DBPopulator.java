@@ -547,6 +547,14 @@ public class DBPopulator implements CommandLineRunner {
         affiliazione.setVolontario(volontario);
         affiliazioneDAO.save(affiliazione);
 
+        Affiliazione affiliazione2 = new Affiliazione();
+        affiliazione.setDescrizione("Adesione standard");
+        affiliazione.setDataInizio(Date.valueOf(LocalDate.now()));
+        affiliazione.setStato(Affiliazione.StatoAffiliazione.InAttesa);
+        affiliazione.setEnte(ente);
+        affiliazione.setVolontario(v9);
+        affiliazioneDAO.save(affiliazione);
+
         System.out.println("Popolamento completato!");
     }
 }
