@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
-// Aggiungi useNavigate per il reindirizzamento
 import { useNavigate } from 'react-router-dom';
-import { User, Lock, Mail, Building2, Heart, Users, HeartHandshake, Pencil, Camera } from 'lucide-react';
+// 1. IMPORTA Eye e EyeOff
+import { User, Lock, Mail, Building2, Heart, Users, HeartHandshake, Pencil, Camera, Eye, EyeOff, PhoneCall, Phone } from 'lucide-react';
 import { registerUser, loginUser } from '../services/loginService';
 import { validateRegistration } from '../utils/loginValidation';
 import Navbar from '../components/Navbar';
@@ -15,7 +15,10 @@ export default function LoginPage() {
   const [step, setStep] = useState(1);
   const fileInputRef = useRef(null);
 
-  // Hook per la navigazione
+  // 2. NUOVI STATI PER LA VISIBILITÀ PASSWORD
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const navigate = useNavigate();
 
   // STATO COMPLETO
@@ -26,7 +29,6 @@ export default function LoginPage() {
     nome: '',
     cognome: '',
     nomeEnte: '',
-    // referente: '',  <-- RIMOSSO
     telefono: '',
     descrizione: '',
     ambito: '',
@@ -63,7 +65,6 @@ export default function LoginPage() {
 
   const handleSubmit = async () => {
     if (isLogin) {
-      // --- LOGICA LOGIN ---
       try {
         const resultMessage = await loginUser({ email: formData.email, password: formData.password });
         console.log(resultMessage);
@@ -72,9 +73,7 @@ export default function LoginPage() {
         alert("Errore Login: " + error.message);
       }
     } else {
-      // --- REGISTRAZIONE ---
       const validation = validateRegistration(formData);
-      // Nota: Potresti dover aggiornare validateRegistration per non richiedere referente
       if (!validation.isValid) {
         alert(Object.values(validation.errors)[0]);
         return;
@@ -96,7 +95,6 @@ export default function LoginPage() {
       let finalNome = formData.nome;
       let finalCognome = formData.cognome;
 
-      // MODIFICA PER ENTE: Nome Ente va nel campo "nome" del payload
       if (userType === 'ente') {
         finalNome = formData.nomeEnte;
         finalCognome = null;
@@ -134,22 +132,18 @@ export default function LoginPage() {
   };
 
   const handleNextStep = () => {
-    // Controllo campi obbligatori per passare allo step 2
     if (!formData.email || !formData.password) {
       alert("Compila email e password per proseguire.");
       return;
     }
-    // Per Ente, controlliamo anche nomeEnte
     if (userType === 'ente' && !formData.nomeEnte) {
        alert("Compila il nome dell'Ente per proseguire.");
        return;
     }
-    // Per Volontario/Beneficiario controlliamo nome e cognome
     if ((userType === 'volontario' || userType === 'beneficiario') && (!formData.nome || !formData.cognome)) {
         alert("Compila nome e cognome per proseguire.");
         return;
     }
-
     setStep(2);
   };
 
@@ -160,13 +154,50 @@ export default function LoginPage() {
           <Mail style={styles.inputIcon} />
           <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Email" style={styles.inputField} onFocus={(e) => { e.target.style.borderColor = '#4AAFB8'; e.target.style.boxShadow = '0 0 0 3px rgba(74, 175, 184, 0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }} />
         </div>
+        
+        {/* PASSWORD FIELD REGISTRAZIONE */}
         <div style={styles.inputGroup}>
           <Lock style={styles.inputIcon} />
-          <input type="password" name="password" value={formData.password} onChange={handleChange} placeholder="Password" style={styles.inputField} onFocus={(e) => { e.target.style.borderColor = '#4AAFB8'; e.target.style.boxShadow = '0 0 0 3px rgba(74, 175, 184, 0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }} />
+          <input 
+            type={showPassword ? "text" : "password"} // Type dinamico
+            name="password" 
+            value={formData.password} 
+            onChange={handleChange} 
+            placeholder="Password" 
+            style={{...styles.inputField, paddingRight: '40px'}} // Padding extra a destra
+            onFocus={(e) => { e.target.style.borderColor = '#4AAFB8'; e.target.style.boxShadow = '0 0 0 3px rgba(74, 175, 184, 0.1)'; }} 
+            onBlur={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }} 
+          />
+          {/* Tasto Occhio */}
+          <button 
+            type="button" 
+            onClick={() => setShowPassword(!showPassword)} 
+            style={styles.passwordToggle}
+          >
+            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+          </button>
         </div>
+
+        {/* CONFERMA PASSWORD FIELD */}
         <div style={styles.inputGroup}>
           <Lock style={styles.inputIcon} />
-          <input type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} placeholder="Conferma Password" style={styles.inputField} onFocus={(e) => { e.target.style.borderColor = '#4AAFB8'; e.target.style.boxShadow = '0 0 0 3px rgba(74, 175, 184, 0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }} />
+          <input 
+            type={showConfirmPassword ? "text" : "password"} 
+            name="confirmPassword" 
+            value={formData.confirmPassword} 
+            onChange={handleChange} 
+            placeholder="Conferma Password" 
+            style={{...styles.inputField, paddingRight: '40px'}}
+            onFocus={(e) => { e.target.style.borderColor = '#4AAFB8'; e.target.style.boxShadow = '0 0 0 3px rgba(74, 175, 184, 0.1)'; }} 
+            onBlur={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }} 
+          />
+          <button 
+            type="button" 
+            onClick={() => setShowConfirmPassword(!showConfirmPassword)} 
+            style={styles.passwordToggle}
+          >
+            {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+          </button>
         </div>
       </>
     );
@@ -176,12 +207,11 @@ export default function LoginPage() {
         <div style={styles.fieldsContainer}>
           <div style={styles.inputGroup}>
             <Building2 style={styles.inputIcon} />
-            {/* Usiamo nomeEnte nello stato, ma verrà mappato a "nome" nel payload */}
             <input type="text" name="nomeEnte" value={formData.nomeEnte} onChange={handleChange} placeholder="Nome Ente" style={styles.inputField} onFocus={(e) => { e.target.style.borderColor = '#4AAFB8'; e.target.style.boxShadow = '0 0 0 3px rgba(74, 175, 184, 0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }} />
           </div>
-          {/* RIMOSSO IL CAMPO REFERENTE QUI */}
           <div style={styles.inputGroup}>
-            <input type="text" name="telefono" value={formData.telefono} onChange={handleChange} placeholder="Telefono" style={styles.inputFieldNoIcon} onFocus={(e) => { e.target.style.borderColor = '#4AAFB8'; e.target.style.boxShadow = '0 0 0 3px rgba(74, 175, 184, 0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }} />
+            <Phone style={styles.inputIcon} />
+            <input type="text" name="telefono" value={formData.telefono} onChange={handleChange} placeholder="Telefono" style={styles.inputField} onFocus={(e) => { e.target.style.borderColor = '#4AAFB8'; e.target.style.boxShadow = '0 0 0 3px rgba(74, 175, 184, 0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }} />
           </div>
           {commonFields}
         </div>
@@ -199,7 +229,8 @@ export default function LoginPage() {
           <input type="text" name="cognome" value={formData.cognome} onChange={handleChange} placeholder="Cognome" style={styles.inputField} onFocus={(e) => { e.target.style.borderColor = '#4AAFB8'; e.target.style.boxShadow = '0 0 0 3px rgba(74, 175, 184, 0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }} />
         </div>
         <div style={styles.inputGroup}>
-          <input type="text" name="telefono" value={formData.telefono} onChange={handleChange} placeholder="Telefono" style={styles.inputFieldNoIcon} onFocus={(e) => { e.target.style.borderColor = '#4AAFB8'; e.target.style.boxShadow = '0 0 0 3px rgba(74, 175, 184, 0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }} />
+          <Phone style={styles.inputIcon} />
+          <input type="text" name="telefono" value={formData.telefono} onChange={handleChange} placeholder="Telefono" style={styles.inputField} onFocus={(e) => { e.target.style.borderColor = '#4AAFB8'; e.target.style.boxShadow = '0 0 0 3px rgba(74, 175, 184, 0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }} />
         </div>
         {commonFields}
       </div>
@@ -223,11 +254,9 @@ export default function LoginPage() {
       <div style={styles.loginPage}>
         <style>{cssStyles}</style>
 
-        {/* AGGIUNTA CLASSE login-container PER RESPONSIVE */}
         <div className="login-container" style={{ ...styles.container, height: (!isLogin && userType) ? 'min(800px, 80vh)' : 'min(700px, 75vh)' }}>
 
-          {/* GRADIENT PANEL (Sinistra) */}
-          {/* AGGIUNTA CLASSE gradient-panel PER RESPONSIVE */}
+          {/* GRADIENT PANEL */}
           <div className="gradient-panel" style={{ ...styles.gradientPanel, transform: isSwapped ? 'translateX(100%)' : 'translateX(0%)' }}>
             <div style={styles.gradientOverlay}></div>
             <div style={styles.blurCircle1}></div>
@@ -248,8 +277,7 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* FORM PANEL (Destra) */}
-          {/* AGGIUNTA CLASSE form-panel PER RESPONSIVE */}
+          {/* FORM PANEL */}
           <div className="form-panel hide-scrollbar" style={{ ...styles.formPanel, transform: isSwapped ? 'translateX(-100%)' : 'translateX(0%)' }}>
             <div style={styles.formContainer}>
               <div style={styles.logoSection}>
@@ -262,7 +290,6 @@ export default function LoginPage() {
 
               <div style={styles.formContent}>
 
-                {/* CASO 1: SELEZIONE UTENTE CON ANIMAZIONE SLIDE IN */}
                 {!isLogin && !userType ? (
                   <div style={styles.userTypeSelection}>
                     <h2 style={styles.formTitle}>Che tipo di utente sei?</h2>
@@ -271,8 +298,8 @@ export default function LoginPage() {
                         onClick={() => handleUserTypeSelection(type)}
                         style={{
                           ...styles.userTypeCard,
-                          animation: `slideInFromLeft 0.5s ease-out forwards`,
-                          animationDelay: `${index * 0.15}s`, // REGOLAZIONE TIMING: Moltiplicatore 0.15s
+                          animation: `slideInFromLeft 0.8s ease-out forwards`,
+                          animationDelay: `${index * 0.30}s`, 
                           opacity: 0
                         }}
                         onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#4AAFB8'; e.currentTarget.style.background = '#E9FBE7'; e.currentTarget.querySelector('.icon-wrapper').style.background = '#7CCE6B'; }}
@@ -288,7 +315,6 @@ export default function LoginPage() {
                     ))}
                   </div>
 
-                  // CASO 2: STEP 1
                 ) : !isLogin && userType && step === 1 ? (
                   <div style={styles.registrationForm}>
                     <button onClick={() => setUserType(null)} style={styles.backButton}>← Indietro</button>
@@ -297,12 +323,10 @@ export default function LoginPage() {
                     <button onClick={handleNextStep} style={styles.submitButton}>CONTINUA</button>
                   </div>
 
-                  // CASO 3: STEP 2 (CONOSCIAMOCI MEGLIO)
                 ) : !isLogin && userType && step === 2 ? (
                   <div style={styles.registrationForm}>
                     <h2 style={styles.formTitle}>Personalizzazione del profilo</h2>
 
-                    {/* UPLOAD */}
                     <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px', position: 'relative' }}>
                       <div style={{ width: '100px', height: '100px', borderRadius: '50%', background: '#F3F4F6', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #E5E7EB', position: 'relative' }}>
                         {formData.immagineBase64 ? (
@@ -319,7 +343,6 @@ export default function LoginPage() {
 
                     <div style={styles.fieldsContainer}>
 
-                      {/* AMBITO SOLO SE ENTE O VOLONTARIO */}
                       {(userType === 'ente' || userType === 'volontario') && (
                         <div style={styles.inputGroup}>
                           <input type="text" name="ambito" value={formData.ambito} onChange={handleChange} placeholder="Di cosa ti occupi? (es. Sociale)" style={styles.inputFieldNoIcon} />
@@ -346,7 +369,6 @@ export default function LoginPage() {
                     </div>
                   </div>
 
-                  // CASO 4: LOGIN
                 ) : (
                   <div style={styles.loginForm}>
                     <div style={styles.avatarWrapper}>
@@ -357,9 +379,26 @@ export default function LoginPage() {
                         <User style={styles.inputIcon} />
                         <input type="text" name="email" value={formData.email} onChange={handleChange} placeholder="USERNAME" style={styles.inputField} onFocus={(e) => { e.target.style.borderColor = '#4AAFB8'; e.target.style.boxShadow = '0 0 0 3px rgba(74, 175, 184, 0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }} />
                       </div>
+                      {/* PASSWORD FIELD LOGIN */}
                       <div style={styles.inputGroup}>
                         <Lock style={styles.inputIcon} />
-                        <input type="password" name="password" value={formData.password} onChange={handleChange} placeholder="PASSWORD" style={styles.inputField} onFocus={(e) => { e.target.style.borderColor = '#4AAFB8'; e.target.style.boxShadow = '0 0 0 3px rgba(74, 175, 184, 0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }} />
+                        <input 
+                          type={showPassword ? "text" : "password"} 
+                          name="password" 
+                          value={formData.password} 
+                          onChange={handleChange} 
+                          placeholder="PASSWORD" 
+                          style={{...styles.inputField, paddingRight: '40px'}} 
+                          onFocus={(e) => { e.target.style.borderColor = '#4AAFB8'; e.target.style.boxShadow = '0 0 0 3px rgba(74, 175, 184, 0.1)'; }} 
+                          onBlur={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }} 
+                        />
+                        <button 
+                          type="button" 
+                          onClick={() => setShowPassword(!showPassword)} 
+                          style={styles.passwordToggle}
+                        >
+                          {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                        </button>
                       </div>
                     </div>
                     <button onClick={handleSubmit} style={styles.submitButton} onMouseEnter={(e) => { e.target.style.transform = 'translateY(-2px)'; e.target.style.boxShadow = '0 6px 20px rgba(8, 120, 134, 0.4)'; }} onMouseLeave={(e) => { e.target.style.transform = 'translateY(0)'; e.target.style.boxShadow = '0 4px 12px rgba(8, 120, 134, 0.3)'; }}>LOGIN</button>
@@ -372,7 +411,6 @@ export default function LoginPage() {
                   </div>
                 )}
 
-                {/* Punti */}
                 {!isLogin && (
                   <div style={styles.dotsIndicator}>
                     <span style={!userType ? styles.dotActive : styles.dot}></span>
@@ -381,7 +419,6 @@ export default function LoginPage() {
                   </div>
                 )}
 
-                {/* Toggle */}
                 <div style={styles.toggleForm}>
                   {isLogin ? (
                     <>Non hai un account? <button onClick={() => { setIsLogin(false); setUserType(null); setStep(1); }} style={styles.toggleButton}>Registrati ora</button></>
@@ -399,7 +436,6 @@ export default function LoginPage() {
   );
 }
 
-// CSS STYLES (Keyframes + Responsive Overrides)
 const cssStyles = `
   @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
@@ -413,7 +449,6 @@ const cssStyles = `
     display: none;
   }
 
-  /* MEDIA QUERY PER MOBILE/TABLET (max-width: 968px) */
   @media (max-width: 968px) {
     .login-container {
       flex-direction: column !important;
@@ -422,18 +457,14 @@ const cssStyles = `
       max-height: 90vh !important;
       border-radius: 20px !important;
     }
-
-    /* Nascondi il pannello decorativo a sinistra su mobile */
     .gradient-panel {
       display: none !important;
     }
-
-    /* Il form occupa tutto lo spazio */
     .form-panel {
       position: relative !important;
       width: 100% !important;
       height: auto !important;
-      transform: none !important; /* Disabilita lo slide orizzontale */
+      transform: none !important; 
       padding: 30px 20px !important;
     }
   }
@@ -488,4 +519,19 @@ const styles = {
   dotsIndicator: { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '16px 0' },
   dot: { width: '8px', height: '8px', borderRadius: '50%', background: '#E5E7EB', transition: 'background 0.3s ease' },
   dotActive: { width: '8px', height: '8px', borderRadius: '50%', background: '#087886' },
+  
+  // STILE AGGIUNTO PER IL TOGGLE PASSWORD
+  passwordToggle: {
+    position: 'absolute',
+    right: '12px',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer',
+    color: '#9CA3AF',
+    padding: 0,
+    display: 'flex',
+    alignItems: 'center'
+  }
 };
