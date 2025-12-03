@@ -46,9 +46,11 @@ const Home = () => {
               </p>
 
               <div className="hero-actions">
-                <button className="btn btn-primary" onClick={() => navigate('/login')}>
-                  Inizia ora <ArrowRight size={18} />
-                </button>
+                {!localStorage.getItem('token') && (
+                  <button className="btn btn-primary" onClick={() => navigate('/login')}>
+                    Inizia ora <ArrowRight size={18} />
+                  </button>
+                )}
                 <button className="btn btn-secondary" onClick={() => navigate('/chisiamo')}>
                   Scopri di più
                 </button>
