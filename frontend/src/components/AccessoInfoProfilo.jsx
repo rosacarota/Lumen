@@ -6,14 +6,41 @@ import '../stylesheets/InfoProfilo.css';
 // Servizio
 import { fetchUserProfile } from '../services/UserServices.js';
 
-const AccessoInfoProfilo = ({ userData, isOwner, onUpdate }) => {
+const AccessoInfoProfilo = ({ userData: propsData, isOwner: propsIsOwner, onUpdate }) => {
     
-    // Se isOwner è true, userData sono i dati privati.
-    // Se isOwner è false, userData sono i dati pubblici scaricati dal padre.
-    
+    // Usiamo lo stato interno se non arrivano props
+    const [userData, setUserData] = useState(propsData || null);
+    const [isOwner, setIsOwner] = useState(propsIsOwner || false);
+    const [loading, setLoading] = useState(!propsData); // Se non ho dati, sto caricando
     const [isEditing, setIsEditing] = useState(false);
 
-    // Gestione visualizzazione testi
+    // ---------------------------------------------------------
+    // AGGIUNTA FONDAMENTALE: Fetch dei dati al caricamento
+    // ---------------------------------------------------------
+    useEffect(() => {
+        // Se abbiamo già i dati dalle props, non fare nulla
+        if (propsData) {
+            setLoading(false);
+            return;
+        }
+
+        const getData = async () => {
+            try {
+                // Questa funzione DEVE leggere il token (vedi sotto come controllarla)
+                const data = await fetchUserProfile(); 
+                setUserData(data);
+                setIsOwner(true); // Se scarico i miei dati, sono l'owner
+            } catch (error) {
+                console.error("Errore caricamento profilo:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        getData();
+    }, [propsData]); // Si riattiva se cambiano le props
+    // ---------------------------------------------------------
+
     const displayTitle = userData 
         ? (userData.ruolo === 'Ente' ? userData.nome : `${userData.nome} ${userData.cognome}`)
         : "Caricamento...";
@@ -29,20 +56,26 @@ const AccessoInfoProfilo = ({ userData, isOwner, onUpdate }) => {
     const handleCloseModal = () => {
         setIsEditing(false);
         if (onUpdate) onUpdate(); 
+        // Opzionale: ricaricare i dati dopo la modifica
+        window.location.reload(); 
     };
 
-    if (!userData) {
+    if (loading) {
         return <div className="hero-wrapper"><Loader2 className="animate-spin" /></div>;
+    }
+
+    if (!userData) {
+        return <div className="hero-wrapper"><p>Impossibile caricare il profilo.</p></div>;
     }
 
     return (
         <>
         <div className="hero-wrapper">
-            <div className="hero-cover"></div>
-            <div className="hero-info-bar">
+             {/* ... IL RESTO DEL TUO CODICE HTML RIMANE IDENTICO ... */}
+             <div className="hero-cover"></div>
+             <div className="hero-info-bar">
+                {/* ... eccetera ... */}
                 <div className="hero-content-inner">
-                    
-                    {/* AVATAR */}
                     <div className="avatar-container">
                         {displayImage ? (
                             <img src={displayImage} alt="Profile" className="profile-img" />
@@ -50,14 +83,11 @@ const AccessoInfoProfilo = ({ userData, isOwner, onUpdate }) => {
                             <div className="profile-img-placeholder"></div>
                         )}
                     </div>
-
-                    {/* DATI UTENTE */}
                     <div className="ente-text">
                         <h1>{displayTitle}</h1>
                         <h3>{displaySubtitle}</h3>
                         <p>{displayDescription}</p>
                         
-                        {/* --- SEZIONE VISIBILE SOLO AL PROPRIETARIO --- */}
                         {isOwner && (
                             <div className="owner-dashboard">
                                 <div className="owner-details-grid">
@@ -74,20 +104,17 @@ const AccessoInfoProfilo = ({ userData, isOwner, onUpdate }) => {
                                         </span>
                                     </div>
                                 </div>
-                                
                                 <button className="pill edit-btn" onClick={handleEditClick}>
                                     <Pencil size={16} />
                                     <span>MODIFICA PROFILO</span>
                                 </button>
                             </div>
                         )}
-                        {/* --------------------------------------------- */}
                     </div>
                 </div>
             </div>
         </div>
 
-        {/* MODALE (Solo per Owner) */}
         {isOwner && isEditing && (
             <ModificaProfilo 
                 isOpen={isEditing} 
