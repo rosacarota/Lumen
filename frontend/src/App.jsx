@@ -11,6 +11,7 @@ import ProfiloEnte from './pages/ProfiloEnte';
 import ProfiloVolontario from './pages/ProfiloVolontario';
 import ProfiloBeneficiario from './pages/ProfiloBeneficiario';
 import DashboardAffiliazione from './pages/DashboardAffiliazione';
+import RicercaGeografica from './pages/RicercaGeografica';
 
 function App() {
   return (
@@ -38,6 +39,9 @@ function App() {
         <Route path="/profiloente" element={<ProfiloEnte />} />
         <Route path="/profilovolontario" element={<ProfiloVolontario />} />
         <Route path="/profilobeneficiario" element={<ProfiloBeneficiario />} />
+
+        {/* Rotta Ricerca Geografica */}
+        <Route path="/ricercageografica" element={<RicercaGeografica />} />
 
         {/* Qualsiasi altro URL porta al Login */}
         <Route path="*" element={<Navigate to="/home" replace />} />

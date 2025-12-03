@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 // RIMOSSO: import { Link, useNavigate } from 'react-router-dom';
-import { Search, User, ChevronDown, LogOut, Settings, FileText, Briefcase, Users, Calendar, Heart, LogIn } from 'lucide-react';
+import { Search, User, ChevronDown, LogOut, Settings, FileText, Briefcase, Users, Calendar, Heart, LogIn, Earth } from 'lucide-react';
 import '../stylesheets/Navbar.css';
 import LogoLumen from '../assets/logo-lumen.png';
 
@@ -29,7 +29,7 @@ const Navbar = () => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    
+
     if (token) {
       // --- LOGICA CHIAMATA API DIRETTA ---
       const fetchUserDirectly = async () => {
@@ -42,28 +42,28 @@ const Navbar = () => {
 
           if (response.ok) {
             const apiData = await response.json();
-            
+
             let img = null;
             if (apiData.immagine) {
-               img = apiData.immagine.startsWith('data:image') 
-                 ? apiData.immagine 
-                 : `data:image/jpeg;base64,${apiData.immagine}`;
+              img = apiData.immagine.startsWith('data:image')
+                ? apiData.immagine
+                : `data:image/jpeg;base64,${apiData.immagine}`;
             }
 
             setCurrentUser({
               isLoggedIn: true,
               username: apiData.nome || 'Utente',
               role: (apiData.ruolo || 'guest').toLowerCase(),
-              immagine: img 
+              immagine: img
             });
-            
+
             localStorage.setItem('ruolo', (apiData.ruolo || 'guest').toLowerCase());
           }
         } catch (error) {
           console.error("Errore fetch:", error);
         }
       };
-      
+
       fetchUserDirectly();
     }
   }, []);
@@ -75,7 +75,7 @@ const Navbar = () => {
     localStorage.removeItem('ruolo');
     setCurrentUser({ username: 'Utente', role: 'guest', immagine: null, isLoggedIn: false });
     setIsDropdownOpen(false);
-    
+
     // SOSTITUZIONE NAVIGATE: Redirect nativo
     window.location.href = '/login';
   };
@@ -109,22 +109,26 @@ const Navbar = () => {
             <input type="text" placeholder="Cerca..." className="search-input" />
           </div>
 
+          <a href="/ricercageografica" className="icon-btn" title="Ricerca Geografica">
+            <Earth size={20} />
+          </a>
+
           <div className="profile-container" onClick={toggleDropdown}>
             <div className={`profile-pill ${isDropdownOpen ? 'active' : ''}`}>
               <div className="profile-avatar">
                 {currentUser.role === 'guest' ? (
                   <User size={20} />
                 ) : currentUser.immagine ? (
-                  <img 
-                    src={currentUser.immagine} 
-                    alt="Profile" 
-                    style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} 
+                  <img
+                    src={currentUser.immagine}
+                    alt="Profile"
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }}
                   />
                 ) : (
                   currentUser.username.charAt(0).toUpperCase()
                 )}
               </div>
-              
+
               {currentUser.isLoggedIn && (
                 <div className="profile-details">
                   <span className="user-name">{currentUser.username}</span>
@@ -145,7 +149,7 @@ const DropdownMenu = ({ role, onLogout }) => {
   const safeRole = role ? role.toLowerCase() : 'guest';
   const getMenuItems = (r) => {
     switch (r) {
-      case 'beneficiario': 
+      case 'beneficiario':
         return [
           { label: 'Area Personale', icon: <Settings size={16} />, href: '/profilobeneficiario' },
           { label: 'Gestione richieste', icon: <FileText size={16} />, href: '/richieste' },
@@ -171,9 +175,9 @@ const DropdownMenu = ({ role, onLogout }) => {
         return [{ label: 'Login', icon: <LogIn size={16} />, href: '/login' }];
     }
   };
-  
+
   const menuItems = getMenuItems(safeRole);
-  
+
   return (
     <div className="dropdown-box">
       {menuItems.map((item, index) => (
