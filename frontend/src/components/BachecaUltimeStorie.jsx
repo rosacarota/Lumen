@@ -9,21 +9,21 @@ const BachecaUltimeStorie = () => {
         <>
         <div className="stories-card">
             <div className="stories-header">
-                <h3>STORIE DELL'ACCOUNT</h3>
+                <h3>BACHECA RACCONTI</h3>
             </div>
             <div className="stories-body">
                 <div className="empty-state">
                     <div className="empty-icon-wrapper">
                         <Camera size={32} color="#4AAFB8" />
                     </div>
-                    <p>Non ci sono storie attive.</p>
+                    <p>Non ci sono racconti attivi.</p>
                     <div className="empty-icon-wrapper add-action" 
                          onClick={() => setIsAddStoryOpen(true)}
                          title="Crea una nuova storia"
                     >
                         <Plus size={32} color="#4AAFB8" />
                         </div>
-                    <p>Aggiungi storia</p>
+                    <p>Aggiungi racconto</p>
                 </div>
                 {/* ESEMPIO DI COME APPARIRANNO LE STORIE (Decommenta per vedere) */}
                 {/* <div className="story-item">
