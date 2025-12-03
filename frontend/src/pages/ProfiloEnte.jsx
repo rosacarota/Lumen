@@ -10,7 +10,7 @@ import ModifyEvento from '../components/ModifyEvento.jsx';
 import AddRaccoltaFondi from '../components/AddRaccoltaFondi.jsx';
 import Footer from '../components/Footer.jsx';
 import RichiestaAffiliazione from '../components/RichiestaAffiliazione.jsx';
-import RichiestaServizio from '../components/RichiestaServizio.jsx'; // <--- NUOVO IMPORT
+import RichiestaServizio from '../components/RichiestaServizio.jsx'; 
 import EventCard from '../components/EventCard.jsx';
 import EventCardEnte from '../components/EventCardEnte.jsx';
 import RaccoltaFondiCard from '../components/RaccoltaFondiCard.jsx'; 
@@ -36,17 +36,19 @@ const ModalWrapper = ({ children, onClose }) => (
 const ProfiloEnte = () => {
   const { id } = useParams();
   
-  // --- STATI UTENTE ---
+  // --- STATI DATI ---
+  const [currentUser, setCurrentUser] = useState(null);
+  const [profileData, setProfileData] = useState(null);
   const [isOwner, setIsOwner] = useState(false);
-  const [userProfile, setUserProfile] = useState(null);
-  
-  // Ruoli Visitatori
+
+  // --- STATI RUOLI ---
+  const [isEnte, setIsEnte] = useState(false);           // <--- FONDAMENTALE
   const [isVolunteer, setIsVolunteer] = useState(false);
-  const [isBeneficiary, setIsBeneficiary] = useState(false); // <--- NUOVO STATO
+  const [isBeneficiary, setIsBeneficiary] = useState(false); 
   
   // --- STATI MODALI ---
   const [showAffiliazioneModal, setShowAffiliazioneModal] = useState(false);
-  const [showServizioModal, setShowServizioModal] = useState(false); // <--- NUOVO MODALE
+  const [showServizioModal, setShowServizioModal] = useState(false);
   const [showAddEventoModal, setShowAddEventoModal] = useState(false);
   const [showModifyEventoModal, setShowModifyEventoModal] = useState(false);
   const [showRaccoltaModal, setShowRaccoltaModal] = useState(false);
@@ -63,31 +65,46 @@ const ProfiloEnte = () => {
   const [loadingRaccolte, setLoadingRaccolte] = useState(false);
   const [loadingStorie, setLoadingStorie] = useState(false);
 
-  // 1. CARICAMENTO UTENTE
-  const loadUserData = async () => {
+  // 1. CARICAMENTO DATI
+  const loadData = async () => {
     try {
-      const myProfile = await fetchUserProfile();
-      
-      // Controllo Ruoli
-      if (myProfile?.ruolo === 'Volontario') setIsVolunteer(true);
-      if (myProfile?.ruolo === 'Beneficiario') setIsBeneficiary(true); // <--- CHECK RUOLO
+      const myData = await fetchUserProfile();
+      setCurrentUser(myData);
 
-      // Controllo Proprietà Profilo
-      if (!id || (myProfile && String(myProfile.id) === String(id))) {
-          setUserProfile(myProfile);
-          setIsOwner(true); 
-          return myProfile;
+      // A. RESETTIAMO I RUOLI PRIMA DI CONTROLLARE
+      setIsEnte(false);
+      setIsVolunteer(false);
+      setIsBeneficiary(false);
+
+      // B. CONTROLLO RUOLI (Case Insensitive)
+      if (myData && myData.ruolo) {
+          const ruolo = myData.ruolo.toLowerCase();
+          
+          if (ruolo === 'ente') setIsEnte(true);              // <--- Setto isEnte
+          if (ruolo === 'volontario') setIsVolunteer(true);
+          if (ruolo === 'beneficiario') setIsBeneficiary(true);
+      }
+
+      // C. CONTROLLO OWNER (Chi visita chi?)
+      if (!id || (myData && String(myData.id) === String(id))) {
+          // Sono sul MIO profilo
+          setIsOwner(true);
+          setProfileData(myData);
+          return myData;
       } else {
-          // Qui dovresti caricare il profilo dell'Ente tramite ID (es. getEnteById(id))
-          // Per ora lasciamo null o usiamo myProfile se stiamo testando
+          // Sono un VISITATORE
           setIsOwner(false);
+          // TODO: Se avessi l'API getEnteById(id), la useresti qui:
+          // const enteData = await getEnteById(id);
+          // setProfileData(enteData);
+          console.warn("Sei visitatore. Qui servirebbe caricare i dati dell'ente ID:", id);
           return null; 
       }
     } catch (error) { console.error(error); return null; }
   };
 
-  // 2. FETCH DATI (Eventi, Raccolte, Storie)
-  const loadEventi = async (profileData = userProfile) => {
+  // 2. FETCH DATI CONTENUTI
+  const loadEventi = async (targetProfile) => {
     setLoadingEventi(true);
     try {
         let stato = activeTab === 'corso' ? 'IN_CORSO' : (activeTab === 'svolti' ? 'TERMINATO' : 'PROGRAMMATO');
@@ -102,7 +119,7 @@ const ProfiloEnte = () => {
             dataFine: ev.dataFine,
             maxpartecipanti: ev.maxPartecipanti,
             immagine: ev.immagine,
-            ente: ev.enteNome || profileData?.nome || "Ente",
+            ente: ev.enteNome || targetProfile?.nome || "Ente",
             rawData: ev 
         })) : [];
         setEventiList(mapped);
@@ -110,16 +127,16 @@ const ProfiloEnte = () => {
     finally { setLoadingEventi(false); }
   };
 
-  const loadRaccolte = async (profileData) => {
-    if(!profileData) return;
+  const loadRaccolte = async (targetProfile) => {
+    if(!targetProfile) return;
     setLoadingRaccolte(true);
     try {
-        const responseData = await getRaccolteDiEnte(); 
+        const responseData = await getRaccolteDiEnte();
         const listaVera = Array.isArray(responseData) ? responseData : (responseData.content || []);
         const mapped = listaVera.map(item => ({
             ...item,
             id_raccolta: item.id || item.idRaccolta,
-            ente: profileData.nome,
+            ente: targetProfile.nome,
             data_apertura: item.dataApertura,
             data_chiusura: item.dataChiusura
         }));
@@ -128,39 +145,36 @@ const ProfiloEnte = () => {
     finally { setLoadingRaccolte(false); }
   };
 
-  const loadStorie = async (profileData) => {
-    if(!profileData) return;
+  const loadStorie = async (targetProfile) => {
     setLoadingStorie(true);
-    try {
-        const mockStorie = [
-            { id: 1, titolo: "Grazie a tutti!", contenuto: "La raccolta è andata benissimo...", data: "2023-11-05" },
-        ];
-        setStorieList(mockStorie);
-    } catch (e) { console.error(e); } 
-    finally { setLoadingStorie(false); }
+    setTimeout(() => {
+        setStorieList([{ id: 1, titolo: "Benvenuti", contenuto: "Pagina ufficiale", data: "2024-01-01" }]);
+        setLoadingStorie(false);
+    }, 500);
   };
 
   // 3. EFFETTI
   useEffect(() => {
     const init = async () => {
-      const profile = await loadUserData();
-      if (profile) {
-          await loadEventi(profile);
-          await loadRaccolte(profile);
-          await loadStorie(profile);
+      const profile = await loadData();
+      const dataToLoad = profile || profileData; 
+      if (dataToLoad || id) { 
+          await loadEventi(dataToLoad);
+          await loadRaccolte(dataToLoad);
+          await loadStorie(dataToLoad);
       }
     };
     init();
   }, [id]);
 
-  useEffect(() => { if (userProfile) loadEventi(userProfile); }, [activeTab]);
+  useEffect(() => { loadEventi(profileData); }, [activeTab]);
 
   // 4. HANDLERS
   const handleDeleteEvento = async (idEvento) => {
     const res = await Swal.fire({ title: 'Eliminare?', icon: 'warning', showCancelButton: true });
     if (res.isConfirmed) {
         await rimuoviEvento(idEvento);
-        loadEventi(userProfile);
+        loadEventi(profileData);
         Swal.fire('Eliminato', '', 'success');
     }
   };
@@ -170,15 +184,10 @@ const ProfiloEnte = () => {
     if(!raccolta) return;
     const res = await Swal.fire({ title: 'Terminare?', text: raccolta.titolo, icon: 'warning', showCancelButton: true });
     if(res.isConfirmed) {
-        await terminaRaccolta({...raccolta, enteObj: userProfile});
-        loadRaccolte(userProfile);
+        await terminaRaccolta({...raccolta, enteObj: profileData});
+        loadRaccolte(profileData);
         Swal.fire('Terminata', '', 'success');
     }
-  };
-
-  const handleOpenModify = (ev) => {
-      setEventoDaModificare(ev);
-      setShowModifyEventoModal(true);
   };
 
   return (
@@ -186,11 +195,11 @@ const ProfiloEnte = () => {
       <Navbar />
       <div className="main-container">
         
-        {/* Info Profilo (con tasto Modifica se Owner) */}
-        <AccessoInfoProfilo userData={userProfile} isOwner={isOwner} onUpdate={loadUserData} />
+        {/* Info Profilo */}
+        <AccessoInfoProfilo userData={profileData} isOwner={isOwner} onUpdate={loadData} />
         
         <section className="event-section">
-          {/* HEADER TABS & ACTIONS */}
+          {/* TABS & ACTIONS */}
           <div className="controll">
             <div className="tabs-left">
               <button className={activeTab === 'corso' ? 'active' : ''} onClick={() => setActiveTab('corso')}>IN CORSO</button>
@@ -199,48 +208,53 @@ const ProfiloEnte = () => {
             </div>
             
             <div className="actions-right">
-              {isOwner ? (
-                /* --- AZIONI PROPRIETARIO --- */
+              
+              {/* ------------------------------------------------------------- */}
+              {/* QUI C'ERA L'ERRORE. ORA CONTROLLIAMO SIA OWNER CHE ENTE */}
+              {/* ------------------------------------------------------------- */}
+              
+              {isOwner && isEnte ? (
+                /* MOSTRA TASTI SOLO SE SONO OWNER **E** SONO UN ENTE */
                 <>
                   <button className="btn-action" onClick={() => setShowAddEventoModal(true)}>CREA EVENTO</button>
                   <button className="btn-action" onClick={() => setShowRaccoltaModal(true)}>CREA RACCOLTA FONDI</button>
                 </>
               ) : (
-                /* --- AZIONI VISITATORE --- */
+                /* CASO VISITATORE (O BENEFICIARIO SUL PROPRIO PROFILO) */
                 <>
-                  {/* Se Volontario -> Richiedi Affiliazione */}
-                  {isVolunteer && (
+                  {/* Se sono Volontario e NON è il mio profilo */}
+                  {isVolunteer && isOwner && (
                     <button className="btn-action btn-affiliation" onClick={() => setShowAffiliazioneModal(true)}>
                         Richiedi affiliazione
                     </button>
                   )}
 
-                  {/* Se Beneficiario -> Richiedi Servizio (NUOVO) */}
-                  {isBeneficiary && (
+                  {/* Se sono Beneficiario e NON è il mio profilo */}
+                  {isBeneficiary && isOwner && (
                     <button className="btn-action btn-affiliation" onClick={() => setShowServizioModal(true)}>
                         Richiedi Servizio
                     </button>
                   )}
                 </>
               )}
+
             </div>
           </div>
 
           <div className="split-layout">
-            {/* SINISTRA: EVENTI */}
             <div className="left-column">
               <div className="event-grid">
                 {loadingEventi ? <p>Caricamento...</p> : eventiList.length === 0 ? <p>Nessun evento.</p> : 
                     eventiList.map(ev => (
-                        isOwner ? 
-                        <EventCardEnte key={ev.id_evento} {...ev} eventData={ev.rawData} onElimina={handleDeleteEvento} onModifica={handleOpenModify} /> 
+                        /* Anche le card possono essere modificate solo se Owner ED Ente */
+                        (isOwner && isEnte) ? 
+                        <EventCardEnte key={ev.id_evento} {...ev} eventData={ev.rawData} onElimina={handleDeleteEvento} onModifica={(e) => { setEventoDaModificare(e); setShowModifyEventoModal(true); }} /> 
                         : <EventCard key={ev.id_evento} {...ev} showParticipate={true} />
                     ))
                 }
               </div>
             </div>
 
-            {/* DESTRA: SIDEBAR */}
             <div className="right-column">
                <div className="sidebar-header">
                 <button className={`side-tab-btn ${activeSideTab === 'storie' ? 'active' : ''}`} onClick={() => setActiveSideTab('storie')}>STORIE</button>
@@ -249,21 +263,17 @@ const ProfiloEnte = () => {
                <div className="sidebar-content">
                  {activeSideTab === 'storie' && (
                     <div className="storie-list">
-                        {loadingStorie ? <p>Caricamento...</p> : storieList.length > 0 ? (
-                            storieList.map(storia => (
-                                <div key={storia.id} className="card-sidebar-generic" style={{borderBottom:'1px solid #eee', padding:'15px 0'}}>
-                                    <h4 style={{margin:'0 0 5px 0', color:'#087886'}}>{storia.titolo}</h4>
-                                    <p style={{fontSize:'0.9rem', color:'#555'}}>{storia.contenuto}</p>
-                                </div>
-                            ))
-                        ) : <p className="placeholder-text">Nessuna storia.</p>}
+                        {storieList.map(storia => (
+                             <div key={storia.id} className="card-sidebar-generic" style={{borderBottom:'1px solid #eee', padding:'15px 0'}}>
+                                <h4 style={{margin:'0 0 5px 0', color:'#087886'}}>{storia.titolo}</h4>
+                                <p style={{fontSize:'0.9rem', color:'#555'}}>{storia.contenuto}</p>
+                            </div>
+                        ))}
                     </div>
                  )}
                  {activeSideTab === 'raccolte' && (
                     <div className="raccolte-list">
-                        {loadingRaccolte ? <p>Caricamento...</p> : raccolteList.length > 0 ? (
-                            raccolteList.map(r => <RaccoltaFondiCard key={r.id_raccolta} {...r} isOwner={isOwner} onTerminate={handleTerminateRaccolta} />)
-                        ) : <p className="placeholder-text">Nessuna raccolta.</p>}
+                        {raccolteList.map(r => <RaccoltaFondiCard key={r.id_raccolta} {...r} isOwner={isOwner && isEnte} onTerminate={handleTerminateRaccolta} />)}
                     </div>
                  )}
                </div>
@@ -273,20 +283,14 @@ const ProfiloEnte = () => {
       </div>
       <Footer />
       
-      {/* --- MODALI (Owner) --- */}
-      {isOwner && showAddEventoModal && <AddEvento onBack={() => setShowAddEventoModal(false)} onSubmit={() => {setShowAddEventoModal(false); loadEventi(userProfile);}} isModal={true} enteId={userProfile?.id} />}
-      {isOwner && showModifyEventoModal && <ModifyEvento isOpen={showModifyEventoModal} onClose={() => {setShowModifyEventoModal(false); setEventoDaModificare(null);}} eventToEdit={eventoDaModificare} onUpdate={() => loadEventi(userProfile)} />}
-      {isOwner && showRaccoltaModal && <ModalWrapper onClose={() => setShowRaccoltaModal(false)}><AddRaccoltaFondi enteLogged={userProfile} onClose={() => {setShowRaccoltaModal(false); loadRaccolte(userProfile);}} isModal={true} /></ModalWrapper>}
+      {/* --- MODALI (Solo se Owner e Ente) --- */}
+      {isOwner && isEnte && showAddEventoModal && <AddEvento onBack={() => setShowAddEventoModal(false)} onSubmit={() => {setShowAddEventoModal(false); loadEventi(profileData);}} isModal={true} enteId={profileData?.id} />}
+      {isOwner && isEnte && showModifyEventoModal && <ModifyEvento isOpen={showModifyEventoModal} onClose={() => {setShowModifyEventoModal(false); setEventoDaModificare(null);}} eventToEdit={eventoDaModificare} onUpdate={() => loadEventi(profileData)} />}
+      {isOwner && isEnte && showRaccoltaModal && <ModalWrapper onClose={() => setShowRaccoltaModal(false)}><AddRaccoltaFondi enteLogged={profileData} onClose={() => {setShowRaccoltaModal(false); loadRaccolte(profileData);}} isModal={true} /></ModalWrapper>}
 
       {/* --- MODALI (Visitatore) --- */}
-      {!isOwner && showAffiliazioneModal && <ModalWrapper onClose={() => setShowAffiliazioneModal(false)}><RichiestaAffiliazione onClose={() => setShowAffiliazioneModal(false)} emailEnte={userProfile?.email} /></ModalWrapper>}
-      
-      {/* MODALE RICHIESTA SERVIZIO (Nuovo) */}
-      {!isOwner && showServizioModal && (
-          <ModalWrapper onClose={() => setShowServizioModal(false)}>
-              <RichiestaServizio onClose={() => setShowServizioModal(false)} emailEnte={userProfile?.email} />
-          </ModalWrapper>
-      )}
+      {!isOwner && showAffiliazioneModal && <ModalWrapper onClose={() => setShowAffiliazioneModal(false)}><RichiestaAffiliazione onClose={() => setShowAffiliazioneModal(false)} emailEnte={profileData?.email} /></ModalWrapper>}
+      {!isOwner && showServizioModal && <ModalWrapper onClose={() => setShowServizioModal(false)}><RichiestaServizio onClose={() => setShowServizioModal(false)} emailEnte={profileData?.email} /></ModalWrapper>}
 
     </div>
   );
