@@ -35,8 +35,14 @@ const RichiestaAffiliazione = ({ onClose, emailEnte, isModal = false }) => {
         }
     };
 
+    const handleBackdropClick = (e) => {
+        if (isModal && onClose && e.target === e.currentTarget) {
+            onClose();
+        }
+    };
+
     return (
-        <div className={`ra-page ${isModal ? "ra-page-modal" : ""}`}>
+        <div className={`ra-page ${isModal ? "ra-page-modal" : ""}`} onClick={handleBackdropClick}>
             <div className="ra-container">
                 {/* Freccia indietro */}
                 {onClose && (
