@@ -100,7 +100,7 @@ class AffiliazioneService {
     const params = new URLSearchParams({ idAffiliazione, token });
 
     const response = await fetch(`${API_URL}/accetta?${params}`, {
-      method: "POST"
+      method: "GET"
     });
 
     const text = await response.text();
@@ -121,7 +121,7 @@ class AffiliazioneService {
     const params = new URLSearchParams({ idAffiliazione, token });
 
     const response = await fetch(`${API_URL}/rifiuta?${params}`, {
-      method: "POST"
+      method: "GET"
     });
 
     const text = await response.text();
