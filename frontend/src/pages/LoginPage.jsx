@@ -459,7 +459,7 @@ export default function LoginPage() {
                         <div style={styles.inputGroup}>
                           <User style={styles.inputIcon} />
                           <input 
-                            type="text" name="email" value={formData.email} onChange={handleChange} placeholder="USERNAME" 
+                            type="text" name="email" value={formData.email} onChange={handleChange} placeholder="EMAIL" 
                             style={getInputStyle('email')} 
                           />
                         </div>
