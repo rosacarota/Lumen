@@ -42,7 +42,7 @@ const StoriesBoard = () => {
     }
   };
 
-  // carica le storie al mount
+  
   useEffect(() => {
     loadStories();
   }, []);
@@ -76,7 +76,7 @@ const StoriesBoard = () => {
   const handleSaveEditedStory = async (updatedStory) => {
     try {
       await editStory(updatedStory);
-      await loadStories(); 
+      await loadStories();
       setEditingStory(null);
     } catch (err) {
       console.error(err);
@@ -99,7 +99,7 @@ const StoriesBoard = () => {
     if (!storyToDelete) return;
     try {
       await deleteStory(storyToDelete.id);
-      await loadStories(); 
+      await loadStories();
       setStoryToDelete(null);
     } catch (err) {
       console.error(err);
@@ -130,20 +130,22 @@ const StoriesBoard = () => {
       <div className="stories-page" id="storie">
         <div className="stories-container">
           {/* Header pagina */}
-          <header className="stories-header">
-            <div>
+          <header className="stories-hero">
+            <div className="stories-hero-left">
               <h1 className="stories-title">Storie</h1>
               <p className="stories-subtitle">
                 Leggi le esperienze della community o condividi la tua.
               </p>
             </div>
-            <button
-              className="stories-add-button"
-              type="button"
-              onClick={openAddStory}
-            >
-              + Nuovo racconto
-            </button>
+            <div className="stories-hero-right">
+              <button
+                className="stories-add-button"
+                type="button"
+                onClick={openAddStory}
+              >
+                + Nuovo racconto
+              </button>
+            </div>
           </header>
 
           {/* Messaggi di stato */}
@@ -192,7 +194,6 @@ const StoriesBoard = () => {
                   )}
 
                   <div className="story-card-footer">
-                    
                     <button
                       type="button"
                       className="story-edit-button"

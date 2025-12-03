@@ -8,31 +8,50 @@
   padding: 40px 20px;
 }
 
-/*larghezza bacheca*/
+/* Contenitore principale */
 .stories-container {
   width: 100%;
-  max-width: 1500px;
-  background: rgba(255, 255, 255, 0.95);
+  max-width: 1400px;
+  background: #ffffff;
   border-radius: 28px;
   box-shadow: 0 18px 50px rgba(8, 120, 134, 0.18);
-  padding: 28px 32px 32px;
+  padding: 24px 28px 32px;
 }
 
-/* Header */
+/* HERO HEADER */
 
-.stories-header {
+.stories-hero {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 24px;
+  gap: 24px;
+  margin-bottom: 28px;
+  padding: 18px 22px;
+  background: #e9fbe7;   /* box verde sotto il titolo */
+  border-radius: 22px;
+  border: 1px solid #c4e9d2;
+  box-shadow: 0 10px 25px rgba(8, 120, 134, 0.08);
+}
+
+.stories-hero-left {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stories-hero-right {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 }
 
 .stories-title {
   font-size: 26px;
   font-weight: 700;
   color: #087886;
-  margin: 0 0 4px;
+  margin: 0;
 }
 
 .stories-subtitle {
@@ -43,6 +62,7 @@
 
 .stories-add-button {
   padding: 10px 20px;
+  min-width: 180px;
   border-radius: 999px;
   border: none;
   background: linear-gradient(135deg, #087886 0%, #7cce6b 120%);
@@ -50,24 +70,29 @@
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   box-shadow: 0 4px 10px rgba(8, 120, 134, 0.3);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
 }
 
 .stories-add-button:hover {
   transform: translateY(-1px);
   box-shadow: 0 6px 16px rgba(8, 120, 134, 0.4);
+  filter: brightness(1.03);
 }
 
-/* Layout 2 colonne */
+/* ================= LAYOUT 2 COLONNE ================= */
 
 .stories-layout {
   display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 1.1fr);
+  grid-template-columns: minmax(0, 3fr) minmax(260px, 1.2fr); /* feed + colonna destra */
   gap: 24px;
+  align-items: flex-start;
 }
 
-/* Colonna sinistra: feed */
+/* ================= COLONNA SINISTRA: FEED ================= */
 
 .stories-main {
   display: flex;
@@ -81,13 +106,19 @@
   padding: 18px 20px;
   border: 1px solid #e5e7eb;
   box-shadow: 0 8px 18px rgba(15, 23, 42, 0.04);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.story-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.08);
 }
 
 .story-card-header {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .story-avatar {
@@ -189,7 +220,7 @@
   color: #9ca3af;
 }
 
-/* stile pulsante Modifica */
+/* Pulsanti Modifica / Elimina */
 
 .story-edit-button {
   padding: 6px 14px;
@@ -215,13 +246,15 @@
   transform: translateY(-1px);
 }
 
-/* Colonna destra: ultime storie */
+/* ================= COLONNA DESTRA: ULTIME STORIE ================= */
 
 .stories-sidebar {
-  background: #f9fafb;
+  align-self: flex-start;
+  background: #ffffff;
   border-radius: 20px;
-  padding: 16px 16px 18px;
+  padding: 16px 18px 18px;
   border: 1px solid #e5e7eb;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -231,15 +264,21 @@
   font-size: 15px;
   font-weight: 700;
   color: #087886;
-  margin: 0 0 4px;
+  margin: 0 0 6px;
 }
 
 .sidebar-story-card {
-  background: #ffffff;
+  background: #f9fafb;
   border-radius: 16px;
-  padding: 12px 14px;
+  padding: 10px 12px 12px;
   border: 1px solid #e5e7eb;
-  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.03);
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.04);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.sidebar-story-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
 }
 
 .sidebar-story-header {
@@ -316,7 +355,18 @@
   color: #6b7280;
 }
 
-/* Responsive */
+/* Messaggi di stato */
+.stories-loading,
+.stories-error {
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.stories-error {
+  color: #b91c1c;
+}
+
+/* ================= RESPONSIVE ================= */
 
 @media (max-width: 960px) {
   .stories-layout {
@@ -333,7 +383,7 @@
     padding: 20px 16px 24px;
   }
 
-  .stories-header {
+  .stories-hero {
     flex-direction: column;
     align-items: flex-start;
   }
