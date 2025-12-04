@@ -2,6 +2,7 @@ package it.lumen.business.gestionePartecipazione.control;
 
 import it.lumen.business.gestionePartecipazione.service.PartecipazioneEventoService;
 import it.lumen.business.gestioneAutenticazione.service.AutenticazioneService;
+import it.lumen.data.dto.PartecipazioneDTO;
 import it.lumen.data.entity.Evento;
 import it.lumen.data.entity.Partecipazione;
 import it.lumen.data.entity.Utente;
@@ -178,6 +179,26 @@ public class PartecipazioneEventoControl {
 
         } catch (Exception e) {
             return new ResponseEntity<>("Errore interno del server: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/cronologiaPartecipazioni")
+    public ResponseEntity<?> visualizzaCronologiaPartecipazioni(@RequestParam String token) {
+        if(token.isEmpty()){
+            return new ResponseEntity<>("Token non valido", HttpStatus.UNAUTHORIZED);
+        }
+        String email = util.extractEmail(token);
+        String ruolo = util.extractRuolo(token);
+
+        if (!"volontario".equalsIgnoreCase(ruolo)) {
+            return new ResponseEntity<>("Utente deve essere volontario per avere una cronologia di partecipazioni", HttpStatus.BAD_REQUEST);
+        }
+
+        try{
+            List<PartecipazioneDTO> cronologia = partecipazioneEventoService.cronologiaPartecipazioni(email);
+            return ResponseEntity.ok(cronologia);
+        }catch(Exception e){
+            return new ResponseEntity<>("Errore interno del server: \n---ERRORE NELLA CREAZIONE DELLA CRONOLOGIA---\n" + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

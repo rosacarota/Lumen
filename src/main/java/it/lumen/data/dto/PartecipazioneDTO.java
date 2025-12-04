@@ -22,6 +22,8 @@ public class PartecipazioneDTO {
     @NotNull(message = "L'id dell'evento è obbligatorio")
     private Integer idEvento;
 
+    private String nomeEvento;
+
     @NotBlank(message = "L'email del volontario è obbligatoria")
     @Email(message = "Formato email del volontario non valido")
     private String emailVolontario;
