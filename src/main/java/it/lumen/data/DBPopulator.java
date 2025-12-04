@@ -493,7 +493,7 @@ public class DBPopulator implements CommandLineRunner {
         evento2.setDataInizio(Date.valueOf(LocalDate.now().plusDays(10)));
         evento2.setDataFine(Date.valueOf(LocalDate.now().plusDays(12)));
         evento2.setMaxPartecipanti(30);
-        evento2.setIndirizzo(indEvento);
+        evento2.setIndirizzo(new Indirizzo(null, "Roma", "RM", "00100", "Via Roma", 10));
         evento2.setUtente(ente);
         eventoDAO.save(evento2);
 
