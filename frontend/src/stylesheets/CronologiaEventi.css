@@ -1,0 +1,124 @@
+@keyframes pulse-soft {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(74, 175, 184, 0.2);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 0.6rem rgba(74, 175, 184, 0);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(74, 175, 184, 0);
+    }
+}
+
+:root {
+    --bg-main: #F7FBFB;
+    --bg-soft: #f0f5f5;
+    --first-color: #087886;
+    --second-color: #4AAFB8;
+    --third-color: #7CCE6B;
+}
+
+.cronologia-card {
+    width: 100%;
+    height: 100%;
+    min-height: 50vh;
+    background: var(--first-color);
+    border-radius: 2rem;
+    box-shadow: 0 1rem 3rem rgba(8, 120, 134, 0.15);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.cronologia-header {
+    background-color: var(--bg-main);
+    padding: 4% 0;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 0.12rem solid #EDEDED;
+    border-bottom: 0.12rem solid var(--first-color);
+    z-index: 2;
+    position: relative;
+}
+
+.cronologia-header h3 {
+    margin: 0;
+    color: var(--first-color);
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: 0.03rem;
+    text-transform: uppercase;
+}
+
+.cronologia-body {
+    flex-grow: 1;
+    background: var(--bg-main);
+    padding: 3% 3% 0 3%;
+    display: flex;
+    flex-direction: column;
+    gap: 2%;
+    position: relative;
+    overflow-y: auto;
+    max-height: 70vh;
+    border: 0.12rem solid #EDEDED;
+}
+
+.cronologia-body::-webkit-scrollbar {
+    width: 0.4rem;
+}
+
+.cronologia-body::-webkit-scrollbar-thumb {
+    background-color: var(--second-color);
+    border-radius: 1rem;
+}
+
+.cronologia-list {
+    display: flex;
+    flex-direction: column;
+    gap: 3%;
+    padding-bottom: 3%;
+}
+
+.empty-state-event {
+    flex-grow: 1; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-top: -10%;
+    gap: 3%;
+    color: #6B7280;
+}
+
+.cronologia-icon-wrapper {
+    width: 5rem;
+    height: 5rem;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.6);
+    border: 0.12rem dashed var(--second-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pulse-soft 3s infinite ease-in-out;
+}
+
+.empty-state-event p {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--first-color);
+    opacity: 0.7;
+    margin-top: 2%;
+}
+
+.loading-text {
+    text-align: center;
+    color: #999;
+    padding-top: 3%;
+}
