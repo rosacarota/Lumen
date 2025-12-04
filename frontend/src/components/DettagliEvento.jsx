@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Calendar, MapPin, Users, Image as ImageIcon, Edit, Trash2 } from 'lucide-react';
+import Swal from 'sweetalert2'; 
 import '../stylesheets/DettagliEvento.css';
 
 import { fetchDatiUtente } from '../services/PartecipazioneEventoService';
@@ -40,19 +41,47 @@ export default function DettagliEvento({
     }
   };
 
+  // --- MODIFICA QUI: onClose() viene chiamato subito ---
   const handleElimina = async () => {
     const id = evento.idEvento || evento.id_evento || evento.id;
     
-    if (window.confirm(`Sei sicuro di voler eliminare definitivamente l'evento "${evento.titolo}"?`)) {
+    // 1. CHIUDO IL MODALE IMMEDIATAMENTE
+    onClose(); 
+
+    // 2. Poi mostro l'alert
+    const result = await Swal.fire({
+      title: 'Sei sicuro?',
+      text: `Sei sicuro di voler eliminare definitivamente l'evento "${evento.titolo}"?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#087886',
+      confirmButtonText: 'Sì, elimina',
+      cancelButtonText: 'Annulla'
+    });
+
+    if (result.isConfirmed) {
         try {
             await rimuoviEvento(id);
-            alert("Evento eliminato con successo.");
-            onClose();
+            
+            await Swal.fire({
+              icon: 'success',
+              title: 'Eliminato',
+              text: 'Evento eliminato con successo.',
+              confirmButtonColor: '#087886'
+            });
+
             window.location.reload();
         } catch (error) {
-            alert("Errore durante l'eliminazione: " + error.message);
+            Swal.fire({
+              icon: 'error',
+              title: 'Errore',
+              text: "Errore durante l'eliminazione: " + error.message,
+              confirmButtonColor: '#d33'
+            });
         }
     }
+    // Nota: Se l'utente clicca "Annulla", il modale rimane chiuso (come richiesto).
   };
 
   const formatDate = (dateString) => {
@@ -140,7 +169,6 @@ export default function DettagliEvento({
             <h2 className="modal-title">{evento.titolo}</h2>
           </div>
 
-          {/* --- NUOVO LAYOUT GRIGLIA --- */}
           <div className="modal-grid-info">
             
             {/* DATA INIZIO */}
@@ -152,7 +180,7 @@ export default function DettagliEvento({
               </div>
             </div>
 
-            {/* DATA FINE (Nuova) */}
+            {/* DATA FINE */}
             <div className="info-item">
               <Calendar className="info-icon" size={20} />
               <div>
@@ -161,8 +189,7 @@ export default function DettagliEvento({
               </div>
             </div>
 
-            {/* LUOGO (Spostato sotto e allargato) */}
-            {/* gridColumn: '1 / -1' forza l'elemento a occupare tutta la larghezza */}
+            {/* LUOGO */}
             <div className="info-item" style={{ gridColumn: '1 / -1' }}>
               <MapPin className="info-icon" size={20} />
               <div>
