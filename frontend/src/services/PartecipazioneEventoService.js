@@ -1,9 +1,8 @@
 const API_BASE_URL = "http://localhost:8080"; 
 
 const getToken = () => localStorage.getItem("token") || "";
-const getUserEmail = () => localStorage.getItem("userEmail") || "";
 
-// --- 1. RECUPERA EVENTI (GET) ---
+// --- 1. RECUPERA TUTTI GLI EVENTI (Bacheca Generale) ---
 export const fetchEvents = async () => {
   const url = new URL(`${API_BASE_URL}/evento/tuttiGliEventi`);
   try {
@@ -16,28 +15,23 @@ export const fetchEvents = async () => {
   } catch (error) { return []; }
 };
 
-// --- 2. CONTROLLA PARTECIPAZIONE (GET - Nuovo Endpoint Sicuro) ---
+// --- 2. CONTROLLA PARTECIPAZIONE SINGOLA ---
 export const checkUserParticipation = async (idEvento) => {
   const token = getToken();
   if (!token) return { isParticipating: false, idPartecipazione: null };
-
   try {
-    // Usiamo la GET che è più sicura e non richiede body
     const response = await fetch(`${API_BASE_URL}/partecipazione/checkIscrizione/${idEvento}?token=${encodeURIComponent(token)}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' }
     });
-
     if (!response.ok) return { isParticipating: false, idPartecipazione: null };
-
     return await response.json();
-
   } catch (error) {
     return { isParticipating: false, idPartecipazione: null };
   }
 };
 
-// --- 3. ISCRIVITI (GET) ---
+// --- 3. ISCRIVITI ---
 export const iscrivitiEvento = async (idEvento) => {
   const token = getToken();
   try {
@@ -45,9 +39,7 @@ export const iscrivitiEvento = async (idEvento) => {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' }
     });
-
     if (response.ok) return { success: true };
-    
     const text = await response.text();
     if (text.toLowerCase().includes("partecipa già")) return { success: true };
     return { success: false, message: text };
@@ -56,7 +48,7 @@ export const iscrivitiEvento = async (idEvento) => {
   }
 };
 
-// --- 4. RIMUOVI (POST) ---
+// --- 4. RIMUOVI ISCRIZIONE ---
 export const rimuoviIscrizione = async (idPartecipazione) => {
   const token = getToken();
   try {
@@ -65,7 +57,6 @@ export const rimuoviIscrizione = async (idPartecipazione) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ idPartecipazione: idPartecipazione })
     });
-
     if (response.ok) return { success: true };
     return { success: false, message: await response.text() };
   } catch (error) {
@@ -73,30 +64,20 @@ export const rimuoviIscrizione = async (idPartecipazione) => {
   }
 };
 
-// --- 5. LISTA PARTECIPANTI (POST - FIX BUG JAVA INT) ---
+// --- 5. LISTA PARTECIPANTI (Per Enti) ---
 export const fetchPartecipanti = async (idEvento) => {
   const token = getToken();
-  
-  // FIX CRITICO: Il backend Java si aspetta un oggetto Evento completo.
-  // Se 'maxPartecipanti' è un int primitivo in Java, non può essere null.
-  // Mandiamo '0' o un valore dummy per evitare l'errore 400.
   const payload = {
       idEvento: parseInt(idEvento),
-      maxPartecipanti: 0 // <--- QUESTO RISOLVE L'ERRORE "Cannot map null into type int"
+      maxPartecipanti: 0
   };
-
   try {
     const response = await fetch(`${API_BASE_URL}/partecipazione/visualizzaPartecipazioniEvento?token=${encodeURIComponent(token)}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
-
-    if (!response.ok) {
-        console.error("Errore fetch partecipanti:", response.status);
-        return [];
-    }
-
+    if (!response.ok) return [];
     const lista = await response.json();
     return lista.map(p => p.volontario);
   } catch (error) { 
@@ -104,7 +85,7 @@ export const fetchPartecipanti = async (idEvento) => {
   }
 };
 
-// --- 6. DATI UTENTE (GET) ---
+// --- 6. DATI UTENTE ---
 export const fetchDatiUtente = async () => {
   const token = getToken();
   if (!token) return null;
