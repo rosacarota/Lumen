@@ -12,6 +12,7 @@ import ProfiloVolontario from './pages/ProfiloVolontario';
 import ProfiloBeneficiario from './pages/ProfiloBeneficiario';
 import DashboardAffiliazione from './pages/DashboardAffiliazione';
 import RicercaGeografica from './pages/RicercaGeografica';
+import RisultatiRicerca from './pages/RisultatiRicerca';
 
 function App() {
   return (
@@ -32,9 +33,6 @@ function App() {
         <Route path="/eventi" element={<EventsPage />} />
         <Route path="/DashboardAffiliazione" element={<DashboardAffiliazione />} />
 
-        {/* Rotta AccessoInfoProfilo*/}
-        <Route path="/AccessoInfoProfilo" element={<AccessoInfoProfilo />} />
-
         {/* Rotte Profili */}
         <Route path="/profiloente" element={<ProfiloEnte />} />
         <Route path="/profilovolontario" element={<ProfiloVolontario />} />
@@ -42,6 +40,7 @@ function App() {
 
         {/* Rotta Ricerca Geografica */}
         <Route path="/ricercageografica" element={<RicercaGeografica />} />
+        <Route path="/cerca" element={<RisultatiRicerca />} />
 
         {/* Qualsiasi altro URL porta al Login */}
         <Route path="*" element={<Navigate to="/home" replace />} />
