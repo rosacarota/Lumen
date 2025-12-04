@@ -13,7 +13,7 @@ export const toBase64 = (file) =>
     reader.onerror = (error) => reject(error);
   });
 
-// 1. GET CRONOLOGIA
+// 1. GET CRONOLOGIA (Generica)
 export const getCronologiaEventi = async (stato = null) => {
   try {
     const token = getAuthToken();
@@ -34,6 +34,12 @@ export const getCronologiaEventi = async (stato = null) => {
     return [];
   }
 };
+
+// --- QUESTA È LA FUNZIONE CHE MANCAVA E CAUSAVA LA PAGINA BIANCA ---
+export const getEventiFuturi = async () => {
+  return await getCronologiaEventi('futuri');
+};
+// -------------------------------------------------------------------
 
 // 2. AGGIUNGI EVENTO
 export const addEvento = async (eventoInput) => {
@@ -78,10 +84,9 @@ export const updateEvento = async (eventoModificato) => {
     maxPartecipanti: parseInt(eventoModificato.maxPartecipanti),
     immagine: eventoModificato.immagineBase64 || null, 
     indirizzo: {
-        // Importante: se c'è un ID indirizzo va passato per aggiornare lo stesso record
         id: eventoModificato.indirizzo.id || eventoModificato.indirizzo.idIndirizzo,
         strada: eventoModificato.indirizzo.strada,
-        nCivico: eventoModificato.indirizzo.ncivico, // Attenzione al case sensitive del Backend (nCivico vs ncivico)
+        nCivico: eventoModificato.indirizzo.ncivico, 
         citta: eventoModificato.indirizzo.citta,
         provincia: eventoModificato.indirizzo.provincia,
         cap: eventoModificato.indirizzo.cap
@@ -101,14 +106,13 @@ export const updateEvento = async (eventoModificato) => {
   return true;
 };
 
-// 4. RIMUOVI EVENTO (alias deleteEvento per compatibilità)
+// 4. RIMUOVI EVENTO
 export const deleteEvento = async (idEvento) => {
     return rimuoviEvento(idEvento);
 };
 
 export const rimuoviEvento = async (idEvento) => {
     const token = getAuthToken();
-    // Alcuni backend vogliono l'ID nel body, altri nel path. Qui lo mettiamo nel body come da tua richiesta.
     const payload = { idEvento: idEvento };
 
     const response = await fetch(`${API_URL}/evento/rimuoviEvento?token=${encodeURIComponent(token)}`, {
