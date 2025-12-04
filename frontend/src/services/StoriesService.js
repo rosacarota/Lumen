@@ -58,7 +58,7 @@ function mapUpdatedStoryToApi(updatedStory) {
 export async function fetchStories() {
   const token = getAuthToken();
 
-  const res = await fetch(`${API_BASE_URL}/racconto/visualizza?token=${token}`, {
+  const res = await fetch(`${API_BASE_URL}/racconto/visualizzaTutti?token=${token}`, {
     method: "GET",
   });
 
