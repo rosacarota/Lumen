@@ -3,19 +3,18 @@ import { X, Calendar, MapPin, Users, Image as ImageIcon, Edit, Trash2 } from 'lu
 import '../stylesheets/DettagliEvento.css';
 
 import { fetchDatiUtente } from '../services/PartecipazioneEventoService';
-// Importiamo la funzione per eliminare (Logica interna al modale)
 import { rimuoviEvento } from '../services/EventoService';
 
 export default function DettagliEvento({ 
   evento, 
   onClose,
   onOpenParticipants,
-  onModifica // <--- Questa arriva dalla EventCard per aprire il popup di modifica
+  onModifica,
+  onElimina
 }) {
   
   const [currentUser, setCurrentUser] = useState(null);
 
-  // --- 1. RECUPERO UTENTE ---
   useEffect(() => {
     const loadUser = async () => {
       let user = null;
@@ -35,16 +34,13 @@ export default function DettagliEvento({
 
   if (!evento) return null; 
 
-  // --- GESTIONE TASTO VEDI PARTECIPANTI ---
   const handleVediPartecipanti = () => {
     if (onOpenParticipants) {
         onOpenParticipants();
     }
   };
 
-  // --- GESTIONE DIRETTA ELIMINAZIONE ---
   const handleElimina = async () => {
-    // Recuperiamo l'ID in modo sicuro
     const id = evento.idEvento || evento.id_evento || evento.id;
     
     if (window.confirm(`Sei sicuro di voler eliminare definitivamente l'evento "${evento.titolo}"?`)) {
@@ -52,7 +48,7 @@ export default function DettagliEvento({
             await rimuoviEvento(id);
             alert("Evento eliminato con successo.");
             onClose();
-            window.location.reload(); // Ricarica la pagina
+            window.location.reload();
         } catch (error) {
             alert("Errore durante l'eliminazione: " + error.message);
         }
@@ -62,7 +58,7 @@ export default function DettagliEvento({
   const formatDate = (dateString) => {
     if (!dateString) return "Data da definire";
     return new Date(dateString).toLocaleDateString('it-IT', {
-      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+      weekday: 'short', day: 'numeric', month: 'long', year: 'numeric'
     });
   };
 
@@ -105,7 +101,6 @@ export default function DettagliEvento({
     return "Luogo da definire";
   };
 
-  // --- CONTROLLO PROPRIETARIO ---
   const emailEnteEvento = getEnteEmail();
   const emailUtenteLoggato = currentUser?.email || "";
   const normalize = (str) => str ? str.trim().toLowerCase() : "";
@@ -145,7 +140,10 @@ export default function DettagliEvento({
             <h2 className="modal-title">{evento.titolo}</h2>
           </div>
 
+          {/* --- NUOVO LAYOUT GRIGLIA --- */}
           <div className="modal-grid-info">
+            
+            {/* DATA INIZIO */}
             <div className="info-item">
               <Calendar className="info-icon" size={20} />
               <div>
@@ -154,13 +152,25 @@ export default function DettagliEvento({
               </div>
             </div>
 
+            {/* DATA FINE (Nuova) */}
             <div className="info-item">
+              <Calendar className="info-icon" size={20} />
+              <div>
+                <span className="label">Data Fine</span>
+                <p>{formatDate(evento.data_fine || evento.dataFine)}</p>
+              </div>
+            </div>
+
+            {/* LUOGO (Spostato sotto e allargato) */}
+            {/* gridColumn: '1 / -1' forza l'elemento a occupare tutta la larghezza */}
+            <div className="info-item" style={{ gridColumn: '1 / -1' }}>
               <MapPin className="info-icon" size={20} />
               <div>
                 <span className="label">Luogo</span>
                 <p>{getIndirizzoCompleto()}</p>
               </div>
             </div>
+
           </div>
 
           <div className="modal-description">
@@ -168,7 +178,6 @@ export default function DettagliEvento({
             <p>{evento.descrizione || "Nessuna descrizione disponibile."}</p>
           </div>
 
-          {/* --- FOOTER --- */}
           <div className="modal-footer">
             <div className="partecipanti-stat">
               <Users size={18} />
@@ -176,20 +185,16 @@ export default function DettagliEvento({
             </div>
 
             <div className="modal-actions">
-              
               {isOwner ? (
                 <>
-                  {/* Elimina: Usa la funzione interna handleElimina */}
                   <button className="btn-danger" onClick={handleElimina}>
                     <Trash2 size={18} /> Elimina
                   </button>
                   
-                  {/* Modifica: Chiama la prop onModifica che apre il modale ModifyEvento */}
-                  <button className="btn-edit" onClick={(e) => { e.stopPropagation(); onModifica && onModifica(); }}>
+                  <button className="btn-edit" onClick={(e) => { e.stopPropagation(); onModifica && onModifica(evento); }}>
                     <Edit size={18}/> Modifica
                   </button>
 
-                  {/* Partecipanti: Apre il modale VisualizzaPartecipanti */}
                   <button className="btn-primary" onClick={handleVediPartecipanti}>
                     Vedi Partecipanti
                   </button>
@@ -197,7 +202,6 @@ export default function DettagliEvento({
               ) : (
                 <button className="btn-secondary" onClick={onClose}>Chiudi</button>
               )}
-
             </div>
           </div>
         </div>
