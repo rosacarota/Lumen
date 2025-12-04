@@ -208,7 +208,7 @@ const RisultatiRicerca = () => {
                 <h3>Non sei soddisfatto della ricerca?</h3>
                 <p>Mettiti in contatto con enti e volontari vicino a te.</p>
               </div>
-              <Link to="/ricerca-geografica" className="sr-geo-button">
+              <Link to="/ricercageografica" className="sr-geo-button">
                 <Map size={20} />
                 Prova la Ricerca Geografica
               </Link>
