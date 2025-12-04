@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
-// Rimosso useNavigate perché usiamo la prop onOpenParticipants
-import { X, Calendar, MapPin, Users, Image as ImageIcon } from 'lucide-react';
+import { X, Calendar, MapPin, Users, Image as ImageIcon, Edit, Trash2 } from 'lucide-react';
 import '../stylesheets/DettagliEvento.css';
 
 import { fetchDatiUtente } from '../services/PartecipazioneEventoService';
+// Importiamo la funzione per eliminare (Logica interna al modale)
+import { rimuoviEvento } from '../services/EventoService';
 
 export default function DettagliEvento({ 
   evento, 
   onClose,
-  onOpenParticipants 
+  onOpenParticipants,
+  onModifica // <--- Questa arriva dalla EventCard per aprire il popup di modifica
 }) {
   
   const [currentUser, setCurrentUser] = useState(null);
@@ -33,11 +35,27 @@ export default function DettagliEvento({
 
   if (!evento) return null; 
 
+  // --- GESTIONE TASTO VEDI PARTECIPANTI ---
   const handleVediPartecipanti = () => {
-    // Gestione ID sia snake_case che camelCase
-    const id = evento.idEvento || evento.id_evento;
     if (onOpenParticipants) {
-        onOpenParticipants(id);
+        onOpenParticipants();
+    }
+  };
+
+  // --- GESTIONE DIRETTA ELIMINAZIONE ---
+  const handleElimina = async () => {
+    // Recuperiamo l'ID in modo sicuro
+    const id = evento.idEvento || evento.id_evento || evento.id;
+    
+    if (window.confirm(`Sei sicuro di voler eliminare definitivamente l'evento "${evento.titolo}"?`)) {
+        try {
+            await rimuoviEvento(id);
+            alert("Evento eliminato con successo.");
+            onClose();
+            window.location.reload(); // Ricarica la pagina
+        } catch (error) {
+            alert("Errore durante l'eliminazione: " + error.message);
+        }
     }
   };
 
@@ -48,20 +66,17 @@ export default function DettagliEvento({
     });
   };
 
-  // --- LOGICHE RECUPERO DATI (Con Log di Debug) ---
+  // --- LOGICHE DATI ---
   const getEnteEmail = () => {
-    // Priorità: ente (oggetto) > ente (stringa) > utente (oggetto) > utente (stringa)
-    let emailTrovata = "";
-
     if (evento.ente) {
-        if (typeof evento.ente === 'object') emailTrovata = evento.ente.email;
-        else emailTrovata = evento.ente;
-    } else if (evento.utente) {
-        if (typeof evento.utente === 'object') emailTrovata = evento.utente.email;
-        else emailTrovata = evento.utente;
+        if (typeof evento.ente === 'string') return evento.ente;
+        return evento.ente.email || "";
     }
-    
-    return emailTrovata || "";
+    if (evento.utente) {
+        if (typeof evento.utente === 'string') return evento.utente;
+        return evento.utente.email || "";
+    }
+    return "";
   };
 
   const getEnteName = () => {
@@ -98,15 +113,6 @@ export default function DettagliEvento({
   const isOwner = currentUser && 
                   normalize(currentUser.ruolo) === 'ente' &&
                   normalize(emailEnteEvento) === normalize(emailUtenteLoggato);
-
-  // --- DEBUG DETTAGLIATO ---
-  console.group(`🔎 DEBUG MODALE (ID: ${evento.idEvento})`);
-  console.log("CHI SONO IO (Browser):", emailUtenteLoggato);
-  console.log("CHI HA CREATO L'EVENTO (Evento):", emailEnteEvento);
-  console.log("IL MIO RUOLO:", currentUser?.ruolo);
-  console.log("MATCH:", isOwner ? "✅ SÌ (Mostro tasto)" : "❌ NO (Nascondo tasto)");
-  console.log("DATI GREZZI EVENTO:", evento);
-  console.groupEnd();
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -162,20 +168,36 @@ export default function DettagliEvento({
             <p>{evento.descrizione || "Nessuna descrizione disponibile."}</p>
           </div>
 
+          {/* --- FOOTER --- */}
           <div className="modal-footer">
             <div className="partecipanti-stat">
               <Users size={18} />
-              <span>Max {evento.maxpartecipanti || evento.maxPartecipanti || "Illimitati"} posti</span>
+              <span>Max {evento.maxpartecipanti || evento.maxPartecipanti}</span>
             </div>
 
             <div className="modal-actions">
-              <button className="btn-secondary" onClick={onClose}>Chiudi</button>
               
-              {isOwner && (
-                <button className="btn-primary" onClick={handleVediPartecipanti}>
-                  Vedi Partecipanti
-                </button>
+              {isOwner ? (
+                <>
+                  {/* Elimina: Usa la funzione interna handleElimina */}
+                  <button className="btn-danger" onClick={handleElimina}>
+                    <Trash2 size={18} /> Elimina
+                  </button>
+                  
+                  {/* Modifica: Chiama la prop onModifica che apre il modale ModifyEvento */}
+                  <button className="btn-edit" onClick={(e) => { e.stopPropagation(); onModifica && onModifica(); }}>
+                    <Edit size={18}/> Modifica
+                  </button>
+
+                  {/* Partecipanti: Apre il modale VisualizzaPartecipanti */}
+                  <button className="btn-primary" onClick={handleVediPartecipanti}>
+                    Vedi Partecipanti
+                  </button>
+                </>
+              ) : (
+                <button className="btn-secondary" onClick={onClose}>Chiudi</button>
               )}
+
             </div>
           </div>
         </div>

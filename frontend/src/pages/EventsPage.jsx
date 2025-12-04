@@ -6,25 +6,18 @@ import Footer from '../components/Footer';
 
 // Servizi
 import { fetchEvents } from '../services/PartecipazioneEventoService'; 
-import { getCronologiaEventi } from '../services/CronologiaEventiService'; 
+// Ho rimosso l'import di cronologia perché non serve più senza il tasto
 
 export default function EventsPage() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [viewMode, setViewMode] = useState('tutti'); 
 
-  // Funzione unica per caricare i dati
-  const loadData = async (mode) => {
+  // Funzione semplificata: carica sempre tutti gli eventi
+  const loadData = async () => {
     setLoading(true);
     try {
-      let data = [];
-      if (mode === 'tutti') {
-        data = await fetchEvents();
-      } else {
-        data = await getCronologiaEventi(null);
-      }
+      const data = await fetchEvents();
       setEvents(data);
-      setViewMode(mode);
     } catch (error) {
       console.error("Errore caricamento:", error);
     } finally {
@@ -33,7 +26,7 @@ export default function EventsPage() {
   };
 
   useEffect(() => {
-    loadData('tutti');
+    loadData();
   }, []);
 
   return (
@@ -46,30 +39,14 @@ export default function EventsPage() {
           
           <div className="box-header">
              <div className="header-text">
-                <h1>{viewMode === 'tutti' ? 'Tutti gli Eventi' : 'La tua Cronologia'}</h1>
+                <h1>Tutti gli Eventi</h1>
                 <p>Scopri le attività della community e partecipa.</p>
              </div>
              
-             <div style={{ marginTop: '15px', display: 'flex', gap: '10px' }}>
-                <button 
-                  onClick={() => loadData('tutti')} 
-                  className="btn-new"
-                  style={{ 
-                    backgroundColor: viewMode === 'tutti' ? '#087886' : '#e0e0e0', 
-                    color: viewMode === 'tutti' ? 'white' : '#333',
-                    border: 'none', cursor: 'pointer' 
-                  }}
-                >Tutti</button>
-                <button 
-                  onClick={() => loadData('cronologia')} 
-                  className="btn-new"
-                  style={{ 
-                    backgroundColor: viewMode === 'cronologia' ? '#087886' : '#e0e0e0', 
-                    color: viewMode === 'cronologia' ? 'white' : '#333',
-                    border: 'none', cursor: 'pointer'
-                  }}
-                >Cronologia</button>
-             </div>
+             {/* 
+                QUI C'ERANO I TASTI "TUTTI" E "CRONOLOGIA".
+                LI HO RIMOSSI COME RICHIESTO.
+             */}
           </div>
 
           <div className="events-grid">
@@ -88,8 +65,6 @@ export default function EventsPage() {
                 event={event}  
                 
                 showParticipate={true}
-                
-                // NOTA: Ho rimosso onOpenDetails perché ora la Card si gestisce da sola!
               />
             ))}
           </div>

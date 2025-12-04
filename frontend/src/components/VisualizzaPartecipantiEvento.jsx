@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { X, Users, ArrowLeft, Mail, Phone } from 'lucide-react';
+import { X, Users, ArrowLeft } from 'lucide-react';
 import SchedaVolontario from './SchedaVolontario';
 import { fetchPartecipanti } from '../services/PartecipazioneEventoService';
 import '../stylesheets/VisualizzaPartecipanti.css';
 
-export default function VisualizzaPartecipantiEvento({ idEvento, onClose, onBack }) {
+export default function VisualizzaPartecipantiEvento({ 
+  idEvento, 
+  titoloEvento, // <--- Nuova prop ricevuta
+  onClose, 
+  onBack 
+}) {
   
   const [listaVolontari, setListaVolontari] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -12,11 +17,7 @@ export default function VisualizzaPartecipantiEvento({ idEvento, onClose, onBack
 
   useEffect(() => {
     const loadData = async () => {
-      // DEBUG 1: Vediamo se l'ID arriva
-      console.log(`[MODALE PARTECIPANTI] Avvio caricamento per ID:`, idEvento);
-
       if (!idEvento) {
-        console.error("[MODALE PARTECIPANTI] Errore: ID Evento mancante!");
         setError("Errore tecnico: ID Evento non ricevuto.");
         setLoading(false);
         return;
@@ -24,12 +25,7 @@ export default function VisualizzaPartecipantiEvento({ idEvento, onClose, onBack
 
       try {
         setLoading(true);
-        // Chiamata al Service
         const data = await fetchPartecipanti(idEvento);
-        
-        // DEBUG 2: Vediamo cosa risponde il server
-        console.log(`[MODALE PARTECIPANTI] Dati ricevuti dal server:`, data);
-
         setListaVolontari(data);
       } catch (err) {
         console.error(err);
@@ -56,7 +52,10 @@ export default function VisualizzaPartecipantiEvento({ idEvento, onClose, onBack
             )}
             <div>
                 <h2>Partecipanti</h2>
-                <p>Evento <strong>#{idEvento}</strong></p>
+                {/* Mostra il titolo se presente, altrimenti l'ID */}
+                <p style={{ fontSize: '1.1rem', fontWeight: '600', color: '#334155' }}>
+                  {titoloEvento ? titoloEvento : `Evento #${idEvento}`}
+                </p>
             </div>
           </div>
 
@@ -83,13 +82,11 @@ export default function VisualizzaPartecipantiEvento({ idEvento, onClose, onBack
                 <div className="empty-state">
                     <Users size={48} color="#cbd5e1" />
                     <p>Non ci sono ancora volontari iscritti.</p>
-                    <small>Controlla la console (F12) se pensi che sia un errore.</small>
                 </div>
             )}
 
             <div className="vp-grid">
                 {listaVolontari.map((volontario, index) => (
-                    // Usiamo index come fallback per la key se email manca
                     <SchedaVolontario 
                         key={volontario?.email || index} 
                         utente={volontario} 

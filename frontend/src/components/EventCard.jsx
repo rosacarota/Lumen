@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { CalendarDays, MapPin, Users, Info, UserPlus, UserCheck, Image as ImageIcon } from 'lucide-react';
 import '../stylesheets/EventCard.css';
 
-// Modali
+// --- IMPORT DEI 3 MODALI ---
 import DettagliEvento from './DettagliEvento';
 import VisualizzaPartecipantiEvento from './VisualizzaPartecipantiEvento';
+import ModifyEvento from './ModifyEvento'; // <--- Assicurati che questo file esista in components
 
 import { 
   iscrivitiEvento, 
@@ -13,13 +14,14 @@ import {
   fetchDatiUtente 
 } from '../services/PartecipazioneEventoService';
 
+import { rimuoviEvento } from '../services/EventoService';
+
 export default function EventCard({ event, showParticipate = true }) {
   
   // --- 1. RECUPERO SICURO DELL'ID ---
-  // Cerchiamo l'ID in tutti i modi possibili per evitare "undefined"
   const safeId = event.id || event.idEvento || event.id_evento;
 
-  // Destrutturiamo i dati (con fallback ai nomi raw se il mapping non c'è)
+  // Destrutturiamo i dati
   const title = event.title || event.titolo;
   const description = event.description || event.descrizione;
   const location = event.location || (event.indirizzo ? "Vedi dettagli" : event.luogo);
@@ -27,7 +29,6 @@ export default function EventCard({ event, showParticipate = true }) {
   const maxParticipants = event.maxParticipants || event.maxPartecipanti || event.maxpartecipanti;
   const image = event.image || event.immagine;
   
-  // Per l'organizzatore usiamo una logica specifica sotto, o quella mappata
   const organizerNameMapped = event.organizerName;
 
   // --- STATI ---
@@ -35,6 +36,9 @@ export default function EventCard({ event, showParticipate = true }) {
   const [participationId, setParticipationId] = useState(null);
   const [loadingBtn, setLoadingBtn] = useState(false);
   const [userRole, setUserRole] = useState("");
+  
+  // STATO PER GESTIRE QUALE MODALE È APERTO
+  // Valori: 'details', 'participants', 'edit', null
   const [activeModal, setActiveModal] = useState(null);
 
   // Formattazione data
@@ -42,11 +46,9 @@ export default function EventCard({ event, showParticipate = true }) {
     ? new Date(startDate).toLocaleDateString('it-IT', { day: 'numeric', month: 'short', year: 'numeric' })
     : "Data da definire";
 
-  // --- CALCOLO NOME ORGANIZZATORE (Se non arriva già mappato) ---
+  // --- CALCOLO NOME ORGANIZZATORE ---
   const getOrganizerName = () => {
     if (organizerNameMapped) return organizerNameMapped;
-
-    // Logica di fallback sui dati raw
     if (event.utente) {
         if (typeof event.utente === 'object') return event.utente.nome || event.utente.email || "Ente";
         return event.utente;
@@ -76,7 +78,6 @@ export default function EventCard({ event, showParticipate = true }) {
 
       const isVolontario = ruoloFinale && ruoloFinale.toLowerCase() === "volontario";
 
-      // Usiamo safeId qui
       if (showParticipate && isVolontario && safeId) {
         const status = await checkUserParticipation(safeId);
         setIsParticipating(status.isParticipating);
@@ -86,14 +87,30 @@ export default function EventCard({ event, showParticipate = true }) {
     if (safeId) initializeCard();
   }, [safeId, showParticipate]);
 
-  // --- HANDLERS ---
+  // --- HANDLERS PER I MODALI ---
+
+  // 1. Apre la modifica (chiamato dal tasto dentro DettagliEvento)
+  const handleOpenModifica = () => {
+    setActiveModal('edit');
+  };
+
+  // 2. Callback dopo aver salvato la modifica
+  const handleUpdateSuccess = () => {
+    setActiveModal(null); // Chiude tutto
+    window.location.reload(); // Ricarica la pagina per vedere le modifiche
+  };
+
+  // 3. Eliminazione diretta dalla card (opzionale, se volessi metterlo anche fuori)
+  // (Nota: DettagliEvento ha già la sua logica interna di eliminazione che hai aggiunto tu)
+
+  // --- HANDLERS PARTECIPAZIONE ---
   const handleToggleParticipation = async (e) => {
     e.stopPropagation();
     if (loadingBtn) return;
     setLoadingBtn(true);
 
     if (!isParticipating) {
-      const result = await iscrivitiEvento(safeId); // Usa safeId
+      const result = await iscrivitiEvento(safeId);
       if (result.success) {
         alert("Iscrizione avvenuta con successo!");
         setIsParticipating(true);
@@ -132,7 +149,6 @@ export default function EventCard({ event, showParticipate = true }) {
     setLoadingBtn(false);
   };
 
-  // Safe Avatar Letter
   const avatarLetter = (displayOrganizerName || "E").charAt(0).toUpperCase();
 
   return (
@@ -207,22 +223,37 @@ export default function EventCard({ event, showParticipate = true }) {
         </div>
       </div>
 
-      {/* MODALI */}
+      {/* --- GESTIONE MODALI --- */}
+
+      {/* 1. MODALE DETTAGLI */}
       {activeModal === 'details' && (
         <DettagliEvento 
-          // Passiamo event.raw se esiste, altrimenti event
           evento={event.raw || event} 
           onClose={() => setActiveModal(null)}
           onOpenParticipants={() => setActiveModal('participants')}
+          
+          // Passiamo la funzione che chiude Dettagli e apre Modifica
+          onModifica={handleOpenModifica} 
         />
       )}
 
+      {/* 2. MODALE PARTECIPANTI */}
       {activeModal === 'participants' && (
         <VisualizzaPartecipantiEvento 
-          // QUI USIAMO safeId CHE ORA E' SICURO
           idEvento={safeId}
+          titoloEvento={title} 
           onClose={() => setActiveModal(null)}
           onBack={() => setActiveModal('details')} 
+        />
+      )}
+
+      {/* 3. MODALE MODIFICA (Nuovo) */}
+      {activeModal === 'edit' && (
+        <ModifyEvento
+            isOpen={true}
+            onClose={() => setActiveModal('details')} // Se chiudi, torna ai dettagli
+            eventToEdit={event.raw || event}          // Passiamo i dati dell'evento
+            onUpdate={handleUpdateSuccess}            // Cosa fare dopo il salvataggio
         />
       )}
     </>

@@ -155,6 +155,46 @@
 }
 .btn-close-absolute:hover { color: #ef4444; }
 
+/* ... altri stili ... */
+
+/* Stile per il tasto Elimina */
+.btn-danger {
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid #ef4444;
+  background-color: white;
+  color: #ef4444;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-danger:hover {
+  background-color: #ef4444;
+  color: white;
+}
+
+/* Stile per il tasto Modifica (simile al secondario ma specifico se vuoi) */
+.btn-edit {
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid #64748b;
+  background-color: white;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-edit:hover {
+  background-color: #f1f5f9;
+}
+
 /* ANIMAZIONI */
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes scaleUp { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
