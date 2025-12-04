@@ -18,11 +18,13 @@ public class GestioneRaccontoControl {
     private final GestioneRaccontoService gestioneRaccontoService;
     private final JwtUtil util;
     private final AutenticazioneService autenticazioneService;
+    private final JwtUtil jwtUtil;
 
-    public GestioneRaccontoControl(GestioneRaccontoService gestioneRaccontoService, JwtUtil util, AutenticazioneService autenticazioneService) {
+    public GestioneRaccontoControl(GestioneRaccontoService gestioneRaccontoService, JwtUtil util, AutenticazioneService autenticazioneService, JwtUtil jwtUtil) {
             this.gestioneRaccontoService = gestioneRaccontoService;
             this.util = util;
             this.autenticazioneService = autenticazioneService;
+        this.jwtUtil = jwtUtil;
     }
 
 
@@ -155,6 +157,16 @@ try {
 
         return ResponseEntity.ok(lista);
 
+    }
+
+    @GetMapping("/visualizzaTutti")
+    public ResponseEntity<List<Racconto>>  visualizzaTuttiRaccontiUtente(@RequestParam String token) {
+
+        if(jwtUtil.extractEmail(token) == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        List<Racconto> lista = gestioneRaccontoService.listaRacconti();
+        return ResponseEntity.ok(lista);
     }
 
 }

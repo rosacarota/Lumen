@@ -147,6 +147,10 @@ public class GestioneRaccontoServiceImpl implements GestioneRaccontoService {
         return racconti;
     }
 
+    public List<Racconto> listaRacconti() {
+        return raccontoDAO.findAll();
+    }
+
     // ========================= IMMAGINI =========================
 
     public String salvaImmagine(String base64) throws IOException {
