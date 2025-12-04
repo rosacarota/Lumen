@@ -42,7 +42,7 @@ const ProfiloEnte = () => {
   const [isOwner, setIsOwner] = useState(false);
 
   // --- STATI RUOLI ---
-  const [isEnte, setIsEnte] = useState(false);           // <--- FONDAMENTALE
+  const [isEnte, setIsEnte] = useState(false);
   const [isVolunteer, setIsVolunteer] = useState(false);
   const [isBeneficiary, setIsBeneficiary] = useState(false);
 
@@ -71,34 +71,28 @@ const ProfiloEnte = () => {
       const myData = await fetchUserProfile();
       setCurrentUser(myData);
 
-      // A. RESETTIAMO I RUOLI PRIMA DI CONTROLLARE
+      // Reset Ruoli
       setIsEnte(false);
       setIsVolunteer(false);
       setIsBeneficiary(false);
 
-      // B. CONTROLLO RUOLI (Case Insensitive)
       if (myData && myData.ruolo) {
         const ruolo = myData.ruolo.toLowerCase();
-
-        if (ruolo === 'ente') setIsEnte(true);              // <--- Setto isEnte
+        if (ruolo === 'ente') setIsEnte(true);
         if (ruolo === 'volontario') setIsVolunteer(true);
         if (ruolo === 'beneficiario') setIsBeneficiary(true);
       }
 
-      // C. CONTROLLO OWNER (Chi visita chi?)
+      // Controllo Owner
       if (!id || (myData && String(myData.id) === String(id))) {
-        // Sono sul MIO profilo
         setIsOwner(true);
         setProfileData(myData);
         return myData;
       } else {
-        // Sono un VISITATORE
         setIsOwner(false);
-        // TODO: Se avessi l'API getEnteById(id), la useresti qui:
-        // const enteData = await getEnteById(id);
-        // setProfileData(enteData);
-        console.warn("Sei visitatore. Qui servirebbe caricare i dati dell'ente ID:", id);
-        return null;
+        // NOTA: Qui dovresti caricare i dati dell'ente che stai visitando se non sei tu!
+        // Per ora ritorno null, ma questo impedisce di vedere i dati se sei un visitatore.
+        return null; 
       }
     } catch (error) { console.error(error); return null; }
   };
@@ -109,14 +103,19 @@ const ProfiloEnte = () => {
     try {
       let stato = activeTab === 'corso' ? 'IN_CORSO' : (activeTab === 'svolti' ? 'TERMINATO' : 'PROGRAMMATO');
       const data = await getCronologiaEventi(stato);
+      
       const mapped = Array.isArray(data) ? data.map(ev => ({
         id_evento: ev.id || ev.idEvento,
         titolo: ev.titolo,
         descrizione: ev.descrizione,
         luogo: ev.indirizzo ? `${ev.indirizzo.citta}, ${ev.indirizzo.strada}` : (ev.luogo || "N/D"),
+        
+        // FIX: Mappatura robusta delle date come nel vecchio codice
         dataInizio: ev.dataInizio,
         data_inizio: ev.dataInizio,
         dataFine: ev.dataFine,
+        data_fine: ev.dataFine,
+
         maxpartecipanti: ev.maxPartecipanti,
         immagine: ev.immagine,
         ente: ev.enteNome || targetProfile?.nome || "Ente",
@@ -133,9 +132,11 @@ const ProfiloEnte = () => {
     try {
       const responseData = await getRaccolteDiEnte();
       const listaVera = Array.isArray(responseData) ? responseData : (responseData.content || []);
+      
       const mapped = listaVera.map(item => ({
         ...item,
-        id_raccolta: item.id || item.idRaccolta,
+        // FIX: Ripristinato idRaccoltaFondi che mancava nel nuovo codice
+        id_raccolta: item.id || item.idRaccolta || item.idRaccoltaFondi,
         ente: targetProfile.nome,
         data_apertura: item.dataApertura,
         data_chiusura: item.dataChiusura
@@ -158,7 +159,9 @@ const ProfiloEnte = () => {
     const init = async () => {
       const profile = await loadData();
       const dataToLoad = profile || profileData;
-      if (dataToLoad || id) {
+      
+      // Carichiamo i dati solo se abbiamo un profilo valido
+      if (dataToLoad) {
         await loadEventi(dataToLoad);
         await loadRaccolte(dataToLoad);
         await loadStorie(dataToLoad);
@@ -167,7 +170,9 @@ const ProfiloEnte = () => {
     init();
   }, [id]);
 
-  useEffect(() => { loadEventi(profileData); }, [activeTab]);
+  useEffect(() => { 
+    if(profileData) loadEventi(profileData); 
+  }, [activeTab]);
 
   // 4. HANDLERS
   const handleDeleteEvento = async (idEvento) => {
@@ -180,8 +185,14 @@ const ProfiloEnte = () => {
   };
 
   const handleTerminateRaccolta = async (idRaccolta) => {
-    const raccolta = raccolteList.find(r => r.id_raccolta === idRaccolta);
-    if (!raccolta) return;
+    // FIX: Uso String() per evitare errori se l'ID è numerico e idRaccolta è stringa
+    const raccolta = raccolteList.find(r => String(r.id_raccolta) === String(idRaccolta));
+    
+    if (!raccolta) {
+      console.error("Raccolta non trovata! ID cercato:", idRaccolta, "Lista:", raccolteList);
+      return;
+    }
+
     const res = await Swal.fire({ title: 'Terminare?', text: raccolta.titolo, icon: 'warning', showCancelButton: true });
     if (res.isConfirmed) {
       await terminaRaccolta({ ...raccolta, enteObj: profileData });
@@ -208,28 +219,18 @@ const ProfiloEnte = () => {
             </div>
 
             <div className="actions-right">
-
-              {/* ------------------------------------------------------------- */}
-              {/* QUI C'ERA L'ERRORE. ORA CONTROLLIAMO SIA OWNER CHE ENTE */}
-              {/* ------------------------------------------------------------- */}
-
               {isOwner && isEnte ? (
-                /* MOSTRA TASTI SOLO SE SONO OWNER **E** SONO UN ENTE */
                 <>
                   <button className="btn-action" onClick={() => setShowAddEventoModal(true)}>CREA EVENTO</button>
                   <button className="btn-action" onClick={() => setShowRaccoltaModal(true)}>CREA RACCOLTA FONDI</button>
                 </>
               ) : (
-                /* CASO VISITATORE (O BENEFICIARIO SUL PROPRIO PROFILO) */
                 <>
-                  {/* Se sono Volontario e NON è il mio profilo */}
                   {isVolunteer && isOwner && (
                     <button className="btn-action btn-affiliation" onClick={() => setShowAffiliazioneModal(true)}>
                       Richiedi affiliazione
                     </button>
                   )}
-
-                  {/* Se sono Beneficiario e NON è il mio profilo */}
                   {isBeneficiary && isOwner && (
                     <button className="btn-action btn-affiliation" onClick={() => setShowServizioModal(true)}>
                       Richiedi Servizio
@@ -237,7 +238,6 @@ const ProfiloEnte = () => {
                   )}
                 </>
               )}
-
             </div>
           </div>
 
@@ -246,9 +246,17 @@ const ProfiloEnte = () => {
               <div className="event-grid">
                 {loadingEventi ? <p>Caricamento...</p> : eventiList.length === 0 ? <p>Nessun evento.</p> :
                   eventiList.map(ev => (
-                    /* Anche le card possono essere modificate solo se Owner ED Ente */
                     (isOwner && isEnte) ?
-                      <EventCardEnte key={ev.id_evento} {...ev} eventData={ev.rawData} onElimina={handleDeleteEvento} onModifica={(e) => { setEventoDaModificare(e); setShowModifyEventoModal(true); }} />
+                      <EventCardEnte 
+                        key={ev.id_evento} 
+                        {...ev} 
+                        eventData={ev.rawData} 
+                        onElimina={handleDeleteEvento} 
+                        onModifica={(e) => { 
+                             setEventoDaModificare(e); 
+                             setShowModifyEventoModal(true); 
+                        }} 
+                      />
                       : <EventCard key={ev.id_evento} {...ev} showParticipate={true} />
                   ))
                 }
@@ -273,7 +281,14 @@ const ProfiloEnte = () => {
                 )}
                 {activeSideTab === 'raccolte' && (
                   <div className="raccolte-list">
-                    {raccolteList.map(r => <RaccoltaFondiCard key={r.id_raccolta} {...r} isOwner={isOwner && isEnte} onTerminate={handleTerminateRaccolta} />)}
+                    {raccolteList.map(r => (
+                        <RaccoltaFondiCard 
+                            key={r.id_raccolta} 
+                            {...r} 
+                            isOwner={isOwner && isEnte} 
+                            onTerminate={handleTerminateRaccolta} 
+                        />
+                    ))}
                   </div>
                 )}
               </div>
@@ -283,14 +298,15 @@ const ProfiloEnte = () => {
       </div>
       <Footer />
 
-      {/* --- MODALI (Solo se Owner e Ente) --- */}
+      {/* --- MODALI --- */}
       {isOwner && isEnte && showAddEventoModal && <AddEvento onBack={() => setShowAddEventoModal(false)} onSubmit={() => { setShowAddEventoModal(false); loadEventi(profileData); }} isModal={true} enteId={profileData?.id} />}
+      
       {isOwner && isEnte && showModifyEventoModal && <ModifyEvento isOpen={showModifyEventoModal} onClose={() => { setShowModifyEventoModal(false); setEventoDaModificare(null); }} eventToEdit={eventoDaModificare} onUpdate={() => loadEventi(profileData)} />}
+      
       {isOwner && isEnte && showRaccoltaModal && <ModalWrapper onClose={() => setShowRaccoltaModal(false)}><AddRaccoltaFondi enteLogged={profileData} onClose={() => { setShowRaccoltaModal(false); loadRaccolte(profileData); }} isModal={true} /></ModalWrapper>}
 
-      {/* --- MODALI (Visitatore) --- */}
-      {isOwner && showAffiliazioneModal && <RichiestaAffiliazione onClose={() => setShowAffiliazioneModal(false)} emailEnte={profileData?.email} isModal={true} />}
-      {isOwner && showServizioModal && <ModalWrapper onClose={() => setShowServizioModal(false)}><RichiestaServizio onClose={() => setShowServizioModal(false)} emailEnte={profileData?.email} /></ModalWrapper>}
+      {!isOwner && showAffiliazioneModal && <RichiestaAffiliazione onClose={() => setShowAffiliazioneModal(false)} emailEnte={profileData?.email} isModal={true} />}
+      {!isOwner && showServizioModal && <ModalWrapper onClose={() => setShowServizioModal(false)}><RichiestaServizio onClose={() => setShowServizioModal(false)} emailEnte={profileData?.email} /></ModalWrapper>}
 
     </div>
   );
