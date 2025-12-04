@@ -1,7 +1,7 @@
 import React from 'react';
 import Navbar from '../components/Navbar';
 import AccessoInfoProfilo from '../components/AccessoInfoProfilo';
-import BachecaUltimeStorie from '../components/BachecaUltimeStorie';
+import BachecaRacconti from '../components/BachecaRacconti';
 import Footer from '../components/Footer';
 import '../stylesheets/ProfiloBeneficiario.css';
 
@@ -14,7 +14,7 @@ const ProfiloBeneficiario = () => {
           <AccessoInfoProfilo />
         </section>
         <section className="beneficiary-stories-section">
-          <BachecaUltimeStorie />
+          <BachecaRacconti />
         </section>
       </div>
       <Footer />
