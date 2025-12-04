@@ -82,6 +82,10 @@ public class GestioneEventoServiceImpl implements GestioneEventoService {
 
                 return eventoDAO.findAllByUtente_EmailAndDataFineBefore(email, oggi);
 
+            case "futuri":
+
+                return eventoDAO.findAllByUtente_EmailAndDataInizioAfter(email, oggi);
+
             default:
 
                 return eventoDAO.findAllByUtente_Email(email);
