@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import VisualizzaRicercaGeografica from '../components/VisualizzaRicercaGeografica';
-import { Users, HeartHandshake, GraduationCap, Leaf, HeartPulse, Siren } from 'lucide-react';
+import { Users, HeartHandshake, GraduationCap, Leaf, HeartPulse, Siren, Loader2 } from 'lucide-react';
 import '../stylesheets/RicercaGeografica.css';
+import useRicercaGeografica from '../services/RicercaGeograficaService.js'; // Assicurati che il path sia corretto
 
 const ambiti = [
     { id: 'Strengthening Communities', label: 'Strengthening Communities', icon: Users, description: 'Supporto e sviluppo delle comunità locali' },
@@ -14,77 +15,30 @@ const ambiti = [
     { id: 'Emergency Preparedness', label: 'Emergency Preparedness', icon: Siren, description: 'Prevenzione e gestione delle emergenze' }
 ];
 
-// Dati Mock per simulare i risultati
-const mockUsers = [
-    {
-        email: "filippoparisi@yahoo.it",
-        nome: "Filippo",
-        cognome: "Parisi",
-        indirizzo: { citta: "Brooklyn", provincia: "NY", cap: "11217", strada: "Nevins St", nCivico: 21 },
-        recapitoTelefonico: "333000011",
-        ambito: "Strengthening Communities",
-        ruolo: "Volontario"
-    },
-    {
-        email: "mariarossi@gmail.com",
-        nome: "Maria",
-        cognome: "Rossi",
-        indirizzo: { citta: "Roma", provincia: "RM", cap: "00100", strada: "Via Roma", nCivico: 10 },
-        recapitoTelefonico: "333123456",
-        ambito: "Education",
-        ruolo: "Ente"
-    },
-    {
-        email: "giovanniverdi@libero.it",
-        nome: "Giovanni",
-        cognome: "Verdi",
-        indirizzo: { citta: "Milano", provincia: "MI", cap: "20100", strada: "Corso Italia", nCivico: 5 },
-        recapitoTelefonico: "333987654",
-        ambito: "Environment",
-        ruolo: "Volontario"
-    },
-    {
-        email: "lucabianchi@hotmail.com",
-        nome: "Luca",
-        cognome: "Bianchi",
-        indirizzo: { citta: "Napoli", provincia: "NA", cap: "80100", strada: "Via Toledo", nCivico: 33 },
-        recapitoTelefonico: "333456789",
-        ambito: "Health",
-        ruolo: "Ente"
-    },
-    {
-        email: "annaneri@outlook.com",
-        nome: "Anna",
-        cognome: "Neri",
-        indirizzo: { citta: "Torino", provincia: "TO", cap: "10100", strada: "Via Po", nCivico: 12 },
-        recapitoTelefonico: "333112233",
-        ambito: "Helping Neighbors in Need",
-        ruolo: "Volontario"
-    },
-    {
-        email: "paologialli@gmail.com",
-        nome: "Paolo",
-        cognome: "Gialli",
-        indirizzo: { citta: "Firenze", provincia: "FI", cap: "50100", strada: "Ponte Vecchio", nCivico: 1 },
-        recapitoTelefonico: "333998877",
-        ambito: "Emergency Preparedness",
-        ruolo: "Ente"
-    }
-];
-
 const RicercaGeografica = () => {
     const [selectedAmbito, setSelectedAmbito] = useState(null);
     const [selectedRole, setSelectedRole] = useState('all'); // 'all', 'Ente', 'Volontario'
 
+    // Utilizzo dell'hook personalizzato per la logica API
+    const { results, isLoading, error, fetchResults, setResults } = useRicercaGeografica();
+
     const handleSelect = (id) => {
-        setSelectedAmbito(selectedAmbito === id ? null : id);
+        const newAmbito = selectedAmbito === id ? null : id;
+        setSelectedAmbito(newAmbito);
+
+        if (newAmbito) {
+            fetchResults(newAmbito); // Chiama l'API
+        } else {
+            setResults([]); // Pulisce se deselezionato
+        }
     };
 
-    // Filtra i risultati in base all'ambito selezionato e al ruolo
-    const filteredResults = mockUsers.filter(user => {
-        const matchAmbito = selectedAmbito ? user.ambito === selectedAmbito : true;
+    // Filtra i risultati API lato client per il ruolo (l'ambito è già filtrato dal backend)
+    const filteredResults = results.filter(user => {
+        // Nota: il backend filtra già per ambito geografico e categoria.
+        // Qui filtriamo solo visivamente per ruolo se l'utente usa i bottoni.
         const matchRole = selectedRole === 'all' ? true : user.ruolo === selectedRole;
-        return matchAmbito && matchRole;
+        return matchRole;
     });
 
     return (
@@ -149,7 +103,7 @@ const RicercaGeografica = () => {
                             <h3>
                                 {selectedAmbito
                                     ? `Risultati per: ${ambiti.find(a => a.id === selectedAmbito)?.label}`
-                                    : "Tutti i profili"}
+                                    : "Seleziona una categoria per iniziare"}
                             </h3>
                             <span className="geo-count-badge">{filteredResults.length} trovati</span>
                         </div>
@@ -176,15 +130,26 @@ const RicercaGeografica = () => {
                         </div>
                     </div>
 
-                    {filteredResults.length > 0 ? (
+                    {/* Logica di rendering condizionale per Loading, Errori e Risultati */}
+                    {isLoading ? (
+                        <div className="geo-loading" style={{textAlign: 'center', padding: '3rem'}}>
+                            <Loader2 className="animate-spin" size={48} style={{margin: '0 auto', color: 'var(--primary-color)'}}/>
+                            <p style={{marginTop: '1rem', color: '#666'}}>Ricerca profili compatibili in corso...</p>
+                        </div>
+                    ) : error ? (
+                        <div className="geo-error" style={{textAlign: 'center', padding: '2rem', color: '#ef4444'}}>
+                            <p>{error}</p>
+                        </div>
+                    ) : filteredResults.length > 0 ? (
                         <div className="geo-results-grid">
                             {filteredResults.map((user, index) => (
+                                // Nota: VisualizzaRicercaGeografica si aspetta una prop "data" come nel tuo esempio originale
                                 <VisualizzaRicercaGeografica key={index} data={user} />
                             ))}
                         </div>
                     ) : (
                         <div className="geo-no-results">
-                            <p>Nessun risultato trovato per questa categoria.</p>
+                            <p>{selectedAmbito ? "Nessun risultato trovato per questa categoria nella tua zona." : "Clicca su una card sopra per cercare."}</p>
                         </div>
                     )}
                 </div>
