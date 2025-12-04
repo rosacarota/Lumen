@@ -13,6 +13,8 @@ import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import jakarta.transaction.Transactional;
 
@@ -37,6 +39,14 @@ public class GestioneEventoServiceImpl implements GestioneEventoService {
     @Override
     @Transactional
     public Evento modificaEvento(Evento evento) {
+
+        try {
+            String path = salvaImmagine(evento.getImmagine());
+            evento.setImmagine(path);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         return eventoDAO.save(evento);
     }
 
@@ -108,7 +118,7 @@ public class GestioneEventoServiceImpl implements GestioneEventoService {
             throw new IllegalArgumentException("Nome file non valido estratto dal percorso: " + pathImmagine);
         }
 
-        String UPLOAD_DIR = "uploads/profile_images/";
+        String UPLOAD_DIR = "uploads/stories/";
         Path filePath = Paths.get(UPLOAD_DIR).resolve(fileName);
 
         if (!Files.exists(filePath)) {
@@ -129,5 +139,44 @@ public class GestioneEventoServiceImpl implements GestioneEventoService {
 
         String base64Content = Base64.getEncoder().encodeToString(imageBytes);
         return "data:" + mimeType + ";base64," + base64Content;
+    }
+
+    public String salvaImmagine(String base64String) throws IOException {
+
+        if (base64String == null || base64String.trim().isEmpty()) {
+            return null;
+        }
+
+        String[] parts = base64String.split(",");
+        String header = parts[0];
+        String content = parts[1];
+
+        String extension = ".jpg";
+        if (header.contains("image/png")) {
+            extension = ".png";
+        } else if (header.contains("image/jpeg") || header.contains("image/jpg")) {
+            extension = ".jpg";
+        } else if (header.contains("image/gif")) {
+            extension = ".gif";
+        }
+
+        byte[] imageBytes = Base64.getDecoder().decode(content);
+
+        String fileName = UUID.randomUUID().toString() + extension;
+
+        String UPLOAD_DIR = "uploads/stories/";
+        Path uploadPath = Paths.get(UPLOAD_DIR);
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+
+        Path filePath = uploadPath.resolve(fileName);
+
+        Files.write(filePath, imageBytes);
+
+
+        return "/stories/" + fileName;
+
+
     }
 }

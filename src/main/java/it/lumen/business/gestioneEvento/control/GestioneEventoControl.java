@@ -170,6 +170,14 @@ public class GestioneEventoControl {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
+        for (Evento evento : listaEventi) {
+            try {
+                evento.setImmagine(gestioneEventoService.recuperaImmagine(evento.getImmagine()));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
         return ResponseEntity.ok(listaEventi);
 
     }
@@ -179,6 +187,14 @@ public class GestioneEventoControl {
         List<Evento> eventi = gestioneEventoService.tuttiGliEventi();
         if (eventi == null || eventi.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        for (Evento evento : eventi) {
+            try {
+                evento.setImmagine(gestioneEventoService.recuperaImmagine(evento.getImmagine()));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
         return ResponseEntity.ok(eventi);
     }

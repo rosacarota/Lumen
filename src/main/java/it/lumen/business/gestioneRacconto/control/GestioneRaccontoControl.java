@@ -160,7 +160,7 @@ try {
     }
 
     @GetMapping("/visualizzaTutti")
-    public ResponseEntity<List<Racconto>>  visualizzaTuttiRaccontiUtente(@RequestParam String token) {
+    public ResponseEntity<List<Racconto>>  visualizzaTuttiRacconti(@RequestParam String token) {
 
         if(jwtUtil.extractEmail(token) == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
