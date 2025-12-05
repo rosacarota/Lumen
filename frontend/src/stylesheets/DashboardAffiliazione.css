@@ -5,7 +5,7 @@
     flex-direction: column;
   }
   
-  /* ================== CONTENITORE CENTRALE ================== */
+  /* CONTENITORE CENTRALE*/
   .dashaff-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -14,7 +14,7 @@
     flex: 1;
   }
   
-  /* ================== HEADER ================== */
+  /* HEADER*/
   .dashaff-header {
     display: flex;
     justify-content: space-between;
@@ -36,7 +36,7 @@
     color: #6B7280;
   }
   
-  /* ======TAB====== */
+  /* TAB*/
   .dashaff-tabs {
     display: flex;
     gap: 10px;
@@ -62,14 +62,14 @@
     box-shadow: 0 4px 10px rgba(8, 120, 134, 0.3);
   }
   
-  /* ================== LAYOUT DUE COLONNE ================== */
+  /* LAYOUT DUE COLONNE */
   .dashaff-layout {
     display: grid;
     grid-template-columns: minmax(0, 3fr) minmax(0, 1.5fr);
     gap: 24px;
   }
   
-  /* ================== COLONNA SINISTRA ================== */
+  /* COLONNA SINISTRA */
   .dashaff-left {}
   
   /* Search bar */

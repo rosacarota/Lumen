@@ -30,7 +30,7 @@ export default function DashboardAffiliazione() {
 
   const navigate = useNavigate();
 
-  // ---------------- CARICA AFFILIATI ----------------
+  // CARICA AFFILIATI 
   const loadAffiliati = async () => {
     setLoadingAffiliati(true);
     setErrorAffiliati(null);
@@ -46,7 +46,7 @@ export default function DashboardAffiliazione() {
     }
   };
 
-  // ---------------- CARICA RICHIESTE ----------------
+  // CARICA RICHIESTE 
   const loadRichieste = async () => {
     setLoadingRichieste(true);
     setErrorRichieste(null);
@@ -70,7 +70,7 @@ export default function DashboardAffiliazione() {
     loadRichieste();
   }, [navigate]);
 
-  // ----RIMUOVI AFFILIATO----
+  // RIMUOVI AFFILIATO
   const handleRemove = async (idAffiliazione) => {
     if (!window.confirm("Confermi la rimozione?")) return;
 
@@ -86,7 +86,7 @@ export default function DashboardAffiliazione() {
     }
   };
 
-  // ---------------- ACCETTA  ----------------
+  // ACCETTA 
   const handleAccettaRichiesta = async (idAffiliazione) => {
     if (!window.confirm("Confermi l’accettazione?")) return;
 
@@ -106,7 +106,7 @@ export default function DashboardAffiliazione() {
     }
   };
 
-  // ---------------- RIFIUTA  ----------------
+  // RIFIUTA 
   const handleRifiutaRichiesta = async (idAffiliazione) => {
     if (!window.confirm("Confermi il rifiuto?")) return;
 
@@ -123,19 +123,19 @@ export default function DashboardAffiliazione() {
     }
   };
 
-  // ---------------- FILTRO AFFILIATI  ----------------
+  // FILTRO AFFILIATI
   const filteredVolontari = volontari.filter(v =>
     `${v.nome} ${v.cognome}`.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // ---------------- RICHIESTE ORDINATE ----------------
+  // RICHIESTE ORDINATE 
   const richiesteOrdinate = [...richieste].sort((a, b) => {
     const d1 = a.dataInizio ? new Date(a.dataInizio) : new Date(0);
     const d2 = b.dataInizio ? new Date(b.dataInizio) : new Date(0);
     return d2 - d1; // più recenti prima
   });
 
-  // ---------------- ULTIME 2 PER SIDEBAR  ----------------
+  // ULTIME 2 PER SIDEBAR 
   const ultimeRichieste = richiesteOrdinate.slice(0, 2);
 
   return (
@@ -165,7 +165,7 @@ export default function DashboardAffiliazione() {
         </div>
 
         <div className="dashaff-layout">
-          {/* ---------------- SINISTRA ---------------- */}
+          {/* SINISTRA  */}
           <div className="dashaff-left">
 
             {/* Barra ricerca affiliati */}
@@ -225,7 +225,7 @@ export default function DashboardAffiliazione() {
               </>
             )}
 
-            {/* ======== LISTA RICHIESTE ======== */}
+            {/* LISTA RICHIESTE*/}
             {activeTab === "richieste" && (
               <>
                 {loadingRichieste ? (
@@ -280,7 +280,7 @@ export default function DashboardAffiliazione() {
 
           </div>
 
-          {/* ======== SIDEBAR ULTIME RICHIESTE ======== */}
+          {/*SIDEBAR ULTIME RICHIESTE */}
           <div className="dashaff-right">
             <div className="dashaff-sidebar">
               <h3>Ultime richieste</h3>

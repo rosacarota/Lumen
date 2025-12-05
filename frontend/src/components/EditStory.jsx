@@ -7,10 +7,10 @@ const EditStory = ({ story, onCancel, onSave }) => {
   const [title, setTitle] = useState(story.title || "");
   const [content, setContent] = useState(story.content || "");
   const [file, setFile] = useState(null);
-  const [imageRemoved, setImageRemoved] = useState(false); // nuova flag per rimuovere immagine
+  const [imageRemoved, setImageRemoved] = useState(false); // flag per rimuovere immagine
   const fileInputRef = useRef(null);
 
-  // Converti file in Base64
+  // Convertire file in Base64
   const toBase64 = (file) =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -66,7 +66,7 @@ const EditStory = ({ story, onCancel, onSave }) => {
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     setFile(selectedFile || null);
-    setImageRemoved(false); // se carico un file nuovo, non rimuovere
+    setImageRemoved(false); 
   };
 
   const handleTypeChange = (type) => {

@@ -40,7 +40,7 @@
   animation: fadeIn 0.3s ease-out;
 }
 
-/* --- CONTENITORE PRINCIPALE (La card bianca) --- */
+/* --- CONTENITORE PRINCIPALE (card bianca) --- */
 .add-story-container {
   position: relative;
   width: 100%;
@@ -53,9 +53,8 @@
   min-height: 480px;
   max-height: 90vh;
   z-index: 20001;
-  /* ANIMAZIONE FLUIDA DELL'ALTEZZA DEL MODALE */
   transition: min-height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), 
-              max-height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  max-height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 /* --- PULSANTE INDIETRO (Freccia) --- */
@@ -105,9 +104,9 @@
   position: absolute;
   inset: 0;
   background: linear-gradient(135deg,
-      rgba(8, 120, 134, 0.8) 0%,
-      rgba(74, 175, 184, 0.6) 50%,
-      rgba(124, 206, 107, 0.4) 100%);
+  rgba(8, 120, 134, 0.8) 0%,
+  rgba(74, 175, 184, 0.6) 50%,
+  rgba(124, 206, 107, 0.4) 100%);
 }
 
 .blur-circle {
@@ -293,8 +292,8 @@
   height: 18px;
 }
 
-/* --- ANIMAZIONE AREA UPLOAD --- */
-/* Questa classe gestisce l'apertura/chiusura fluida */
+/* ANIMAZIONE AREA UPLOAD*/
+/* gestisce l'apertura/chiusura fluida */
 .upload-collapse-wrapper {
   display: grid;
   grid-template-rows: 0fr; /* Chiuso di default */
@@ -307,12 +306,12 @@
 }
 
 .upload-collapse-wrapper.open {
-  grid-template-rows: 1fr; /* Aperto: altezza automatica */
+  grid-template-rows: 1fr; /* altezza automatica */
   opacity: 1;
-  margin-top: -8px; /* Ripristina il margine negativo originale */
+  margin-top: -8px; 
 }
 
-/* Contenuto interno necessario per il grid trick */
+
 .upload-collapse-inner {
   overflow: hidden;
 }
