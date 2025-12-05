@@ -2,18 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { Camera, Plus, Loader2 } from 'lucide-react';
 import '../stylesheets/BachecaRacconti.css';
 import AggiungiStoria from '../components/AddStory';
-
 import { fetchStories, addStory } from '../services/StoriesService';
 
-const BachecaRacconti = () => {
+const BachecaRacconti = ({ isOwner, targetEmail }) => {
     const [stories, setStories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isAddStoryOpen, setIsAddStoryOpen] = useState(false);
 
     const loadStories = async () => {
+        if (!targetEmail) return;
+
         setLoading(true);
         try {
-            const data = await fetchStories();
+            const data = await fetchStories(targetEmail);
             setStories(data);
         } catch (error) {
             console.error("Errore caricamento storie:", error);
@@ -24,7 +25,7 @@ const BachecaRacconti = () => {
 
     useEffect(() => {
         loadStories();
-    }, []);
+    }, [targetEmail]);
 
     const handleSaveStory = async (newStoryData) => {
         try {
@@ -41,7 +42,7 @@ const BachecaRacconti = () => {
             <div className="stories-card">
                 <div className="stories-header">
                     <h3>BACHECA RACCONTI</h3>
-                    {!loading && stories.length > 0 && (
+                    {!loading && stories.length > 0 && isOwner && (
                         <button 
                             className="header-add-btn" 
                             onClick={() => setIsAddStoryOpen(true)}
@@ -66,14 +67,18 @@ const BachecaRacconti = () => {
                                 <Camera size={32} color="#4AAFB8" />
                             </div>
                             <p>Non ci sono racconti attivi.</p>
-                            <div 
-                                className="empty-icon-wrapper add-action" 
-                                onClick={() => setIsAddStoryOpen(true)}
-                                title="Crea una nuova storia"
-                            >
-                                <Plus size={32} color="#4AAFB8" />
-                            </div>
-                            <p className="small-text">Aggiungi racconto</p>
+                            {isOwner && (
+                                <>
+                                    <div 
+                                        className="empty-icon-wrapper add-action" 
+                                        onClick={() => setIsAddStoryOpen(true)}
+                                        title="Crea una nuova storia"
+                                    >
+                                        <Plus size={32} color="#4AAFB8" />
+                                    </div>
+                                    <p className="small-text">Aggiungi racconto</p>
+                                </>
+                            )}
                         </div>
 
                     ) : (
@@ -108,7 +113,7 @@ const BachecaRacconti = () => {
                     )}
                 </div>
             </div>
-            {isAddStoryOpen && (
+            {isOwner && isAddStoryOpen && (
                 <AggiungiStoria 
                     onClose={() => setIsAddStoryOpen(false)}
                     onSubmit={handleSaveStory}
