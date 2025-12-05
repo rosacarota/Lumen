@@ -482,12 +482,7 @@ export default function LoginPage() {
                       </div>
                     </div>
                     <button onClick={handleSubmit} style={styles.submitButton}>LOGIN</button>
-                    <div style={styles.loginOptions}>
-                      <label style={styles.rememberMe}>
-                        <input type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} style={styles.checkbox} /> Ricordami
-                      </label>
-                      <button style={styles.forgotPassword}>Password dimenticata?</button>
-                    </div>
+                    
                   </div>
                 )}
 
