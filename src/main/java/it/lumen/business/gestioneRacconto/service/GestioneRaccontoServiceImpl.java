@@ -57,9 +57,8 @@ public class GestioneRaccontoServiceImpl implements GestioneRaccontoService {
             throw new RuntimeException("Racconto non trovato con id: " + nuovoRacconto.getIdRacconto());
         }
 
-        // Mantieni vecchia immagine se non viene inviata una nuova
         if (nuovoRacconto.getImmagine() == null || nuovoRacconto.getImmagine().isEmpty()) {
-            nuovoRacconto.setImmagine(vecchioRacconto.getImmagine());
+            nuovoRacconto.setImmagine(null);
         } else {
             try {
                 // Salva nuova immagine

@@ -3,10 +3,13 @@ package it.lumen.business.gestioneRacconto.control;
 import it.lumen.business.gestioneAutenticazione.service.AutenticazioneService;
 import it.lumen.business.gestioneRacconto.service.GestioneRaccontoService;
 import it.lumen.data.entity.Racconto;
+import it.lumen.data.entity.Utente;
 import it.lumen.security.JwtUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 import java.sql.Date;
 import java.util.List;
 import java.util.Map;
@@ -166,6 +169,14 @@ try {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         List<Racconto> lista = gestioneRaccontoService.listaRacconti();
+        for(Racconto r : lista) {
+            Utente utente = r.getUtente();
+            try {
+                utente.setImmagine(autenticazioneService.recuperaImmagine(utente.getImmagine()));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
         return ResponseEntity.ok(lista);
     }
 
