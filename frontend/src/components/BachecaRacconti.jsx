@@ -2,14 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { Camera, Plus, Loader2 } from 'lucide-react';
 import '../stylesheets/BachecaRacconti.css';
 import AggiungiStoria from '../components/AddStory';
-import { fetchStories, addStory } from '../services/StoriesService';
+import { fetchStories, addStory, fetchFilteredStories } from '../services/StoriesService';
 
 const BachecaRacconti = ({ isOwner, targetEmail }) => {
-    const [stories, setStories] = useState([]);
+    //const [stories, setStories] = useState([]);
+    const [filteredStories, setFilteredStories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isAddStoryOpen, setIsAddStoryOpen] = useState(false);
 
-    const loadStories = async () => {
+    /*const loadStories = async () => {
         if (!targetEmail) return;
 
         setLoading(true);
@@ -21,17 +22,28 @@ const BachecaRacconti = ({ isOwner, targetEmail }) => {
         } finally {
             setLoading(false);
         }
+    };*/
+
+    const loadFilteredStories = async () => {
+        if(!targetEmail)return;
+        setLoading(true);
+        try {
+            const filteredData = await fetchFilteredStories(targetEmail);
+            setFilteredStories(filteredData);
+        }catch(error){console.error("Errore durante il caricamento delle storie dell'utente: ", error);}
+        finally {setLoading(false);}
     };
 
     useEffect(() => {
-        loadStories();
+        //loadStories();
+        loadFilteredStories();
     }, [targetEmail]);
 
     const handleSaveStory = async (newStoryData) => {
         try {
             await addStory(newStoryData);
             setIsAddStoryOpen(false);
-            await loadStories();
+            await loadFilteredStories();
         } catch (error) {
             alert("Errore durante la pubblicazione: " + error.message);
         }
@@ -42,7 +54,7 @@ const BachecaRacconti = ({ isOwner, targetEmail }) => {
             <div className="stories-card">
                 <div className="stories-header">
                     <h3>BACHECA RACCONTI</h3>
-                    {!loading && stories.length > 0 && isOwner && (
+                    {!loading && filteredStories.length > 0 && isOwner && (
                         <button 
                             className="header-add-btn" 
                             onClick={() => setIsAddStoryOpen(true)}
@@ -61,7 +73,7 @@ const BachecaRacconti = ({ isOwner, targetEmail }) => {
                         <div style={{ display: 'flex', justifyContent: 'center', padding: '20px' }}>
                             <Loader2 className="animate-spin" color="#4AAFB8" />
                         </div>
-                    ) : stories.length === 0 ? (
+                    ) : filteredStories.length === 0 ? (
                         <div className="empty-state">
                             <div className="empty-icon-wrapper">
                                 <Camera size={32} color="#4AAFB8" />
@@ -84,7 +96,7 @@ const BachecaRacconti = ({ isOwner, targetEmail }) => {
                     ) : (
                         
                         <div className="stories-list" style={{ overflowY: 'auto', maxHeight: '100%', display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                            {stories.map((story) => (
+                            {filteredStories.map((story) => (
                                 <div key={story.id} className="story-item">
                                     <div className="story-avatar">
                                         <span style={{ color: 'white', fontWeight: 'bold' }}>
