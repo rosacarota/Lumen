@@ -70,10 +70,14 @@ public class RicercaUtenteControl {
     }
 
     @PostMapping("/ricercaGeografica")
-    public ResponseEntity<List<Utente>> searchMatchingVolunteers(@RequestParam String token, @RequestBody SearchRequest frontendRequest) {
+    public ResponseEntity<List<?>> searchMatchingVolunteers(@RequestParam String token, @RequestBody SearchRequest frontendRequest) {
 
         String emailUtente = jwtUtil.extractEmail(token);
         Utente utenteLoggato = autenticazioneService.getUtente(emailUtente);
+
+        if(utenteLoggato.getRuolo() != Utente.Ruolo.Beneficiario){
+            return ResponseEntity.badRequest().body(null);
+        }
 
         if (utenteLoggato == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
