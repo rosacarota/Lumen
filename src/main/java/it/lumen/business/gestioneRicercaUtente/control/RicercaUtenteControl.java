@@ -55,6 +55,8 @@ public class RicercaUtenteControl {
                     utenteDTO.setCognome(utente.getCognome());
                     utenteDTO.setEmail(utente.getEmail());
                     utenteDTO.setRuolo(utente.getRuolo());
+                    utenteDTO.setAmbito(utente.getAmbito());
+                    utenteDTO.setDescrizione(utente.getDescrizione());
                     try{
                             utenteDTO.setImmagine(autenticazioneService.recuperaImmagine(utente.getImmagine()));
                             }catch(IOException e){
