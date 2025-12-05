@@ -76,15 +76,31 @@ export async function fetchStories(targetEmail = null) {
   if (targetEmail) {
       const safeTarget = targetEmail.trim().toLowerCase();
       
-      const filtered = allStories.filter(story => {
+      /*const filtered = allStories.filter(story => {
           const match = story.authorEmail === safeTarget;
           return match;
       });
       
-      return filtered;
+      return filtered;*/
   }
 
   return allStories;
+}
+
+export async function fetchFilteredStories(targetEmail = null){
+  const token = getAuthToken();
+
+  const res = await fetch(`${API_BASE_URL}/racconto/visualizza?token=${token}`, {
+    method: "GET",
+  });
+  if(!res.ok) throw new Error("Errore nel caricamento delle storie filtrate");
+
+  const data = await res.json();
+
+  const filteredStories = data.map(mapStoryFromApi);
+
+  return filteredStories;
+  
 }
 
 export async function addStory(newStory) {

@@ -2,14 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { Camera, Plus, Loader2 } from 'lucide-react';
 import '../stylesheets/BachecaRacconti.css';
 import AggiungiStoria from '../components/AddStory';
-import { fetchStories, addStory } from '../services/StoriesService';
+import { fetchStories, addStory, fetchFilteredStories } from '../services/StoriesService';
 
 const BachecaRacconti = ({ isOwner, targetEmail }) => {
-    const [stories, setStories] = useState([]);
+    //const [stories, setStories] = useState([]);
+    const [stories, setFilteredStories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isAddStoryOpen, setIsAddStoryOpen] = useState(false);
 
-    const loadStories = async () => {
+    /*const loadStories = async () => {
         if (!targetEmail) return;
 
         setLoading(true);
@@ -21,10 +22,21 @@ const BachecaRacconti = ({ isOwner, targetEmail }) => {
         } finally {
             setLoading(false);
         }
+    };*/
+
+    const loadFilteredStories = async () => {
+        if(!targetEmail)return;
+        setLoading(true);
+        try {
+            const filteredData = await fetchFilteredStories(targetEmail);
+            setFilteredStories(filteredData);
+        }catch(error){console.error("Errore durante il caricamento delle storie dell'utente: ", error);}
+        finally {setLoading(false);}
     };
 
     useEffect(() => {
-        loadStories();
+        //loadStories();
+        loadFilteredStories();
     }, [targetEmail]);
 
     const handleSaveStory = async (newStoryData) => {
