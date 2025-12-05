@@ -2,14 +2,21 @@ import React from 'react';
 import { Mail, Phone, Briefcase } from 'lucide-react'; 
 import '../stylesheets/SchedaVolontario.css';
 
-export default function SchedaVolontario({ utente }) {
+// 1. Ricevi onClick dalle props
+export default function SchedaVolontario({ utente, onClick }) {
   if (!utente) return null;
 
   const { nome, cognome, immagine, descrizione, email, recapitoTelefonico, ambito } = utente;
   const iniziali = `${nome?.charAt(0) || ''}${cognome?.charAt(0) || ''}`;
 
   return (
-    <div className="volunteer-card-horizontal">
+    // 2. Aggiungi l'evento onClick al div principale
+    // 3. Aggiungi style cursor: pointer per far capire che è cliccabile
+    <div 
+      className="volunteer-card-horizontal" 
+      onClick={onClick}
+      style={{ cursor: onClick ? 'pointer' : 'default' }}
+    >
       
       {/* SEZIONE SINISTRA: AVATAR + DATI PRINCIPALI */}
       <div className="vol-left-group">
@@ -33,8 +40,6 @@ export default function SchedaVolontario({ utente }) {
               </span>
             )}
           </div>
-          {/* La descrizione la nascondiamo o la mettiamo piccola sotto se serve */}
-          {/* <p className="vol-bio-small">{descrizione}</p> */}
         </div>
       </div>
 

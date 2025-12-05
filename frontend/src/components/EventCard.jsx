@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
+// 1. Importiamo useNavigate
+import { useNavigate } from 'react-router-dom';
 import { CalendarDays, MapPin, Users, Info, UserPlus, UserCheck, Image as ImageIcon } from 'lucide-react';
-import Swal from 'sweetalert2'; // <--- IMPORTANTE
+import Swal from 'sweetalert2';
 import '../stylesheets/EventCard.css';
 
-// --- IMPORT DEI 3 MODALI ---
+// MODALI
 import DettagliEvento from './DettagliEvento';
 import VisualizzaPartecipantiEvento from './VisualizzaPartecipantiEvento';
-import ModifyEvento from './ModifyEvento'; 
+import ModifyEvento from './ModifyEvento';
 
 import { 
   iscrivitiEvento, 
@@ -19,10 +21,11 @@ import { rimuoviEvento } from '../services/EventoService';
 
 export default function EventCard({ event, showParticipate = true }) {
   
-  // --- 1. RECUPERO SICURO DELL'ID ---
+  // 2. Inizializziamo il navigatore
+  const navigate = useNavigate();
+
   const safeId = event.id || event.idEvento || event.id_evento;
 
-  // Destrutturiamo i dati
   const title = event.title || event.titolo;
   const description = event.description || event.descrizione;
   const location = event.location || (event.indirizzo ? "Vedi dettagli" : event.luogo);
@@ -32,21 +35,16 @@ export default function EventCard({ event, showParticipate = true }) {
   
   const organizerNameMapped = event.organizerName;
 
-  // --- STATI ---
   const [isParticipating, setIsParticipating] = useState(false);
   const [participationId, setParticipationId] = useState(null);
   const [loadingBtn, setLoadingBtn] = useState(false);
   const [userRole, setUserRole] = useState("");
-  
-  // STATO PER GESTIRE QUALE MODALE È APERTO
   const [activeModal, setActiveModal] = useState(null);
 
-  // Formattazione data
   const fullDate = startDate 
     ? new Date(startDate).toLocaleDateString('it-IT', { day: 'numeric', month: 'short', year: 'numeric' })
     : "Data da definire";
 
-  // --- CALCOLO NOME ORGANIZZATORE ---
   const getOrganizerName = () => {
     if (organizerNameMapped) return organizerNameMapped;
     if (event.utente) {
@@ -60,9 +58,18 @@ export default function EventCard({ event, showParticipate = true }) {
     return "Ente";
   };
   
-  const displayOrganizerName = getOrganizerName();
+  // Cerchiamo di recuperare anche l'email dell'ente se serve per la navigazione futura
+  const getOrganizerEmail = () => {
+    if (event.organizerEmail) return event.organizerEmail;
+    if (event.utente && typeof event.utente === 'object') return event.utente.email;
+    if (event.ente && typeof event.ente === 'object') return event.ente.email;
+    if (typeof event.ente === 'string') return event.ente;
+    return "";
+  }
 
-  // --- CONTROLLO INIZIALE ---
+  const displayOrganizerName = getOrganizerName();
+  // const organizerEmail = getOrganizerEmail(); // Utile se vorrai passare l'email nell'URL
+
   useEffect(() => {
     const initializeCard = async () => {
       let ruoloFinale = "";
@@ -87,7 +94,15 @@ export default function EventCard({ event, showParticipate = true }) {
     if (safeId) initializeCard();
   }, [safeId, showParticipate]);
 
-  // --- HANDLERS PER I MODALI ---
+  // --- 3. NUOVA FUNZIONE PER CLICK SULL'ENTE ---
+  const handleEnteClick = (e) => {
+    e.stopPropagation(); // Evita di aprire i dettagli dell'evento
+    
+    // Opzionale: Salva l'email nel localStorage se la pagina profilo la legge da lì
+    // localStorage.setItem("selectedEnteEmail", getOrganizerEmail());
+
+    navigate('/ProfiloEnte');
+  };
 
   const handleOpenModifica = () => {
     setActiveModal('edit');
@@ -98,38 +113,33 @@ export default function EventCard({ event, showParticipate = true }) {
     window.location.reload(); 
   };
 
-  // --- HANDLERS PARTECIPAZIONE (CON SWEETALERT) ---
+  const handleEliminaEvento = async () => {
+    if (window.confirm(`Sei sicuro di voler eliminare l'evento "${title}"?`)) {
+        try {
+            await rimuoviEvento(safeId);
+            window.location.reload();
+        } catch (error) {
+            alert("Errore: " + error.message);
+        }
+    }
+  };
+
   const handleToggleParticipation = async (e) => {
     e.stopPropagation();
     if (loadingBtn) return;
     setLoadingBtn(true);
 
     if (!isParticipating) {
-      // --- ISCRIZIONE ---
       const result = await iscrivitiEvento(safeId);
       if (result.success) {
-        // SUCCESSO
-        Swal.fire({
-            icon: 'success',
-            title: 'Iscrizione effettuata!',
-            text: `Ti sei iscritto a: ${title}`,
-            timer: 2000,
-            showConfirmButton: false
-        });
-        
+        Swal.fire({ icon: 'success', title: 'Iscrizione effettuata!', text: `Ti sei iscritto a: ${title}`, timer: 2000, showConfirmButton: false });
         setIsParticipating(true);
         const status = await checkUserParticipation(safeId);
         if (status.idPartecipazione) setParticipationId(status.idPartecipazione);
       } else {
-        // ERRORE
-        Swal.fire({
-            icon: 'error',
-            title: 'Errore',
-            text: result.message || "Impossibile iscriversi"
-        });
+        Swal.fire({ icon: 'error', title: 'Errore', text: result.message || "Impossibile iscriversi" });
       }
     } else {
-      // --- CANCELLAZIONE ---
       let idDaCancellare = participationId;
       if (!idDaCancellare) {
         const status = await checkUserParticipation(safeId);
@@ -140,16 +150,11 @@ export default function EventCard({ event, showParticipate = true }) {
       }
 
       if (!idDaCancellare) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Errore tecnico',
-            text: 'ID partecipazione non trovato. Ricarica la pagina.'
-        });
+        Swal.fire({ icon: 'error', title: 'Errore tecnico', text: 'ID partecipazione non trovato.' });
         setLoadingBtn(false);
         return;
       }
 
-      // CONFERMA CANCELLAZIONE CON SWEETALERT
       const confirmResult = await Swal.fire({
         title: 'Sei sicuro?',
         text: "Vuoi davvero annullare la tua partecipazione?",
@@ -157,26 +162,17 @@ export default function EventCard({ event, showParticipate = true }) {
         showCancelButton: true,
         confirmButtonColor: '#d33',
         cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Sì, annulla!',
-        cancelButtonText: 'No, rimani'
+        confirmButtonText: 'Sì, annulla!'
       });
 
       if (confirmResult.isConfirmed) {
         const result = await rimuoviIscrizione(idDaCancellare);
         if (result.success) {
-          Swal.fire(
-            'Annullata!',
-            'La tua partecipazione è stata cancellata.',
-            'success'
-          );
+          Swal.fire('Annullata!', 'La tua partecipazione è stata cancellata.', 'success');
           setIsParticipating(false);
           setParticipationId(null);
         } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'Errore',
-            text: result.message || "Impossibile annullare"
-          });
+          Swal.fire({ icon: 'error', title: 'Errore', text: result.message || "Impossibile annullare" });
         }
       }
     }
@@ -202,7 +198,15 @@ export default function EventCard({ event, showParticipate = true }) {
               <span>{avatarLetter}</span>
             </div>
             <div className="event-meta">
-              <span className="event-brand">{displayOrganizerName}</span>
+              {/* 4. AGGIUNTO ONCLICK E STILE QUI */}
+              <span 
+                className="event-brand" 
+                onClick={handleEnteClick}
+                style={{ cursor: 'pointer' }}
+                title="Vai al profilo Ente"
+              >
+                {displayOrganizerName}
+              </span>
               <span className="event-role">ORGANIZZATORE</span>
             </div>
           </div>
@@ -257,12 +261,13 @@ export default function EventCard({ event, showParticipate = true }) {
         </div>
       </div>
 
-      {/* --- GESTIONE MODALI --- */}
+      {/* MODALI */}
       {activeModal === 'details' && (
         <DettagliEvento 
           evento={event.raw || event} 
           onClose={() => setActiveModal(null)}
           onOpenParticipants={() => setActiveModal('participants')}
+          onElimina={handleEliminaEvento}
           onModifica={handleOpenModifica} 
         />
       )}

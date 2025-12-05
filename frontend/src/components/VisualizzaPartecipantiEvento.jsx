@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // <--- 1. Importa useNavigate
 import { X, Users, ArrowLeft } from 'lucide-react';
 import SchedaVolontario from './SchedaVolontario';
 import { fetchPartecipanti } from '../services/PartecipazioneEventoService';
@@ -6,7 +7,7 @@ import '../stylesheets/VisualizzaPartecipanti.css';
 
 export default function VisualizzaPartecipantiEvento({ 
   idEvento, 
-  titoloEvento, // <--- Nuova prop ricevuta
+  titoloEvento, 
   onClose, 
   onBack 
 }) {
@@ -14,6 +15,8 @@ export default function VisualizzaPartecipantiEvento({
   const [listaVolontari, setListaVolontari] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const navigate = useNavigate(); // <--- 2. Inizializza
 
   useEffect(() => {
     const loadData = async () => {
@@ -38,6 +41,15 @@ export default function VisualizzaPartecipantiEvento({
     loadData();
   }, [idEvento]);
 
+  // --- 3. Funzione per gestire il click sulla card ---
+  const handleCardClick = (volontario) => {
+    // Opzionale: Se ti serve sapere CHI hai cliccato nella prossima pagina,
+    // potresti salvare l'email nel localStorage prima di navigare.
+    // localStorage.setItem("selectedProfileEmail", volontario.email);
+    
+    navigate('/ProfiloVolontario');
+  };
+
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-container-large" onClick={(e) => e.stopPropagation()}>
@@ -52,7 +64,6 @@ export default function VisualizzaPartecipantiEvento({
             )}
             <div>
                 <h2>Partecipanti</h2>
-                {/* Mostra il titolo se presente, altrimenti l'ID */}
                 <p style={{ fontSize: '1.1rem', fontWeight: '600', color: '#334155' }}>
                   {titoloEvento ? titoloEvento : `Evento #${idEvento}`}
                 </p>
@@ -89,7 +100,9 @@ export default function VisualizzaPartecipantiEvento({
                 {listaVolontari.map((volontario, index) => (
                     <SchedaVolontario 
                         key={volontario?.email || index} 
-                        utente={volontario} 
+                        utente={volontario}
+                        // 4. Passiamo la funzione onClick
+                        onClick={() => handleCardClick(volontario)}
                     />
                 ))}
             </div>
