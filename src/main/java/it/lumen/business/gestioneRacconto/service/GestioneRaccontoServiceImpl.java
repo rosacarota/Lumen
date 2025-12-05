@@ -148,7 +148,16 @@ public class GestioneRaccontoServiceImpl implements GestioneRaccontoService {
     }
 
     public List<Racconto> listaRacconti() {
-        return raccontoDAO.findAll();
+        List<Racconto> racconti = raccontoDAO.findAll();
+        for (Racconto r : racconti) {
+            try {
+                r.setImmagine(recuperaImmagine(r.getImmagine()));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return racconti;
     }
 
     // ========================= IMMAGINI =========================
