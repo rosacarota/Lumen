@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { CalendarDays, MapPin, Users, Info, UserPlus, UserCheck, Image as ImageIcon } from 'lucide-react';
+import Swal from 'sweetalert2'; // <--- IMPORTANTE
 import '../stylesheets/EventCard.css';
 
 // --- IMPORT DEI 3 MODALI ---
 import DettagliEvento from './DettagliEvento';
 import VisualizzaPartecipantiEvento from './VisualizzaPartecipantiEvento';
-import ModifyEvento from './ModifyEvento'; // <--- Assicurati che questo file esista in components
+import ModifyEvento from './ModifyEvento'; 
 
 import { 
   iscrivitiEvento, 
@@ -38,7 +39,6 @@ export default function EventCard({ event, showParticipate = true }) {
   const [userRole, setUserRole] = useState("");
   
   // STATO PER GESTIRE QUALE MODALE È APERTO
-  // Valori: 'details', 'participants', 'edit', null
   const [activeModal, setActiveModal] = useState(null);
 
   // Formattazione data
@@ -89,60 +89,94 @@ export default function EventCard({ event, showParticipate = true }) {
 
   // --- HANDLERS PER I MODALI ---
 
-  // 1. Apre la modifica (chiamato dal tasto dentro DettagliEvento)
   const handleOpenModifica = () => {
     setActiveModal('edit');
   };
 
-  // 2. Callback dopo aver salvato la modifica
   const handleUpdateSuccess = () => {
-    setActiveModal(null); // Chiude tutto
-    window.location.reload(); // Ricarica la pagina per vedere le modifiche
+    setActiveModal(null); 
+    window.location.reload(); 
   };
 
-  // 3. Eliminazione diretta dalla card (opzionale, se volessi metterlo anche fuori)
-  // (Nota: DettagliEvento ha già la sua logica interna di eliminazione che hai aggiunto tu)
-
-  // --- HANDLERS PARTECIPAZIONE ---
+  // --- HANDLERS PARTECIPAZIONE (CON SWEETALERT) ---
   const handleToggleParticipation = async (e) => {
     e.stopPropagation();
     if (loadingBtn) return;
     setLoadingBtn(true);
 
     if (!isParticipating) {
+      // --- ISCRIZIONE ---
       const result = await iscrivitiEvento(safeId);
       if (result.success) {
-        alert("Iscrizione avvenuta con successo!");
+        // SUCCESSO
+        Swal.fire({
+            icon: 'success',
+            title: 'Iscrizione effettuata!',
+            text: `Ti sei iscritto a: ${title}`,
+            timer: 2000,
+            showConfirmButton: false
+        });
+        
         setIsParticipating(true);
         const status = await checkUserParticipation(safeId);
         if (status.idPartecipazione) setParticipationId(status.idPartecipazione);
       } else {
-        alert("Errore: " + (result.message || "Impossibile iscriversi"));
+        // ERRORE
+        Swal.fire({
+            icon: 'error',
+            title: 'Errore',
+            text: result.message || "Impossibile iscriversi"
+        });
       }
     } else {
+      // --- CANCELLAZIONE ---
       let idDaCancellare = participationId;
       if (!idDaCancellare) {
         const status = await checkUserParticipation(safeId);
-        if (status.isParticipating) {
+        if (status.isParticipating && status.idPartecipazione) {
             idDaCancellare = status.idPartecipazione;
             setParticipationId(status.idPartecipazione);
         }
       }
 
       if (!idDaCancellare) {
-        alert("Errore tecnico: ID partecipazione non trovato.");
+        Swal.fire({
+            icon: 'error',
+            title: 'Errore tecnico',
+            text: 'ID partecipazione non trovato. Ricarica la pagina.'
+        });
         setLoadingBtn(false);
         return;
       }
 
-      if (window.confirm("Vuoi annullare la partecipazione?")) {
+      // CONFERMA CANCELLAZIONE CON SWEETALERT
+      const confirmResult = await Swal.fire({
+        title: 'Sei sicuro?',
+        text: "Vuoi davvero annullare la tua partecipazione?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sì, annulla!',
+        cancelButtonText: 'No, rimani'
+      });
+
+      if (confirmResult.isConfirmed) {
         const result = await rimuoviIscrizione(idDaCancellare);
         if (result.success) {
-          alert("Partecipazione annullata.");
+          Swal.fire(
+            'Annullata!',
+            'La tua partecipazione è stata cancellata.',
+            'success'
+          );
           setIsParticipating(false);
           setParticipationId(null);
         } else {
-          alert("Errore: " + result.message);
+          Swal.fire({
+            icon: 'error',
+            title: 'Errore',
+            text: result.message || "Impossibile annullare"
+          });
         }
       }
     }
@@ -224,20 +258,15 @@ export default function EventCard({ event, showParticipate = true }) {
       </div>
 
       {/* --- GESTIONE MODALI --- */}
-
-      {/* 1. MODALE DETTAGLI */}
       {activeModal === 'details' && (
         <DettagliEvento 
           evento={event.raw || event} 
           onClose={() => setActiveModal(null)}
           onOpenParticipants={() => setActiveModal('participants')}
-          
-          // Passiamo la funzione che chiude Dettagli e apre Modifica
           onModifica={handleOpenModifica} 
         />
       )}
 
-      {/* 2. MODALE PARTECIPANTI */}
       {activeModal === 'participants' && (
         <VisualizzaPartecipantiEvento 
           idEvento={safeId}
@@ -247,13 +276,12 @@ export default function EventCard({ event, showParticipate = true }) {
         />
       )}
 
-      {/* 3. MODALE MODIFICA (Nuovo) */}
       {activeModal === 'edit' && (
         <ModifyEvento
             isOpen={true}
-            onClose={() => setActiveModal('details')} // Se chiudi, torna ai dettagli
-            eventToEdit={event.raw || event}          // Passiamo i dati dell'evento
-            onUpdate={handleUpdateSuccess}            // Cosa fare dopo il salvataggio
+            onClose={() => setActiveModal('details')} 
+            eventToEdit={event.raw || event}         
+            onUpdate={handleUpdateSuccess}           
         />
       )}
     </>

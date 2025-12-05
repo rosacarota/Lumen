@@ -73,10 +73,12 @@
     padding: 30px;
 }
 
+/* MODIFICA QUI: Da Griglia a Lista Verticale */
 .vp-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
+    display: flex;
+    flex-direction: column; /* Uno sotto l'altro */
+    gap: 15px; /* Spazio tra le righe */
+    padding-bottom: 20px;
 }
 
 .status-text { text-align: center; color: #64748b; margin-top: 40px; }
