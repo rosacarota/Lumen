@@ -106,7 +106,17 @@ const Navbar = () => {
         <div className="navbar-right">
           <div className="search-box">
             <Search size={18} className="search-icon" />
-            <input type="text" placeholder="Cerca..." className="search-input" />
+            <input 
+              type="text" 
+              placeholder="Cerca..." 
+              className="search-input" 
+              onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+            // Assicurati che window.location funzioni o usa navigate se sei dentro Router
+            window.location.href = `/cerca?q=${e.target.value}`;
+            }
+  }}
+/>
           </div>
 
           <a href="/ricercageografica" className="icon-btn" title="Ricerca Geografica">
