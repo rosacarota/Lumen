@@ -3,10 +3,10 @@ import '../stylesheets/EventsPage.css';
 import Navbar from '../components/Navbar';
 import EventCard from '../components/EventCard'; 
 import Footer from '../components/Footer';
+import Swal from 'sweetalert2'; // <--- UNICA AGGIUNTA IMPORT
 
 // Servizi
 import { fetchEvents } from '../services/PartecipazioneEventoService'; 
-// Ho rimosso l'import di cronologia perché non serve più senza il tasto
 
 export default function EventsPage() {
   const [events, setEvents] = useState([]);
@@ -20,6 +20,13 @@ export default function EventsPage() {
       setEvents(data);
     } catch (error) {
       console.error("Errore caricamento:", error);
+      // --- UNICA MODIFICA: Alert grafico invece del console.log ---
+      Swal.fire({
+        icon: 'error',
+        title: 'Ops...',
+        text: 'Impossibile caricare gli eventi. Riprova più tardi.',
+        confirmButtonColor: '#087886'
+      });
     } finally {
       setLoading(false);
     }

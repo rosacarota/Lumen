@@ -85,6 +85,14 @@
     padding-bottom: 3%;
 }
 
+.cronologia-item-wrapper {
+    margin-bottom: 5%;
+}
+
+.cronologia-item-wrapper:last-child {
+    margin-bottom: 0;
+}
+
 .empty-state-event {
     flex-grow: 1; 
     display: flex;
@@ -117,8 +125,8 @@
     margin-top: 2%;
 }
 
-.loading-text {
-    text-align: center;
-    color: #999;
-    padding-top: 3%;
+.loading-text { 
+    padding: '5%';
+    text-align: 'center';
+    color: '#6B7280';
 }

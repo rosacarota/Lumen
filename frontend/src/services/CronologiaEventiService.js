@@ -4,29 +4,17 @@ function getAuthToken() {
   return localStorage.getItem("token");
 }
 
-// Funzione generica: recupera cronologia completa o filtrata per stato
-export const getCronologiaEventi = async (stato = null) => {
+export const getCronologiaEventi = async () => {
   try {
     const token = getAuthToken();
-
     if (!token) return [];
-
-    // Costruzione dell'URL base con il token
-    let url = `${API_URL}/evento/cronologiaEventi?token=${token}`;
-
-    // Se viene passato un parametro stato (es. 'futuri'), lo aggiunge all'URL
-    if (stato) {
-      url += `&stato=${stato}`;
-    }
+    const url = `${API_URL}/partecipazione/cronologiaPartecipazioni?token=${encodeURIComponent(token)}`;
 
     const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
     });
 
-    // 204 No Content: ritorna array vuoto senza errori
     if (response.status === 204) {
       return [];
     }
@@ -36,15 +24,23 @@ export const getCronologiaEventi = async (stato = null) => {
       throw new Error(errorText || 'Errore nel recupero della cronologia eventi');
     }
 
-    return await response.json();
+    const data = await response.json();
+    
+    return data.map(dto => ({
+            id: dto.idEvento,
+            titolo: dto.nomeEvento,
+            data_inizio: dto.data,
+            descrizione: "Dettagli non disponibili in cronologia",
+            luogo: "Vedi dettagli",
+            immagine: null,
+            ente: "Ente Organizzatore"
+    }));
   } catch (error) {
     console.error("Errore API Cronologia Eventi:", error);
     return [];
   }
 };
 
-// Funzione specifica per gli eventi futuri
-// Richiama la funzione principale passando lo stato 'futuri'
 export const getEventiFuturi = async () => {
   return await getCronologiaEventi('futuri');
 };

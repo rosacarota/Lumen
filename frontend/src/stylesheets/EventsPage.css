@@ -57,10 +57,15 @@
 /* --- GRIGLIA DELLE CARD --- */
 .events-grid {
   display: grid;
-  /* Crea colonne automatiche (minimo 300px larghezza) */
+  /* Crea colonne che sono MINIMO 320px e si allargano in proporzione (1fr) */
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
   gap: 30px;
-  justify-items: center; /* Centra le card nella loro cella */
+  
+  /* Questo allinea le card in alto */
+  align-items: start;
+  
+  /* FONDAMENTALE: Occupa tutta la larghezza del contenitore */
+  width: 100%; 
 }
 
 /* Adattamento per cellulari */

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Calendar, MapPin, Users, Image as ImageIcon, Edit, Trash2 } from 'lucide-react';
+import Swal from 'sweetalert2'; 
 import '../stylesheets/DettagliEvento.css';
 
 import { fetchDatiUtente } from '../services/PartecipazioneEventoService';
@@ -14,6 +15,8 @@ export default function DettagliEvento({
 }) {
   
   const [currentUser, setCurrentUser] = useState(null);
+  // NUOVO STATO: Per capire se l'immagine è orizzontale
+  const [isLandscape, setIsLandscape] = useState(false);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -34,6 +37,17 @@ export default function DettagliEvento({
 
   if (!evento) return null; 
 
+  // --- FUNZIONE PER CONTROLLARE LE DIMENSIONI IMMAGINE ---
+  const handleImageLoad = (e) => {
+    const { naturalWidth, naturalHeight } = e.target;
+    // Se la larghezza è maggiore dell'altezza, è orizzontale (Landscape)
+    if (naturalWidth > naturalHeight) {
+        setIsLandscape(true);
+    } else {
+        setIsLandscape(false);
+    }
+  };
+
   const handleVediPartecipanti = () => {
     if (onOpenParticipants) {
         onOpenParticipants();
@@ -43,14 +57,36 @@ export default function DettagliEvento({
   const handleElimina = async () => {
     const id = evento.idEvento || evento.id_evento || evento.id;
     
-    if (window.confirm(`Sei sicuro di voler eliminare definitivamente l'evento "${evento.titolo}"?`)) {
+    onClose(); 
+
+    const result = await Swal.fire({
+      title: 'Sei sicuro?',
+      text: `Sei sicuro di voler eliminare definitivamente l'evento "${evento.titolo}"?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#087886',
+      confirmButtonText: 'Sì, elimina',
+      cancelButtonText: 'Annulla'
+    });
+
+    if (result.isConfirmed) {
         try {
             await rimuoviEvento(id);
-            alert("Evento eliminato con successo.");
-            onClose();
+            await Swal.fire({
+              icon: 'success',
+              title: 'Eliminato',
+              text: 'Evento eliminato con successo.',
+              confirmButtonColor: '#087886'
+            });
             window.location.reload();
         } catch (error) {
-            alert("Errore durante l'eliminazione: " + error.message);
+            Swal.fire({
+              icon: 'error',
+              title: 'Errore',
+              text: "Errore durante l'eliminazione: " + error.message,
+              confirmButtonColor: '#d33'
+            });
         }
     }
   };
@@ -113,37 +149,44 @@ export default function DettagliEvento({
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-container" onClick={(e) => e.stopPropagation()}>
         
-        <button className="btn-close-absolute" onClick={onClose}>
-          <X size={24} />
-        </button>
-
-        {/* LATO SINISTRO */}
-        <div className="modal-left">
+        {/* 1. IMMAGINE DI COPERTINA */}
+        {/* Aggiungiamo una classe dinamica 'landscape-mode' se l'immagine è larga */}
+        <div 
+          className={`modal-top-image ${isLandscape ? 'landscape-mode' : ''}`}
+          style={(!isLandscape && evento.immagine) ? { backgroundImage: `url(${evento.immagine})` } : {}}
+        >
           {evento.immagine ? (
-            <img src={evento.immagine} alt={evento.titolo} className="modal-image" />
+            <img 
+                src={evento.immagine} 
+                alt={evento.titolo} 
+                className="modal-image"
+                onLoad={handleImageLoad} // <--- Trigger per controllare le dimensioni
+            />
           ) : (
             <div className="modal-placeholder">
-              <ImageIcon size={64} color="white" />
+              <ImageIcon size={48} />
               <span>Nessuna Immagine</span>
             </div>
           )}
           
+          <button className="btn-close-absolute" onClick={onClose}>
+            <X size={20} />
+          </button>
+
           <div className="modal-ente-badge">
             <span>Organizzato da:</span>
             <strong>{getEnteName()}</strong>
           </div>
         </div>
 
-        {/* LATO DESTRO */}
-        <div className="modal-right">
+        {/* 2. CONTENUTO */}
+        <div className="modal-content-scrollable">
+          
           <div className="modal-header">
             <h2 className="modal-title">{evento.titolo}</h2>
           </div>
 
-          {/* --- NUOVO LAYOUT GRIGLIA --- */}
           <div className="modal-grid-info">
-            
-            {/* DATA INIZIO */}
             <div className="info-item">
               <Calendar className="info-icon" size={20} />
               <div>
@@ -152,7 +195,6 @@ export default function DettagliEvento({
               </div>
             </div>
 
-            {/* DATA FINE (Nuova) */}
             <div className="info-item">
               <Calendar className="info-icon" size={20} />
               <div>
@@ -161,8 +203,6 @@ export default function DettagliEvento({
               </div>
             </div>
 
-            {/* LUOGO (Spostato sotto e allargato) */}
-            {/* gridColumn: '1 / -1' forza l'elemento a occupare tutta la larghezza */}
             <div className="info-item" style={{ gridColumn: '1 / -1' }}>
               <MapPin className="info-icon" size={20} />
               <div>
@@ -170,7 +210,6 @@ export default function DettagliEvento({
                 <p>{getIndirizzoCompleto()}</p>
               </div>
             </div>
-
           </div>
 
           <div className="modal-description">
@@ -188,11 +227,11 @@ export default function DettagliEvento({
               {isOwner ? (
                 <>
                   <button className="btn-danger" onClick={handleElimina}>
-                    <Trash2 size={18} /> Elimina
+                    <Trash2 size={16} /> Elimina
                   </button>
                   
                   <button className="btn-edit" onClick={(e) => { e.stopPropagation(); onModifica && onModifica(evento); }}>
-                    <Edit size={18}/> Modifica
+                    <Edit size={16}/> Modifica
                   </button>
 
                   <button className="btn-primary" onClick={handleVediPartecipanti}>
