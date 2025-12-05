@@ -157,9 +157,11 @@ const EditStory = ({ story, onCancel, onSave }) => {
                       Nuovo file selezionato: <strong>{file.name}</strong> ({Math.round(file.size / 1024)} KB) – clicca per cambiare
                     </p>
                   ) : story.imageBase64 && !imageRemoved ? (
-                    <div className="edit-image-preview">
+                    <div className="edit-image-preview"
+                    onClick={(e) => e.stopPropagation()}  >
                       <img src={story.imageBase64} alt="Immagine corrente" className="edit-preview-img" />
-                      <button type="button" className="edit-remove-image-button" onClick={handleRemoveImage} title="Rimuovi immagine">
+                      <button type="button" className="edit-remove-image-button" onClick={(e) => {e.stopPropagation();handleRemoveImage();
+          }} title="Rimuovi immagine">
                         <X size={16} />
                       </button>
                     </div>
