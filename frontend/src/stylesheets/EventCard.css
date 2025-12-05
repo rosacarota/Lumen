@@ -1,14 +1,22 @@
 /* --- CONTENITORE CARD --- */
 .event-card {
   background-color: white;
-  border-radius: 24px; /* Bordi molto arrotondati come nello screen */
+  border-radius: 24px;
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* Ombra morbida */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   border: 1px solid #f1f5f9;
+  
+  /* FLEXBOX VERTICALE */
   display: flex;
   flex-direction: column;
+  
+  /* DIMENSIONI FORZATE */
+  width: 100%;   /* <--- QUESTA RISOLVE IL PROBLEMA DEL RESTRINGIMENTO */
+  height: 100%;  /* Occupa tutta l'altezza della riga */
+  min-height: 450px; /* Altezza minima per uniformità visiva */
+  
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  height: 100%;
+  position: relative;
 }
 
 .event-card:hover {
@@ -16,21 +24,26 @@
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
 }
 
-/* --- IMMAGINE / PLACEHOLDER --- */
+/* --- IMMAGINE --- */
 .event-cover {
   width: 100%;
-  height: 180px;
-  object-fit: cover;
+  height: 200px; /* Altezza fissa immagine */
+  min-height: 200px;
+  object-fit: cover; /* Ritaglia senza deformare */
+  object-position: center;
+  background-color: #e2e8f0;
+  display: block;
 }
 
 .placeholder-cover {
   width: 100%;
-  height: 180px;
-  background-color: #f1f5f9; /* Grigio chiarissimo dello screen */
+  height: 200px;
+  min-height: 200px;
+  background-color: #f1f5f9;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #cbd5e1; /* Icona grigia */
+  color: #cbd5e1;
 }
 
 /* --- CONTENUTO INTERNO --- */
@@ -38,11 +51,11 @@
   padding: 24px;
   display: flex;
   flex-direction: column;
-  flex: 1;
+  flex: 1; /* Spinge il footer in basso */
   gap: 16px;
 }
 
-/* --- HEADER (Avatar e Nome) --- */
+/* --- HEADER --- */
 .event-header {
   display: flex;
   align-items: center;
@@ -53,9 +66,8 @@
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  /* Colore verde chiaro dello screen */
   background-color: #dcfce7; 
-  color: #047857; /* Testo verde scuro */
+  color: #047857;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -75,12 +87,16 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  overflow: hidden;
 }
 
 .event-brand {
   font-size: 0.95rem;
   font-weight: 700;
-  color: #087886; /* Il tuo Teal */
+  color: #087886;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .event-role {
@@ -88,16 +104,13 @@
   font-weight: 700;
   text-transform: uppercase;
   color: #64748b;
-  background-color: #f1f5f9; /* Badge grigio/verde chiarissimo */
+  background-color: #f1f5f9;
   padding: 2px 8px;
   border-radius: 6px;
   width: fit-content;
-  letter-spacing: 0.5px;
-  /* Se vuoi il verde dello screen per il badge: */
-  /* background-color: #f0fdf4; color: #166534; */ 
 }
 
-/* --- BODY (Titolo e Descrizione) --- */
+/* --- BODY --- */
 .event-body {
   display: flex;
   flex-direction: column;
@@ -105,25 +118,30 @@
 }
 
 .event-title {
-  font-size: 1.4rem; /* Titolo grande */
+  font-size: 1.4rem;
   font-weight: 800;
-  color: #0f172a; /* Quasi nero */
+  color: #0f172a;
   margin: 0;
   line-height: 1.2;
-}
-
-.event-description {
-  font-size: 0.9rem;
-  color: #64748b; /* Grigio testo */
-  margin: 0;
-  line-height: 1.5;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-/* --- DETTAGLI (Icone) --- */
+.event-description {
+  font-size: 0.9rem;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.8em; /* Riserva spazio anche se vuota */
+}
+
+/* --- DETTAGLI --- */
 .event-details {
   display: flex;
   flex-direction: column;
@@ -134,30 +152,28 @@
 .event-detail-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   font-size: 0.9rem;
   color: #475569;
   font-weight: 500;
 }
 
-.event-icon {
-  color: #087886; /* Colore icone */
-  flex-shrink: 0;
-}
+.event-icon { color: #087886; flex-shrink: 0; }
 
-/* --- FOOTER (Bottoni) --- */
+/* --- FOOTER --- */
 .event-footer {
-  margin-top: auto;
+  margin-top: auto; 
   padding-top: 20px;
   display: flex;
   gap: 12px;
+  width: 100%; /* Forza il footer a prendere tutto lo spazio */
 }
 
-/* Stile Base Bottone */
 .event-btn {
-  flex: 1;
+  flex: 1; /* Occupa tutto lo spazio disponibile */
+  width: 100%; /* Forza larghezza */
   padding: 12px;
-  border-radius: 12px; /* Arrotondato */
+  border-radius: 12px;
   font-weight: 700;
   font-size: 0.95rem;
   cursor: pointer;
@@ -167,33 +183,14 @@
   justify-content: center;
   gap: 8px;
   transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
-/* Bottone Dettagli (Grigio chiaro come nello screen) */
-.btn-secondary {
-  background-color: #f1f5f9;
-  color: #1e293b;
-}
-.btn-secondary:hover {
-  background-color: #e2e8f0;
-}
+.btn-secondary { background-color: #f1f5f9; color: #1e293b; }
+.btn-secondary:hover { background-color: #e2e8f0; }
 
-/* Bottone Partecipa (Teal) */
-.btn-primary {
-  background-color: #087886;
-  color: white;
-}
-.btn-primary:hover {
-  background-color: #0e7490;
-}
+.btn-primary { background-color: #087886; color: white; }
+.btn-primary:hover { background-color: #0e7490; }
 
-/* Bottone Attivo/Rosso (Iscritto) */
-.btn-active {
-  background-color: #fff1f2;
-  color: #e11d48;
-  border: 1px solid #fecdd3;
-}
-.btn-active:hover {
-  background-color: #ffe4e6;
-  border-color: #e11d48;
-}
+.btn-active { background-color: #fff1f2; color: #e11d48; border: 1px solid #fecdd3; }
+.btn-active:hover { background-color: #ffe4e6; border-color: #e11d48; }
