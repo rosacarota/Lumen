@@ -50,6 +50,11 @@
     width: 48%;
 }
 
+.loading-text {
+    padding: 100px; 
+    text-align: center;
+}
+
 @media (max-width: 768px) {
     .voluntary-container {
         gap: 0;

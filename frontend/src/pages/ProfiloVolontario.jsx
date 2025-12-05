@@ -46,7 +46,7 @@ const ProfiloVolontario = () => {
         initProfile();
     }, [visitedUser]);
 
-    if (loading) return <div style={{padding:'100px', textAlign:'center'}}>Caricamento...</div>;
+    if (loading) return <div className="loading-text">Caricamento...</div>;
 
     return (
         <div className="voluntary-page-wrapper">
