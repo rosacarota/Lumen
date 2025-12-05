@@ -98,3 +98,21 @@ export const fetchDatiUtente = async () => {
     return await response.json(); 
   } catch (error) { return null; }
 };
+
+// --- 7. NUOVA FUNZIONE: RECUPERA I MIEI EVENTI (Cronologia Volontario) ---
+export const getEventiSvolti = async () => {
+  const token = getToken();
+  if (!token) return [];
+  try {
+    const response = await fetch(`${API_BASE_URL}/partecipazione/visualizzaEventiUtente?token=${encodeURIComponent(token)}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    if (response.status === 204) return [];
+    if (!response.ok) return [];
+    return await response.json();
+  } catch (error) {
+    console.error("Errore recupero miei eventi:", error);
+    return [];
+  }
+};

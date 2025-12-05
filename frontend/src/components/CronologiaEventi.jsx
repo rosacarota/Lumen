@@ -1,55 +1,63 @@
 import React, { useState, useEffect } from 'react';
 import { CalendarClock } from 'lucide-react';
-import EventCard from '../components/EventCard.jsx'; 
+import EventCard from '../components/EventCard.jsx';
 import '../stylesheets/CronologiaEventi.css';
+
 import { getCronologiaEventi } from '../services/CronologiaEventiService';
+import { fetchEvents } from '../services/PartecipazioneEventoService';
 
 const CronologiaEventi = () => {
-    const [eventi, setEventi] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [listaEventi, setListaEventi] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+
     useEffect(() => {
-        const fetchEventi = async () => {
-            setLoading(true);
+        const inizializzaDati = async () => {
+            setIsLoading(true);
             try {
-                const data = await getCronologiaEventi(null);
-                const listaEventi = Array.isArray(data) ? data : [];
-                setEventi(listaEventi);
+                const [partecipazioniRaw, catalogoEventi] = await Promise.all([
+                    getCronologiaEventi(),
+                    fetchEvents()
+                ]);
+                const partecipazioni = Array.isArray(partecipazioniRaw) ? partecipazioniRaw : [];
+                const tuttiGliEventi = Array.isArray(catalogoEventi) ? catalogoEventi : [];
+                const eventiUtenteCompleti = tuttiGliEventi.filter(eventoGlobale => 
+                    partecipazioni.some(partecipazione => partecipazione.id === eventoGlobale.idEvento)
+                );
+                setListaEventi(eventiUtenteCompleti);
             } catch (error) {
-                console.error("Errore nel componente Cronologia:", error);
-                setEventi([]);
+                console.error("Errore durante l'elaborazione della cronologia:", error);
+                setListaEventi([]);
             } finally {
-                setLoading(false);
+                setIsLoading(false);
             }
         };
-        fetchEventi();
+        inizializzaDati();
     }, []);
+
     return (
         <div className="cronologia-card">
             <div className="cronologia-header">
                 <h3>CRONOLOGIA EVENTI</h3>
             </div>
             <div className="cronologia-body">
-                {loading ? (
-                    <div style={{ padding: '20px', textAlign: 'center', color: '#6B7280' }}>
-                        Caricamento partecipazioni...
+                {isLoading ? (
+                    <div className="loading-text">
+                        Caricamento storico...
                     </div>
-                ) : eventi.length === 0 ? (
+                ) : listaEventi.length === 0 ? (
                     <div className="empty-state-event">
-                        <CalendarClock size={40} color="#4AAFB8" />
+                        <div className="cronologia-icon-wrapper">
+                            <CalendarClock size={40} color="#4AAFB8" />
+                        </div>
                         <p>Non hai ancora partecipato a nessun evento.</p>
                     </div>
                 ) : (
                     <div className="cronologia-list">
-                        {eventi.map((evento) => (
-                            <div key={evento.idEvento || evento.id} className="cronologia-item-wrapper">
-                                {/* 
-                                    showParticipate={true}: 
-                                    La card controllerà lo stato e mostrerà "Iscritto" (Verde),
-                                    permettendo all'utente di disiscriversi.
-                                */}
-                                <EventCard 
-                                    event={evento} 
-                                    showParticipate={true} 
+                        {listaEventi.map((evento) => (
+                            <div key={evento.idEvento} className="cronologia-item-wrapper">
+                                <EventCard
+                                    event={evento}
+                                    showParticipate={true}
                                 />
                             </div>
                         ))}
