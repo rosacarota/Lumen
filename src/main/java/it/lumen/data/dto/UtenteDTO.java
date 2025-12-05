@@ -2,6 +2,7 @@ package it.lumen.data.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import it.lumen.data.entity.Indirizzo;
 import it.lumen.data.entity.Utente;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -27,6 +28,8 @@ public class UtenteDTO {
     private String cognome;
 
     private Integer indirizzo;
+
+    private Indirizzo objIndirizzo;
 
     private String password;
 
