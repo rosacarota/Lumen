@@ -3,7 +3,7 @@ import '../stylesheets/EventsPage.css';
 import Navbar from '../components/Navbar';
 import EventCard from '../components/EventCard'; 
 import Footer from '../components/Footer';
-import Swal from 'sweetalert2'; // <--- UNICA AGGIUNTA IMPORT
+import Swal from 'sweetalert2';
 
 // Servizi
 import { fetchEvents } from '../services/PartecipazioneEventoService'; 
@@ -20,7 +20,6 @@ export default function EventsPage() {
       setEvents(data);
     } catch (error) {
       console.error("Errore caricamento:", error);
-      // --- UNICA MODIFICA: Alert grafico invece del console.log ---
       Swal.fire({
         icon: 'error',
         title: 'Ops...',
@@ -37,8 +36,8 @@ export default function EventsPage() {
   }, []);
 
   return (
-    <>
-    <div className="page-wrapper">
+    // USIAMO LA CLASSE DEL NUOVO CSS
+    <div className="page-wrapper-inner">
       <Navbar />
 
       <div className="main-container">
@@ -49,11 +48,6 @@ export default function EventsPage() {
                 <h1>Tutti gli Eventi</h1>
                 <p>Scopri le attività della community e partecipa.</p>
              </div>
-             
-             {/* 
-                QUI C'ERANO I TASTI "TUTTI" E "CRONOLOGIA".
-                LI HO RIMOSSI COME RICHIESTO.
-             */}
           </div>
 
           <div className="events-grid">
@@ -78,8 +72,9 @@ export default function EventsPage() {
 
         </div>
       </div>
+      
+      {/* IL FOOTER ORA È DENTRO IL WRAPPER, COSÌ VIENE SPINTO GIÙ */}
+      <Footer />
     </div>
-    <Footer />
-    </>
   );
 }

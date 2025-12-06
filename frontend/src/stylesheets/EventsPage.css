@@ -1,135 +1,101 @@
-/* --- LAYOUT GENERALE --- */
-/* Eredita lo stile del wrapper della Home */
-.page-wrapper-inner {
-  padding-top: 100px; /* 80px di navbar + 20px di respiro */
-  padding-bottom: 60px;
-  background-color: var(--bg-main); /* Uniformato allo sfondo della Home */
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+/* --- 1. RESET GLOBALE (Toglie la striscia bianca di default) --- */
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
 }
 
-/* Uniformato al .container della Home */
+/* --- 2. WRAPPER PRINCIPALE --- */
+.page-wrapper-inner {
+  display: flex;
+  flex-direction: column; /* Impila gli elementi verticalmente */
+  min-height: 100vh;      /* Forza l'altezza minima a tutto lo schermo */
+  background-color: #F0F5F5;
+  font-family: 'Inter', sans-serif;
+}
+
+/* --- 3. CONTENITORE CENTRALE (La parte che deve crescere) --- */
 .main-container {
-  max-width: 1280px; /* Aumentato da 1200 a 1280 per coerenza */
-  margin: 0 auto;
-  padding: 0 32px; /* Uniformato al padding laterale della Home */
+  /* FONDAMENTALE: flex: 1 dice "occupa tutto lo spazio vuoto disponibile" */
+  /* Questo spinge il footer verso il basso */
+  flex: 1; 
+  
   width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 40px 32px; /* Uniformato il padding */
   box-sizing: border-box;
+  
+  /* Centratura del box bianco */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Evita che il box si stiri verticalmente */
 }
 
 /* --- IL RIQUADRO BIANCO --- */
-/* Mantiene il concetto di "scheda fluttuante" ma con lo stile della Home */
 .content-box {
   background-color: white;
   width: 100%;
-  border-radius: 24px; /* Stesso radius delle immagini Hero */
+  border-radius: 24px;
+  margin-top: 5%;
   padding: 40px;
-  
-  /* Uso l'ombra colorata tipica del tema invece di quella grigia generica */
-  box-shadow: 0 20px 40px rgba(8, 120, 134, 0.08); 
-  
-  /* Bordo sottile se necessario, o rimosso se l'ombra basta */
-  border: 1px solid rgba(0,0,0,0.03); 
-  
-  /* Animazione leggera all'ingresso, simile alla Hero */
-  animation: float 6s ease-in-out infinite; /* Opzionale: se vuoi che fluttui leggermente */
-  animation: fadeInUp 0.8s ease-out; /* Animazione di entrata */
+  box-shadow: 0 20px 40px rgba(8, 120, 134, 0.08);
+  border: 1px solid rgba(0,0,0,0.03);
+  animation: fadeInUp 0.8s ease-out;
 }
 
-/* --- INTESTAZIONE (Titolo + Bottone) --- */
+/* --- INTESTAZIONE --- */
 .box-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 40px;
-  border-bottom: 1px solid #e0e0e0; /* Stesso colore del .stat-divider */
+  border-bottom: 1px solid #e0e0e0;
   padding-bottom: 24px;
 }
 
 .header-text h1 {
-  /* Stile derivato da .hero-title ma ridimensionato */
   font-size: 2.2rem;
-  color: var(--text-main);
+  color: #0e7490; /* Teal scuro */
   margin: 0 0 8px 0;
-  font-weight: 800; /* Peso identico alla Home */
+  font-weight: 800;
   line-height: 1.2;
 }
 
 .header-text p {
-  color: var(--text-sub);
+  color: #64748b;
   margin: 0;
-  font-size: 1.1rem; /* Leggermente più grande, come .hero-description */
+  font-size: 1.1rem;
   line-height: 1.6;
-}
-
-/* Stile del bottone adattato alle classi .btn e .btn-primary della Home */
-.btn-new {
-  padding: 12px 24px;
-  border-radius: 12px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  border: none;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.3s ease;
-  
-  /* Colori e ombre */
-  background-color: var(--first-color);
-  color: white;
-  box-shadow: 0 4px 15px rgba(8, 120, 134, 0.3);
-}
-
-.btn-new:hover {
-  /* Effetto hover identico a .btn-primary:hover */
-  background-color: #06606b; /* O var(--third-color) se vuoi un accento diverso */
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(8, 120, 134, 0.4);
 }
 
 /* --- GRIGLIA DELLE CARD --- */
 .events-grid {
   display: grid;
-  /* Uniformato il minmax a 300px come nella features-grid */
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
-  gap: 40px; /* Aumentato gap per più respiro (whitespace) */
-  align-items: stretch; /* Stretch assicura che le card abbiano la stessa altezza */
+  gap: 40px;
+  align-items: stretch; /* Le card avranno tutte la stessa altezza */
   width: 100%; 
 }
 
-/* Aggiunta animazione per l'entrata del box */
+/* Animazione entrata */
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* --- RESPONSIVE --- */
-@media (max-width: 968px) { /* Uniformato breakpoint a 968px */
-  .content-box {
-    padding: 24px; /* Ridotto padding su mobile */
-  }
+@media (max-width: 968px) {
+  .content-box { padding: 24px; }
   
   .box-header {
     flex-direction: column;
     gap: 24px;
     text-align: center;
-    align-items: center;
   }
 
-  .header-text h1 {
-    font-size: 1.8rem;
-  }
+  .header-text h1 { font-size: 1.8rem; }
   
-  .btn-new {
-    width: 100%; /* Bottone full width su mobile */
-    justify-content: center;
-  }
+  /* Riduciamo il padding laterale su mobile */
+  .main-container { padding: 20px; }
 }
