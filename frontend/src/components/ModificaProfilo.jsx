@@ -164,7 +164,7 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
         <div className="preview-panel">
           <div className="preview-content">
              <button className="back-button" onClick={onClose}>
-               <ArrowLeft size={18} /> Chiudi
+               <ArrowLeft size={18} />
              </button>
              
              <div className="avatar-container">
