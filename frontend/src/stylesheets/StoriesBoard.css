@@ -1,7 +1,7 @@
 /* Pagina bacheca */
 .stories-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f7fbfb 0%, #e9fbe7 100%);
+  background-color: var(--bg-main);
   display: flex;
   align-items: flex-start;
   justify-content: center;

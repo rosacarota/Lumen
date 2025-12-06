@@ -1,29 +1,40 @@
 /* --- LAYOUT GENERALE --- */
-.page-wrapper {
-  min-height: 100vh;
-  background-color: #F0F5F5;
+/* Eredita lo stile del wrapper della Home */
+.page-wrapper-inner {
+  padding-top: 100px; /* 80px di navbar + 20px di respiro */
   padding-bottom: 60px;
-  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-main); /* Uniformato allo sfondo della Home */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
+/* Uniformato al .container della Home */
 .main-container {
-  max-width: 1200px;
+  max-width: 1280px; /* Aumentato da 1200 a 1280 per coerenza */
   margin: 0 auto;
-  padding: 40px 20px;
-  display: flex;
+  padding: 0 32px; /* Uniformato al padding laterale della Home */
   width: 100%;
   box-sizing: border-box;
-  justify-content: center;
 }
 
-/* --- IL RIQUADRO BIANCO (Il "Container" dello screenshot) --- */
+/* --- IL RIQUADRO BIANCO --- */
+/* Mantiene il concetto di "scheda fluttuante" ma con lo stile della Home */
 .content-box {
   background-color: white;
   width: 100%;
-  border-radius: 24px; /* Angoli molto arrotondati */
+  border-radius: 24px; /* Stesso radius delle immagini Hero */
   padding: 40px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-  border: 1px solid #e5e7eb;
+  
+  /* Uso l'ombra colorata tipica del tema invece di quella grigia generica */
+  box-shadow: 0 20px 40px rgba(8, 120, 134, 0.08); 
+  
+  /* Bordo sottile se necessario, o rimosso se l'ombra basta */
+  border: 1px solid rgba(0,0,0,0.03); 
+  
+  /* Animazione leggera all'ingresso, simile alla Hero */
+  animation: float 6s ease-in-out infinite; /* Opzionale: se vuoi che fluttui leggermente */
+  animation: fadeInUp 0.8s ease-out; /* Animazione di entrata */
 }
 
 /* --- INTESTAZIONE (Titolo + Bottone) --- */
@@ -32,51 +43,93 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 40px;
-  border-bottom: 1px solid #f3f4f6;
-  padding-bottom: 20px;
+  border-bottom: 1px solid #e0e0e0; /* Stesso colore del .stat-divider */
+  padding-bottom: 24px;
 }
 
 .header-text h1 {
-  font-size: 2rem;
-  color: #0e7490; /* Teal Scuro */
+  /* Stile derivato da .hero-title ma ridimensionato */
+  font-size: 2.2rem;
+  color: var(--text-main);
   margin: 0 0 8px 0;
-  font-weight: 800;
+  font-weight: 800; /* Peso identico alla Home */
+  line-height: 1.2;
 }
 
 .header-text p {
-  color: #6b7280; /* Grigio testo */
+  color: var(--text-sub);
   margin: 0;
+  font-size: 1.1rem; /* Leggermente più grande, come .hero-description */
+  line-height: 1.6;
+}
+
+/* Stile del bottone adattato alle classi .btn e .btn-primary della Home */
+.btn-new {
+  padding: 12px 24px;
+  border-radius: 12px;
   font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  
+  /* Colori e ombre */
+  background-color: var(--first-color);
+  color: white;
+  box-shadow: 0 4px 15px rgba(8, 120, 134, 0.3);
 }
 
 .btn-new:hover {
-  background-color: #059669;
+  /* Effetto hover identico a .btn-primary:hover */
+  background-color: #06606b; /* O var(--third-color) se vuoi un accento diverso */
   transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(8, 120, 134, 0.4);
 }
 
 /* --- GRIGLIA DELLE CARD --- */
 .events-grid {
   display: grid;
-  /* Crea colonne che sono MINIMO 320px e si allargano in proporzione (1fr) */
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
-  gap: 30px;
-  
-  /* Questo allinea le card in alto */
-  align-items: start;
-  
-  /* FONDAMENTALE: Occupa tutta la larghezza del contenitore */
+  /* Uniformato il minmax a 300px come nella features-grid */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+  gap: 40px; /* Aumentato gap per più respiro (whitespace) */
+  align-items: stretch; /* Stretch assicura che le card abbiano la stessa altezza */
   width: 100%; 
 }
 
-/* Adattamento per cellulari */
-@media (max-width: 768px) {
-  .content-box {
-    padding: 20px;
+/* Aggiunta animazione per l'entrata del box */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 968px) { /* Uniformato breakpoint a 968px */
+  .content-box {
+    padding: 24px; /* Ridotto padding su mobile */
+  }
+  
   .box-header {
     flex-direction: column;
-    gap: 15px;
+    gap: 24px;
     text-align: center;
     align-items: center;
+  }
+
+  .header-text h1 {
+    font-size: 1.8rem;
+  }
+  
+  .btn-new {
+    width: 100%; /* Bottone full width su mobile */
+    justify-content: center;
   }
 }

@@ -1,19 +1,19 @@
 /* --- CONTENITORE CARD --- */
 .event-card {
-  background-color: white;
+  background-color: var(--white, #FFFFFF);
   border-radius: 24px;
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-  border: 1px solid #f1f5f9;
+  box-shadow: var(--shadow-soft, 0 10px 40px rgba(8, 120, 134, 0.08));
+  border: 1px solid var(--bg-soft, #F0F5F5);
   
   /* FLEXBOX VERTICALE */
   display: flex;
   flex-direction: column;
   
   /* DIMENSIONI FORZATE */
-  width: 100%;   /* <--- QUESTA RISOLVE IL PROBLEMA DEL RESTRINGIMENTO */
-  height: 100%;  /* Occupa tutta l'altezza della riga */
-  min-height: 450px; /* Altezza minima per uniformità visiva */
+  width: 100%;
+  height: 100%;
+  min-height: 450px;
   
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   position: relative;
@@ -21,17 +21,17 @@
 
 .event-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-hover, 0 20px 50px rgba(8, 120, 134, 0.15));
 }
 
 /* --- IMMAGINE --- */
 .event-cover {
   width: 100%;
-  height: 200px; /* Altezza fissa immagine */
+  height: 200px;
   min-height: 200px;
-  object-fit: cover; /* Ritaglia senza deformare */
+  object-fit: cover;
   object-position: center;
-  background-color: #e2e8f0;
+  background-color: var(--bg-soft, #F0F5F5);
   display: block;
 }
 
@@ -39,11 +39,11 @@
   width: 100%;
   height: 200px;
   min-height: 200px;
-  background-color: #f1f5f9;
+  background-color: var(--bg-soft, #F0F5F5);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #cbd5e1;
+  color: var(--text-sub, #5A6B7C);
 }
 
 /* --- CONTENUTO INTERNO --- */
@@ -51,7 +51,7 @@
   padding: 24px;
   display: flex;
   flex-direction: column;
-  flex: 1; /* Spinge il footer in basso */
+  flex: 1;
   gap: 16px;
 }
 
@@ -66,8 +66,8 @@
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background-color: #dcfce7; 
-  color: #047857;
+  background-color: rgba(124, 206, 107, 0.15);
+  color: var(--third-color, #7CCE6B);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -93,7 +93,7 @@
 .event-brand {
   font-size: 0.95rem;
   font-weight: 700;
-  color: #087886;
+  color: var(--first-color, #087886);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -103,8 +103,8 @@
   font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
-  color: #64748b;
-  background-color: #f1f5f9;
+  color: var(--text-sub, #5A6B7C);
+  background-color: var(--bg-soft, #F0F5F5);
   padding: 2px 8px;
   border-radius: 6px;
   width: fit-content;
@@ -120,7 +120,7 @@
 .event-title {
   font-size: 1.4rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--text-main, #1A2B3C);
   margin: 0;
   line-height: 1.2;
   display: -webkit-box;
@@ -131,14 +131,14 @@
 
 .event-description {
   font-size: 0.9rem;
-  color: #64748b;
+  color: var(--text-sub, #5A6B7C);
   margin: 0;
   line-height: 1.5;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  min-height: 2.8em; /* Riserva spazio anche se vuota */
+  min-height: 2.8em;
 }
 
 /* --- DETTAGLI --- */
@@ -154,24 +154,27 @@
   align-items: center;
   gap: 10px;
   font-size: 0.9rem;
-  color: #475569;
+  color: var(--text-sub, #5A6B7C);
   font-weight: 500;
 }
 
-.event-icon { color: #087886; flex-shrink: 0; }
+.event-icon { 
+  color: var(--first-color, #087886);
+  flex-shrink: 0;
+}
 
 /* --- FOOTER --- */
 .event-footer {
-  margin-top: auto; 
+  margin-top: auto;
   padding-top: 20px;
   display: flex;
   gap: 12px;
-  width: 100%; /* Forza il footer a prendere tutto lo spazio */
+  width: 100%;
 }
 
 .event-btn {
-  flex: 1; /* Occupa tutto lo spazio disponibile */
-  width: 100%; /* Forza larghezza */
+  flex: 1;
+  width: 100%;
   padding: 12px;
   border-radius: 12px;
   font-weight: 700;
@@ -186,11 +189,31 @@
   white-space: nowrap;
 }
 
-.btn-secondary { background-color: #f1f5f9; color: #1e293b; }
-.btn-secondary:hover { background-color: #e2e8f0; }
+.btn-secondary {
+  background-color: var(--bg-soft, #F0F5F5);
+  color: var(--text-main, #1A2B3C);
+}
 
-.btn-primary { background-color: #087886; color: white; }
-.btn-primary:hover { background-color: #0e7490; }
+.btn-secondary:hover {
+  background-color: var(--bg-main, #F7FBFB);
+}
 
-.btn-active { background-color: #fff1f2; color: #e11d48; border: 1px solid #fecdd3; }
-.btn-active:hover { background-color: #ffe4e6; border-color: #e11d48; }
+.btn-primary {
+  background-color: var(--first-color, #087886);
+  color: var(--white, #FFFFFF);
+}
+
+.btn-primary:hover {
+  background-color: var(--second-color, #4AAFB8);
+}
+
+.btn-active {
+  background-color: rgba(124, 206, 107, 0.1);
+  color: var(--third-color, #7CCE6B);
+  border: 1px solid var(--third-color, #7CCE6B);
+}
+
+.btn-active:hover {
+  background-color: rgba(124, 206, 107, 0.2);
+  border-color: var(--third-color, #7CCE6B);
+}
