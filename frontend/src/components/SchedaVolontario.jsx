@@ -1,17 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Mail, Phone, Briefcase } from 'lucide-react'; 
 import '../stylesheets/SchedaVolontario.css';
 
-// 1. Ricevi onClick dalle props
+// COSTANTE BACKEND (O importala dal service se preferisci)
+const API_BASE_URL = "http://localhost:8080";
+
 export default function SchedaVolontario({ utente, onClick }) {
+  // Stato per gestire se l'immagine fallisce il caricamento
+  const [imgError, setImgError] = useState(false);
+
   if (!utente) return null;
 
   const { nome, cognome, immagine, descrizione, email, recapitoTelefonico, ambito } = utente;
   const iniziali = `${nome?.charAt(0) || ''}${cognome?.charAt(0) || ''}`;
 
+  // Funzione per costruire l'URL corretto dell'immagine
+  const getImageUrl = (img) => {
+    if (!img) return null;
+    // Se è già un URL completo (es. https://...) o Base64 (data:image...), lo usiamo così com'è
+    if (img.startsWith("http") || img.startsWith("data:")) {
+        return img;
+    }
+    // Altrimenti, se è un percorso relativo (es. /profile_images/...), ci attacchiamo il dominio del backend
+    return `${API_BASE_URL}${img.startsWith('/') ? '' : '/'}${img}`;
+  };
+
+  const finalImageSrc = getImageUrl(immagine);
+
   return (
-    // 2. Aggiungi l'evento onClick al div principale
-    // 3. Aggiungi style cursor: pointer per far capire che è cliccabile
     <div 
       className="volunteer-card-horizontal" 
       onClick={onClick}
@@ -21,8 +37,14 @@ export default function SchedaVolontario({ utente, onClick }) {
       {/* SEZIONE SINISTRA: AVATAR + DATI PRINCIPALI */}
       <div className="vol-left-group">
         <div className="vol-avatar-horiz">
-          {immagine ? (
-            <img src={immagine} alt={`${nome} ${cognome}`} className="vol-img" />
+          {/* LOGICA: Mostra immagine SOLO se esiste E non ha dato errore */}
+          {!imgError && finalImageSrc ? (
+            <img 
+              src={finalImageSrc} 
+              alt={`${nome} ${cognome}`} 
+              className="vol-img"
+              onError={() => setImgError(true)} // Se non la trova, attiva il fallback
+            />
           ) : (
             <span className="vol-initials">{iniziali}</span>
           )}

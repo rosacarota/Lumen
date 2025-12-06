@@ -43,7 +43,13 @@
   flex-shrink: 0;
 }
 
-.vol-img { width: 100%; height: 100%; object-fit: cover; }
+.vol-img { 
+  width: 100%; 
+  height: 100%; 
+  object-fit: cover; /* Ritaglia l'immagine per riempire il cerchio senza deformarla */
+  display: block;
+}
+
 .vol-initials { font-weight: 700; font-size: 1.1rem; text-transform: uppercase; }
 
 .vol-main-info {
