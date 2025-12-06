@@ -5,7 +5,6 @@ import { registerUser, loginUser } from '../services/loginService';
 import { validateForm } from '../utils/loginValidation';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import '../stylesheets/LoginPage.css';
 
 export default function LoginPage() {
 
@@ -76,13 +75,26 @@ export default function LoginPage() {
     setApiError("");
   };
 
-  // Helper per lo stile condizionale degli input (classe has-error)
-  const getInputClassName = (fieldName) => {
-    return errors[fieldName] ? 'input-field has-error' : 'input-field';
+  // Helper per lo stile condizionale degli input (Bordo Rosso)
+  const getInputStyle = (fieldName, extraStyle = {}) => {
+    const hasError = !!errors[fieldName];
+    return {
+      ...styles.inputField,
+      ...extraStyle,
+      borderColor: hasError ? '#EF4444' : '#E5E7EB', // Rosso se errore, altrimenti grigio
+      boxShadow: hasError ? '0 0 0 1px #EF4444' : 'none'
+    };
   };
   
-  const getInputNoIconClassName = (fieldName) => {
-    return errors[fieldName] ? 'input-field-no-icon has-error' : 'input-field-no-icon';
+  // Helper per input senza icona
+  const getInputNoIconStyle = (fieldName, extraStyle = {}) => {
+    const hasError = !!errors[fieldName];
+    return {
+      ...styles.inputFieldNoIcon,
+      ...extraStyle,
+      borderColor: hasError ? '#EF4444' : '#E5E7EB',
+      boxShadow: hasError ? '0 0 0 1px #EF4444' : 'none'
+    };
   };
 
   // Gestione Next Step (Step 1 -> Step 2)
@@ -174,58 +186,46 @@ export default function LoginPage() {
   };
 
   // Helper per renderizzare errori sotto i campi
-  const ErrorMsg = ({ field }) => errors[field] ? <span className="error-text">{errors[field]}</span> : null;
+  const ErrorMsg = ({ field }) => errors[field] ? <span style={styles.errorText}>{errors[field]}</span> : null;
 
   const renderRegistrationFields = () => {
     const commonFields = (
       <>
-        <div className="input-group-container">
-          <div className="input-group">
-            <Mail className="input-icon" />
+        <div style={styles.inputGroupContainer}>
+          <div style={styles.inputGroup}>
+            <Mail style={styles.inputIcon} />
             <input 
-              type="email" 
-              name="email" 
-              value={formData.email} 
-              onChange={handleChange} 
-              placeholder="Email" 
-              className={getInputClassName('email')} 
+              type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Email" 
+              style={getInputStyle('email')} 
             />
           </div>
           <ErrorMsg field="email" />
         </div>
         
-        <div className="input-group-container">
-          <div className="input-group">
-            <Lock className="input-icon" />
+        <div style={styles.inputGroupContainer}>
+          <div style={styles.inputGroup}>
+            <Lock style={styles.inputIcon} />
             <input 
               type={showPassword ? "text" : "password"} 
-              name="password" 
-              value={formData.password} 
-              onChange={handleChange} 
-              placeholder="Password" 
-              className={getInputClassName('password')}
-              style={{ paddingRight: '40px' }}
+              name="password" value={formData.password} onChange={handleChange} placeholder="Password" 
+              style={getInputStyle('password', { paddingRight: '40px' })} 
             />
-            <button type="button" onClick={() => setShowPassword(!showPassword)} className="password-toggle">
+            <button type="button" onClick={() => setShowPassword(!showPassword)} style={styles.passwordToggle}>
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
           </div>
           <ErrorMsg field="password" />
         </div>
 
-        <div className="input-group-container">
-          <div className="input-group">
-            <Lock className="input-icon" />
+        <div style={styles.inputGroupContainer}>
+          <div style={styles.inputGroup}>
+            <Lock style={styles.inputIcon} />
             <input 
               type={showConfirmPassword ? "text" : "password"} 
-              name="confirmPassword" 
-              value={formData.confirmPassword} 
-              onChange={handleChange} 
-              placeholder="Conferma Password" 
-              className={getInputClassName('confirmPassword')}
-              style={{ paddingRight: '40px' }}
+              name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} placeholder="Conferma Password" 
+              style={getInputStyle('confirmPassword', { paddingRight: '40px' })} 
             />
-            <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="password-toggle">
+            <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} style={styles.passwordToggle}>
               {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
           </div>
@@ -236,32 +236,24 @@ export default function LoginPage() {
 
     if (userType === 'ente') {
       return (
-        <div className="fields-container">
-          <div className="input-group-container">
-            <div className="input-group">
-              <Building2 className="input-icon" />
+        <div style={styles.fieldsContainer}>
+          <div style={styles.inputGroupContainer}>
+            <div style={styles.inputGroup}>
+              <Building2 style={styles.inputIcon} />
               <input 
-                type="text" 
-                name="nomeEnte" 
-                value={formData.nomeEnte} 
-                onChange={handleChange} 
-                placeholder="Nome Ente" 
-                className={getInputClassName('nomeEnte')} 
+                type="text" name="nomeEnte" value={formData.nomeEnte} onChange={handleChange} placeholder="Nome Ente" 
+                style={getInputStyle('nomeEnte')} 
               />
             </div>
             <ErrorMsg field="nomeEnte" />
           </div>
           
-          <div className="input-group-container">
-            <div className="input-group">
-              <Phone className="input-icon" />
+          <div style={styles.inputGroupContainer}>
+            <div style={styles.inputGroup}>
+              <Phone style={styles.inputIcon} />
               <input 
-                type="text" 
-                name="telefono" 
-                value={formData.telefono} 
-                onChange={handleChange} 
-                placeholder="Telefono" 
-                className={getInputClassName('telefono')} 
+                type="text" name="telefono" value={formData.telefono} onChange={handleChange} placeholder="Telefono" 
+                style={getInputStyle('telefono')} 
               />
             </div>
             <ErrorMsg field="telefono" />
@@ -272,47 +264,35 @@ export default function LoginPage() {
     }
 
     return (
-      <div className="fields-container">
-        <div className="input-group-container">
-          <div className="input-group">
-            <User className="input-icon" />
+      <div style={styles.fieldsContainer}>
+        <div style={styles.inputGroupContainer}>
+          <div style={styles.inputGroup}>
+            <User style={styles.inputIcon} />
             <input 
-              type="text" 
-              name="nome" 
-              value={formData.nome} 
-              onChange={handleChange} 
-              placeholder="Nome" 
-              className={getInputClassName('nome')} 
+              type="text" name="nome" value={formData.nome} onChange={handleChange} placeholder="Nome" 
+              style={getInputStyle('nome')} 
             />
           </div>
           <ErrorMsg field="nome" />
         </div>
 
-        <div className="input-group-container">
-          <div className="input-group">
-            <User className="input-icon" />
+        <div style={styles.inputGroupContainer}>
+          <div style={styles.inputGroup}>
+            <User style={styles.inputIcon} />
             <input 
-              type="text" 
-              name="cognome" 
-              value={formData.cognome} 
-              onChange={handleChange} 
-              placeholder="Cognome" 
-              className={getInputClassName('cognome')} 
+              type="text" name="cognome" value={formData.cognome} onChange={handleChange} placeholder="Cognome" 
+              style={getInputStyle('cognome')} 
             />
           </div>
           <ErrorMsg field="cognome" />
         </div>
 
-        <div className="input-group-container">
-          <div className="input-group">
-            <Phone className="input-icon" />
+        <div style={styles.inputGroupContainer}>
+          <div style={styles.inputGroup}>
+            <Phone style={styles.inputIcon} />
             <input 
-              type="text" 
-              name="telefono" 
-              value={formData.telefono} 
-              onChange={handleChange} 
-              placeholder="Telefono" 
-              className={getInputClassName('telefono')} 
+              type="text" name="telefono" value={formData.telefono} onChange={handleChange} placeholder="Telefono" 
+              style={getInputStyle('telefono')} 
             />
           </div>
           <ErrorMsg field="telefono" />
@@ -332,28 +312,29 @@ export default function LoginPage() {
 
   const welcomeMsg = getWelcomeMessage();
   const isSwapped = !isLogin && step !== 2;
-  const containerHeight = (!isLogin && userType) ? 'min(850px, 85vh)' : 'min(700px, 75vh)';
 
   return (
     <>
       <Navbar />
-      <div className="login-page">
-        <div className="login-container hide-scrollbar" style={{ height: containerHeight }}>
+      <div style={styles.loginPage}>
+        <style>{cssStyles}</style>
+
+        <div className="login-container" style={{ ...styles.container, height: (!isLogin && userType) ? 'min(850px, 85vh)' : 'min(700px, 75vh)' }}>
 
           {/* GRADIENT PANEL */}
-          <div className="gradient-panel" style={{ transform: isSwapped ? 'translateX(100%)' : 'translateX(0%)' }}>
-            <div className="gradient-overlay"></div>
-            <div className="blur-circle-1"></div>
-            <div className="blur-circle-2"></div>
-            <div className="welcome-content" key={`${isLogin}-${step}-${userType}`}>
-              <h1 className="welcome-title">{welcomeMsg.title}</h1>
-              <p className="welcome-subtitle">{welcomeMsg.subtitle}</p>
-              <div className="welcome-footer">
+          <div className="gradient-panel" style={{ ...styles.gradientPanel, transform: isSwapped ? 'translateX(100%)' : 'translateX(0%)' }}>
+            <div style={styles.gradientOverlay}></div>
+            <div style={styles.blurCircle1}></div>
+            <div style={styles.blurCircle2}></div>
+            <div style={styles.welcomeContent} key={`${isLogin}-${step}-${userType}`}>
+              <h1 style={styles.welcomeTitle}>{welcomeMsg.title}</h1>
+              <p style={styles.welcomeSubtitle}>{welcomeMsg.subtitle}</p>
+              <div style={styles.welcomeFooter}>
                 {welcomeMsg.footer}{' '}
                 {step === 2 ? (
-                  <button onClick={() => setStep(1)} className="link-button">Torna indietro</button>
+                  <button onClick={() => setStep(1)} style={styles.linkButton}>Torna indietro</button>
                 ) : (
-                  <button onClick={() => { setIsLogin(!isLogin); setUserType(null); setStep(1); setErrors({}); setApiError(""); }} className="link-button">
+                  <button onClick={() => { setIsLogin(!isLogin); setUserType(null); setStep(1); setErrors({}); setApiError(""); }} style={styles.linkButton}>
                     {isLogin ? 'Iscriviti ora' : 'Accedi'}
                   </button>
                 )}
@@ -362,219 +343,162 @@ export default function LoginPage() {
           </div>
 
           {/* FORM PANEL */}
-          <div className="form-panel hide-scrollbar" style={{ transform: isSwapped ? 'translateX(-100%)' : 'translateX(0%)' }}>
-            <div className="form-container">
-              <div className="logo-section">
-                <div className="logo-wrapper">
-                  <HeartHandshake className="logo-icon" />
-                  <span className="logo-text">Lumen</span>
+          <div className="form-panel hide-scrollbar" style={{ ...styles.formPanel, transform: isSwapped ? 'translateX(-100%)' : 'translateX(0%)' }}>
+            <div style={styles.formContainer}>
+              <div style={styles.logoSection}>
+                <div style={styles.logoWrapper}>
+                  <HeartHandshake style={styles.logoIcon} />
+                  <span style={styles.logoText}>Lumen</span>
                 </div>
-                <p className="logo-subtitle">Insieme, per un futuro luminoso</p>
+                <p style={styles.logoSubtitle}>Insieme, per un futuro luminoso</p>
               </div>
 
               {/* BOX ERRORI API */}
               {apiError && (
-                <div className="api-error-box">
+                <div style={styles.apiErrorBox}>
                   <AlertCircle size={18} />
                   <span>{apiError}</span>
                 </div>
               )}
 
-              <div className="form-content">
+              <div style={styles.formContent}>
 
                 {!isLogin && !userType ? (
-                  <div className="user-type-selection">
-                    <h2 className="form-title">Che tipo di utente sei?</h2>
+                  <div style={styles.userTypeSelection}>
+                    <h2 style={styles.formTitle}>Che tipo di utente sei?</h2>
                     {['ente', 'volontario', 'beneficiario'].map((type, index) => (
                       <button key={type}
                         onClick={() => handleUserTypeSelection(type)}
-                        className="user-type-card"
                         style={{
+                          ...styles.userTypeCard,
                           animation: `slideInFromLeft 0.8s ease-out forwards`,
                           animationDelay: `${index * 0.30}s`, 
                           opacity: 0
-                        }}>
-                        <div className="icon-wrapper user-type-icon-wrapper">
-                          {type === 'ente' ? <Building2 className="user-type-icon" /> : type === 'volontario' ? <Heart className="user-type-icon" /> : <Users className="user-type-icon" />}
+                        }}
+                        onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#4AAFB8'; e.currentTarget.style.background = '#E9FBE7'; e.currentTarget.querySelector('.icon-wrapper').style.background = '#7CCE6B'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E5E7EB'; e.currentTarget.style.background = 'white'; e.currentTarget.querySelector('.icon-wrapper').style.background = '#E9FBE7'; }}>
+                        <div className="icon-wrapper" style={styles.userTypeIconWrapper}>
+                          {type === 'ente' ? <Building2 style={styles.userTypeIcon} /> : type === 'volontario' ? <Heart style={styles.userTypeIcon} /> : <Users style={styles.userTypeIcon} />}
                         </div>
-                        <div className="user-type-info">
-                          <div className="user-type-name">{type.charAt(0).toUpperCase() + type.slice(1)}</div>
-                          <div className="user-type-desc">{type === 'ente' ? 'Organizzazione o associazione' : type === 'volontario' ? 'Voglio offrire il mio tempo' : 'Ho bisogno di supporto'}</div>
+                        <div style={styles.userTypeInfo}>
+                          <div style={styles.userTypeName}>{type.charAt(0).toUpperCase() + type.slice(1)}</div>
+                          <div style={styles.userTypeDesc}>{type === 'ente' ? 'Organizzazione o associazione' : type === 'volontario' ? 'Voglio offrire il mio tempo' : 'Ho bisogno di supporto'}</div>
                         </div>
                       </button>
                     ))}
                   </div>
 
                 ) : !isLogin && userType && step === 1 ? (
-                  <div className="registration-form">
-                    <button onClick={() => { setUserType(null); setErrors({}); setApiError(""); }} className="back-button">← Indietro</button>
-                    <h2 className="form-title">Registrazione {userType.charAt(0).toUpperCase() + userType.slice(1)}</h2>
+                  <div style={styles.registrationForm}>
+                    <button onClick={() => { setUserType(null); setErrors({}); setApiError(""); }} style={styles.backButton}>← Indietro</button>
+                    <h2 style={styles.formTitle}>Registrazione {userType.charAt(0).toUpperCase() + userType.slice(1)}</h2>
                     {renderRegistrationFields()}
-                    <button onClick={handleNextStep} className="submit-button">CONTINUA</button>
+                    <button onClick={handleNextStep} style={styles.submitButton}>CONTINUA</button>
                   </div>
 
                 ) : !isLogin && userType && step === 2 ? (
-                  <div className="registration-form">
-                    <h2 className="form-title">Personalizzazione</h2>
+                  <div style={styles.registrationForm}>
+                    <h2 style={styles.formTitle}>Personalizzazione</h2>
 
-                    <div className="image-upload-container">
-                      <div className="image-preview-wrapper">
+                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px', position: 'relative' }}>
+                      <div style={{ width: '100px', height: '100px', borderRadius: '50%', background: '#F3F4F6', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #E5E7EB', position: 'relative' }}>
                         {formData.immagineBase64 ? (
-                          <img src={formData.immagineBase64} alt="Preview" className="image-preview" />
+                          <img src={formData.immagineBase64} alt="Preview" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
                         ) : (
                           <Camera size={40} color="#9CA3AF" />
                         )}
                         <input type="file" ref={fileInputRef} onChange={handleImageUpload} accept="image/*" style={{ display: 'none' }} />
-                        <button onClick={() => fileInputRef.current.click()} className="image-edit-button">
+                        <button onClick={() => fileInputRef.current.click()} style={{ position: 'absolute', bottom: 0, right: 0, background: '#087886', border: '2px solid white', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
                           <Pencil size={16} color="white" />
                         </button>
                       </div>
                     </div>
 
-                    <div className="fields-container">
+                    <div style={styles.fieldsContainer}>
 
                       {(userType === 'ente' || userType === 'volontario') && (
-                        <div className="input-group-container">
-                          <div className="input-group">
-                            <input 
-                              type="text" 
-                              name="ambito" 
-                              value={formData.ambito} 
-                              onChange={handleChange} 
-                              placeholder="Di cosa ti occupi? (es. Sociale)" 
-                              className={getInputNoIconClassName('ambito')} 
-                            />
+                        <div style={styles.inputGroupContainer}>
+                          <div style={styles.inputGroup}>
+                            <input type="text" name="ambito" value={formData.ambito} onChange={handleChange} placeholder="Di cosa ti occupi? (es. Sociale)" style={getInputNoIconStyle('ambito')} />
                           </div>
                         </div>
                       )}
 
-                      <div className="input-group-container">
-                        <div className="input-group">
-                          <textarea 
-                            name="descrizione" 
-                            value={formData.descrizione} 
-                            onChange={handleChange} 
-                            placeholder="Parlaci di te / Bio" 
-                            className="textarea-field" 
-                            rows="3" 
-                          />
+                      <div style={styles.inputGroupContainer}>
+                        <div style={styles.inputGroup}>
+                          <textarea name="descrizione" value={formData.descrizione} onChange={handleChange} placeholder="Parlaci di te / Bio" style={styles.textareaField} rows="3" />
                         </div>
                       </div>
 
-                      <div className="address-label">Indirizzo (Opzionale)</div>
+                      <div style={{ fontSize: '14px', fontWeight: '600', color: '#087886', marginTop: '10px' }}>Indirizzo (Opzionale)</div>
 
-                      <div className="address-row">
-                        <input 
-                          type="text" 
-                          name="strada" 
-                          value={formData.strada} 
-                          onChange={handleChange} 
-                          placeholder="Via" 
-                          className={getInputNoIconClassName('strada')}
-                          style={{ flex: 2 }}
-                        />
-                        <input 
-                          type="text" 
-                          name="nCivico" 
-                          value={formData.nCivico} 
-                          onChange={handleChange} 
-                          placeholder="N." 
-                          className={getInputNoIconClassName('nCivico')}
-                          style={{ flex: 1 }}
-                        />
+                      <div style={{ display: 'flex', gap: '10px' }}>
+                        <input type="text" name="strada" value={formData.strada} onChange={handleChange} placeholder="Via" style={{ ...getInputNoIconStyle('strada'), flex: 2 }} />
+                        <input type="text" name="nCivico" value={formData.nCivico} onChange={handleChange} placeholder="N." style={{ ...getInputNoIconStyle('nCivico'), flex: 1 }} />
                       </div>
-                      <div className="address-row">
-                        <input 
-                          type="text" 
-                          name="citta" 
-                          value={formData.citta} 
-                          onChange={handleChange} 
-                          placeholder="Città" 
-                          className={getInputNoIconClassName('citta')} 
-                        />
-                        <div className="cap-wrapper">
-                           <input 
-                             type="text" 
-                             name="cap" 
-                             value={formData.cap} 
-                             onChange={handleChange} 
-                             placeholder="CAP" 
-                             className={getInputNoIconClassName('cap')} 
-                           />
+                      <div style={{ display: 'flex', gap: '10px' }}>
+                        <input type="text" name="citta" value={formData.citta} onChange={handleChange} placeholder="Città" style={getInputNoIconStyle('citta')} />
+                        <div style={{flex: 1}}>
+                           <input type="text" name="cap" value={formData.cap} onChange={handleChange} placeholder="CAP" style={getInputNoIconStyle('cap')} />
                            <ErrorMsg field="cap" />
                         </div>
                       </div>
-                      <input 
-                        type="text" 
-                        name="provincia" 
-                        value={formData.provincia} 
-                        onChange={handleChange} 
-                        placeholder="Provincia (es. MI)" 
-                        className={getInputNoIconClassName('provincia')} 
-                      />
+                      <input type="text" name="provincia" value={formData.provincia} onChange={handleChange} placeholder="Provincia (es. MI)" style={getInputNoIconStyle('provincia')} />
 
-                      <button onClick={handleSubmit} className="submit-button">COMPLETA REGISTRAZIONE</button>
+                      <button onClick={handleSubmit} style={styles.submitButton}>COMPLETA REGISTRAZIONE</button>
                     </div>
                   </div>
 
                 ) : (
-                  <div className="login-form">
-                    <div className="avatar-wrapper">
-                      <User className="avatar-icon" />
+                  <div style={styles.loginForm}>
+                    <div style={styles.avatarWrapper}>
+                      <User style={styles.avatarIcon} />
                     </div>
-                    <div className="fields-container">
-                      <div className="input-group-container">
-                        <div className="input-group">
-                          <User className="input-icon" />
+                    <div style={styles.fieldsContainer}>
+                      <div style={styles.inputGroupContainer}>
+                        <div style={styles.inputGroup}>
+                          <User style={styles.inputIcon} />
                           <input 
-                            type="text" 
-                            name="email" 
-                            value={formData.email} 
-                            onChange={handleChange} 
-                            placeholder="EMAIL" 
-                            className={getInputClassName('email')} 
+                            type="text" name="email" value={formData.email} onChange={handleChange} placeholder="EMAIL" 
+                            style={getInputStyle('email')} 
                           />
                         </div>
                         <ErrorMsg field="email" />
                       </div>
 
-                      <div className="input-group-container">
-                        <div className="input-group">
-                          <Lock className="input-icon" />
+                      <div style={styles.inputGroupContainer}>
+                        <div style={styles.inputGroup}>
+                          <Lock style={styles.inputIcon} />
                           <input 
                             type={showPassword ? "text" : "password"} 
-                            name="password" 
-                            value={formData.password} 
-                            onChange={handleChange} 
-                            placeholder="PASSWORD" 
-                            className={getInputClassName('password')}
-                            style={{ paddingRight: '40px' }}
+                            name="password" value={formData.password} onChange={handleChange} placeholder="PASSWORD" 
+                            style={getInputStyle('password', { paddingRight: '40px' })} 
                           />
-                          <button type="button" onClick={() => setShowPassword(!showPassword)} className="password-toggle">
+                          <button type="button" onClick={() => setShowPassword(!showPassword)} style={styles.passwordToggle}>
                             {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                           </button>
                         </div>
                         <ErrorMsg field="password" />
                       </div>
                     </div>
-                    <button onClick={handleSubmit} className="submit-button">LOGIN</button>
+                    <button onClick={handleSubmit} style={styles.submitButton}>LOGIN</button>
                     
                   </div>
                 )}
 
                 {!isLogin && (
-                  <div className="dots-indicator">
-                    <span className={!userType ? 'dot-active' : 'dot'}></span>
-                    <span className={userType && step === 1 ? 'dot-active' : 'dot'}></span>
-                    <span className={step === 2 ? 'dot-active' : 'dot'}></span>
+                  <div style={styles.dotsIndicator}>
+                    <span style={!userType ? styles.dotActive : styles.dot}></span>
+                    <span style={userType && step === 1 ? styles.dotActive : styles.dot}></span>
+                    <span style={step === 2 ? styles.dotActive : styles.dot}></span>
                   </div>
                 )}
 
-                <div className="toggle-form">
+                <div style={styles.toggleForm}>
                   {isLogin ? (
-                    <>Non hai un account? <button onClick={() => { setIsLogin(false); setUserType(null); setStep(1); setErrors({}); setApiError(""); }} className="toggle-button">Registrati ora</button></>
+                    <>Non hai un account? <button onClick={() => { setIsLogin(false); setUserType(null); setStep(1); setErrors({}); setApiError(""); }} style={styles.toggleButton}>Registrati ora</button></>
                   ) : !userType ? (
-                    <>Hai già un account? <button onClick={() => { setIsLogin(true); setUserType(null); setStep(1); setErrors({}); setApiError(""); }} className="toggle-button">Accedi</button></>
+                    <>Hai già un account? <button onClick={() => { setIsLogin(true); setUserType(null); setStep(1); setErrors({}); setApiError(""); }} style={styles.toggleButton}>Accedi</button></>
                   ) : null}
                 </div>
               </div>
@@ -586,3 +510,73 @@ export default function LoginPage() {
     </>
   );
 }
+
+const cssStyles = `
+  @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+  @keyframes slideInFromLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+
+  .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  .hide-scrollbar::-webkit-scrollbar { display: none; }
+
+  @media (max-width: 968px) {
+    .login-container { flex-direction: column !important; width: 100% !important; height: auto !important; max-height: 90vh !important; border-radius: 20px !important; }
+    .gradient-panel { display: none !important; }
+    .form-panel { position: relative !important; width: 100% !important; height: auto !important; transform: none !important; padding: 30px 20px !important; }
+  }
+`;
+
+const styles = {
+  loginPage: { flex: 1, background: 'linear-gradient(135deg, #F7FBFB 0%, #E9FBE7 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '46px', overflow: 'hidden' },
+  container: { width: '100%', maxWidth: '1200px', display: 'flex', borderRadius: '30px', overflow: 'hidden', boxShadow: '0 20px 60px rgba(8, 120, 134, 0.15)', background: 'white', position: 'relative', transition: 'height 0.5s cubic-bezier(0.4, 0, 0.2, 1)' },
+  gradientPanel: { position: 'absolute', width: '50%', height: '100%', left: 0, top: 0, background: 'linear-gradient(135deg, #087886 0%, #4AAFB8 50%, #7CCE6B 100%)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '60px', transition: 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)', zIndex: 2 },
+  formPanel: { position: 'absolute', width: '50%', height: '100%', right: 0, top: 0, background: 'white', padding: '20px 60px', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)', zIndex: 1, overflowY: 'auto' },
+  gradientOverlay: { position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(8, 120, 134, 0.8) 0%, rgba(74, 175, 184, 0.6) 50%, rgba(124, 206, 107, 0.4) 100%)' },
+  blurCircle1: { position: 'absolute', width: '300px', height: '300px', background: '#7CCE6B', borderRadius: '50%', filter: 'blur(80px)', opacity: 0.5, top: '10%', left: '10%', animation: 'pulse 4s ease-in-out infinite' },
+  blurCircle2: { position: 'absolute', width: '400px', height: '400px', background: '#4AAFB8', borderRadius: '50%', filter: 'blur(80px)', opacity: 0.5, bottom: '10%', right: '10%', animation: 'pulse 5s ease-in-out infinite' },
+  welcomeContent: { position: 'relative', zIndex: 10, color: 'white', textAlign: 'center', animation: 'fadeInUp 0.6s ease-out' },
+  welcomeTitle: { fontSize: '56px', fontWeight: 700, marginBottom: '24px', textShadow: '0 2px 20px rgba(0, 0, 0, 0.2)' },
+  welcomeSubtitle: { fontSize: '18px', lineHeight: 1.6, opacity: 0.95, marginBottom: '32px' },
+  welcomeFooter: { fontSize: '14px', opacity: 0.9 },
+  linkButton: { background: 'none', border: 'none', color: 'white', fontWeight: 600, cursor: 'pointer', textDecoration: 'underline', fontSize: '14px', transition: 'opacity 0.3s ease' },
+  forgotPassword: { background: 'none', border: 'none', color: '#6B7280', cursor: 'pointer', fontSize: '14px', transition: 'color 0.3s ease' },
+  userTypeSelection: { display: 'flex', flexDirection: 'column', gap: '16px', width: '100%' },
+  userTypeCard: { width: '100%', padding: '16px', background: 'white', border: '2px solid #E5E7EB', borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer', textAlign: 'left', transition: 'all 0.3s ease' },
+  userTypeIconWrapper: { width: '48px', height: '48px', borderRadius: '50%', background: '#E9FBE7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'all 0.3s ease' },
+  userTypeIcon: { width: '24px', height: '24px', color: '#087886' },
+  userTypeInfo: { flex: 1 },
+  userTypeName: { fontWeight: 600, color: '#087886', marginBottom: '4px' },
+  userTypeDesc: { fontSize: '14px', color: '#6B7280' },
+  backButton: { background: 'none', border: 'none', color: '#6B7280', cursor: 'pointer', fontSize: '14px', marginBottom: '16px', transition: 'color 0.3s ease' },
+  toggleForm: { textAlign: 'center', fontSize: '14px', color: '#6B7280', paddingTop: '16px' },
+  toggleButton: { background: 'none', border: 'none', color: '#087886', fontWeight: 600, cursor: 'pointer', fontSize: '14px', transition: 'color 0.3s ease' },
+  registrationForm: { display: 'flex', flexDirection: 'column', gap: '16px', width: '100%' },
+  loginForm: { display: 'flex', flexDirection: 'column', gap: '24px', width: '100%' },
+  textareaField: { width: '100%', padding: '12px 16px', border: '2px solid #E5E7EB', borderRadius: '20px', fontSize: '14px', outline: 'none', transition: 'all 0.3s ease', fontFamily: 'inherit', resize: 'vertical', boxSizing: 'border-box' },
+  formContainer: { width: '100%', maxWidth: '420px' },
+  logoSection: { marginBottom: '30px', marginTop: '50px' },
+  logoWrapper: { display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' },
+  logoIcon: { width: '32px', height: '32px', color: '#087886' },
+  logoText: { fontSize: '24px', fontWeight: 700, color: '#087886' },
+  logoSubtitle: { fontSize: '14px', color: '#6B7280' },
+  formContent: { display: 'flex', flexDirection: 'column', gap: '24px' },
+  formTitle: { fontSize: '24px', fontWeight: 600, color: '#087886', marginBottom: '24px' },
+  avatarWrapper: { width: '80px', height: '80px', borderRadius: '50%', border: '4px solid #E5E7EB', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' },
+  avatarIcon: { width: '40px', height: '40px', color: '#9CA3AF' },
+  fieldsContainer: { display: 'flex', flexDirection: 'column', gap: '16px' },
+  inputGroupContainer: { display: 'flex', flexDirection: 'column', gap: '4px' },
+  inputGroup: { position: 'relative' },
+  inputIcon: { position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', width: '20px', height: '20px', color: '#9CA3AF', pointerEvents: 'none' },
+  inputField: { width: '100%', padding: '12px 16px 12px 44px', border: '2px solid #E5E7EB', borderRadius: '25px', fontSize: '14px', outline: 'none', transition: 'all 0.3s ease', boxSizing: 'border-box' },
+  inputFieldNoIcon: { width: '100%', padding: '12px 16px', border: '2px solid #E5E7EB', borderRadius: '25px', fontSize: '14px', outline: 'none', transition: 'all 0.3s ease', boxSizing: 'border-box' },
+  submitButton: { width: '100%', padding: '14px', background: 'linear-gradient(135deg, #087886 0%, #7CCE6B 120%)', color: 'white', border: 'none', borderRadius: '25px', fontSize: '16px', fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 12px rgba(8, 120, 134, 0.3)', transition: 'all 0.3s ease' },
+  loginOptions: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '14px' },
+  rememberMe: { display: 'flex', alignItems: 'center', gap: '8px', color: '#6B7280', cursor: 'pointer' },
+  checkbox: { width: '16px', height: '16px', cursor: 'pointer' },
+  dotsIndicator: { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '16px 0' },
+  dot: { width: '8px', height: '8px', borderRadius: '50%', background: '#E5E7EB', transition: 'background 0.3s ease' },
+  dotActive: { width: '8px', height: '8px', borderRadius: '50%', background: '#087886' },
+  passwordToggle: { position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#9CA3AF', padding: 0, display: 'flex', alignItems: 'center' },
+  errorText: { fontSize: '12px', color: '#EF4444', marginLeft: '12px', marginTop: '2px' },
+  apiErrorBox: { display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', backgroundColor: '#FEE2E2', border: '1px solid #FCA5A5', borderRadius: '8px', color: '#B91C1C', marginBottom: '20px', fontSize: '14px' }
+};
