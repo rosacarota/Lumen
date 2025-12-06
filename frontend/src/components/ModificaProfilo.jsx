@@ -3,16 +3,12 @@ import {
   User, Mail, Phone, MapPin, Building2, Save, X, 
   Camera, Briefcase, Home, Map, ArrowLeft 
 } from 'lucide-react';
-
-// Assicurati che il percorso del CSS sia corretto
+import Swal from 'sweetalert2'; 
 import '../stylesheets/ModificaProfilo.css'; 
-
-// Importiamo la funzione per salvare dal Service
 import { updateUserProfile } from '../services/UserServices.js'; 
 
 export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
   
-  // 1. Stato del Form
   const [formData, setFormData] = useState({
      nome: '', 
      cognome: '', 
@@ -21,7 +17,7 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
      recapitoTelefonico: '', 
      ambito: '', 
      ruolo: '', 
-     immagine: '', // Qui finirà la stringa Base64 dell'immagine
+     immagine: '', 
      citta: '', 
      provincia: '', 
      cap: '', 
@@ -31,7 +27,6 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
   
   const [loading, setLoading] = useState(false);
 
-  // 2. Effetto: Quando il modale si apre, copia i dati dell'utente nel form
   useEffect(() => {
     if (isOpen && currentUser) {
       setFormData({
@@ -49,50 +44,60 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
     }
   }, [isOpen, currentUser]);
 
-  // Se il modale è chiuso, non renderizzare nulla
   if (!isOpen) return null;
 
-  // 3. Gestione cambiamento input di testo
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // 4. Gestione caricamento immagine (Conversione File -> Base64)
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
-      
-      // Quando il file è stato letto
       reader.onloadend = () => {
-        // reader.result è la stringa lunga che rappresenta l'immagine
         setFormData(prev => ({ ...prev, immagine: reader.result }));
       };
-      
-      // Legge il file
       reader.readAsDataURL(file);
     }
   };
 
-  // 5. Gestione Salvataggio
+  // --- MODIFICA IMPORTANTE QUI ---
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     
     try {
+      // 1. Attendiamo che il server salvi i dati
       await updateUserProfile(formData);
-      alert("Profilo aggiornato con successo!");
-      onClose(); // Chiude il modale
+      
+      // 2. Chiudiamo SUBITO il modale (così l'utente vede la pagina sotto)
+      onClose(); 
+
+      // 3. Mostriamo l'alert di successo
+      Swal.fire({
+        icon: 'success',
+        title: 'Salvato!',
+        text: 'Profilo aggiornato con successo!',
+        confirmButtonColor: '#087886'
+      });
+
     } catch (error) {
       console.error("Errore salvataggio:", error);
-      alert("Errore durante il salvataggio: " + error.message);
+      
+      // In caso di errore, NON chiudiamo il modale per permettere di riprovare,
+      // ma mostriamo l'alert di errore sopra il modale.
+      Swal.fire({
+        icon: 'error',
+        title: 'Errore',
+        text: "Errore durante il salvataggio: " + error.message,
+        confirmButtonColor: '#d33'
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  // Helper per mostrare campi diversi se l'utente è un Ente
   const renderAnagraficaFields = () => {
     if (formData.ruolo === 'Ente') {
       return (
