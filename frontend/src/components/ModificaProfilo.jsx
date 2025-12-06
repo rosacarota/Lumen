@@ -113,17 +113,7 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
               className="input-field"
             />
           </div>
-          <div className="input-group">
-            <User className="input-icon" />
-            <input 
-              type="text" 
-              name="cognome" 
-              value={formData.cognome} 
-              onChange={handleChange} 
-              placeholder="Nome Referente" 
-              className="input-field"
-            />
-          </div>
+          
         </>
       );
     } else {
