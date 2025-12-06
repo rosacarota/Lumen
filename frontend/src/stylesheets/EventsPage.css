@@ -1,101 +1,82 @@
-/* --- 1. RESET GLOBALE (Toglie la striscia bianca di default) --- */
-html, body, #root {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-}
-
-/* --- 2. WRAPPER PRINCIPALE --- */
-.page-wrapper-inner {
-  display: flex;
-  flex-direction: column; /* Impila gli elementi verticalmente */
-  min-height: 100vh;      /* Forza l'altezza minima a tutto lo schermo */
+/* --- LAYOUT GENERALE --- */
+.page-wrapper {
+  min-height: 100vh;
   background-color: #F0F5F5;
+  padding-bottom: 60px;
   font-family: 'Inter', sans-serif;
 }
 
-/* --- 3. CONTENITORE CENTRALE (La parte che deve crescere) --- */
 .main-container {
-  /* FONDAMENTALE: flex: 1 dice "occupa tutto lo spazio vuoto disponibile" */
-  /* Questo spinge il footer verso il basso */
-  flex: 1; 
-  
-  width: 100%;
-  max-width: 1280px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 40px 32px; /* Uniformato il padding */
-  box-sizing: border-box;
-  
-  /* Centratura del box bianco */
+  padding: 40px 20px;
   display: flex;
+  width: 100%;
+  box-sizing: border-box;
   justify-content: center;
-  align-items: flex-start; /* Evita che il box si stiri verticalmente */
 }
 
-/* --- IL RIQUADRO BIANCO --- */
+/* --- IL RIQUADRO BIANCO (Il "Container" dello screenshot) --- */
 .content-box {
   background-color: white;
   width: 100%;
-  border-radius: 24px;
-  margin-top: 5%;
+  border-radius: 24px; /* Angoli molto arrotondati */
   padding: 40px;
-  box-shadow: 0 20px 40px rgba(8, 120, 134, 0.08);
-  border: 1px solid rgba(0,0,0,0.03);
-  animation: fadeInUp 0.8s ease-out;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  border: 1px solid #e5e7eb;
 }
 
-/* --- INTESTAZIONE --- */
+/* --- INTESTAZIONE (Titolo + Bottone) --- */
 .box-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 40px;
-  border-bottom: 1px solid #e0e0e0;
-  padding-bottom: 24px;
+  border-bottom: 1px solid #f3f4f6;
+  padding-bottom: 20px;
 }
 
 .header-text h1 {
-  font-size: 2.2rem;
-  color: #0e7490; /* Teal scuro */
+  font-size: 2rem;
+  color: #0e7490; /* Teal Scuro */
   margin: 0 0 8px 0;
   font-weight: 800;
-  line-height: 1.2;
 }
 
 .header-text p {
-  color: #64748b;
+  color: #6b7280; /* Grigio testo */
   margin: 0;
-  font-size: 1.1rem;
-  line-height: 1.6;
+  font-size: 1rem;
+}
+
+.btn-new:hover {
+  background-color: #059669;
+  transform: translateY(-2px);
 }
 
 /* --- GRIGLIA DELLE CARD --- */
 .events-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
-  gap: 40px;
-  align-items: stretch; /* Le card avranno tutte la stessa altezza */
+  /* Crea colonne che sono MINIMO 320px e si allargano in proporzione (1fr) */
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
+  gap: 30px;
+  
+  /* Questo allinea le card in alto */
+  align-items: start;
+  
+  /* FONDAMENTALE: Occupa tutta la larghezza del contenitore */
   width: 100%; 
 }
 
-/* Animazione entrata */
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* --- RESPONSIVE --- */
-@media (max-width: 968px) {
-  .content-box { padding: 24px; }
-  
+/* Adattamento per cellulari */
+@media (max-width: 768px) {
+  .content-box {
+    padding: 20px;
+  }
   .box-header {
     flex-direction: column;
-    gap: 24px;
+    gap: 15px;
     text-align: center;
+    align-items: center;
   }
-
-  .header-text h1 { font-size: 1.8rem; }
-  
-  /* Riduciamo il padding laterale su mobile */
-  .main-container { padding: 20px; }
 }
