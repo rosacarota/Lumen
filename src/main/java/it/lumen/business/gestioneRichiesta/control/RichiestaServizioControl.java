@@ -89,4 +89,11 @@ public class RichiestaServizioControl {
 
         return ResponseEntity.ok(richiestaServizioService.getRichiesteByEmail(email));
     }
+
+    @GetMapping("/getRichiestaInAttesa")
+    public ResponseEntity<List<?>> getRichiestaInAttesa(@RequestParam String token) {
+        String email = util.extractEmail(token);
+
+        return ResponseEntity.ok(richiestaServizioService.getRichiesteInAttesaByEmail(email));
+    }
 }

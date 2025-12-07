@@ -2,6 +2,7 @@ package it.lumen.business.gestioneRichiesta.service;
 
 import it.lumen.business.gestioneAutenticazione.service.AutenticazioneService;
 import it.lumen.data.dao.RichiestaServizioDAO;
+import it.lumen.data.dao.UtenteDAO;
 import it.lumen.data.dto.RichiestaServizioDTO;
 import it.lumen.data.entity.RichiestaServizio;
 import it.lumen.data.entity.Utente;
@@ -18,11 +19,13 @@ public class RichiestaServizioServiceImpl implements RichiestaServizioService {
 
     private final RichiestaServizioDAO richiestaServizioDAO;
     private final AutenticazioneService autenticazioneService;
+    private final UtenteDAO utenteDAO;
 
     @Autowired
-    public RichiestaServizioServiceImpl(RichiestaServizioDAO richiestaServizioDAO, AutenticazioneService autenticazioneService) {
+    public RichiestaServizioServiceImpl(RichiestaServizioDAO richiestaServizioDAO, AutenticazioneService autenticazioneService, UtenteDAO utenteDAO) {
         this.richiestaServizioDAO = richiestaServizioDAO;
         this.autenticazioneService = autenticazioneService;
+        this.utenteDAO = utenteDAO;
     }
 
     @Override
@@ -54,5 +57,12 @@ public class RichiestaServizioServiceImpl implements RichiestaServizioService {
     public List<RichiestaServizio> getRichiesteByEmail(String email) {
 
         return richiestaServizioDAO.findAllByEnteVolontario_Email(email);
+    }
+
+    public List<RichiestaServizio>getRichiesteInAttesaByEmail(String email) {
+
+        //Utente utente = utenteDAO.findByEmail(email);
+        List<RichiestaServizio> richiesta = richiestaServizioDAO.findAllByEmailInAttesa(email);
+        return richiesta;
     }
 }

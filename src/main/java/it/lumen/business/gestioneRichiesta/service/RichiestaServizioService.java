@@ -11,4 +11,5 @@ public interface RichiestaServizioService {
     public void accettaRichiestaServizio(RichiestaServizio richiestaServizio);
     public void rifiutaRichiestaServizio(RichiestaServizio richiestaServizio);
     public List<RichiestaServizio> getRichiesteByEmail(String email);
+    public List<RichiestaServizio>getRichiesteInAttesaByEmail(String email);
 }
