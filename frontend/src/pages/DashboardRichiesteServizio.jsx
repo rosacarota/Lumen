@@ -205,7 +205,7 @@ export default function DashboardRichiesteServizio() {
                     <div className="req-desc-title">
                       <FileText size={16} /> <span>Dettagli Richiesta</span>
                     </div>
-                    <p className="req-text">"{req.testo}"</p>
+                    <p className="req-text">{req.testo}</p>
                     
                     <div className="req-divider"></div>
 
