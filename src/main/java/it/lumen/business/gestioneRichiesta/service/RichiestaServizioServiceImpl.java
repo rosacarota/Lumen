@@ -9,6 +9,9 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.sql.Date;
+
 @Service
 public class RichiestaServizioServiceImpl implements RichiestaServizioService {
 
@@ -26,13 +29,12 @@ public class RichiestaServizioServiceImpl implements RichiestaServizioService {
     public void creaRichiestaServizio(RichiestaServizioDTO  richiestaServizioDTO) {
         Utente volontario = autenticazioneService.getUtente(richiestaServizioDTO.getEnteVolontario());
         Utente beneficiario = autenticazioneService.getUtente(richiestaServizioDTO.getBeneficiario());
-
         if(volontario == null || beneficiario == null) {
             throw new IllegalArgumentException("Utenti non trovati");
         }
         RichiestaServizio richiesta = new RichiestaServizio();
         richiesta.setTesto(richiestaServizioDTO.getTesto());
-        richiesta.setDataRichiesta(richiestaServizioDTO.getDataRichiesta());
+        richiesta.setDataRichiesta(Date.valueOf(LocalDate.now()));
         richiesta.setBeneficiario(beneficiario);
         richiesta.setEnteVolontario(volontario);
         richiesta.setStato(RichiestaServizio.StatoRichiestaServizio.InAttesa);
