@@ -17,7 +17,7 @@ function mapStoryFromApi(apiStory) {
 
   if (apiStory.utente) {
     if (typeof apiStory.utente === 'object') {
-      authorEmail = apiStory.utente.email || ""; 
+      authorEmail = apiStory.utente.email || "";
       authorName = apiStory.utente.nome || apiStory.autoreNome || "Utente";
     } else {
       authorEmail = String(apiStory.utente);
@@ -26,7 +26,7 @@ function mapStoryFromApi(apiStory) {
   }
 
   if (!authorEmail && apiStory.autoreEmail) {
-      authorEmail = apiStory.autoreEmail;
+    authorEmail = apiStory.autoreEmail;
   }
 
   return {
@@ -39,6 +39,7 @@ function mapStoryFromApi(apiStory) {
     authorName: authorName,
     authorRole: apiStory.autoreRuolo,
     type: apiStory.immagine ? "photo" : "text",
+    utente: apiStory.utente, // Preserva l'oggetto utente completo con ruolo, immagine, etc.
   };
 }
 
@@ -70,37 +71,37 @@ export async function fetchStories(targetEmail = null) {
   if (!res.ok) throw new Error("Errore nel caricamento delle storie");
 
   const data = await res.json();
-  
+
   const allStories = data.map(mapStoryFromApi);
 
   if (targetEmail) {
-      const safeTarget = targetEmail.trim().toLowerCase();
-      
-      /*const filtered = allStories.filter(story => {
-          const match = story.authorEmail === safeTarget;
-          return match;
-      });
-      
-      return filtered;*/
+    const safeTarget = targetEmail.trim().toLowerCase();
+
+    /*const filtered = allStories.filter(story => {
+        const match = story.authorEmail === safeTarget;
+        return match;
+    });
+    
+    return filtered;*/
   }
 
   return allStories;
 }
 
-export async function fetchFilteredStories(targetEmail = null){
+export async function fetchFilteredStories(targetEmail = null) {
   const token = getAuthToken();
 
   const res = await fetch(`${API_BASE_URL}/racconto/visualizza?token=${token}`, {
     method: "GET",
   });
-  if(!res.ok) throw new Error("Errore nel caricamento delle storie filtrate");
+  if (!res.ok) throw new Error("Errore nel caricamento delle storie filtrate");
 
   const data = await res.json();
 
   const filteredStories = data.map(mapStoryFromApi);
 
   return filteredStories;
-  
+
 }
 
 export async function addStory(newStory) {

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import AddStory from "../components/AddStory";
 import EditStory from "../components/EditStory";
 import DeleteStory from "../components/DeleteStory";
@@ -150,45 +151,54 @@ const StoriesBoard = () => {
     return story.authorName || "Anonimo";
   };
 
+
+  const getStoryOwnerRole = (story) => {
+    if (story.utente && story.utente.ruolo) {
+      return story.utente.ruolo;
+    }
+    return story.authorRole || "";
+  };
+
+
   const latestStories = stories.slice(0, 3);
 
   return (
-      <>
-        <Navbar />
+    <>
+      <Navbar />
 
-        <div className="stories-page" id="storie">
-          <div className="stories-container">
-            <header className="stories-hero">
-              <div className="stories-hero-left">
-                <h1 className="stories-title">Storie</h1>
-                <p className="stories-subtitle">
-                  Leggi le esperienze della community o condividi la tua.
-                </p>
-              </div>
-              <div className="stories-hero-right">
-                {/* Tasto nuovo racconto visibile se siamo loggati */}
-                {currentUserEmail && (
-                    <button
-                        className="stories-add-button"
-                        type="button"
-                        onClick={openAddStory}
-                    >
-                      + Nuovo racconto
-                    </button>
-                )}
-              </div>
-            </header>
+      <div className="stories-page" id="storie">
+        <div className="stories-container">
+          <header className="stories-hero">
+            <div className="stories-hero-left">
+              <h1 className="stories-title">Storie</h1>
+              <p className="stories-subtitle">
+                Leggi le esperienze della community o condividi la tua.
+              </p>
+            </div>
+            <div className="stories-hero-right">
+              {/* Tasto nuovo racconto visibile se siamo loggati */}
+              {currentUserEmail && (
+                <button
+                  className="stories-add-button"
+                  type="button"
+                  onClick={openAddStory}
+                >
+                  + Nuovo racconto
+                </button>
+              )}
+            </div>
+          </header>
 
-            {loading && (
-                <p className="stories-loading">Caricamento storie...</p>
-            )}
-            {error && <p className="stories-error">{error}</p>}
+          {loading && (
+            <p className="stories-loading">Caricamento storie...</p>
+          )}
+          {error && <p className="stories-error">{error}</p>}
 
-            <div className="stories-layout">
-              <section className="stories-main">
-{stories.map((story) => {
+          <div className="stories-layout">
+            <section className="stories-main">
+              {stories.map((story) => {
                 const authorName = getAuthorName(story);
-                
+                const storyOwnerRole = getStoryOwnerRole(story);
                 const myEmail = currentUserEmail ? currentUserEmail.trim().toLowerCase() : "";
                 let storyOwnerEmail = "";
                 if (story.utente && story.utente.email) {
@@ -196,15 +206,15 @@ const StoriesBoard = () => {
                 } else if (story.authorEmail) {
                   storyOwnerEmail = story.authorEmail;
                 } else if (story.email) {
-                   storyOwnerEmail = story.email;
+                  storyOwnerEmail = story.email;
                 }
                 storyOwnerEmail = storyOwnerEmail ? storyOwnerEmail.trim().toLowerCase() : "";
                 const isOwner = myEmail && storyOwnerEmail && (myEmail === storyOwnerEmail);
                 let authorAvatar = null;
                 if (story.utente && story.utente.immagine) {
 
-                  authorAvatar = story.utente.immagine.startsWith("data:image") 
-                    ? story.utente.immagine 
+                  authorAvatar = story.utente.immagine.startsWith("data:image")
+                    ? story.utente.immagine
                     : `data:image/jpeg;base64,${story.utente.immagine}`;
                 }
 
@@ -212,19 +222,19 @@ const StoriesBoard = () => {
                 return (
                   <article key={story.id || story.idRacconto} className="story-card">
                     <div className="story-card-header">
-                      
+
                       {/* --- MODIFICA QUI SOTTO --- */}
                       <div className="story-avatar">
                         {authorAvatar ? (
-                          <img 
-                            src={authorAvatar} 
-                            alt="Avatar" 
-                            style={{ 
-                              width: "100%", 
-                              height: "100%", 
-                              objectFit: "cover", 
-                              borderRadius: "50%" 
-                            }} 
+                          <img
+                            src={authorAvatar}
+                            alt="Avatar"
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                              borderRadius: "50%"
+                            }}
                           />
                         ) : (
                           authorName.charAt(0).toUpperCase()
@@ -233,9 +243,18 @@ const StoriesBoard = () => {
                       {/* ------------------------- */}
 
                       <div className="story-author-info">
-                        <span className="story-author-name">
-                          {authorName}
-                        </span>
+                        <Link
+                          to={`/profilo${storyOwnerRole ? storyOwnerRole.toLowerCase() : ''}`}
+                          className="sr-profile-link"
+                          onClick={() => {
+                            if (storyOwnerEmail) {
+                              localStorage.setItem('searchEmail', storyOwnerEmail);
+                            }
+                          }}>
+                          <span className="story-author-name">
+                            {authorName}
+                          </span>
+                        </Link>
                         <span className="story-author-role">
                           {story.authorRole || (story.utente ? "Utente" : "")}
                         </span>
@@ -286,81 +305,81 @@ const StoriesBoard = () => {
                 );
               })}
 
-                {stories.length === 0 && !loading && !error && (
-                    <p className="stories-empty">
-                      Nessuna storia ancora. Sii il primo a condividere un racconto.
-                    </p>
-                )}
-              </section>
+              {stories.length === 0 && !loading && !error && (
+                <p className="stories-empty">
+                  Nessuna storia ancora. Sii il primo a condividere un racconto.
+                </p>
+              )}
+            </section>
 
-              <aside className="stories-sidebar">
-                <h3 className="sidebar-title">Ultime storie</h3>
+            <aside className="stories-sidebar">
+              <h3 className="sidebar-title">Ultime storie</h3>
 
-                {latestStories.map((story) => {
-                  const authorName = getAuthorName(story);
-                  return (
-                      <article key={story.id || story.idRacconto} className="sidebar-story-card">
-                        <div className="sidebar-story-header">
-                          <div className="sidebar-avatar">
-                            {authorName.charAt(0).toUpperCase()}
-                          </div>
-                          <div className="sidebar-author-info">
+              {latestStories.map((story) => {
+                const authorName = getAuthorName(story);
+                return (
+                  <article key={story.id || story.idRacconto} className="sidebar-story-card">
+                    <div className="sidebar-story-header">
+                      <div className="sidebar-avatar">
+                        {authorName.charAt(0).toUpperCase()}
+                      </div>
+                      <div className="sidebar-author-info">
                         <span className="sidebar-author-name">
                           {authorName}
                         </span>
-                            <span className="sidebar-author-role">
+                        <span className="sidebar-author-role">
                           {story.authorRole || "Utente"}
                         </span>
-                          </div>
-                        </div>
+                      </div>
+                    </div>
 
-                        <h4 className="sidebar-story-title">{story.titolo || story.title}</h4>
-                        <p className="sidebar-story-snippet">
-                          {(story.descrizione || story.content) && (story.descrizione || story.content).length > 110
-                              ? (story.descrizione || story.content).slice(0, 110) + "..."
-                              : (story.descrizione || story.content)}
-                        </p>
-                        <button className="sidebar-story-button" type="button">
-                          LEGGI QUI
-                        </button>
-                      </article>
-                  );
-                })}
+                    <h4 className="sidebar-story-title">{story.titolo || story.title}</h4>
+                    <p className="sidebar-story-snippet">
+                      {(story.descrizione || story.content) && (story.descrizione || story.content).length > 110
+                        ? (story.descrizione || story.content).slice(0, 110) + "..."
+                        : (story.descrizione || story.content)}
+                    </p>
+                    <button className="sidebar-story-button" type="button">
+                      LEGGI QUI
+                    </button>
+                  </article>
+                );
+              })}
 
-                {latestStories.length === 0 && !loading && !error && (
-                    <p className="stories-empty">Ancora nessuna storia recente.</p>
-                )}
-              </aside>
-            </div>
+              {latestStories.length === 0 && !loading && !error && (
+                <p className="stories-empty">Ancora nessuna storia recente.</p>
+              )}
+            </aside>
           </div>
         </div>
+      </div>
 
-        {isAddStoryOpen && (
-            <AddStory
-                onSubmit={handleSubmitStory}
-                onBack={closeAddStory}
-                isModal={true}
-            />
-        )}
+      {isAddStoryOpen && (
+        <AddStory
+          onSubmit={handleSubmitStory}
+          onBack={closeAddStory}
+          isModal={true}
+        />
+      )}
 
-        {editingStory && (
-            <EditStory
-                story={editingStory}
-                onCancel={closeEditStory}
-                onSave={handleSaveEditedStory}
-            />
-        )}
+      {editingStory && (
+        <EditStory
+          story={editingStory}
+          onCancel={closeEditStory}
+          onSave={handleSaveEditedStory}
+        />
+      )}
 
-        {storyToDelete && (
-            <DeleteStory
-                story={storyToDelete}
-                onCancel={closeDeleteStory}
-                onConfirm={handleDeleteConfirm}
-            />
-        )}
+      {storyToDelete && (
+        <DeleteStory
+          story={storyToDelete}
+          onCancel={closeDeleteStory}
+          onConfirm={handleDeleteConfirm}
+        />
+      )}
 
-        <Footer />
-      </>
+      <Footer />
+    </>
   );
 };
 
