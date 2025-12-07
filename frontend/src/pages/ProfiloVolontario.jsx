@@ -67,7 +67,7 @@ const ProfiloVolontario = () => {
             <Navbar />
             <div className="voluntary-container">
 
-                <section className="profile-section-full">
+                <section className="profile-section-v">
                     <InfoProfilo
                         userData={profileData}
                         isOwner={isOwner}

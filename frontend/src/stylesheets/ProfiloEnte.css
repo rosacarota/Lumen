@@ -1,4 +1,3 @@
-/* Scoped variables for this page only */
 .ente-page-wrapper {
   --bg-main: #F7FBFB;
   --bg-soft: #E9FBE7;
@@ -22,6 +21,7 @@
   font-family: 'Segoe UI', sans-serif;
   overflow-x: hidden;
   color: var(--first-color);
+  padding-top: 50px;
 }
 
 .ente-page-wrapper .main-container {
@@ -207,56 +207,52 @@
   box-sizing: border-box;
 }
 
-/* --- GRIGLIA EVENTI (Left Column) --- */
-
 .ente-page-wrapper .left-column {
-
-  /* Impostazioni Contenitore Scrollabile */
   background-color: rgba(255, 255, 255, 0.5);
   border: 1px solid white;
   padding: 50px;
-    height: 500px; /* Puoi usare max-height se preferisci che si accorci se vuoto */
+  height: 500px;
   align-items: center;
   align-content: center;
-  /* Altezza fissa o max-height per attivare lo scroll */
-
-  overflow-y: auto; /* Scroll verticale attivo */
+  overflow-y: auto;
   align-self: center;
-  /* Scrollbar Custom (Firefox) */
   scrollbar-width: thin;
   scrollbar-color: var(--second-color) rgba(255, 255, 255, 0.3);
 }
+
 .ente-page-wrapper .event-grid{
-   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* ESATTAMENTE 2 COLONNE */
-  gap: 20px; 
-  
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
 }
-/* Scrollbar Custom (Chrome, Edge, Safari) */
+
 .ente-page-wrapper .event-grid::-webkit-scrollbar {
   width: 8px;
 }
+
 .ente-page-wrapper .event-grid::-webkit-scrollbar-track {
   background: rgba(255, 255, 255, 0.3);
   border-radius: 10px;
   margin: 6px 0;
 }
+
 .ente-page-wrapper .event-grid::-webkit-scrollbar-thumb {
   background-color: var(--second-color);
   border-radius: 10px;
 }
+
 .ente-page-wrapper .event-grid::-webkit-scrollbar-thumb:hover {
   background-color: var(--first-color);
 }
 
-/* --- RESPONSIVE MOBILE --- */
 @media (max-width: 900px) {
   .ente-page-wrapper .event-grid {
-    grid-template-columns: 1fr; /* 1 colonna su schermi piccoli */
-    height: auto; /* Rimuovi altezza fissa su mobile per scroll pagina naturale */
-    max-height: 500px; /* Opzionale: limite altezza su mobile */
+    grid-template-columns: 1fr;
+    height: auto;
+    max-height: 500px;
   }
 }
+
 .ente-page-wrapper .sidebar-header {
   background-color: var(--second-color);
   padding: 19px;
@@ -291,8 +287,6 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* === MODIFICHE PER LO SCROLL E LA SPAZIATURA === */
-
 .ente-page-wrapper .sidebar-content {
   background-color: rgba(255, 255, 255, 0.5);
   border: 1px solid white;
@@ -300,47 +294,41 @@
   padding: 20px;
   min-height: 400px;
   color: #999;
-  
-  /* Imposta un'altezza massima e attiva lo scroll verticale */
-  max-height: 400px; /* Regola questo valore in base a quanto alta vuoi la sidebar prima che scrolli */
+  max-height: 400px;
   overflow-y: auto;
   display: block;
-
-  /* Stile scrollbar per Firefox */
   scrollbar-width: thin;
   scrollbar-color: var(--second-color) rgba(255, 255, 255, 0.3);
 }
 
-/* === STILE SCROLLBAR PERSONALIZZATO (Chrome, Edge, Safari) === */
 .ente-page-wrapper .sidebar-content::-webkit-scrollbar {
-  width: 8px; /* Larghezza della barra */
+  width: 8px;
 }
 
 .ente-page-wrapper .sidebar-content::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.3); /* Colore sfondo barra (trasparente/bianco) */
+  background: rgba(255, 255, 255, 0.3);
   border-radius: 10px;
-  margin: 10px 0; /* Un po' di margine sopra e sotto */
+  margin: 10px 0;
 }
 
 .ente-page-wrapper .sidebar-content::-webkit-scrollbar-thumb {
-  background-color: var(--second-color); /* Colore del "manico" della barra */
+  background-color: var(--second-color);
   border-radius: 10px;
-  border: 2px solid transparent; /* Trucco per renderla meno tozza */
+  border: 2px solid transparent;
   background-clip: content-box;
 }
 
 .ente-page-wrapper .sidebar-content::-webkit-scrollbar-thumb:hover {
-  background-color: var(--first-color); /* Colore più scuro quando ci passi sopra */
+  background-color: var(--first-color);
 }
 
-/* Container per le card delle raccolte */
 .ente-page-wrapper .raccolte-list-container {
   display: flex;
   flex-direction: column;
-  gap: 20px; /* Spaziatura tra le card */
+  gap: 20px;
   width: 100%;
   align-items: center;
-  justify-content: flex-start; /* Inizia dall'alto, non dal centro */
+  justify-content: flex-start;
 }
 
 .ente-page-wrapper .placeholder-content {
@@ -381,7 +369,6 @@
     min-width: auto;
   }
 
-  /* Quando siamo su mobile, rimuoviamo la max-height fissa per non avere doppio scroll scomodo */
   .ente-page-wrapper .sidebar-content {
     max-height: none;
     overflow-y: visible;

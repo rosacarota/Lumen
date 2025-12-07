@@ -9,18 +9,14 @@ const ProfiloBeneficiario = () => {
 
   const searchEmail = localStorage.getItem('searchEmail');
   const currentUserEmail = localStorage.getItem('email');
-
-  // Se c'è una mail di ricerca, usiamo quella, altrimenti quella dell'utente loggato
   const targetEmail = searchEmail || currentUserEmail;
-
-  // isOwner è true se NON c'è searchEmail oppure se coincidono
   const isOwner = !searchEmail || (currentUserEmail && searchEmail.toLowerCase() === currentUserEmail.toLowerCase());
 
   return (
     <div className="beneficiary-page-wrapper">
       <Navbar />
       <div className="beneficiary-container">
-        <section className="profile-section-full">
+        <section className="profile-section-b">
           <InfoProfilo />
         </section>
         <section className="beneficiary-stories-section">

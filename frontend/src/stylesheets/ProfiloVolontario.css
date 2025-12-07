@@ -1,12 +1,8 @@
-:root {
-    --bg-soft: #E9FBE7;
-}
-
 .voluntary-page-wrapper {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    background-color: var(--bg-soft);
+    background-color: #FFFFFF;
     font-family: 'Segoe UI', sans-serif;
 }
 
@@ -28,9 +24,10 @@
     height: auto;
 }
 
-.profile-section-full {
+.profile-section-v {
     width: 100%;
     box-sizing: border-box;
+    padding: 0;
 }
 
 .voluntary-split-layout {

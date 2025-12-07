@@ -2,14 +2,12 @@ import React, { useState, useEffect, useMemo } from 'react';
 import Swal from 'sweetalert2';
 import { Trash2, Plus, Pencil, Calendar, Image as ImageIcon } from 'lucide-react';
 
-// --- COMPONENTI UI ---
 import Navbar from '../components/Navbar.jsx';
 import InfoProfilo from '../components/InfoProfilo.jsx';
 import Footer from '../components/Footer.jsx';
 import EventCard from '../components/EventCard.jsx';
 import RaccoltaFondiCard from '../components/RaccoltaFondiCard.jsx';
 
-// --- MODALI ---
 import AddEvento from '../components/AddEvento.jsx';
 import AddRaccoltaFondi from '../components/AddRaccoltaFondi.jsx';
 import RichiestaAffiliazione from '../components/RichiestaAffiliazione.jsx';
@@ -18,7 +16,6 @@ import AddStory from '../components/AddStory.jsx';
 import EditStory from '../components/EditStory.jsx';
 import DeleteStory from '../components/DeleteStory.jsx';
 
-// --- SERVIZI ---
 import { fetchUserProfile, fetchUserPublicProfile } from '../services/UserServices.js';
 import { getCronologiaEventi } from '../services/EventoService.js';
 import { getRaccolteDiEnte, terminaRaccolta } from '../services/RaccoltaFondiService.js';
@@ -26,9 +23,6 @@ import { fetchStories, addStory, editStory, deleteStory } from '../services/Stor
 
 import '../stylesheets/ProfiloEnte.css';
 
-// --- COMPONENTI INTERNI ---
-
-// Wrapper generico per i modali
 const ModalWrapper = ({ children, onClose }) => (
   <div className="modal-overlay" onClick={onClose} style={modalStyles.overlay}>
     <div className="modal-content" onClick={(e) => e.stopPropagation()} style={modalStyles.content}>
@@ -40,14 +34,12 @@ const ModalWrapper = ({ children, onClose }) => (
 
 const ProfiloEnte = () => {
 
-  // --- STATI DATI ---
   const [profileData, setProfileData] = useState(null);
-  // --- STATI UI ---
   const [activeTab, setActiveTab] = useState('futuri');
   const [activeSideTab, setActiveSideTab] = useState('storie');
 
 
-  const currentUserEmail = localStorage.getItem('email'); // O dal tuo context/token
+  const currentUserEmail = localStorage.getItem('email');
 
   const isOwner = useMemo(() => {
 
@@ -58,7 +50,6 @@ const ProfiloEnte = () => {
 
 
 
-  // --- STATI MODALI ---
   const [modals, setModals] = useState({
     affiliazione: false,
     servizio: false,
@@ -70,16 +61,11 @@ const ProfiloEnte = () => {
   });
   const [selectedStory, setSelectedStory] = useState(null);
 
-  // --- DATI LISTE ---
   const [lists, setLists] = useState({ eventi: [], raccolte: [], storie: [] });
   const [loading, setLoading] = useState({ eventi: false, raccolte: false, storie: false });
 
-  // --- LOGICA RUOLI (Derivati) ---
   const userRole = localStorage.getItem('ruolo');
 
-
-
-  // --- HELPER AGGIORNAMENTO MODALI ---
   const toggleModal = (modalName, value) => {
     setModals(prev => ({ ...prev, [modalName]: value }));
   };
@@ -144,7 +130,6 @@ const ProfiloEnte = () => {
     finally { setLoading(prev => ({ ...prev, storie: false })); }
   };
 
-  // --- INIT EFFECT ---
   useEffect(() => {
     const init = async () => {
       const profile = await loadData();
@@ -182,7 +167,6 @@ const ProfiloEnte = () => {
     const raccolta = lists.raccolte.find(r => String(r.id_raccolta) === String(idRaccolta));
     if (!raccolta) return;
 
-    // Manteniamo solo il controllo di sicurezza
     const res = await Swal.fire({
       title: 'Sei sicuro?',
       text: "Vuoi terminare la raccolta fondi? L'azione è irreversibile.",
@@ -197,7 +181,6 @@ const ProfiloEnte = () => {
     if (res.isConfirmed) {
       try {
         await terminaRaccolta({ ...raccolta, enteObj: profileData });
-        // Ricarichiamo solo i dati senza mostrare popup di successo "inutili"
         loadRaccolte(profileData);
       } catch (error) {
         console.error("Errore terminazione:", error);
@@ -212,9 +195,7 @@ const ProfiloEnte = () => {
       <Navbar />
       <InfoProfilo userData={profileData} isOwner={isOwner} onUpdate={loadData} />
       <div className="main-container">
-
         <section className="event-section">
-          {/* BARRA DI CONTROLLO SUPERIORE */}
           <div className="controll">
             <div className="tabs-left">
               {['attivi', 'futuri', 'svolti'].map(tab => (
@@ -227,25 +208,16 @@ const ProfiloEnte = () => {
                 </button>
               ))}
             </div>
-
             <div className="actions-right">
-              {isOwner && userRole === 'ente' ? (
+              {isOwner && userRole === 'ente' (
                 <>
                   <button className="btn-action" onClick={() => toggleModal('addStory', true)}>CREA STORIA</button>
                   <button className="btn-action" onClick={() => toggleModal('raccolta', true)}>CREA RACCOLTA FONDI</button>
                 </>
-              ) : (
-                <>
-                  {userRole === 'volontario' && !isOwner && <button className="btn-action btn-affiliation" onClick={() => toggleModal('affiliazione', true)}>Richiedi affiliazione</button>}
-                  {userRole === 'beneficiario' && !isOwner && <button className="btn-action btn-affiliation" onClick={() => toggleModal('servizio', true)}>Richiedi Servizio</button>}
-                </>
               )}
             </div>
           </div>
-
           <div className="split-layout">
-
-            {/* COLONNA SINISTRA: EVENTI */}
             <div className="left-column">
               {isOwner && userRole === 'ente' && (
                 <div onClick={() => toggleModal('addEvento', true)} style={styles.createEventBtn}>
@@ -253,7 +225,6 @@ const ProfiloEnte = () => {
                   <span style={styles.createEventText}>Crea Nuovo Evento</span>
                 </div>
               )}
-
               <div className="event-grid">
                 {loading.eventi ? <p>Caricamento eventi...</p> : lists.eventi.map(ev => (
                   <EventCard key={ev.id_evento} event={ev} showParticipate={true} />
@@ -263,14 +234,11 @@ const ProfiloEnte = () => {
                 )}
               </div>
             </div>
-
-            {/* COLONNA DESTRA: SIDEBAR */}
             <div className="right-column">
               <div className="sidebar-header">
                 <button className={`side-tab-btn ${activeSideTab === 'storie' ? 'active' : ''}`} onClick={() => setActiveSideTab('storie')}>STORIE</button>
                 <button className={`side-tab-btn ${activeSideTab === 'raccolte' ? 'active' : ''}`} onClick={() => setActiveSideTab('raccolte')}>RACCOLTE FONDI</button>
               </div>
-
               <div className="sidebar-content">
                 {activeSideTab === 'storie' && (
                   <div className="storie-container">
@@ -326,13 +294,10 @@ const ProfiloEnte = () => {
       </div>
       <Footer />
 
-      {/* --- MODALI --- */}
       {isOwner && userRole === 'ente' && modals.addEvento && <AddEvento onBack={() => toggleModal('addEvento', false)} onSubmit={() => { toggleModal('addEvento', false); loadEventi(profileData); }} isModal={true} enteId={profileData?.id} />}
       {isOwner && userRole === 'ente' && modals.raccolta && <ModalWrapper onClose={() => toggleModal('raccolta', false)}><AddRaccoltaFondi enteLogged={profileData} onClose={() => { toggleModal('raccolta', false); loadRaccolte(profileData); }} isModal={true} /></ModalWrapper>}
-
       {!isOwner && userRole === 'volontario' && modals.affiliazione && <RichiestaAffiliazione onClose={() => toggleModal('affiliazione', false)} emailEnte={profileData?.email} isModal={true} />}
       {!isOwner && userRole === 'beneficiario' && modals.servizio && <ModalWrapper onClose={() => toggleModal('servizio', false)}><RichiestaServizio onClose={() => toggleModal('servizio', false)} emailEnte={profileData?.email} /></ModalWrapper>}
-
       {isOwner && userRole === 'ente' && modals.addStory && <AddStory onBack={() => toggleModal('addStory', false)} onSubmit={(d) => handleStoryAction('add', d)} />}
       {isOwner && userRole === 'ente' && modals.editStory && selectedStory && <EditStory story={selectedStory} onCancel={() => { toggleModal('editStory', false); setSelectedStory(null); }} onSave={(d) => handleStoryAction('edit', d)} />}
       {isOwner && userRole === 'ente' && modals.deleteStory && selectedStory && <DeleteStory story={selectedStory} onCancel={() => { toggleModal('deleteStory', false); setSelectedStory(null); }} onConfirm={() => handleStoryAction('delete', selectedStory)} />}
