@@ -45,7 +45,7 @@ export default function VisualizzaPartecipantiEvento({
   const handleCardClick = (volontario) => {
     // Opzionale: Se ti serve sapere CHI hai cliccato nella prossima pagina,
     // potresti salvare l'email nel localStorage prima di navigare.
-    // localStorage.setItem("selectedProfileEmail", volontario.email);
+    localStorage.setItem("searchEmail", volontario.email);
     
     navigate('/ProfiloVolontario');
   };

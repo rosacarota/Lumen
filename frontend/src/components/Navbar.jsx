@@ -163,21 +163,16 @@ const DropdownMenu = ({ role, onLogout }) => {
       case 'beneficiario':
         return [
           { label: 'Area Personale', icon: <Settings size={16} />, href: '/profilobeneficiario' },
-          { label: 'Gestione richieste', icon: <FileText size={16} />, href: '/richieste' },
           { label: 'Logout', icon: <LogOut size={16} />, action: onLogout, type: 'danger' }
         ];
       case 'volontario':
         return [
           { label: 'Area Personale', icon: <Settings size={16} />, href: '/profilovolontario' },
-          { label: 'Gestione servizi', icon: <Briefcase size={16} />, href: '/servizi' },
-          { label: 'Gestione affiliazione', icon: <Users size={16} />, href: '/affiliazione' },
           { label: 'Logout', icon: <LogOut size={16} />, action: onLogout, type: 'danger' }
         ];
       case 'ente':
         return [
           { label: 'Area Personale', icon: <Settings size={16} />, href: '/profiloente' },
-          { label: 'Gestione eventi', icon: <Calendar size={16} />, href: '/eventi-gestione' },
-          { label: 'Gestione raccolte fondi', icon: <Heart size={16} />, href: '/raccolte-fondi' },
           { label: 'Gestione affiliati', icon: <Users size={16} />, href: '/DashboardAffiliazione' },
           { label: 'Logout', icon: <LogOut size={16} />, action: onLogout, type: 'danger' }
         ];

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, Phone, Briefcase } from 'lucide-react'; 
+import { User, Mail, Phone, Briefcase } from 'lucide-react'; 
 import '../stylesheets/SchedaVolontario.css';
 
 // COSTANTE BACKEND (O importala dal service se preferisci)
@@ -54,7 +54,7 @@ export default function SchedaVolontario({ utente, onClick }) {
           <h3 className="vol-name">{nome} {cognome}</h3>
           
           <div className="vol-badges-row">
-            <span className="vol-badge">Volontario</span>
+            <span className="vol-badge"><User size={14} strokeWidth={2.5} style={{ marginRight: '6px' }} />Volontario</span>
             {ambito && (
               <span className="vol-ambito">
                 <Briefcase size={12} style={{marginRight: '4px'}}/> 

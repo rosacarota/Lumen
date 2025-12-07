@@ -19,9 +19,11 @@ import {
 
 import { rimuoviEvento } from '../services/EventoService';
 
+// DEFINIZIONE URL BACKEND
+const API_BASE_URL = "http://localhost:8080";
+
 export default function EventCard({ event, showParticipate = true }) {
   
-  // 2. Inizializziamo il navigatore
   const navigate = useNavigate();
 
   const safeId = event.id || event.idEvento || event.id_evento;
@@ -45,6 +47,7 @@ export default function EventCard({ event, showParticipate = true }) {
     ? new Date(startDate).toLocaleDateString('it-IT', { day: 'numeric', month: 'short', year: 'numeric' })
     : "Data da definire";
 
+  // --- CALCOLO NOME ---
   const getOrganizerName = () => {
     if (organizerNameMapped) return organizerNameMapped;
     if (event.utente) {
@@ -58,17 +61,43 @@ export default function EventCard({ event, showParticipate = true }) {
     return "Ente";
   };
   
-  // Cerchiamo di recuperare anche l'email dell'ente se serve per la navigazione futura
-  const getOrganizerEmail = () => {
-    if (event.organizerEmail) return event.organizerEmail;
-    if (event.utente && typeof event.utente === 'object') return event.utente.email;
-    if (event.ente && typeof event.ente === 'object') return event.ente.email;
-    if (typeof event.ente === 'string') return event.ente;
-    return "";
-  }
-
   const displayOrganizerName = getOrganizerName();
-  // const organizerEmail = getOrganizerEmail(); // Utile se vorrai passare l'email nell'URL
+
+  // ---------------------------------------------------------
+  // QUI SONO LE FUNZIONI NUOVE PER L'IMMAGINE
+  // ---------------------------------------------------------
+
+  // 1. Trova la stringa dell'immagine nei dati
+  const getOrganizerImage = () => {
+    if (event.organizerImage) return event.organizerImage;
+    if (event.utente && typeof event.utente === 'object' && event.utente.immagine) {
+        return event.utente.immagine;
+    }
+    if (event.ente && typeof event.ente === 'object' && event.ente.immagine) {
+        return event.ente.immagine;
+    }
+    return null;
+  };
+
+  // 2. Costruisce l'URL completo
+  const getAvatarUrl = (img) => {
+    if (!img) return null;
+    if (img.startsWith("http") || img.startsWith("data:")) return img;
+    return `${API_BASE_URL}${img.startsWith('/') ? '' : '/'}${img}`;
+  };
+
+  // 3. Variabili finali da usare nel return
+  const rawImage = getOrganizerImage();
+  const finalAvatarUrl = getAvatarUrl(rawImage);
+  const avatarLetter = (displayOrganizerName || "E").charAt(0).toUpperCase();
+  
+  // ---------------------------------------------------------
+
+  const handleEnteClick = (e) => {
+    e.stopPropagation();
+    localStorage.setItem("searchEmail", event.utente.email); 
+    navigate('/ProfiloEnte');
+  };
 
   useEffect(() => {
     const initializeCard = async () => {
@@ -93,16 +122,6 @@ export default function EventCard({ event, showParticipate = true }) {
     };
     if (safeId) initializeCard();
   }, [safeId, showParticipate]);
-
-  // --- 3. NUOVA FUNZIONE PER CLICK SULL'ENTE ---
-  const handleEnteClick = (e) => {
-    e.stopPropagation(); // Evita di aprire i dettagli dell'evento
-    
-    // Opzionale: Salva l'email nel localStorage se la pagina profilo la legge da lì
-    // localStorage.setItem("selectedEnteEmail", getOrganizerEmail());
-
-    navigate('/ProfiloEnte');
-  };
 
   const handleOpenModifica = () => {
     setActiveModal('edit');
@@ -179,8 +198,6 @@ export default function EventCard({ event, showParticipate = true }) {
     setLoadingBtn(false);
   };
 
-  const avatarLetter = (displayOrganizerName || "E").charAt(0).toUpperCase();
-
   return (
     <>
       <div className="event-card">
@@ -194,11 +211,28 @@ export default function EventCard({ event, showParticipate = true }) {
 
         <div className="event-content">
           <div className="event-header">
+            {/* QUI HO INSERITO IL CODICE JSX PER L'AVATAR */}
             <div className="event-avatar">
-              <span>{avatarLetter}</span>
+              {finalAvatarUrl ? (
+                <img 
+                  src={finalAvatarUrl} 
+                  alt={displayOrganizerName} 
+                  className="event-avatar-img"
+                  onError={(e) => { 
+                    e.target.style.display = 'none'; 
+                    e.target.nextSibling.style.display = 'flex'; 
+                  }} 
+                />
+              ) : null}
+  
+              {/* Fallback Lettera */}
+              <span style={{ display: finalAvatarUrl ? 'none' : 'flex' }}>
+                {avatarLetter}
+              </span>
             </div>
+            {/* ----------------------------------------------------- */}
+
             <div className="event-meta">
-              {/* 4. AGGIUNTO ONCLICK E STILE QUI */}
               <span 
                 className="event-brand" 
                 onClick={handleEnteClick}
