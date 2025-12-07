@@ -228,8 +228,8 @@ body {
 
 .role-card:hover {
     transform: translateY(-10px);
-    box-shadow: var(--shadow-hover);
-    border-color: var(--second-color);
+    box-shadow: 0 15px 35px -5px rgba(8, 119, 134, 0.253);
+    
 }
 
 .icon-wrapper {
