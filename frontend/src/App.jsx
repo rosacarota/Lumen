@@ -10,6 +10,7 @@ import ProfiloEnte from './pages/ProfiloEnte';
 import ProfiloVolontario from './pages/ProfiloVolontario';
 import ProfiloBeneficiario from './pages/ProfiloBeneficiario';
 import DashboardAffiliazione from './pages/DashboardAffiliazione';
+import DashboardRichiesteServizio from './pages/DashboardRichiesteServizio';
 import RicercaGeografica from './pages/RicercaGeografica';
 import RisultatiRicerca from './pages/RisultatiRicerca';
 
@@ -31,6 +32,7 @@ function App() {
         <Route path="/storie" element={<StoriesBoard />} />
         <Route path="/eventi" element={<EventsPage />} />
         <Route path="/DashboardAffiliazione" element={<DashboardAffiliazione />} />
+        <Route path="/DashboardRichiesteServizio" element={<DashboardRichiesteServizio />} />
 
         {/* Rotte Profili */}
         <Route path="/profiloente" element={<ProfiloEnte />} />

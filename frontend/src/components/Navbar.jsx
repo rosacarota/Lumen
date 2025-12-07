@@ -23,6 +23,7 @@ const Navbar = () => {
   // AGGIUNTA: Se il ruolo è 'ente', aggiungo la voce "Affiliazione"
   if (currentUser.role === 'ente') {
     navItems.push({ label: 'Affiliati', path: '/DashboardAffiliazione' });
+    navItems.push({ label: 'Servizi', path: '/DashboardRichiesteServizio' });
   }
 
   useEffect(() => {
@@ -174,6 +175,7 @@ const DropdownMenu = ({ role, onLogout }) => {
         return [
           { label: 'Area Personale', icon: <Settings size={16} />, href: '/profiloente' },
           { label: 'Gestione affiliati', icon: <Users size={16} />, href: '/DashboardAffiliazione' },
+          { label: 'Gestione servizi', icon: <FileText size={16} />, href: '/DashboardRichiesteServizio' },
           { label: 'Logout', icon: <LogOut size={16} />, action: onLogout, type: 'danger' }
         ];
       case 'guest':
