@@ -47,26 +47,7 @@ public class RicercaUtenteControl {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
-        List<Utente> listaUtenti = ricercaUtenteService.getUtentiPerNome(nome);
-
-        List<UtenteDTO> listaUtentiDTO = listaUtenti.stream()
-                .map(utente -> {
-                    UtenteDTO utenteDTO = new UtenteDTO();
-                    utenteDTO.setNome(utente.getNome());
-                    utenteDTO.setCognome(utente.getCognome());
-                    utenteDTO.setEmail(utente.getEmail());
-                    utenteDTO.setRuolo(utente.getRuolo());
-                    utenteDTO.setAmbito(utente.getAmbito());
-                    utenteDTO.setDescrizione(utente.getDescrizione());
-                    utenteDTO.setObjIndirizzo(utente.getIndirizzo());
-                    try{
-                            utenteDTO.setImmagine(autenticazioneService.recuperaImmagine(utente.getImmagine()));
-                            }catch(IOException e){
-                        throw new RuntimeException(e);
-                    }
-                    return utenteDTO;
-                }).collect(Collectors.toList());
-
+        List<UtenteDTO> listaUtentiDTO = ricercaUtenteService.getUtentiPerNome(nome);
         return ResponseEntity.ok(listaUtentiDTO);
     }
 

@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface RicercaUtenteService {
 
-    List<Utente> getUtentiPerNome(String nome);
+    List<UtenteDTO> getUtentiPerNome(String nome);
     UtenteDTO getUtenteByEmail(String email);
 
 }
