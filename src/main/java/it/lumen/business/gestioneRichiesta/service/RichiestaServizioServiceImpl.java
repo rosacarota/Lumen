@@ -48,7 +48,7 @@ public class RichiestaServizioServiceImpl implements RichiestaServizioService {
     @Override
     @Transactional
     public void accettaRichiestaServizio(RichiestaServizio richiestaServizio) {
-        richiestaServizio.setStato(RichiestaServizio.StatoRichiestaServizio.valueOf("Accettato"));
+        richiestaServizio.setStato(RichiestaServizio.StatoRichiestaServizio.valueOf("Accettata"));
         richiestaServizioDAO.save(richiestaServizio);}   //Cambio stato: InAttesa -> Accettato
 
     @Override
