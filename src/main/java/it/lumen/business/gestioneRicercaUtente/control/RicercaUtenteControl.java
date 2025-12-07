@@ -55,12 +55,9 @@ public class RicercaUtenteControl {
     public ResponseEntity<UtenteDTO> datiUtente(@RequestBody Map<String, String> paramEmail) {
 
         String email = paramEmail.get("email");
-        System.out.println(email);
         if(email ==  null || email.isEmpty()) {return ResponseEntity.badRequest().build();}
 
         UtenteDTO utenteDTO = ricercaUtenteService.getUtenteByEmail(email);
-
-        System.out.println(utenteDTO);
         return ResponseEntity.ok(utenteDTO);
     }
 
