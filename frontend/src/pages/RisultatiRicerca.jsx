@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { MapPin, Briefcase, User, Building2, ArrowRight, Heart, Map } from 'lucide-react';
+import { MapPin, Briefcase, User, Building2, ArrowRight, Heart, Map, SearchX } from 'lucide-react';
 import '../stylesheets/RisultatiRicerca.css';
 import RicercaService from '../services/RicercaService.js';
 
@@ -75,7 +75,7 @@ const SearchResults = () => {
           <div className="sr-header">
             <h1>Risultati ricerca</h1>
             <p>
-              Risultati per: <span className="sr-query-highlight">"{searchTerm}"</span>
+              Risultati per: <span className="sr-query-highlight">{searchTerm}</span>
             </p>
 
             <div className="sr-filter-tabs">
@@ -174,7 +174,7 @@ const SearchResults = () => {
             </div>
           ) : (
             <div className="sr-no-results">
-              <div className="sr-no-results-icon">🔍</div>
+              <div className="sr-no-results-icon"><SearchX size={65}></SearchX></div>
               <h3>Nessun risultato trovato</h3>
               <p>Non abbiamo trovato {activeFilter !== 'Tutti' ? activeFilter.toLowerCase() : 'utenti'} corrispondenti alla tua ricerca "{searchTerm}".</p>
             </div>
