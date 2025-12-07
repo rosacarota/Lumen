@@ -39,7 +39,7 @@ public class Evento {
     @Column(name="maxpartecipanti", nullable= true)
     private int maxPartecipanti;
 
-    @Column(name="immagine", nullable= true, length=255)
+    @Column(name="immagine", nullable= true)
     private String immagine;
 
     @ManyToOne(fetch = FetchType.LAZY)

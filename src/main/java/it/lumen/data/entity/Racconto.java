@@ -41,7 +41,7 @@ public class Racconto {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "utente")
-    @JsonIgnoreProperties({"indirizzo", "password", "ruolo", "ambito", "recapitoTelefonico", "descrizione", "hibernateLazyInitializer"})
+    @JsonIgnoreProperties({"indirizzo", "password", "ambito", "recapitoTelefonico", "descrizione", "hibernateLazyInitializer"})
     private Utente utente;
 
 
