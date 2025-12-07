@@ -1,4 +1,3 @@
-/* --- LAYOUT GENERALE HERO --- */
 .hero-wrapper {
     width: 100%;
     margin-bottom: 40px;
@@ -6,7 +5,6 @@
     border-top-left-radius: 0;
     border-top-right-radius: 0;
     position: relative;
-    /* Sfondo sfumato base */
     background: linear-gradient(to bottom right, var(--first-color) 0%, var(--second-color) 40%, var(--third-color) 100%);
     overflow: hidden;
     min-height: 25vh; 
@@ -16,34 +14,29 @@
     z-index: 1;
 }
 
-/* --- DECORAZIONI STATICHE (Zero carico GPU) --- */
 .hero-wrapper::before,
 .hero-wrapper::after {
     content: '';
     position: absolute;
     border-radius: 50%;
     z-index: -1;
-    pointer-events: none; /* Non interferiscono coi click */
-    opacity: 0.6;         /* Trasparenza fissa */
+    pointer-events: none;
+    opacity: 0.6;
 }
 
-/* Sfera in alto a sinistra */
 .hero-wrapper::before {
     width: 400px; 
     height: 400px;
     top: -80px; 
     left: 5%;
-    /* Gradiente radiale invece del pesante blur */
     background: radial-gradient(circle, var(--third-color) 0%, rgba(255,255,255,0) 70%);
 }
 
-/* Sfera in basso a destra */
 .hero-wrapper::after {
     width: 500px; 
     height: 500px;
     bottom: -100px; 
     right: 5%;
-    /* Gradiente radiale invece del pesante blur */
     background: radial-gradient(circle, var(--second-color) 0%, rgba(255,255,255,0) 70%);
 }
 
@@ -54,7 +47,6 @@
     flex-grow: 1; 
 }
 
-/* --- BARRA INFORMAZIONI --- */
 .hero-info-bar {
     background: linear-gradient(to top, rgba(8, 120, 134, 0.8) 0%, rgba(8, 120, 134, 0) 100%);
     padding-bottom: 30px;
@@ -70,12 +62,12 @@
     max-width: 1200px;
     width: 100%;
     display: flex;
-    align-items: center;
+    justify-content: flex-start;
+    align-items: flex-end;
     padding: 0 20px;
     gap: 30px;
 }
 
-/* --- BOX DATI PERSONALI (Visibile solo all'Owner) --- */
 .owner-details-grid {
     display: flex;
     flex-wrap: wrap; 
@@ -103,29 +95,6 @@
     opacity: 0.9;
 }
 
-/* --- RESPONSIVE MOBILE --- */
-@media (max-width: 768px) {
-    .owner-details-grid {
-        flex-direction: column;
-        gap: 10px;
-        width: 100%;
-    }
-    
-    .hero-content-inner {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .ente-text p {
-        margin: 0 auto;
-    }
-    
-    .stats-row {
-        justify-content: center;
-    }
-}
-
-/* --- AVATAR E IMMAGINE --- */
 .avatar-container {
     width: 160px;
     height: 160px;
@@ -142,8 +111,6 @@
     color: var(--first-color);
     font-weight: bold;
     font-size: 1.2rem;
-    
-    /* Fondamentale per mascherare l'immagine nel cerchio */
     overflow: hidden; 
     position: relative;
 }
@@ -151,7 +118,7 @@
 .profile-img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Mantiene le proporzioni senza deformare */
+    object-fit: cover;
     display: block;
 }
 
@@ -161,7 +128,11 @@
     background-color: #eee;
 }
 
-/* --- TESTI --- */
+.profile-actions-right {
+    flex-shrink: 0;
+    margin-bottom: 23px;
+}
+
 .ente-text {
     color: white;
     margin-top: 10px;
@@ -195,10 +166,8 @@
     align-items: center;
 }
 
-/* --- PULSANTI --- */
 .pill {
   background-color: rgba(255, 255, 255, 0.25);
-  /* Backdrop-filter mantenuto leggero, rimuovere se da ancora problemi su mobile vecchi */
   backdrop-filter: blur(5px);
   padding: 8px 20px;
   border-radius: 20px;
@@ -244,4 +213,25 @@
     color: white; 
     border: 1px solid white; 
     box-shadow: none; 
+}
+
+@media (max-width: 768px) {
+    .owner-details-grid {
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+    }
+    
+    .hero-content-inner {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .ente-text p {
+        margin: 0 auto;
+    }
+    
+    .stats-row {
+        justify-content: center;
+    }
 }
