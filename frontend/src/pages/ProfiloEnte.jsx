@@ -210,9 +210,8 @@ const ProfiloEnte = () => {
   return (
     <div className="ente-page-wrapper">
       <Navbar />
+      <AccessoInfoProfilo userData={profileData} isOwner={isOwner} onUpdate={loadData} />
       <div className="main-container">
-
-        <AccessoInfoProfilo userData={profileData} isOwner={isOwner} onUpdate={loadData} />
 
         <section className="event-section">
           {/* BARRA DI CONTROLLO SUPERIORE */}
