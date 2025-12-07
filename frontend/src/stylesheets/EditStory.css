@@ -9,8 +9,8 @@
   /* Flexbox per centrare */
   display: flex;
   justify-content: center; /* Orizzontale */
-  align-items: center;     
-  padding: 20px;           
+  align-items: flex-start;    
+  padding: 100px 20px 40px;           
   overflow-y: auto;        
 }
 
@@ -328,19 +328,21 @@
 }
 
 .edit-image-preview {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
+  gap: 8px;
+  padding: 8px 10px;
   border-radius: 14px;
   background: #ffffff;
   border: 1px solid #e5e7eb;
   box-shadow: 0 4px 10px rgba(15, 23, 42, 0.06);
+  width: auto;           
+  max-width: 100%;
 }
 
 .edit-preview-img {
-  width: 96px;
-  height: 96px;
+  width: 140px;
+  height: 140px;
   border-radius: 12px;
   object-fit: cover;
   flex-shrink: 0;
