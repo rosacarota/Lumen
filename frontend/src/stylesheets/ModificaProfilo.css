@@ -90,7 +90,6 @@
   filter: blur(80px);
   opacity: 0.5;
   top: 10%; left: 10%;
-  animation: pulse 4s ease-in-out infinite;
   z-index: 0;
 }
 
@@ -102,7 +101,6 @@
   filter: blur(80px);
   opacity: 0.5;
   bottom: 10%; right: 10%;
-  animation: pulse 5s ease-in-out infinite;
   z-index: 0;
 }
 
