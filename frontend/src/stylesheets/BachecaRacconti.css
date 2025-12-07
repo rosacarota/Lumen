@@ -1,46 +1,10 @@
-/* --- VARIABILI GLOBALI (Richiamo per coerenza) --- */
-/* Assumiamo che queste siano nel :root principale */
-/* 
-:root {
-    --bg-main: #F7FBFB;
-    --bg-soft: #f0f5f5;
-    --first-color: #087886;
-    --second-color: #4AAFB8;
-    --text-main: #2c3e50; 
-    --text-sub: #5A6B7C;
-} 
-*/
-
-/* --- ANIMAZIONE PULSE (Ottimizzata) --- */
-@keyframes pulse-soft {
-    0% {
-        transform: scale(1);
-        box-shadow: 0 0 0 0 rgba(74, 175, 184, 0.2); /* var(--second-color) con opacità */
-    }
-    50% {
-        transform: scale(1.05);
-        box-shadow: 0 0 0 10px rgba(74, 175, 184, 0);
-    }
-    100% {
-        transform: scale(1);
-        box-shadow: 0 0 0 0 rgba(74, 175, 184, 0);
-    }
-}
-
-/* --- CARD CONTENITORE --- */
 .stories-card {
     width: 100%;
     height: 100%;
-    /* Altezza minima fissa in px per stabilità, invece di vh */
     min-height: 400px; 
-    background: white; /* Uniformato alle altre card (bianco su sfondo soft) */
-    
-    /* Stesso border-radius della Home (.image-wrapper, .content-box) */
-    border-radius: 24px; 
-    
-    /* Ombra "Teal" caratteristica del tema */
+    background: white;
+    border-radius: 24px;
     box-shadow: 0 20px 40px rgba(8, 120, 134, 0.08);
-    
     border: 1px solid rgba(0,0,0,0.03);
     overflow: hidden;
     display: flex;
@@ -48,66 +12,49 @@
     position: relative;
 }
 
-/* --- HEADER DELLA CARD --- */
 .stories-header {
     background-color: white;
-    padding: 24px 32px; /* Spaziatura standard */
+    padding: 24px 32px;
     display: flex;
-    justify-content: space-between; /* Predisposto per eventuali azioni a destra */
+    justify-content: center;
     align-items: center;
-    border-bottom: 1px solid var(--bg-soft); /* Linea sottile e pulita */
+    border-bottom: 1px solid var(--bg-soft);
     z-index: 2;
 }
 
 .stories-header h3 {
     margin: 0;
     color: var(--first-color);
-    font-weight: 800; /* Peso bold come i titoli della Home */
+    font-weight: 800;
     font-size: 1.1rem;
     letter-spacing: 0.5px;
     text-transform: uppercase;
-    
-    /* Aggiunta icona decorativa o stile badge */
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-/* Opzionale: pallino decorativo accanto al titolo */
-.stories-header h3::before {
-    content: '';
-    display: block;
-    width: 8px;
-    height: 8px;
-    background-color: var(--second-color);
-    border-radius: 50%;
-}
-
-/* --- CORPO DELLA CARD --- */
 .stories-body {
     flex-grow: 1;
     background: white;
-    padding: 24px; /* Padding uniforme */
+    padding: 24px;
     display: flex;
     flex-direction: column;
     gap: 16px;
     overflow-y: auto;
-    
-    /* Scrollbar personalizzata per Chrome/Safari/Edge */
     scrollbar-width: thin;
     scrollbar-color: var(--bg-soft) transparent;
 }
 
-/* Stile Scrollbar Webkit */
 .stories-body::-webkit-scrollbar {
     width: 6px;
 }
+
 .stories-body::-webkit-scrollbar-thumb {
     background-color: #e0e0e0;
     border-radius: 10px;
 }
 
-/* --- STATO VUOTO (Empty State) --- */
 .empty-state {
     display: flex;
     flex-direction: column;
@@ -119,38 +66,27 @@
 }
 
 .empty-icon-wrapper {
-    width: 80px; /* Dimensioni fisse in px */
+    width: 80px;
     height: 80px;
     border-radius: 50%;
-    background-color: var(--bg-soft); /* Sfondo soft */
+    background-color: var(--bg-soft);
     color: var(--first-color);
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 16px;
-    
-    /* Bordo rimosso a favore dell'ombra o background */
     animation: pulse-soft 3s infinite ease-in-out;
 }
 
 .empty-state p {
     font-size: 1rem;
     color: var(--text-sub);
-    margin: 0;
+    margin: 0 0 40px 0;
     max-width: 80%;
 }
 
-/* Bottone per aggiungere azione (se presente nell'empty state) */
-.add-action-btn {
-    margin-top: 20px;
-    padding: 10px 20px;
-    border-radius: 30px;
-    border: 1px dashed var(--first-color);
-    color: var(--first-color);
-    background: transparent;
+.add-action {
     cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s ease;
 }
 
 .add-action-btn:hover {
@@ -159,7 +95,6 @@
     border-style: solid;
 }
 
-/* --- LISTA STORIE --- */
 .stories-list {
     display: flex;
     flex-direction: column;
@@ -167,29 +102,28 @@
 }
 
 .story-item {
-    background: var(--bg-main); /* Leggero contrasto rispetto al contenitore bianco */
+    background: var(--bg-main);
     padding: 16px;
-    border-radius: 12px; /* Radius coerente con i bottoni */
+    border-radius: 12px;
     display: flex;
     align-items: center;
     gap: 16px;
-    border: 1px solid transparent; /* Predispone il bordo per l'hover */
+    border: 1px solid transparent;
     transition: all 0.3s ease;
     cursor: pointer;
 }
 
 .story-item:hover {
     background: white;
-    transform: translateY(-3px); /* Effetto "lift" tipico della Home */
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05); /* Ombra leggera */
-    border-color: rgba(74, 175, 184, 0.3); /* Bordo colorato var(--second-color) */
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+    border-color: rgba(74, 175, 184, 0.3);
 }
 
 .story-avatar {
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    /* Gradiente coerente con i colori del brand */
     background: linear-gradient(135deg, var(--first-color), var(--second-color));
     flex-shrink: 0;
     display: flex;
@@ -203,13 +137,13 @@
 
 .story-info {
     flex-grow: 1;
-    min-width: 0; /* Previene overflow del testo su flex items */
+    min-width: 0;
 }
 
 .story-info h4 {
     margin: 0 0 4px 0;
     font-size: 1rem;
-    color: var(--text-main); /* Nero morbido invece di teal, per leggibilità */
+    color: var(--text-main);
     font-weight: 700;
 }
 
@@ -217,8 +151,6 @@
     font-size: 0.9rem;
     color: var(--text-sub);
     margin: 0;
-    
-    /* Troncamento testo con ellissi (...) */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

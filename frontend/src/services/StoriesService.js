@@ -88,11 +88,20 @@ export async function fetchStories(targetEmail = null) {
   return allStories;
 }
 
-export async function fetchFilteredStories(targetEmail = null) {
+export async function fetchFilteredStories(email) {
   const token = getAuthToken();
 
+  const attr = "email";
+  const value = email;
+  const obj = {
+      [attr]: value
+  };
+  const payload = JSON.stringify(obj);
+
   const res = await fetch(`${API_BASE_URL}/racconto/visualizza?token=${token}`, {
-    method: "GET",
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: payload,
   });
   if (!res.ok) throw new Error("Errore nel caricamento delle storie filtrate");
 

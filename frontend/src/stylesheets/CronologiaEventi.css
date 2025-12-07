@@ -1,33 +1,11 @@
-@keyframes pulse-soft {
-    0% {
-        transform: scale(1);
-        box-shadow: 0 0 0 0 rgba(74, 175, 184, 0.2);
-    }
-    50% {
-        transform: scale(1.05);
-        box-shadow: 0 0 0 0.6rem rgba(74, 175, 184, 0);
-    }
-    100% {
-        transform: scale(1);
-        box-shadow: 0 0 0 0 rgba(74, 175, 184, 0);
-    }
-}
-
-:root {
-    --bg-main: #F7FBFB;
-    --bg-soft: #f0f5f5;
-    --first-color: #087886;
-    --second-color: #4AAFB8;
-    --third-color: #7CCE6B;
-}
-
 .cronologia-card {
     width: 100%;
     height: 100%;
-    min-height: 50vh;
-    background: var(--first-color);
-    border-radius: 2rem;
-    box-shadow: 0 1rem 3rem rgba(8, 120, 134, 0.15);
+    min-height: 400px;
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(8, 120, 134, 0.08);
+    border: 1px solid rgba(0,0,0,0.03);
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -35,14 +13,12 @@
 }
 
 .cronologia-header {
-    background-color: var(--bg-main);
-    padding: 4% 0;
-    text-align: center;
+    background-color: white;
+    padding: 24px 32px;
     display: flex;
     justify-content: center;
     align-items: center;
-    border: 0.12rem solid #EDEDED;
-    border-bottom: 0.12rem solid var(--first-color);
+    border-bottom: 1px solid var(--bg-soft);
     z-index: 2;
     position: relative;
 }
@@ -50,83 +26,81 @@
 .cronologia-header h3 {
     margin: 0;
     color: var(--first-color);
-    font-weight: 700;
+    font-weight: 800;
     font-size: 1.1rem;
-    letter-spacing: 0.03rem;
+    letter-spacing: 0.5px;
     text-transform: uppercase;
 }
 
 .cronologia-body {
     flex-grow: 1;
-    background: var(--bg-main);
-    padding: 3% 3% 0 3%;
+    background: white;
+    padding: 24px;
     display: flex;
     flex-direction: column;
-    gap: 2%;
+    gap: 16px;
     position: relative;
     overflow-y: auto;
-    max-height: 70vh;
-    border: 0.12rem solid #EDEDED;
+    scrollbar-width: thin;
+    scrollbar-color: var(--bg-soft) transparent;
 }
 
 .cronologia-body::-webkit-scrollbar {
-    width: 0.4rem;
+    width: 6px;
 }
 
 .cronologia-body::-webkit-scrollbar-thumb {
-    background-color: var(--second-color);
-    border-radius: 1rem;
+    background-color: #e0e0e0;
+    border-radius: 10px;
 }
 
 .cronologia-list {
     display: flex;
     flex-direction: column;
-    gap: 3%;
-    padding-bottom: 3%;
+    gap: 12px;
+    padding-bottom: 0;
 }
 
 .cronologia-item-wrapper {
-    margin-bottom: 5%;
-}
-
-.cronologia-item-wrapper:last-child {
-    margin-bottom: 0;
+    margin-bottom: 0; 
 }
 
 .empty-state-event {
-    flex-grow: 1; 
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 100%;
-    margin-top: -10%;
-    gap: 3%;
+    height: 100%;
     color: #6B7280;
+    padding: 40px 0;
+    text-align: center;
+    margin-top: 0;
 }
 
 .cronologia-icon-wrapper {
-    width: 5rem;
-    height: 5rem;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.6);
-    border: 0.12rem dashed var(--second-color);
+    background-color: var(--bg-soft);
+    border: none;
+    color: var(--first-color);
     display: flex;
     align-items: center;
     justify-content: center;
     animation: pulse-soft 3s infinite ease-in-out;
+    margin-bottom: 16px;
 }
 
 .empty-state-event p {
-    font-size: 0.95rem;
+    font-size: 1rem;
     font-weight: 500;
-    color: var(--first-color);
-    opacity: 0.7;
-    margin-top: 2%;
+    color: #5A6B7C;
+    margin: 0;
+    max-width: 80%;
 }
 
-.loading-text { 
-    padding: '5%';
-    text-align: 'center';
-    color: '#6B7280';
+.loading-text {
+    padding: 20px;
+    text-align: center;
+    color: #999;
 }

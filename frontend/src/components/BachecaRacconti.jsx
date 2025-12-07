@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Camera, Plus, Loader2 } from 'lucide-react';
 import '../stylesheets/BachecaRacconti.css';
-import AggiungiStoria from '../components/AddStory';
-import { fetchStories, addStory, fetchFilteredStories } from '../services/StoriesService';
+import AddStory from '../components/AddStory';
+import EditStory from "../components/EditStory";
+import DeleteStory from "../components/DeleteStory";
+import { fetchStories, addStory, editStory, deleteStory, fetchFilteredStories } from '../services/StoriesService';
 
 const BachecaRacconti = ({ isOwner, targetEmail }) => {
     //const [stories, setStories] = useState([]);
     const [filteredStories, setFilteredStories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isAddStoryOpen, setIsAddStoryOpen] = useState(false);
+    const [editingStory, setEditingStory] = useState(null);
+    const [storyToDelete, setStoryToDelete] = useState(null);
 
     /*const loadStories = async () => {
         if (!targetEmail) return;
@@ -25,6 +29,8 @@ const BachecaRacconti = ({ isOwner, targetEmail }) => {
     };*/
 
     const loadFilteredStories = async () => {
+        targetEmail = localStorage.getItem("searchEmail");
+        console.log(targetEmail)
         if(!targetEmail)return;
         setLoading(true);
         try {
@@ -46,6 +52,28 @@ const BachecaRacconti = ({ isOwner, targetEmail }) => {
             await loadFilteredStories();
         } catch (error) {
             alert("Errore durante la pubblicazione: " + error.message);
+        }
+    };
+
+    const handleSaveEditedStory = async (updatedStory) => {
+        try {
+            await editStory(updatedStory);
+            setEditingStory(null);
+            await loadFilteredStories();
+        } catch (error) {
+            alert("Errore modifica: " + error.message);
+        }
+    };
+
+    const handleDeleteConfirm = async () => {
+        if (!storyToDelete) return;
+        try {
+            const idToDelete = storyToDelete.id || storyToDelete.idRacconto;
+            await deleteStory(idToDelete);
+            setStoryToDelete(null);
+            await loadFilteredStories();
+        } catch (error) {
+            alert("Errore eliminazione: " + error.message);
         }
     };
 
@@ -97,26 +125,47 @@ const BachecaRacconti = ({ isOwner, targetEmail }) => {
                         
                         <div className="stories-list" style={{ overflowY: 'auto', maxHeight: '100%', display: 'flex', flexDirection: 'column', gap: '15px' }}>
                             {filteredStories.map((story) => (
-                                <div key={story.id} className="story-item">
-                                    <div className="story-avatar">
-                                        <span style={{ color: 'white', fontWeight: 'bold' }}>
-                                            {story.authorName ? story.authorName.charAt(0).toUpperCase() : 'U'}
-                                        </span>
+                                <div key={story.id} className="story-item-container">
+                                    <div className="story-item">
+                                        <div className="story-avatar">
+                                            <span style={{ color: 'white', fontWeight: 'bold' }}>
+                                                {story.authorName ? story.authorName.charAt(0).toUpperCase() : 'U'}
+                                            </span>
+                                        </div>
+                                        <div className="story-info">
+                                            <h4>{story.title}</h4>
+                                            <p style={{ fontSize: '0.85rem', color: '#555', margin: '2px 0' }}>
+                                                {story.content.length > 50 
+                                                    ? story.content.substring(0, 50) + "..." 
+                                                    : story.content}
+                                            </p>
+                                            <span style={{ fontSize: '0.75rem', color: '#999' }}>
+                                                {new Date(story.createdAt).toLocaleDateString()} - {story.authorName}
+                                            </span>
+                                        </div>
+                                        {story.type === 'photo' && story.imageBase64 && (
+                                            <div style={{ width: '50px', height: '50px', borderRadius: '8px', overflow: 'hidden', marginLeft: 'auto' }}>
+                                                <img src={story.imageBase64} alt="anteprima" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                            </div>
+                                        )}
                                     </div>
-                                    <div className="story-info">
-                                        <h4>{story.title}</h4>
-                                        <p style={{ fontSize: '0.85rem', color: '#555', margin: '2px 0' }}>
-                                            {story.content.length > 50 
-                                                ? story.content.substring(0, 50) + "..." 
-                                                : story.content}
-                                        </p>
-                                        <span style={{ fontSize: '0.75rem', color: '#999' }}>
-                                            {new Date(story.createdAt).toLocaleDateString()} - {story.authorName}
-                                        </span>
-                                    </div>
-                                    {story.type === 'photo' && story.imageBase64 && (
-                                        <div style={{ width: '50px', height: '50px', borderRadius: '8px', overflow: 'hidden', marginLeft: 'auto' }}>
-                                            <img src={story.imageBase64} alt="anteprima" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    {isOwner && (
+                                        <div className="story-card-footer">
+                                            <button
+                                                type="button"
+                                                className="story-edit-button"
+                                                onClick={() => setEditingStory(story)}
+                                            >
+                                                Modifica
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                className="story-edit-button delete-btn"
+                                                onClick={() => setStoryToDelete(story)}
+                                            >
+                                                Elimina
+                                            </button>
                                         </div>
                                     )}
                                 </div>
@@ -126,10 +175,24 @@ const BachecaRacconti = ({ isOwner, targetEmail }) => {
                 </div>
             </div>
             {isOwner && isAddStoryOpen && (
-                <AggiungiStoria 
+                <AddStory
                     onClose={() => setIsAddStoryOpen(false)}
                     onSubmit={handleSaveStory}
                     onBack={() => setIsAddStoryOpen(false)}
+                />
+            )}
+            {isOwner && editingStory && (
+                <EditStory
+                    story={editingStory}
+                    onCancel={() => setEditingStory(null)}
+                    onSave={handleSaveEditedStory}
+                />
+            )}
+            {isOwner && storyToDelete && (
+                <DeleteStory
+                    story={storyToDelete}
+                    onCancel={() => setStoryToDelete(null)}
+                    onConfirm={handleDeleteConfirm}
                 />
             )}
         </>
