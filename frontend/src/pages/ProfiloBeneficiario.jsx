@@ -1,6 +1,6 @@
 import React from 'react';
 import Navbar from '../components/Navbar';
-import AccessoInfoProfilo from '../components/AccessoInfoProfilo';
+import InfoProfilo from '../components/InfoProfilo';
 import BachecaRacconti from '../components/BachecaRacconti';
 import Footer from '../components/Footer';
 import '../stylesheets/ProfiloBeneficiario.css';
@@ -21,7 +21,7 @@ const ProfiloBeneficiario = () => {
       <Navbar />
       <div className="beneficiary-container">
         <section className="profile-section-full">
-          <AccessoInfoProfilo />
+          <InfoProfilo />
         </section>
         <section className="beneficiary-stories-section">
           <BachecaRacconti isOwner={isOwner} targetEmail={targetEmail} />

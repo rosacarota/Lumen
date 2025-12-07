@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Pencil, Loader2, Mail, Phone, MapPin } from 'lucide-react';
-import ModificaProfilo from '../components/ModificaProfilo';
+import ModificaProfilo from './ModificaProfilo.jsx';
 import '../stylesheets/InfoProfilo.css';
 
 // Servizio
 import { fetchUserProfile, fetchUserPublicProfile } from '../services/UserServices.js';
 
-const AccessoInfoProfilo = ({ userData: propsData, onUpdate }) => {
+const InfoProfilo = ({ userData: propsData, onUpdate }) => {
 
 
     const [userData, setUserData] = useState(propsData || null);
@@ -142,4 +142,4 @@ const AccessoInfoProfilo = ({ userData: propsData, onUpdate }) => {
     );
 };
 
-export default AccessoInfoProfilo;
+export default InfoProfilo;
