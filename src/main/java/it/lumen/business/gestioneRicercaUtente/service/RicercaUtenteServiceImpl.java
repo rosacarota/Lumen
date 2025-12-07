@@ -66,6 +66,11 @@ public class RicercaUtenteServiceImpl implements RicercaUtenteService {
         dto.setAmbito(utente.getAmbito());
         dto.setDescrizione(utente.getDescrizione());
         dto.setObjIndirizzo(utente.getIndirizzo());
+        try {
+            dto.setImmagine(autenticazioneService.recuperaImmagine(utente.getImmagine()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         return dto;
     }
 }
