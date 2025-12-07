@@ -51,7 +51,7 @@ export const rifiutaRichiestaServizio = async (richiestaServizio) => {
 export const getRichiesteServizio = async () => {
   const token = getAuthToken();
   try {
-    const response = await fetch(`${API_URL}/richiestaServizio/getRichiesteServizio?token=${token}`, {
+    const response = await fetch(`${API_URL}/richiestaServizio/getRichiestaInAttesa?token=${token}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     });
