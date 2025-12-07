@@ -209,7 +209,7 @@ const ProfiloEnte = () => {
               ))}
             </div>
             <div className="actions-right">
-              {isOwner && userRole === 'ente' (
+              {isOwner && userRole === 'ente' && (
                 <>
                   <button className="btn-action" onClick={() => toggleModal('addStory', true)}>CREA STORIA</button>
                   <button className="btn-action" onClick={() => toggleModal('raccolta', true)}>CREA RACCOLTA FONDI</button>
