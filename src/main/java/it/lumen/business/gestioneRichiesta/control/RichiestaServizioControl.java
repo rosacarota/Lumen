@@ -33,7 +33,7 @@ public class RichiestaServizioControl {
 
     //CREA RICHIESTA DI SERVIZIO
     @PostMapping("/creaRichiestaServizio")
-    public ResponseEntity<String> creaRichiestaServizio(@Valid @RequestBody RichiestaServizioDTO richiestaServizioDTO, BindingResult result, String token) {
+    public ResponseEntity<String> creaRichiestaServizio(@RequestBody RichiestaServizioDTO richiestaServizioDTO, BindingResult result, String token) {
 
         String email = util.extractEmail(token);
         richiestaServizioDTO.setBeneficiario(email);
