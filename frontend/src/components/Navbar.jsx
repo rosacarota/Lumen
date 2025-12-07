@@ -13,9 +13,7 @@ const Navbar = () => {
     isLoggedIn: false
   });
 
-  // RIMOSSO: const navigate = useNavigate();
 
-  // Definisco gli elementi base della navbar
   const navItems = [
     { label: 'Chi siamo', path: '/chisiamo' },
     { label: 'Storie', path: '/storie' },
@@ -29,41 +27,41 @@ const Navbar = () => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
+    // --- LOGICA CHIAMATA API DIRETTA ---
+    const fetchUserDirectly = async () => {
+      try {
+        const response = await fetch(`http://localhost:8080/account/datiUtente?token=${token}`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+          //body: JSON.stringify({ token: token })
+        });
 
-    if (token) {
-      // --- LOGICA CHIAMATA API DIRETTA ---
-      const fetchUserDirectly = async () => {
-        try {
-          const response = await fetch(`http://localhost:8080/account/datiUtente?token=${token}`, {
-            method: "GET",
-            headers: { "Content-Type": "application/json" },
-            //body: JSON.stringify({ token: token })
+        if (response.ok) {
+          const apiData = await response.json();
+
+          localStorage.setItem('email', apiData.email);
+          let img = null;
+          if (apiData.immagine) {
+            img = apiData.immagine.startsWith('data:image')
+              ? apiData.immagine
+              : `data:image/jpeg;base64,${apiData.immagine}`;
+          }
+
+          setCurrentUser({
+            isLoggedIn: true,
+            username: apiData.nome || 'Utente',
+            role: (apiData.ruolo || 'guest').toLowerCase(),
+            immagine: img
           });
 
-          if (response.ok) {
-            const apiData = await response.json();
-
-            let img = null;
-            if (apiData.immagine) {
-              img = apiData.immagine.startsWith('data:image')
-                ? apiData.immagine
-                : `data:image/jpeg;base64,${apiData.immagine}`;
-            }
-
-            setCurrentUser({
-              isLoggedIn: true,
-              username: apiData.nome || 'Utente',
-              role: (apiData.ruolo || 'guest').toLowerCase(),
-              immagine: img
-            });
-
-            localStorage.setItem('ruolo', (apiData.ruolo || 'guest').toLowerCase());
-          }
-        } catch (error) {
-          console.error("Errore fetch:", error);
+          localStorage.setItem('ruolo', (apiData.ruolo || 'guest').toLowerCase());
         }
-      };
+      } catch (error) {
+        console.error("Errore fetch:", error);
+      }
+    };
 
+    if (token) {
       fetchUserDirectly();
     }
   }, []);

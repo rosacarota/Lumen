@@ -3,7 +3,7 @@
 const API_BASE_URL = "http://localhost:8080";
 
 function getAuthToken() {
- return localStorage.getItem("token");
+  return localStorage.getItem("token");
 }
 
 // ==========================================
@@ -12,7 +12,6 @@ function getAuthToken() {
 function mapApiToUser(apiData) {
   const indirizzo = apiData.indirizzo || {};
   return {
-    id: apiData.id, // Importante: assicurati che il backend ritorni l'ID
     email: apiData.email,
     nome: apiData.nome,
     cognome: apiData.cognome,
@@ -26,7 +25,7 @@ function mapApiToUser(apiData) {
     provincia: indirizzo.provincia || "",
     cap: indirizzo.cap || "",
     strada: indirizzo.strada || "",
-    ncivico: indirizzo.nCivico || "" 
+    ncivico: indirizzo.nCivico || ""
   };
 }
 
@@ -69,7 +68,7 @@ export async function fetchUserProfile() {
     });
 
     if (!response.ok) throw new Error(`Errore server fetch: ${response.status}`);
-    
+
     const data = await response.json();
     return mapApiToUser(data);
 
@@ -79,26 +78,24 @@ export async function fetchUserProfile() {
   }
 }
 
-/**
- * SCARICA IL PROFILO PUBBLICO (Di un altro utente/ente tramite ID)
- * Nota: Assumiamo che il backend abbia un endpoint pubblico tipo /account/profilo/{id}
- */
-export async function fetchPublicUserData(id) {
-    try {
-      // Esempio di endpoint. Adatta l'URL in base al tuo Controller Java
-      const response = await fetch(`${API_BASE_URL}/account/profilo/${id}`, { 
-        method: "GET" 
-      });
-  
-      if (!response.ok) throw new Error(`Errore fetch public user: ${response.status}`);
-  
-      const data = await response.json();
-      return mapApiToUser(data);
-  
-    } catch (error) {
-      console.error("Errore fetchPublicUserData:", error);
-      return null;
-    }
+
+export async function fetchUserPublicProfile(email) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/ricercaUtente/datiUtente`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+
+    if (!response.ok) throw new Error(`Errore server fetch: ${response.status}`);
+
+    const data = await response.json();
+    return mapApiToUser(data);
+
+  } catch (error) {
+    console.error("Errore fetchUserProfile:", error);
+    throw error;
+  }
 }
 
 /**
