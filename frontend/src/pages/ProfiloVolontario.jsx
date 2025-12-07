@@ -7,11 +7,11 @@ import CronologiaEventi from '../components/CronologiaEventi';
 import Footer from '../components/Footer';
 import '../stylesheets/ProfiloVolontario.css';
 
-import { fetchUserProfile } from '../services/UserServices';
+import { fetchUserProfile, fetchUserPublicProfile } from '../services/UserServices';
 
 const ProfiloVolontario = () => {
     const location = useLocation();
-    
+
     const visitedUser = location.state?.visitedUser;
 
     const [isOwner, setIsOwner] = useState(false);
@@ -23,12 +23,26 @@ const ProfiloVolontario = () => {
             setLoading(true);
             const userStr = localStorage.getItem('user');
             const currentUser = userStr ? JSON.parse(userStr) : null;
-            if (visitedUser && visitedUser.email !== currentUser?.email) {
+            const searchEmail = localStorage.getItem('searchEmail');
+
+            if (searchEmail) {
+                console.log("Modalità Ricerca: visualizzo", searchEmail);
+                try {
+                    const publicProfile = await fetchUserPublicProfile(searchEmail);
+                    setProfileData(publicProfile);
+                    setIsOwner(currentUser?.email === searchEmail);
+                } catch (error) {
+                    console.error("Errore caricamento profilo ricercato", error);
+                } finally {
+                    setLoading(false);
+                }
+            }
+            else if (visitedUser && visitedUser.email !== currentUser?.email) {
                 console.log("Modalità Visitatore: visualizzo", visitedUser.email);
                 setProfileData(visitedUser);
                 setIsOwner(false);
                 setLoading(false);
-            } 
+            }
             else {
                 console.log("Modalità Owner: carico il mio profilo");
                 setIsOwner(true);
@@ -52,18 +66,18 @@ const ProfiloVolontario = () => {
         <div className="voluntary-page-wrapper">
             <Navbar />
             <div className="voluntary-container">
-                
+
                 <section className="profile-section-full">
-                    <AccessoInfoProfilo 
-                        userData={profileData} 
-                        isOwner={isOwner} 
+                    <AccessoInfoProfilo
+                        userData={profileData}
+                        isOwner={isOwner}
                     />
                 </section>
                 <div className="voluntary-split-layout">
                     <section className="voluntary-stories-section">
-                        <BachecaRacconti 
+                        <BachecaRacconti
                             isOwner={isOwner}
-                            targetEmail={profileData ? profileData.email : null} 
+                            targetEmail={profileData ? profileData.email : null}
                         />
                     </section>
                     <section className="voluntary-events-section">

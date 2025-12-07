@@ -158,6 +158,7 @@ const Navbar = () => {
 const DropdownMenu = ({ role, onLogout }) => {
   const safeRole = role ? role.toLowerCase() : 'guest';
   const getMenuItems = (r) => {
+    localStorage.setItem('searchEmail', localStorage.getItem('email'));
     switch (r) {
       case 'beneficiario':
         return [

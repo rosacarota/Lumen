@@ -85,7 +85,7 @@ const ProfiloEnte = () => {
   };
 
   const loadData = async () => {
-    setProfileData(await fetchUserPublicProfile(localStorage.getItem('email')));
+    setProfileData(await fetchUserPublicProfile(localStorage.getItem('searchEmail')));
     if (isOwner) {
       setProfileData(await fetchUserProfile());
     }

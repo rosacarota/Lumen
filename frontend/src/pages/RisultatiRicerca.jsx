@@ -12,7 +12,7 @@ const SearchResults = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeFilter, setActiveFilter] = useState("Tutti");
   const [error, setError] = useState(null);
-  
+
   const location = useLocation();
 
   useEffect(() => {
@@ -50,7 +50,7 @@ const SearchResults = () => {
 
   const getDisplayName = (user) => {
     if (user.ruolo && user.ruolo.toLowerCase() === 'ente') {
-        return user.nome; 
+      return user.nome;
     }
     return `${user.nome} ${user.cognome || ''}`.trim();
   };
@@ -68,10 +68,10 @@ const SearchResults = () => {
   return (
     <div className="sr-page-wrapper">
       <Navbar />
-      
+
       <main className="sr-main-content">
         <div className="sr-container">
-          
+
           <div className="sr-header">
             <h1>Risultati ricerca</h1>
             <p>
@@ -102,7 +102,7 @@ const SearchResults = () => {
               <p>{error}</p>
             </div>
           ) : displayedResults.length > 0 ? (
-            
+
             <div className="sr-results-wrapper">
               <div className="sr-results-header">
                 <span className="sr-count-badge">
@@ -112,8 +112,8 @@ const SearchResults = () => {
 
               <div className="sr-results-grid">
                 {displayedResults.map((user, index) => (
-                  <div 
-                    key={user.id || index} 
+                  <div
+                    key={user.id || index}
                     className="sr-card"
                     style={{ animationDelay: `${index * 0.1}s` }}
                   >
@@ -123,7 +123,7 @@ const SearchResults = () => {
                           <img src={user.immagine} alt="Avatar" className="sr-avatar-img" />
                         ) : (
                           <div className="sr-avatar-placeholder">
-                            {user.ruolo && user.ruolo.toLowerCase() === 'ente' ? <Building2 size={24}/> : <User size={24}/>}
+                            {user.ruolo && user.ruolo.toLowerCase() == 'ente' ? <Building2 size={24} /> : <User size={24} />}
                           </div>
                         )}
                       </div>
@@ -135,7 +135,7 @@ const SearchResults = () => {
 
                     <div className="sr-card-body">
                       <h3 className="sr-user-name">{getDisplayName(user)}</h3>
-                      
+
                       <div className="sr-meta-tags">
                         {user.ambito && (
                           <span className="sr-tag">
@@ -156,7 +156,15 @@ const SearchResults = () => {
 
                     <div className="sr-card-footer">
                       {/* Link al profilo: usa ID se c'è, altrimenti placeholder */}
-                      <Link to={`/profilo/${user.id}`} className="sr-profile-link">
+                      <Link
+                        to={`/profilo${user.ruolo ? user.ruolo.toLowerCase() : ''}`}
+                        className="sr-profile-link"
+                        onClick={() => {
+                          if (user.email) {
+                            localStorage.setItem('searchEmail', user.email);
+                          }
+                        }}
+                      >
                         Visualizza Profilo <ArrowRight size={16} />
                       </Link>
                     </div>
