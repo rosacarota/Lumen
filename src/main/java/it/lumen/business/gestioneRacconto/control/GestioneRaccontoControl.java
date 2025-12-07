@@ -146,13 +146,16 @@ try {
     }
 
 
-    @GetMapping("/visualizza")
-    public ResponseEntity<List<Racconto>> visualizzaRaccontiUtente(@RequestParam String token) {
+    @PostMapping("/visualizza")
+    public ResponseEntity<List<Racconto>> visualizzaRaccontiUtente(@RequestParam String token, @RequestBody Map<String, String> emailParam) {
 
-        String email= util.extractEmail(token);
+        String loggedemail= util.extractEmail(token);
+        String email = emailParam.get("email");
+        if (loggedemail == null) {
 
-        if (email == null) {
-
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        if(email ==  null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
