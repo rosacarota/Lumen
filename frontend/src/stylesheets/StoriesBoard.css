@@ -109,6 +109,10 @@
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
+.stories-main .story-card {
+  animation: fadeInUp 0.85s cubic-bezier(0.15, 0.85, 0.3, 1); 
+}
+
 .story-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 12px 26px rgba(15, 23, 42, 0.08);
