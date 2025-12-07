@@ -44,17 +44,17 @@ export default function DashboardRichiesteServizio() {
     fetchData();
   }, []);
 
-  // --- GESTIONE ACCETTA CON SWEETALERT ---
-  const handleAccetta = async (req) => {
+  // --- GESTIONE TERMINA (ex Accetta) CON SWEETALERT ---
+  const handleTermina = async (req) => {
     // 1. Chiediamo conferma
     const result = await Swal.fire({
-      title: 'Accettare la richiesta?',
-      text: `Stai per accettare il servizio per ${req.beneficiario?.nome || 'questo utente'}.`,
+      title: 'Hai completato il servizio?',
+      text: `Confermi di aver risolto la richiesta per ${req.beneficiario?.nome || 'questo utente'}?`,
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#087886', // Il tuo colore Turchese
       cancelButtonColor: '#6b7280',  // Grigio
-      confirmButtonText: 'Sì, accetta',
+      confirmButtonText: 'Sì, termina',
       cancelButtonText: 'Annulla'
     });
 
@@ -63,26 +63,26 @@ export default function DashboardRichiesteServizio() {
         // Mostriamo un caricamento mentre chiamiamo l'API
         Swal.fire({
           title: 'Elaborazione...',
-          text: 'Sto accettando la richiesta',
+          text: 'Sto chiudendo la richiesta',
           allowOutsideClick: false,
           didOpen: () => {
             Swal.showLoading();
           }
         });
 
-        // Chiamata API
+        // Chiamata API (Usiamo la funzione di accettazione per confermare/chiudere)
         await accettaRichiestaServizio(req);
         
-        // Aggiorniamo stato locale
+        // Aggiorniamo stato locale (Rimuove la card dalla lista)
         setRichieste(prev => prev.filter(r => r.idRichiestaServizio !== req.idRichiestaServizio));
 
-        // Messaggio di successo
+        // Messaggio di successo RICHIESTO
         Swal.fire({
           icon: 'success',
-          title: 'Accettata!',
-          text: 'La richiesta è stata presa in carico.',
+          title: 'Ottimo lavoro!',
+          text: 'Complimenti hai risolto la richiesta',
           confirmButtonColor: '#087886',
-          timer: 2000 // Si chiude da solo dopo 2 secondi
+          timer: 3000 // Si chiude dopo 3 secondi
         });
 
       } catch (err) {
@@ -233,7 +233,8 @@ export default function DashboardRichiesteServizio() {
                      <button className="btn-reject" onClick={() => handleRifiuta(req)}>
                        <X size={18} /> Rifiuta
                      </button>
-                     <button className="btn-accept" onClick={() => handleAccetta(req)}>
+                     {/* Bottone modificato in TERMINA */}
+                     <button className="btn-accept" onClick={() => handleTermina(req)}>
                        <Check size={18} /> Accetta
                      </button>
                   </div>

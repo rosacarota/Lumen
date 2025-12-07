@@ -110,23 +110,6 @@ const RichiestaServizio = ({ onClose, enteDestinatarioEmail, isModal = true }) =
                                                 disabled={isLoading}
                                             />
                                         </div>
-                                        <div className="rs-input-group">
-                                            <div style={{ position: 'relative', width: '100%' }}>
-                                                <Calendar
-                                                    size={18}
-                                                    style={{ position: 'absolute', top: '50%', left: '12px', transform: 'translateY(-50%)', color: '#087886', pointerEvents: 'none' }}
-                                                />
-                                                <input
-                                                    type="date"
-                                                    className="rs-input-field"
-                                                    style={{ paddingLeft: '40px' }}
-                                                    value={dataRichiesta}
-                                                    onChange={(e) => setDataRichiesta(e.target.value)}
-                                                    required
-                                                    disabled={isLoading}
-                                                />
-                                            </div>
-                                        </div>
                                     </div>
                                     {error && <div className="error-message" style={{ color: '#e74c3c', fontSize: '0.9em', marginTop: '10px' }}>{error}</div>}
                                     <div className="rs-footer">
