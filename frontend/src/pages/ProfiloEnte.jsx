@@ -237,8 +237,8 @@ const ProfiloEnte = () => {
                 </>
               ) : (
                 <>
-                  {userRole === 'volontario' && isOwner && <button className="btn-action btn-affiliation" onClick={() => toggleModal('affiliazione', true)}>Richiedi affiliazione</button>}
-                  {userRole === 'beneficiario' && isOwner && <button className="btn-action btn-affiliation" onClick={() => toggleModal('servizio', true)}>Richiedi Servizio</button>}
+                  {userRole === 'volontario' && !isOwner && <button className="btn-action btn-affiliation" onClick={() => toggleModal('affiliazione', true)}>Richiedi affiliazione</button>}
+                  {userRole === 'beneficiario' && !isOwner && <button className="btn-action btn-affiliation" onClick={() => toggleModal('servizio', true)}>Richiedi Servizio</button>}
                 </>
               )}
             </div>
@@ -331,8 +331,8 @@ const ProfiloEnte = () => {
       {isOwner && userRole === 'ente' && modals.addEvento && <AddEvento onBack={() => toggleModal('addEvento', false)} onSubmit={() => { toggleModal('addEvento', false); loadEventi(profileData); }} isModal={true} enteId={profileData?.id} />}
       {isOwner && userRole === 'ente' && modals.raccolta && <ModalWrapper onClose={() => toggleModal('raccolta', false)}><AddRaccoltaFondi enteLogged={profileData} onClose={() => { toggleModal('raccolta', false); loadRaccolte(profileData); }} isModal={true} /></ModalWrapper>}
 
-      {!isOwner && modals.affiliazione && <RichiestaAffiliazione onClose={() => toggleModal('affiliazione', false)} emailEnte={profileData?.email} isModal={true} />}
-      {!isOwner && modals.servizio && <ModalWrapper onClose={() => toggleModal('servizio', false)}><RichiestaServizio onClose={() => toggleModal('servizio', false)} emailEnte={profileData?.email} /></ModalWrapper>}
+      {!isOwner && userRole === 'volontario' && modals.affiliazione && <RichiestaAffiliazione onClose={() => toggleModal('affiliazione', false)} emailEnte={profileData?.email} isModal={true} />}
+      {!isOwner && userRole === 'beneficiario' && modals.servizio && <ModalWrapper onClose={() => toggleModal('servizio', false)}><RichiestaServizio onClose={() => toggleModal('servizio', false)} emailEnte={profileData?.email} /></ModalWrapper>}
 
       {isOwner && userRole === 'ente' && modals.addStory && <AddStory onBack={() => toggleModal('addStory', false)} onSubmit={(d) => handleStoryAction('add', d)} />}
       {isOwner && userRole === 'ente' && modals.editStory && selectedStory && <EditStory story={selectedStory} onCancel={() => { toggleModal('editStory', false); setSelectedStory(null); }} onSave={(d) => handleStoryAction('edit', d)} />}
