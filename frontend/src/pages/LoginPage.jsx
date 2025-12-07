@@ -346,7 +346,7 @@ export default function LoginPage() {
             <div className="blur-circle-0"></div>
             <div className="blur-circle-3"></div>
             <div className="welcome-content" key={`${isLogin}-${step}-${userType}`}>
-              <h1 className="welcome-title">{welcomeMsg.title}</h1>
+              <h1 className="welcome-title1">{welcomeMsg.title}</h1>
               <p className="welcome-subtitle">{welcomeMsg.subtitle}</p>
               <div className="welcome-footer">
                 {welcomeMsg.footer}{' '}
@@ -490,7 +490,7 @@ export default function LoginPage() {
                           value={formData.citta} 
                           onChange={handleChange} 
                           placeholder="Città" 
-                          className={getInputNoIconClassName('citta')} 
+                          className="city-input" 
                         />
                         <div className="cap-wrapper">
                            <input 
@@ -519,7 +519,7 @@ export default function LoginPage() {
 
                 ) : (
                   <div className="login-form">
-                    <div className="avatar-wrapper">
+                    <div className="avatar-wrapper1">
                       <User className="avatar-icon" />
                     </div>
                     <div className="fields-container">

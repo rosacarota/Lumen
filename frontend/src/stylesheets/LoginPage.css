@@ -97,6 +97,7 @@
   opacity: 0.5;
   top: 10%;
   left: 10%;
+  
 }
 
 .blur-circle-3 {
@@ -109,6 +110,7 @@
   opacity: 0.5;
   bottom: 10%;
   right: 10%;
+  
 }
 
 .welcome-content {
@@ -116,9 +118,10 @@
   z-index: 10;
   color: white;
   text-align: center;
+  animation: fadeInUp 0.6s ease-out;
 }
 
-.welcome-title {
+.welcome-title1 {
   font-size: 56px;
   font-weight: 700;
   margin-bottom: 24px;
@@ -148,39 +151,68 @@
   transition: opacity 0.3s ease;
 }
 
-/* Form Panel */
+/* --- PANNELLO CONTENITORE --- */
 .form-panel {
   position: absolute;
-  width: 50%;
+  /* CORREZIONE CHIAVE: Era 60% negli screenshot. Deve essere 50% per essere simmetrico. */
+  width: 50% !important; 
   height: 100%;
-  right: 0;
+  left: 50%;
   top: 0;
   background: white;
-  padding: 20px 60px;
+  
+  /* Rimuoviamo il padding dal padre per non alterare i calcoli di larghezza */
+  padding: 0 !important;
+  
+  /* Flexbox serve per far funzionare il margin: auto del figlio */
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  
+  /* Manteniamo le tue impostazioni di scroll e transizione */
+  overflow-y: auto; 
   transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 1;
-  overflow-y: auto;
+  z-index: 3;
 }
 
+/* --- IL FORM VERO E PROPRIO --- */
 .form-container {
   width: 100%;
-  max-width: 420px;
+  /* Manteniamo la larghezza elegante che hai scelto */
+  max-width: 420px !important; 
+  
+  /* MAGIA: Questo centra Orizzontalmente E Verticalmente nello spazio disponibile */
+  margin: auto; 
+  
+  /* Padding interno solo per sicurezza su schermi piccoli */
+  padding: 20px;
+  box-sizing: border-box;
 }
 
-/* Logo Section */
+/* --- LOGO E INTESTAZIONE (Allineamento a sinistra) --- */
 .logo-section {
+  display: flex;
+  flex-direction: column;
+  /* Rimosso align-items: center e text-align: center */
   margin-bottom: 30px;
-  margin-top: 50px;
+  width: 100%;
+  text-align: left; /* Opzionale, è il default, ma lo esplicitiamo */
 }
 
 .logo-wrapper {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  align-items: center; /* Mantiene icona e testo allineati verticalmente tra loro */
+  /* Rimosso justify-content: center */
+  gap: 10px;
   margin-bottom: 8px;
+}
+
+/* --- MOBILE --- */
+@media (max-width: 968px) {
+  .form-panel {
+    width: 100% !important;
+    left: 0 !important;
+    position: relative !important; /* Su mobile diventa relativo */
+  }
 }
 
 .logo-icon {
@@ -318,7 +350,7 @@
 }
 
 /* Avatar */
-.avatar-wrapper {
+.avatar-wrapper1 {
   width: 80px;
   height: 80px;
   border-radius: 50%;
@@ -330,8 +362,8 @@
 }
 
 .avatar-icon {
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   color: #9CA3AF;
 }
 
@@ -377,6 +409,17 @@
 .input-field.has-error {
   border-color: #EF4444;
   box-shadow: 0 0 0 1px #EF4444;
+}
+
+.city-input {
+  width: 70%;
+  padding: 12px 16px;
+  border: 2px solid #E5E7EB;
+  border-radius: 25px;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
 }
 
 .input-field-no-icon {
