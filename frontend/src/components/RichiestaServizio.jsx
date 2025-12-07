@@ -11,15 +11,9 @@ const RichiestaServizio = ({ onClose, enteDestinatarioEmail, isModal = true }) =
     const [isLoading, setIsLoading] = useState(false);
 
     const getBeneficiarioEmail = () => {
-        const userStr = localStorage.getItem("user");
-        if (userStr) {
-            try {
-                const user = JSON.parse(userStr);
-                return user.email;
-            } catch (e) {
-                console.error("Errore nel parsing dell'utente:", e);
-                return null;
-            }
+        const email = localStorage.getItem("email");
+        if (email) {
+            return email;
         }
         return null;
     };
@@ -41,8 +35,8 @@ const RichiestaServizio = ({ onClose, enteDestinatarioEmail, isModal = true }) =
         const nuovaRichiesta = {
             testo: testo.trim(),
             dataRichiesta: dataRichiesta,
-            beneficiario: beneficiarioEmail,
-            enteVolontario: enteDestinatarioEmail
+            beneficiario: null,
+            enteVolontario: localStorage.getItem("searchEmail")
         };
 
         try {
@@ -118,11 +112,11 @@ const RichiestaServizio = ({ onClose, enteDestinatarioEmail, isModal = true }) =
                                         </div>
                                         <div className="rs-input-group">
                                             <div style={{ position: 'relative', width: '100%' }}>
-                                                <Calendar 
-                                                    size={18} 
-                                                    style={{ position: 'absolute', top: '50%', left: '12px', transform: 'translateY(-50%)', color: '#087886', pointerEvents: 'none' }} 
+                                                <Calendar
+                                                    size={18}
+                                                    style={{ position: 'absolute', top: '50%', left: '12px', transform: 'translateY(-50%)', color: '#087886', pointerEvents: 'none' }}
                                                 />
-                                                <input 
+                                                <input
                                                     type="date"
                                                     className="rs-input-field"
                                                     style={{ paddingLeft: '40px' }}
