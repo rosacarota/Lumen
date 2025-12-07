@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import it.lumen.security.Encrypter;
 
+import javax.validation.constraints.Pattern;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
@@ -43,10 +44,14 @@ public class AutenticazioneServiceImpl implements AutenticazioneService {
 
     public String recuperaImmagine(String pathImmagine) throws IOException {
 
-        if (pathImmagine == null || pathImmagine.trim().isEmpty()) {
+
+
+        if(pathImmagine == null || !(pathImmagine.endsWith("jpg") ||  pathImmagine.endsWith("jpeg") || pathImmagine.endsWith("png") || pathImmagine.endsWith("gif") ||  pathImmagine.endsWith("webp"))) {
+            return pathImmagine;
+        }
+        if (pathImmagine.trim().isEmpty()) {
             return null;
         }
-
         String fileName = pathImmagine.substring(pathImmagine.lastIndexOf("/") + 1);
 
         if (fileName.trim().isEmpty()) {

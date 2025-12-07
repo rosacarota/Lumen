@@ -1,7 +1,9 @@
 package it.lumen.business.gestioneEvento.service;
 
+import it.lumen.business.gestioneAutenticazione.service.AutenticazioneService;
 import it.lumen.data.dao.EventoDAO;
 import it.lumen.data.entity.Evento;
+import it.lumen.data.entity.Utente;
 import org.springframework.stereotype.Service;
 
 import java.io.FileNotFoundException;
@@ -14,19 +16,24 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import jakarta.transaction.Transactional;
+
+import javax.validation.constraints.Pattern;
 
 @Service
 public class GestioneEventoServiceImpl implements GestioneEventoService {
 
 
     private final EventoDAO eventoDAO;
+    private final AutenticazioneService autenticazioneService;
 
     @Autowired
-    public GestioneEventoServiceImpl(EventoDAO eventoDAO) {
+    public GestioneEventoServiceImpl(EventoDAO eventoDAO, AutenticazioneService autenticazioneService) {
         this.eventoDAO = eventoDAO;
+        this.autenticazioneService = autenticazioneService;
     }
 
     @Override
@@ -103,11 +110,21 @@ public class GestioneEventoServiceImpl implements GestioneEventoService {
     }
 
     public List<Evento> tuttiGliEventi(){
-        return eventoDAO.findAll();
+        List<Evento> eventList = eventoDAO.findAll();
+
+        eventList.stream().map(evento -> {
+            Utente utente = evento.getUtente();
+            try {
+                utente.setImmagine(autenticazioneService.recuperaImmagine(utente.getImmagine()));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            return evento;
+        }).collect(Collectors.toList());
+        return eventList;
     }
 
     public String recuperaImmagine(String pathImmagine) throws IOException {
-
         if (pathImmagine == null || pathImmagine.trim().isEmpty()) {
             return null;
         }

@@ -2,15 +2,13 @@ package it.lumen.data.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.sql.Date;
 
 @Entity
 @Table(name="Evento")
+@ToString
 @Getter
 @Setter
 @NoArgsConstructor
@@ -46,7 +44,7 @@ public class Evento {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Ente")
-    @JsonIgnoreProperties({"cognome", "password", "ambito", "descrizione", "indirizzo", "recapitoTelefonico", "immagine", "ruolo", "hibernateLazyInitializer"})
+    @JsonIgnoreProperties({"cognome", "password", "ambito", "descrizione", "indirizzo", "recapitoTelefonico", "ruolo", "hibernateLazyInitializer"})
     private Utente utente;
 
 }

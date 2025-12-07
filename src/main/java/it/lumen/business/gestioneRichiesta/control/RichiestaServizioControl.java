@@ -83,7 +83,7 @@ public class RichiestaServizioControl {
         return ResponseEntity.ok("Richiesta servizio rifiutata con successo");
     }
 
-    @GetMapping("/getRichiestaServizio")
+    @GetMapping("/getRichiesteServizio")
     public ResponseEntity<?> getRichiesteByToken(@RequestParam String token) {
         String email = util.extractEmail(token);
 
