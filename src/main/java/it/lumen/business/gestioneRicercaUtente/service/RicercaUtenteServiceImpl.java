@@ -1,5 +1,6 @@
 package it.lumen.business.gestioneRicercaUtente.service;
 //import it.lumen.business.gestioneRicercaUtente.service.RicercaUtenteService;
+import it.lumen.data.dto.UtenteDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import it.lumen.data.dao.UtenteDAO;
@@ -22,5 +23,23 @@ public class RicercaUtenteServiceImpl implements RicercaUtenteService {
         if(nome == null){return null;}
         listaUtenti = utenteDAO.findUtentiByNome(nome);
         return listaUtenti;
+    }
+
+    @Override
+    public UtenteDTO getUtenteByEmail(String email){
+
+        if (email == null){return null;}
+        Utente utente = utenteDAO.findByEmail(email);
+        if (utente == null){return null;}
+
+        UtenteDTO dto = new UtenteDTO();
+        dto.setNome(utente.getNome());
+        dto.setCognome(utente.getCognome());
+        dto.setEmail(utente.getEmail());
+        dto.setRuolo(utente.getRuolo());
+        dto.setAmbito(utente.getAmbito());
+        dto.setDescrizione(utente.getDescrizione());
+        dto.setObjIndirizzo(utente.getIndirizzo());
+        return dto;
     }
 }

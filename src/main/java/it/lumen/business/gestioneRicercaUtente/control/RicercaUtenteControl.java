@@ -17,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -67,6 +68,19 @@ public class RicercaUtenteControl {
                 }).collect(Collectors.toList());
 
         return ResponseEntity.ok(listaUtentiDTO);
+    }
+
+    @PostMapping("/datiUtente")
+    public ResponseEntity<UtenteDTO> datiUtente(@RequestBody Map<String, String> paramEmail) {
+
+        String email = paramEmail.get("email");
+        System.out.println(email);
+        if(email ==  null || email.isEmpty()) {return ResponseEntity.badRequest().build();}
+
+        UtenteDTO utenteDTO = ricercaUtenteService.getUtenteByEmail(email);
+
+        System.out.println(utenteDTO);
+        return ResponseEntity.ok(utenteDTO);
     }
 
     @PostMapping("/ricercaGeografica")
