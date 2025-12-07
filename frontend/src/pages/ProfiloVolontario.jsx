@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-import AccessoInfoProfilo from '../components/AccessoInfoProfilo';
+import InfoProfilo from '../components/InfoProfilo';
 import BachecaRacconti from '../components/BachecaRacconti';
 import CronologiaEventi from '../components/CronologiaEventi';
 import Footer from '../components/Footer';
@@ -68,7 +68,7 @@ const ProfiloVolontario = () => {
             <div className="voluntary-container">
 
                 <section className="profile-section-full">
-                    <AccessoInfoProfilo
+                    <InfoProfilo
                         userData={profileData}
                         isOwner={isOwner}
                     />

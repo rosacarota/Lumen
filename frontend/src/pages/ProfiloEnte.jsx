@@ -4,7 +4,7 @@ import { Trash2, Plus, Pencil, Calendar, Image as ImageIcon } from 'lucide-react
 
 // --- COMPONENTI UI ---
 import Navbar from '../components/Navbar.jsx';
-import AccessoInfoProfilo from '../components/AccessoInfoProfilo.jsx';
+import InfoProfilo from '../components/InfoProfilo.jsx';
 import Footer from '../components/Footer.jsx';
 import EventCard from '../components/EventCard.jsx';
 import RaccoltaFondiCard from '../components/RaccoltaFondiCard.jsx';
@@ -210,7 +210,7 @@ const ProfiloEnte = () => {
   return (
     <div className="ente-page-wrapper">
       <Navbar />
-      <AccessoInfoProfilo userData={profileData} isOwner={isOwner} onUpdate={loadData} />
+      <InfoProfilo userData={profileData} isOwner={isOwner} onUpdate={loadData} />
       <div className="main-container">
 
         <section className="event-section">

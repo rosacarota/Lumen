@@ -1,11 +1,8 @@
-/* Recupera le variabili definite nel file Navbar.css se importato globalmente, 
-   altrimenti assicurati che :root sia accessibile */
+/* Recupera le variabili definite nel file Navbar.css */
 
 .page-wrapper {
-  /* Assicura che la pagina inizi dopo la navbar fissa */
   padding-top: 80px;
-  /* min-height: 100vh; RIMOSSO per evitare spazio extra prima del footer */
-  background-color: var(--bg-main);
+  background-color: #ffffff; /* Sfondo base bianco */
   display: flex;
   flex-direction: column;
 }
@@ -16,14 +13,23 @@
   padding: 0 32px;
 }
 
+/* --- ELEMENTI DECORATIVI NUOVI --- */
+/* Linea grigia sottile che occupa solo metà pagina */
+.section-separator {
+  width: 50%;
+  height: 1px;
+  background-color: #e5e5e5;
+  margin: 0 auto;
+}
+
 /* --- HERO SECTION --- */
 .hero-section {
   display: flex;
   align-items: center;
-  /* Altezza dinamica: occupa tutto lo schermo meno la navbar */
   min-height: calc(100vh - 80px);
   position: relative;
   overflow: hidden;
+  background-color: #ffffff;
 }
 
 .hero-container {
@@ -59,7 +65,6 @@
 
 .hero-title {
   font-size: 3.5rem;
-  /* Grande e leggibile */
   line-height: 1.1;
   color: var(--text-main);
   margin: 0 0 24px 0;
@@ -72,7 +77,6 @@
   z-index: 1;
 }
 
-/* Effetto sottolineatura creativa */
 .hero-title .highlight::after {
   content: '';
   position: absolute;
@@ -81,7 +85,6 @@
   width: 100%;
   height: 12px;
   background-color: rgba(74, 175, 184, 0.2);
-  /* var(--second-color) molto trasparente */
   z-index: -1;
   border-radius: 4px;
 }
@@ -186,15 +189,21 @@
   height: 100%;
   object-fit: cover;
   border-radius: 24px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.123);
 }
 
 /* --- FEATURES SECTION --- */
 .features-section {
-  padding: 60px 0;
-  background-color: white;
+  padding-top: 40px;
+  padding-bottom: 80px;
+  background-color: #ffffff;
 }
 
+.features-section.reveal.active {
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.103);
+  position: relative;
+  z-index: 10;
+}
 .features-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -202,158 +211,126 @@
   max-width: 1280px;
   margin: 0 auto;
   padding: 0 32px;
+  
 }
 
+/* MODIFICHE CARD: Ombre, Bordi e Glow */
 .feature-card {
-  padding: 24px;
-  border-radius: 16px;
-  background-color: var(--bg-main);
-  transition: transform 0.3s;
+  padding: 32px 24px;
+  border-radius: 30px;
+  background-color: #ffffff;
+  /* Bordo sottile grigio per definizione */
+  border: 1px solid #f0f0f0;
+  /* Ombra morbida per staccare dal fondo bianco */
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.226); 
+  transition: all 0.3s ease;
 }
 
 .feature-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-8px);
+  /* Bordo turchese */
+  
+  /* Effetto "Glow" turchese nell'ombra */
+  box-shadow: 0 15px 35px -5px rgba(8, 119, 134, 0.253); 
 }
 
 .icon-box {
-  width: 50px;
-  height: 50px;
-  background-color: white;
+  width: 56px;
+  height: 56px;
+  background-color: #f8fafc;
   border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--first-color);
-  margin-bottom: 16px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
+  /* Piccola ombra anche per l'icona */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); 
 }
 
 .feature-card h3 {
-  margin: 0 0 10px 0;
+  margin: 0 0 12px 0;
   color: var(--text-main);
+  font-weight: 700;
+  font-size: 1.25rem;
 }
 
 .feature-card p {
   color: var(--text-sub);
-  font-size: 0.95rem;
-  line-height: 1.5;
+  font-size: 1rem;
+  line-height: 1.6;
   margin: 0;
 }
 
 /* --- ANIMAZIONI --- */
 @keyframes fadeInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-30px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  from { opacity: 0; transform: translateX(-30px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes fadeInRight {
-  from {
-    opacity: 0;
-    transform: translateX(30px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes float {
-  0% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-10px);
-  }
-
-  100% {
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateX(30px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
 /* --- RESPONSIVE --- */
 @media (max-width: 968px) {
   .hero-container {
     flex-direction: column-reverse;
-    /* Immagine sopra o sotto a scelta */
     text-align: center;
     padding-top: 40px;
   }
 
-  .hero-content {
-    max-width: 100%;
-  }
-
-  .hero-actions,
-  .hero-stats {
-    justify-content: center;
-  }
-
-  .hero-title {
-    font-size: 2.5rem;
-  }
-
-  .image-wrapper {
-    height: 400px;
-  }
-
-  .floating-card {
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: -20px;
-    width: max-content;
-  }
+  .hero-content { max-width: 100%; }
+  .hero-actions, .hero-stats { justify-content: center; }
+  .hero-title { font-size: 2.5rem; }
+  .image-wrapper { height: 400px; }
+  
+  /* Adatta il separatore su mobile */
+  .section-separator { width: 80%; }
 }
 
 /* --- STORIES & EVENTS SECTIONS --- */
 .stories-section,
 .events-section {
-  padding: 80px 32px;
+  padding: 100px 32px;
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
 }
 
+/* SFONDO GRIGIO DISTINTO */
 .stories-section {
-  background-color: #f8f9fa;
-  /* Alternating background */
+  background-color: var(--bg-soft); 
 }
 
+/* SFONDO BIANCO */
 .events-section {
-  background-color: white;
+  background-color: #ffffff;
 }
 
 .section-content {
-  max-width: 700px;
+  max-width: 768px;
   margin: 0 auto;
 }
 
 .section-content h2 {
-  font-size: 2.5rem;
+  font-size: 2.8rem;
   color: var(--text-main);
-  margin-bottom: 16px;
-  font-weight: 700;
+  margin-bottom: 20px;
+  font-weight: 800;
 }
 
 .section-content p {
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   color: var(--text-sub);
-  margin-bottom: 32px;
-  line-height: 1.6;
+  margin-bottom: 40px;
+  line-height: 1.7;
 }
 
 .section-content .btn {
   margin: 0 auto;
-  /* Center button */
   width: fit-content;
 }
 
@@ -362,7 +339,6 @@
   opacity: 0;
   transition: all 1s ease-out;
   visibility: hidden;
-  /* Prevents interaction before reveal */
 }
 
 .reveal.active {
@@ -371,14 +347,6 @@
   transform: translate(0, 0);
 }
 
-.fade-left {
-  transform: translateX(-100px);
-}
-
-.fade-right {
-  transform: translateX(100px);
-}
-
-.fade-up {
-  transform: translateY(50px);
-}
+.fade-left { transform: translateX(-60px); }
+.fade-right { transform: translateX(60px); }
+.fade-up { transform: translateY(60px); }

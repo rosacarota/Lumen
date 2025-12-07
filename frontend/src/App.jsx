@@ -4,7 +4,6 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import Home from './pages/Home';
 import EventsPage from './pages/EventsPage';
-import AccessoInfoProfilo from './components/AccessoInfoProfilo';
 import StoriesBoard from './pages/StoriesBoard';
 import ChiSiamo from './pages/ChiSiamo';
 import ProfiloEnte from './pages/ProfiloEnte';
