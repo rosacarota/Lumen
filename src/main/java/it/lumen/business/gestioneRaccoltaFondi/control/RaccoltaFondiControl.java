@@ -12,6 +12,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -44,6 +46,13 @@ public class RaccoltaFondiControl {
             result.getAllErrors().forEach(error -> errorMsg.append(error.getDefaultMessage()).append("; "));
             System.out.println("Errore: " + errorMsg);
             return ResponseEntity.badRequest().body(errorMsg.toString());
+        }
+
+        if(raccoltaFondi.getDataApertura().toInstant().isBefore(Date.valueOf(LocalDate.now()).toInstant())){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("La data di avvio della richiesta è nel passato");
+        }
+        if(raccoltaFondi.getDataChiusura().toInstant().isBefore(raccoltaFondi.getDataApertura().toInstant())){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("La data di avvio deve precedere la data di fine");
         }
 
         String email = null;
