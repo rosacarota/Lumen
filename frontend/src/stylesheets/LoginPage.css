@@ -4,6 +4,7 @@
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -11,9 +12,12 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: scale(1);
   }
+
   50% {
     transform: scale(1.05);
   }
@@ -24,6 +28,7 @@
     opacity: 0;
     transform: translateX(-30px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -97,7 +102,7 @@
   opacity: 0.5;
   top: 10%;
   left: 10%;
-  
+
 }
 
 .blur-circle-3 {
@@ -110,7 +115,7 @@
   opacity: 0.5;
   bottom: 10%;
   right: 10%;
-  
+
 }
 
 .welcome-content {
@@ -155,21 +160,21 @@
 .form-panel {
   position: absolute;
   /* CORREZIONE CHIAVE: Era 60% negli screenshot. Deve essere 50% per essere simmetrico. */
-  width: 50% !important; 
+  width: 50% !important;
   height: 100%;
   left: 50%;
   top: 0;
   background: white;
-  
+
   /* Rimuoviamo il padding dal padre per non alterare i calcoli di larghezza */
   padding: 0 !important;
-  
+
   /* Flexbox serve per far funzionare il margin: auto del figlio */
   display: flex;
   flex-direction: column;
-  
+
   /* Manteniamo le tue impostazioni di scroll e transizione */
-  overflow-y: auto; 
+  overflow-y: auto;
   transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 3;
 }
@@ -178,11 +183,11 @@
 .form-container {
   width: 100%;
   /* Manteniamo la larghezza elegante che hai scelto */
-  max-width: 420px !important; 
-  
+  max-width: 420px !important;
+
   /* MAGIA: Questo centra Orizzontalmente E Verticalmente nello spazio disponibile */
-  margin: auto; 
-  
+  margin: auto;
+
   /* Padding interno solo per sicurezza su schermi piccoli */
   padding: 20px;
   box-sizing: border-box;
@@ -195,12 +200,14 @@
   /* Rimosso align-items: center e text-align: center */
   margin-bottom: 30px;
   width: 100%;
-  text-align: left; /* Opzionale, è il default, ma lo esplicitiamo */
+  text-align: left;
+  /* Opzionale, è il default, ma lo esplicitiamo */
 }
 
 .logo-wrapper {
   display: flex;
-  align-items: center; /* Mantiene icona e testo allineati verticalmente tra loro */
+  align-items: center;
+  /* Mantiene icona e testo allineati verticalmente tra loro */
   /* Rimosso justify-content: center */
   gap: 10px;
   margin-bottom: 8px;
@@ -211,7 +218,8 @@
   .form-panel {
     width: 100% !important;
     left: 0 !important;
-    position: relative !important; /* Su mobile diventa relativo */
+    position: relative !important;
+    /* Su mobile diventa relativo */
   }
 }
 
@@ -606,11 +614,11 @@
     max-height: 90vh !important;
     border-radius: 20px !important;
   }
-  
+
   .gradient-panel {
     display: none !important;
   }
-  
+
   .form-panel {
     position: relative !important;
     width: 100% !important;
@@ -618,4 +626,11 @@
     transform: none !important;
     padding: 30px 20px !important;
   }
+}
+
+/* FIX: Footer stuck to bottom */
+.login-page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }

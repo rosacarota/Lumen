@@ -48,7 +48,7 @@ export default function LoginPage() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    
+
     // Rimuovi l'errore specifico del campo se esiste
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: null }));
@@ -80,7 +80,7 @@ export default function LoginPage() {
   const getInputClassName = (fieldName) => {
     return errors[fieldName] ? 'input-field has-error' : 'input-field';
   };
-  
+
   const getInputNoIconClassName = (fieldName) => {
     return errors[fieldName] ? 'input-field-no-icon has-error' : 'input-field-no-icon';
   };
@@ -182,27 +182,27 @@ export default function LoginPage() {
         <div className="input-group-container">
           <div className="input-group">
             <Mail className="input-icon" />
-            <input 
-              type="email" 
-              name="email" 
-              value={formData.email} 
-              onChange={handleChange} 
-              placeholder="Email" 
-              className={getInputClassName('email')} 
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="Email"
+              className={getInputClassName('email')}
             />
           </div>
           <ErrorMsg field="email" />
         </div>
-        
+
         <div className="input-group-container">
           <div className="input-group">
             <Lock className="input-icon" />
-            <input 
-              type={showPassword ? "text" : "password"} 
-              name="password" 
-              value={formData.password} 
-              onChange={handleChange} 
-              placeholder="Password" 
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Password"
               className={getInputClassName('password')}
               style={{ paddingRight: '40px' }}
             />
@@ -216,12 +216,12 @@ export default function LoginPage() {
         <div className="input-group-container">
           <div className="input-group">
             <Lock className="input-icon" />
-            <input 
-              type={showConfirmPassword ? "text" : "password"} 
-              name="confirmPassword" 
-              value={formData.confirmPassword} 
-              onChange={handleChange} 
-              placeholder="Conferma Password" 
+            <input
+              type={showConfirmPassword ? "text" : "password"}
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              placeholder="Conferma Password"
               className={getInputClassName('confirmPassword')}
               style={{ paddingRight: '40px' }}
             />
@@ -240,28 +240,28 @@ export default function LoginPage() {
           <div className="input-group-container">
             <div className="input-group">
               <Building2 className="input-icon" />
-              <input 
-                type="text" 
-                name="nomeEnte" 
-                value={formData.nomeEnte} 
-                onChange={handleChange} 
-                placeholder="Nome Ente" 
-                className={getInputClassName('nomeEnte')} 
+              <input
+                type="text"
+                name="nomeEnte"
+                value={formData.nomeEnte}
+                onChange={handleChange}
+                placeholder="Nome Ente"
+                className={getInputClassName('nomeEnte')}
               />
             </div>
             <ErrorMsg field="nomeEnte" />
           </div>
-          
+
           <div className="input-group-container">
             <div className="input-group">
               <Phone className="input-icon" />
-              <input 
-                type="text" 
-                name="telefono" 
-                value={formData.telefono} 
-                onChange={handleChange} 
-                placeholder="Telefono" 
-                className={getInputClassName('telefono')} 
+              <input
+                type="text"
+                name="telefono"
+                value={formData.telefono}
+                onChange={handleChange}
+                placeholder="Telefono"
+                className={getInputClassName('telefono')}
               />
             </div>
             <ErrorMsg field="telefono" />
@@ -276,13 +276,13 @@ export default function LoginPage() {
         <div className="input-group-container">
           <div className="input-group">
             <User className="input-icon" />
-            <input 
-              type="text" 
-              name="nome" 
-              value={formData.nome} 
-              onChange={handleChange} 
-              placeholder="Nome" 
-              className={getInputClassName('nome')} 
+            <input
+              type="text"
+              name="nome"
+              value={formData.nome}
+              onChange={handleChange}
+              placeholder="Nome"
+              className={getInputClassName('nome')}
             />
           </div>
           <ErrorMsg field="nome" />
@@ -291,13 +291,13 @@ export default function LoginPage() {
         <div className="input-group-container">
           <div className="input-group">
             <User className="input-icon" />
-            <input 
-              type="text" 
-              name="cognome" 
-              value={formData.cognome} 
-              onChange={handleChange} 
-              placeholder="Cognome" 
-              className={getInputClassName('cognome')} 
+            <input
+              type="text"
+              name="cognome"
+              value={formData.cognome}
+              onChange={handleChange}
+              placeholder="Cognome"
+              className={getInputClassName('cognome')}
             />
           </div>
           <ErrorMsg field="cognome" />
@@ -306,13 +306,13 @@ export default function LoginPage() {
         <div className="input-group-container">
           <div className="input-group">
             <Phone className="input-icon" />
-            <input 
-              type="text" 
-              name="telefono" 
-              value={formData.telefono} 
-              onChange={handleChange} 
-              placeholder="Telefono" 
-              className={getInputClassName('telefono')} 
+            <input
+              type="text"
+              name="telefono"
+              value={formData.telefono}
+              onChange={handleChange}
+              placeholder="Telefono"
+              className={getInputClassName('telefono')}
             />
           </div>
           <ErrorMsg field="telefono" />
@@ -335,7 +335,7 @@ export default function LoginPage() {
   const containerHeight = (!isLogin && userType) ? 'min(850px, 85vh)' : 'min(700px, 75vh)';
 
   return (
-    <>
+    <div className="login-page-wrapper">
       <Navbar />
       <div className="login-page">
         <div className="login-container hide-scrollbar" style={{ height: containerHeight }}>
@@ -391,7 +391,7 @@ export default function LoginPage() {
                         className="user-type-card"
                         style={{
                           animation: `slideInFromLeft 0.8s ease-out forwards`,
-                          animationDelay: `${index * 0.30}s`, 
+                          animationDelay: `${index * 0.30}s`,
                           opacity: 0
                         }}>
                         <div className="icon-wrapper user-type-icon-wrapper">
@@ -436,13 +436,13 @@ export default function LoginPage() {
                       {(userType === 'ente' || userType === 'volontario') && (
                         <div className="input-group-container">
                           <div className="input-group">
-                            <input 
-                              type="text" 
-                              name="ambito" 
-                              value={formData.ambito} 
-                              onChange={handleChange} 
-                              placeholder="Di cosa ti occupi? (es. Sociale)" 
-                              className={getInputNoIconClassName('ambito')} 
+                            <input
+                              type="text"
+                              name="ambito"
+                              value={formData.ambito}
+                              onChange={handleChange}
+                              placeholder="Di cosa ti occupi? (es. Sociale)"
+                              className={getInputNoIconClassName('ambito')}
                             />
                           </div>
                         </div>
@@ -450,13 +450,13 @@ export default function LoginPage() {
 
                       <div className="input-group-container">
                         <div className="input-group">
-                          <textarea 
-                            name="descrizione" 
-                            value={formData.descrizione} 
-                            onChange={handleChange} 
-                            placeholder="Parlaci di te / Bio" 
-                            className="textarea-field" 
-                            rows="3" 
+                          <textarea
+                            name="descrizione"
+                            value={formData.descrizione}
+                            onChange={handleChange}
+                            placeholder="Parlaci di te / Bio"
+                            className="textarea-field"
+                            rows="3"
                           />
                         </div>
                       </div>
@@ -464,53 +464,53 @@ export default function LoginPage() {
                       <div className="address-label">Indirizzo (Opzionale)</div>
 
                       <div className="address-row">
-                        <input 
-                          type="text" 
-                          name="strada" 
-                          value={formData.strada} 
-                          onChange={handleChange} 
-                          placeholder="Via" 
+                        <input
+                          type="text"
+                          name="strada"
+                          value={formData.strada}
+                          onChange={handleChange}
+                          placeholder="Via"
                           className={getInputNoIconClassName('strada')}
                           style={{ flex: 2 }}
                         />
-                        <input 
-                          type="text" 
-                          name="nCivico" 
-                          value={formData.nCivico} 
-                          onChange={handleChange} 
-                          placeholder="N." 
+                        <input
+                          type="text"
+                          name="nCivico"
+                          value={formData.nCivico}
+                          onChange={handleChange}
+                          placeholder="N."
                           className={getInputNoIconClassName('nCivico')}
                           style={{ flex: 1 }}
                         />
                       </div>
                       <div className="address-row">
-                        <input 
-                          type="text" 
-                          name="citta" 
-                          value={formData.citta} 
-                          onChange={handleChange} 
-                          placeholder="Città" 
-                          className="city-input" 
+                        <input
+                          type="text"
+                          name="citta"
+                          value={formData.citta}
+                          onChange={handleChange}
+                          placeholder="Città"
+                          className="city-input"
                         />
                         <div className="cap-wrapper">
-                           <input 
-                             type="text" 
-                             name="cap" 
-                             value={formData.cap} 
-                             onChange={handleChange} 
-                             placeholder="CAP" 
-                             className={getInputNoIconClassName('cap')} 
-                           />
-                           <ErrorMsg field="cap" />
+                          <input
+                            type="text"
+                            name="cap"
+                            value={formData.cap}
+                            onChange={handleChange}
+                            placeholder="CAP"
+                            className={getInputNoIconClassName('cap')}
+                          />
+                          <ErrorMsg field="cap" />
                         </div>
                       </div>
-                      <input 
-                        type="text" 
-                        name="provincia" 
-                        value={formData.provincia} 
-                        onChange={handleChange} 
-                        placeholder="Provincia (es. MI)" 
-                        className={getInputNoIconClassName('provincia')} 
+                      <input
+                        type="text"
+                        name="provincia"
+                        value={formData.provincia}
+                        onChange={handleChange}
+                        placeholder="Provincia (es. MI)"
+                        className={getInputNoIconClassName('provincia')}
                       />
 
                       <button onClick={handleSubmit} className="submit-button">COMPLETA REGISTRAZIONE</button>
@@ -526,13 +526,13 @@ export default function LoginPage() {
                       <div className="input-group-container">
                         <div className="input-group">
                           <User className="input-icon" />
-                          <input 
-                            type="text" 
-                            name="email" 
-                            value={formData.email} 
-                            onChange={handleChange} 
-                            placeholder="EMAIL" 
-                            className={getInputClassName('email')} 
+                          <input
+                            type="text"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            placeholder="EMAIL"
+                            className={getInputClassName('email')}
                           />
                         </div>
                         <ErrorMsg field="email" />
@@ -541,12 +541,12 @@ export default function LoginPage() {
                       <div className="input-group-container">
                         <div className="input-group">
                           <Lock className="input-icon" />
-                          <input 
-                            type={showPassword ? "text" : "password"} 
-                            name="password" 
-                            value={formData.password} 
-                            onChange={handleChange} 
-                            placeholder="PASSWORD" 
+                          <input
+                            type={showPassword ? "text" : "password"}
+                            name="password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            placeholder="PASSWORD"
                             className={getInputClassName('password')}
                             style={{ paddingRight: '40px' }}
                           />
@@ -558,7 +558,7 @@ export default function LoginPage() {
                       </div>
                     </div>
                     <button onClick={handleSubmit} className="submit-button">LOGIN</button>
-                    
+
                   </div>
                 )}
 
@@ -583,6 +583,6 @@ export default function LoginPage() {
         </div>
       </div>
       <Footer />
-    </>
+    </div>
   );
 }
