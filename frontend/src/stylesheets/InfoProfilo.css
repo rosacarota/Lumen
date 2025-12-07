@@ -1,8 +1,4 @@
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-}
-
+/* --- LAYOUT GENERALE HERO --- */
 .hero-wrapper {
     width: 100%;
     margin-bottom: 40px;
@@ -10,6 +6,7 @@
     border-top-left-radius: 0;
     border-top-right-radius: 0;
     position: relative;
+    /* Sfondo sfumato base */
     background: linear-gradient(to bottom right, var(--first-color) 0%, var(--second-color) 40%, var(--third-color) 100%);
     overflow: hidden;
     min-height: 25vh; 
@@ -19,30 +16,35 @@
     z-index: 1;
 }
 
-.hero-wrapper::before {
-    content: '';
-    position: absolute;
-    width: 300px; height: 300px;
-    background: var(--third-color);
-    border-radius: 50%;
-    filter: blur(60px);
-    opacity: 0.6;
-    top: -50px; left: 10%;
-    animation: pulse 4s ease-in-out infinite;
-    z-index: -1;
-}
-
+/* --- DECORAZIONI STATICHE (Zero carico GPU) --- */
+.hero-wrapper::before,
 .hero-wrapper::after {
     content: '';
     position: absolute;
-    width: 400px; height: 400px;
-    background: var(--second-color);
     border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.5;
-    bottom: -50px; right: 10%;
-    animation: pulse 5s ease-in-out infinite;
     z-index: -1;
+    pointer-events: none; /* Non interferiscono coi click */
+    opacity: 0.6;         /* Trasparenza fissa */
+}
+
+/* Sfera in alto a sinistra */
+.hero-wrapper::before {
+    width: 400px; 
+    height: 400px;
+    top: -80px; 
+    left: 5%;
+    /* Gradiente radiale invece del pesante blur */
+    background: radial-gradient(circle, var(--third-color) 0%, rgba(255,255,255,0) 70%);
+}
+
+/* Sfera in basso a destra */
+.hero-wrapper::after {
+    width: 500px; 
+    height: 500px;
+    bottom: -100px; 
+    right: 5%;
+    /* Gradiente radiale invece del pesante blur */
+    background: radial-gradient(circle, var(--second-color) 0%, rgba(255,255,255,0) 70%);
 }
 
 .hero-cover {
@@ -52,6 +54,7 @@
     flex-grow: 1; 
 }
 
+/* --- BARRA INFORMAZIONI --- */
 .hero-info-bar {
     background: linear-gradient(to top, rgba(8, 120, 134, 0.8) 0%, rgba(8, 120, 134, 0) 100%);
     padding-bottom: 30px;
@@ -100,15 +103,29 @@
     opacity: 0.9;
 }
 
+/* --- RESPONSIVE MOBILE --- */
 @media (max-width: 768px) {
     .owner-details-grid {
         flex-direction: column;
         gap: 10px;
         width: 100%;
     }
+    
+    .hero-content-inner {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .ente-text p {
+        margin: 0 auto;
+    }
+    
+    .stats-row {
+        justify-content: center;
+    }
 }
 
-/* --- GESTIONE IMMAGINE PROFILO (MODIFICATA) --- */
+/* --- AVATAR E IMMAGINE --- */
 .avatar-container {
     width: 160px;
     height: 160px;
@@ -126,19 +143,25 @@
     font-weight: bold;
     font-size: 1.2rem;
     
-    /* MODIFICA: Assicura che l'immagine non esca dal cerchio */
+    /* Fondamentale per mascherare l'immagine nel cerchio */
     overflow: hidden; 
     position: relative;
 }
 
-/* MODIFICA: Classe aggiunta per adattare l'immagine */
 .profile-img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Mantiene le proporzioni e riempie il cerchio */
+    object-fit: cover; /* Mantiene le proporzioni senza deformare */
     display: block;
 }
 
+.profile-img-placeholder {
+    width: 100%;
+    height: 100%;
+    background-color: #eee;
+}
+
+/* --- TESTI --- */
 .ente-text {
     color: white;
     margin-top: 10px;
@@ -149,12 +172,20 @@
     font-size: 3rem; 
     font-weight: bold; 
     margin-bottom: 5px; 
+    line-height: 1.2;
+}
+
+.ente-text h3 {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    margin-bottom: 10px;
 }
 
 .ente-text p { 
     font-size: 1.1rem; 
     opacity: 0.95; 
     max-width: 600px; 
+    line-height: 1.5;
 }
 
 .stats-row {
@@ -164,8 +195,10 @@
     align-items: center;
 }
 
+/* --- PULSANTI --- */
 .pill {
   background-color: rgba(255, 255, 255, 0.25);
+  /* Backdrop-filter mantenuto leggero, rimuovere se da ancora problemi su mobile vecchi */
   backdrop-filter: blur(5px);
   padding: 8px 20px;
   border-radius: 20px;
@@ -173,10 +206,18 @@
   font-weight: 700;
   color: white;
   border: 1px solid rgba(255,255,255,0.4);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.2s;
 }
 
-#edit-btn {
+.edit-btn {
     cursor: pointer;
+}
+
+.edit-btn:hover {
+    background-color: rgba(255, 255, 255, 0.35);
 }
 
 .follow-btn {
