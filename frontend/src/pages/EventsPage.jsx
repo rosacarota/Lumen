@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import '../stylesheets/EventsPage.css';
 import Navbar from '../components/Navbar';
-import EventCard from '../components/EventCard'; 
+import EventCard from '../components/EventCard';
 import Footer from '../components/Footer';
 import Swal from 'sweetalert2';
 
 // Servizi
-import { fetchEvents } from '../services/PartecipazioneEventoService'; 
+import { fetchEvents } from '../services/PartecipazioneEventoService';
 
 export default function EventsPage() {
   const [events, setEvents] = useState([]);
@@ -37,34 +37,34 @@ export default function EventsPage() {
 
   return (
     // USIAMO LA CLASSE DEL NUOVO CSS
-    <div className="page-wrapper-inner">
+    <div className="events-page-wrapper">
       <Navbar />
 
       <div className="main-container">
         <div className="content-box">
-          
+
           <div className="box-header">
-             <div className="header-text">
-                <h1>Tutti gli Eventi</h1>
-                <p>Scopri le attività della community e partecipa.</p>
-             </div>
+            <div className="header-text">
+              <h1>Tutti gli Eventi</h1>
+              <p>Scopri le attività della community e partecipa.</p>
+            </div>
           </div>
 
           <div className="events-grid">
-            {loading && <p style={{gridColumn:'1/-1', textAlign:'center', color:'#666'}}>Caricamento in corso...</p>}
-            
+            {loading && <p style={{ gridColumn: '1/-1', textAlign: 'center', color: '#666' }}>Caricamento in corso...</p>}
+
             {!loading && events.length === 0 && (
-              <p style={{gridColumn:'1/-1', textAlign:'center', color:'#666'}}>Nessun evento disponibile.</p>
+              <p style={{ gridColumn: '1/-1', textAlign: 'center', color: '#666' }}>Nessun evento disponibile.</p>
             )}
 
             {!loading && events.map((event, index) => (
-              <EventCard 
+              <EventCard
                 // Usiamo l'ID se c'è, altrimenti l'indice come fallback per evitare errori di key
-                key={event.id || event.idEvento || index} 
-                
+                key={event.id || event.idEvento || index}
+
                 // Passiamo l'intero oggetto "pulito" dal service
-                event={event}  
-                
+                event={event}
+
                 showParticipate={true}
               />
             ))}
@@ -72,7 +72,7 @@ export default function EventsPage() {
 
         </div>
       </div>
-      
+
       {/* IL FOOTER ORA È DENTRO IL WRAPPER, COSÌ VIENE SPINTO GIÙ */}
       <Footer />
     </div>
