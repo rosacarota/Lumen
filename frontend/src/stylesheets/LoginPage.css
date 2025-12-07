@@ -48,7 +48,7 @@
 /* Main Page Container */
 .login-page {
   flex: 1;
-  background: linear-gradient(135deg, #F7FBFB 0%, #E9FBE7 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #fbfffa 100%);
   display: flex;
   align-items: center;
   justify-content: center;
