@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import VisualizzaRicercaGeografica from '../components/VisualizzaRicercaGeografica';
@@ -143,8 +144,18 @@ const RicercaGeografica = () => {
                     ) : filteredResults.length > 0 ? (
                         <div className="geo-results-grid">
                             {filteredResults.map((user, index) => (
-                                // Nota: VisualizzaRicercaGeografica si aspetta una prop "data" come nel tuo esempio originale
-                                <VisualizzaRicercaGeografica key={index} data={user} />
+                                <Link
+                                    key={index}
+                                    to={`/profilo${user.ruolo ? user.ruolo.toLowerCase() : ''}`}
+                                    onClick={() => {
+                                        if (user.email) {
+                                            localStorage.setItem('searchEmail', user.email);
+                                        }
+                                    }}
+                                    style={{ textDecoration: 'none', display: 'block' }}
+                                >
+                                    <VisualizzaRicercaGeografica data={user} />
+                                </Link>
                             ))}
                         </div>
                     ) : (

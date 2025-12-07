@@ -62,8 +62,9 @@
 
 .vrg-badges {
     display: flex;
+    flex-direction: column;
     gap: 6px;
-    flex-wrap: wrap;
+    align-items: flex-start;
 }
 
 .vrg-badge-role {
