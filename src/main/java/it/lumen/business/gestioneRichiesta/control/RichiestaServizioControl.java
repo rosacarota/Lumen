@@ -13,6 +13,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+
 @RestController
 @RequestMapping("/richiestaServizio")
 public class RichiestaServizioControl {
@@ -79,5 +81,12 @@ public class RichiestaServizioControl {
         }
         richiestaServizioService.rifiutaRichiestaServizio(richiestaServizio);
         return ResponseEntity.ok("Richiesta servizio rifiutata con successo");
+    }
+
+    @GetMapping("/getRichiestaServizio")
+    public ResponseEntity<?> getRichiesteByToken(@RequestParam String token) {
+        String email = util.extractEmail(token);
+
+        return ResponseEntity.ok(richiestaServizioService.getRichiesteByEmail(email));
     }
 }

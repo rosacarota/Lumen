@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.sql.Date;
+import java.util.List;
 
 @Service
 public class RichiestaServizioServiceImpl implements RichiestaServizioService {
@@ -49,4 +50,9 @@ public class RichiestaServizioServiceImpl implements RichiestaServizioService {
     @Transactional
     //----------------------------------------------------------TO ARGUE----------------------------------------------------------
     public void rifiutaRichiestaServizio(RichiestaServizio richiestaServizio) {richiestaServizioDAO.delete(richiestaServizio);} //Rimozione della richiesta dal database
+
+    public List<RichiestaServizio> getRichiesteByEmail(String email) {
+
+        return richiestaServizioDAO.findAllByEnteVolontario_Email(email);
+    }
 }

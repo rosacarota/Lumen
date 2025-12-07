@@ -45,12 +45,13 @@ public class RichiestaServizio {
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull(message = "Il mittente della ricerca è obbligatorio")
     @JoinColumn(name = "beneficiario")
+    @JsonIgnoreProperties({"password", "ambito", "immagine", "ruolo", "hibernateLazyInitializer"})
     Utente beneficiario;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull(message = "Il destinatario della richiesta è sbagliato")
     @JoinColumn(name = "entevolontario")
-    @JsonIgnoreProperties({"nome", "cognome", "password", "ambito", "descrizione", "indirizzo", "recapitoTelefonico", "immagine", "ruolo", "hibernateLazyInitializer"})
+    @JsonIgnoreProperties({"password", "ambito", "immagine", "ruolo", "hibernateLazyInitializer"})
     Utente enteVolontario;
 
 
