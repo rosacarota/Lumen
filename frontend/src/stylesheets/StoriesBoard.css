@@ -48,14 +48,14 @@
 }
 
 .stories-title {
-  font-size: 26px;
+  font-size: 32px;
   font-weight: 700;
   color: #087886;
   margin: 0;
 }
 
 .stories-subtitle {
-  font-size: 14px;
+  font-size: 16px;
   color: #6b7280;
   margin: 0;
 }
@@ -116,7 +116,7 @@
 
 .story-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.075);
 }
 
 .story-card-header {
@@ -145,13 +145,14 @@
 }
 
 .story-author-name {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 17px;
+  font-weight: 700;
   color: #111827;
 }
 
 .story-author-role {
-  font-size: 12px;
+  padding-left: 10px;
+  font-size: 14px;
   color: #6b7280;
 }
 
@@ -180,14 +181,14 @@
 }
 
 .story-card-title {
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 1.4rem;
+  font-weight: 700;
   color: #111827;
   margin: 4px 0 6px;
 }
 
 .story-card-content {
-  font-size: 14px;
+  font-size: 18px;
   color: #4b5563;
   margin: 0 0 10px;
 }
