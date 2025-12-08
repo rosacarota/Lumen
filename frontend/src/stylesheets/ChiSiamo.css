@@ -30,6 +30,7 @@ body {
     min-height: auto;
     /* Override global min-height if set */
     background-color: var(--bg-main);
+    overflow-y: hidden;
 }
 
 /* Container */
