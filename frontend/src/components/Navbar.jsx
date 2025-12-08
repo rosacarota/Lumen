@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-// RIMOSSO: import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Search, User, ChevronDown, LogOut, Settings, FileText, Briefcase, Users, Calendar, Heart, LogIn, Earth } from 'lucide-react';
 import '../stylesheets/Navbar.css';
 import LogoLumen from '../assets/logo-lumen.png';
@@ -13,6 +13,7 @@ const Navbar = () => {
     isLoggedIn: false
   });
 
+  const navigate = useNavigate();
 
   const navItems = [
     { label: 'Chi siamo', path: '/chisiamo' },
@@ -20,7 +21,6 @@ const Navbar = () => {
     { label: 'Eventi', path: '/eventi' }
   ];
 
-  // AGGIUNTA: Se il ruolo è 'ente', aggiungo la voce "Affiliazione"
   if (currentUser.role === 'ente') {
     navItems.push({ label: 'Affiliati', path: '/DashboardAffiliazione' });
     navItems.push({ label: 'Servizi', path: '/DashboardRichiesteServizio' });
@@ -28,13 +28,11 @@ const Navbar = () => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    // --- LOGICA CHIAMATA API DIRETTA ---
     const fetchUserDirectly = async () => {
       try {
         const response = await fetch(`http://localhost:8080/account/datiUtente?token=${token}`, {
           method: "GET",
-          headers: { "Content-Type": "application/json" },
-          //body: JSON.stringify({ token: token })
+          headers: { "Content-Type": "application/json" }
         });
 
         if (response.ok) {
@@ -74,30 +72,32 @@ const Navbar = () => {
     localStorage.removeItem('ruolo');
     setCurrentUser({ username: 'Utente', role: 'guest', immagine: null, isLoggedIn: false });
     setIsDropdownOpen(false);
-
-    // SOSTITUZIONE NAVIGATE: Redirect nativo
-    window.location.href = '/login';
+    navigate('/login');
   };
+
+  const handleSearch = (e) => {
+    if (e.key === 'Enter') {
+      navigate(`/cerca?q=${e.target.value}`);
+    }
+  }
 
   return (
     <header className="navbar-wrapper">
       <nav className="navbar">
         <div className="navbar-left">
           <div className="navbar-logo">
-            {/* SOSTITUZIONE LINK -> A */}
-            <a href="/home">
+            <Link to="/home">
               <div className="logo-circle">
                 <img src={LogoLumen} alt="Lumen Logo" />
               </div>
-            </a>
+            </Link>
           </div>
           <div className="nav-divider"></div>
           <div className="navbar-links">
             {navItems.map((item, index) => (
-              /* SOSTITUZIONE LINK -> A */
-              <a key={index} href={item.path} className="nav-item">
+              <Link key={index} to={item.path} className="nav-item">
                 {item.label}
-              </a>
+              </Link>
             ))}
           </div>
         </div>
@@ -109,19 +109,14 @@ const Navbar = () => {
               type="text"
               placeholder="Cerca..."
               className="search-input"
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  // Assicurati che window.location funzioni o usa navigate se sei dentro Router
-                  window.location.href = `/cerca?q=${e.target.value}`;
-                }
-              }}
+              onKeyDown={handleSearch}
             />
           </div>
 
           {currentUser.role === 'beneficiario' && (
-            <a href="/ricercageografica" className="icon-btn" title="Ricerca Geografica">
+            <Link to="/ricercageografica" className="icon-btn" title="Ricerca Geografica">
               <Earth size={20} />
-            </a>
+            </Link>
           )}
 
           <div className="profile-container" onClick={toggleDropdown}>
@@ -158,29 +153,34 @@ const Navbar = () => {
 
 const DropdownMenu = ({ role, onLogout }) => {
   const safeRole = role ? role.toLowerCase() : 'guest';
-  const getMenuItems = (r) => {
+
+  // Helper to handle navigation to personal area ensuring searchEmail is reset to self
+  const handlePersonalAreaClick = () => {
     localStorage.setItem('searchEmail', localStorage.getItem('email'));
+  };
+
+  const getMenuItems = (r) => {
     switch (r) {
       case 'beneficiario':
         return [
-          { label: 'Area Personale', icon: <Settings size={16} />, href: '/profilobeneficiario' },
+          { label: 'Area Personale', icon: <Settings size={16} />, to: '/profilobeneficiario', onClick: handlePersonalAreaClick },
           { label: 'Logout', icon: <LogOut size={16} />, action: onLogout, type: 'danger' }
         ];
       case 'volontario':
         return [
-          { label: 'Area Personale', icon: <Settings size={16} />, href: '/profilovolontario' },
+          { label: 'Area Personale', icon: <Settings size={16} />, to: '/profilovolontario', onClick: handlePersonalAreaClick },
           { label: 'Logout', icon: <LogOut size={16} />, action: onLogout, type: 'danger' }
         ];
       case 'ente':
         return [
-          { label: 'Area Personale', icon: <Settings size={16} />, href: '/profiloente' },
-          { label: 'Gestione affiliati', icon: <Users size={16} />, href: '/DashboardAffiliazione' },
-          { label: 'Gestione servizi', icon: <FileText size={16} />, href: '/DashboardRichiesteServizio' },
+          { label: 'Area Personale', icon: <Settings size={16} />, to: '/profiloente', onClick: handlePersonalAreaClick },
+          { label: 'Gestione affiliati', icon: <Users size={16} />, to: '/DashboardAffiliazione' },
+          { label: 'Gestione servizi', icon: <FileText size={16} />, to: '/DashboardRichiesteServizio' },
           { label: 'Logout', icon: <LogOut size={16} />, action: onLogout, type: 'danger' }
         ];
       case 'guest':
       default:
-        return [{ label: 'Login', icon: <LogIn size={16} />, href: '/login' }];
+        return [{ label: 'Login', icon: <LogIn size={16} />, to: '/login' }];
     }
   };
 
@@ -194,10 +194,17 @@ const DropdownMenu = ({ role, onLogout }) => {
             <span className="row-icon">{item.icon}</span>{item.label}
           </div>
         ) : (
-          /* SOSTITUZIONE LINK -> A */
-          <a key={index} href={item.href} className={`dropdown-row ${item.type === 'danger' ? 'danger' : ''}`}>
+          <Link
+            key={index}
+            to={item.to}
+            className={`dropdown-row ${item.type === 'danger' ? 'danger' : ''}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (item.onClick) item.onClick();
+            }}
+          >
             <span className="row-icon">{item.icon}</span>{item.label}
-          </a>
+          </Link>
         )
       ))}
     </div>

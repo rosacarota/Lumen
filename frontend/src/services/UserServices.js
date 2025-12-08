@@ -10,14 +10,13 @@ function getAuthToken() {
 // 1. MAPPER
 // ==========================================
 function mapApiToUser(apiData) {
-  const indirizzo = apiData.indirizzo || {};
+  const indirizzo = apiData.indirizzo || apiData.objIndirizzo || {};
   return {
     email: apiData.email,
     nome: apiData.nome,
     cognome: apiData.cognome,
-    // Password non la mappiamo in lettura per sicurezza
     descrizione: apiData.descrizione,
-    recapitoTelefonico: apiData.recapitoTelefonico,
+    recapitoTelefonico: apiData.recapitoTelefonico || apiData.telefono || apiData.numeroTelefonico || apiData.cellulare,
     ruolo: apiData.ruolo,
     ambito: apiData.ambito,
     immagine: apiData.immagine,

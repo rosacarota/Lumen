@@ -71,9 +71,21 @@ const ProfiloEnte = () => {
   };
 
   const loadData = async () => {
-    setProfileData(await fetchUserPublicProfile(localStorage.getItem('searchEmail')));
-    if (isOwner) {
-      setProfileData(await fetchUserProfile());
+    let data = null;
+    const searchEmail = localStorage.getItem('searchEmail');
+    try {
+      if (searchEmail) {
+        data = await fetchUserPublicProfile(searchEmail);
+        if (currentUserEmail && data?.email && data.email.trim().toLowerCase() === currentUserEmail.trim().toLowerCase()) {
+          data = await fetchUserProfile();
+        }
+      } else if (currentUserEmail) {
+        data = await fetchUserProfile();
+      }
+      setProfileData(data);
+      return data;
+    } catch (error) {
+      console.error("Errore caricamento dati:", error);
     }
   };
 
