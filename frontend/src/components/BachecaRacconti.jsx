@@ -4,7 +4,7 @@ import '../stylesheets/BachecaRacconti.css';
 import AddStory from '../components/AddStory';
 import EditStory from "../components/EditStory";
 import DeleteStory from "../components/DeleteStory";
-import { fetchStories, addStory, editStory, deleteStory, fetchFilteredStories } from '../services/StoriesService';
+import { addStory, editStory, deleteStory, fetchFilteredStories } from '../services/StoriesService';
 import { Link } from 'react-router-dom';
 
 const BachecaRacconti = ({ isOwner, targetEmail }) => {
@@ -36,7 +36,8 @@ const BachecaRacconti = ({ isOwner, targetEmail }) => {
         setLoading(true);
         try {
             const filteredData = await fetchFilteredStories(targetEmail);
-            setFilteredStories(filteredData);
+            const sortedData = [...filteredData].reverse();
+            setFilteredStories(sortedData);
         }catch(error){console.error("Errore durante il caricamento delle storie dell'utente: ", error);}
         finally {setLoading(false);}
     };

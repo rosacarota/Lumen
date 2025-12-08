@@ -21,8 +21,14 @@ const ProfiloVolontario = () => {
     useEffect(() => {
         const initProfile = async () => {
             setLoading(true);
-            const userStr = localStorage.getItem('user');
-            const currentUser = userStr ? JSON.parse(userStr) : null;
+            let currentUser = null;
+            try {
+                 currentUser = await fetchUserProfile();
+            } catch {
+                 const userStr = localStorage.getItem('user');
+                 currentUser = userStr ? JSON.parse(userStr) : null;
+            }
+            
             const searchEmail = localStorage.getItem('searchEmail');
 
             if (searchEmail) {
@@ -30,7 +36,8 @@ const ProfiloVolontario = () => {
                 try {
                     const publicProfile = await fetchUserPublicProfile(searchEmail);
                     setProfileData(publicProfile);
-                    setIsOwner(currentUser?.email === searchEmail);
+                    const isMe = currentUser && (currentUser.email === searchEmail);
+                    setIsOwner(isMe);
                 } catch (error) {
                     console.error("Errore caricamento profilo ricercato", error);
                 } finally {
@@ -47,8 +54,11 @@ const ProfiloVolontario = () => {
                 console.log("Modalità Owner: carico il mio profilo");
                 setIsOwner(true);
                 try {
-                    const myData = await fetchUserProfile();
+                    const myData = currentUser || await fetchUserProfile();
                     setProfileData(myData);
+                    if (myData?.email) {
+                        localStorage.setItem("searchEmail", myData.email);
+                    }
                 } catch (error) {
                     console.error("Errore caricamento mio profilo", error);
                 } finally {
@@ -64,9 +74,7 @@ const ProfiloVolontario = () => {
 
     return (
         <div className="voluntary-page-wrapper">
-
             <div className="voluntary-container">
-
                 <section className="profile-section-v">
                     <InfoProfilo
                         userData={profileData}
