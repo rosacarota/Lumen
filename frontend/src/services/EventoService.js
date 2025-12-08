@@ -16,10 +16,10 @@ export const toBase64 = (file) =>
 // 1. GET CRONOLOGIA (Generica)
 export const getCronologiaEventi = async (stato = null) => {
   try {
-    const token = getAuthToken();
+    const token = localStorage.getItem("searchEmail");
     if (!token) return [];
     
-    let url = `${API_URL}/evento/cronologiaEventi?token=${encodeURIComponent(token)}`;
+    let url = `${API_URL}/evento/cronologiaEventiEnteEsterno?email=${encodeURIComponent(token)}`;
     if (stato) url += `&stato=${stato}`;
 
     const response = await fetch(url, {
