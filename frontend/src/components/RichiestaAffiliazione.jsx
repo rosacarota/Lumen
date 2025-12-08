@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { UserPlus, SendHorizontal, ArrowLeft } from 'lucide-react';
 import AffiliazioneService from '../services/AffiliazioneService';
 import '../stylesheets/RichiestaAffiliazione.css';
@@ -34,6 +34,16 @@ const RichiestaAffiliazione = ({ onClose, emailEnte, isModal = false }) => {
             setIsLoading(false);
         }
     };
+
+    // Prevent scrolling when modal is open
+    useEffect(() => {
+        if (isModal) {
+            document.body.style.overflow = 'hidden';
+            return () => {
+                document.body.style.overflow = 'unset';
+            };
+        }
+    }, [isModal]);
 
     const handleBackdropClick = (e) => {
         if (isModal && onClose && e.target === e.currentTarget) {

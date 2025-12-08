@@ -1,8 +1,17 @@
+import { useEffect } from "react";
 import { X, Trash2 } from "lucide-react";
 import "../stylesheets/DeleteStory.css";
 
 const DeleteStory = ({ story, onCancel, onConfirm }) => {
   if (!story) return null;
+
+  // Prevent scrolling when modal is open
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
 
   return (
     <div className="delete-story-overlay">

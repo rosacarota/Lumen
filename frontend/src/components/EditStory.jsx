@@ -29,6 +29,14 @@ const EditStory = ({ story, onCancel, onSave }) => {
     if (fileInputRef.current) fileInputRef.current.value = "";
   }, [story]);
 
+  // Prevent scrolling when modal is open
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -66,7 +74,7 @@ const EditStory = ({ story, onCancel, onSave }) => {
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     setFile(selectedFile || null);
-    setImageRemoved(false); 
+    setImageRemoved(false);
   };
 
   const handleTypeChange = (type) => {
@@ -158,10 +166,11 @@ const EditStory = ({ story, onCancel, onSave }) => {
                     </p>
                   ) : story.imageBase64 && !imageRemoved ? (
                     <div className="edit-image-preview"
-                    onClick={(e) => e.stopPropagation()}  >
+                      onClick={(e) => e.stopPropagation()}  >
                       <img src={story.imageBase64} alt="Immagine corrente" className="edit-preview-img" />
-                      <button type="button" className="edit-remove-image-button" onClick={(e) => {e.stopPropagation();handleRemoveImage();
-          }} title="Rimuovi immagine">
+                      <button type="button" className="edit-remove-image-button" onClick={(e) => {
+                        e.stopPropagation(); handleRemoveImage();
+                      }} title="Rimuovi immagine">
                         <X size={16} />
                       </button>
                     </div>

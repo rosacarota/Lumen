@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Coins, SendHorizontal, ArrowLeft } from "lucide-react";
-import Swal from 'sweetalert2'; 
+import Swal from 'sweetalert2';
 
 // Importa la funzione dal service
-import { createRaccolta } from "../services/RaccoltaFondiService"; 
+import { createRaccolta } from "../services/RaccoltaFondiService";
 
 const cssStyles = `
 @keyframes fadeInUp {
@@ -188,10 +188,10 @@ const cssStyles = `
 /* Modal */
 .arf-page-modal {
   position: fixed; inset: 0; z-index: 60;
-  background: rgba(15, 23, 42, 0.55);
+  background: rgba(235, 245, 246, 0.3); /* Leggerissimo teal/bianco trasparente */
+  backdrop-filter: blur(6px);
   display: flex; align-items: center; justify-content: center;
   padding: 20px;
-  backdrop-filter: blur(3px);
 }
 
 .arf-page-modal .arf-container {
@@ -208,13 +208,13 @@ const AddRaccoltaFondi = ({ onSubmit, onBack, onClose, isModal = false }) => {
   const [descrizione, setDescrizione] = useState("");
   const [obiettivo, setObiettivo] = useState("");
   const [dataChiusura, setDataChiusura] = useState("");
-  
+
   const [currentUser, setCurrentUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   // Recupera l'Ente dal LocalStorage
   useEffect(() => {
-    const storedUser = localStorage.getItem("user"); 
+    const storedUser = localStorage.getItem("user");
     if (storedUser) {
       try {
         const parsedUser = JSON.parse(storedUser);
@@ -224,6 +224,16 @@ const AddRaccoltaFondi = ({ onSubmit, onBack, onClose, isModal = false }) => {
       }
     }
   }, []);
+
+  // Prevent scrolling when modal is open
+  useEffect(() => {
+    if (isModal) {
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = 'unset';
+      };
+    }
+  }, [isModal]);
 
   const getMinDate = () => {
     const tomorrow = new Date();
@@ -261,9 +271,9 @@ const AddRaccoltaFondi = ({ onSubmit, onBack, onClose, isModal = false }) => {
 
     try {
       console.log("Invio dati...", nuovaRaccoltaPayload);
-      
+
       const responseMessage = await createRaccolta(nuovaRaccoltaPayload);
-      
+
       // 1. Alert temporizzato elegante (senza blocco utente)
       await Swal.fire({
         icon: 'success',
@@ -277,12 +287,12 @@ const AddRaccoltaFondi = ({ onSubmit, onBack, onClose, isModal = false }) => {
       if (onSubmit) {
         onSubmit(responseMessage);
       }
-      
+
       // 3. CHIUSURA E RICARICA
       // Questa è la parte fondamentale: chiamando onClose (passato dal padre ProfiloEnte)
       // il padre chiuderà il modale e ricaricherà i dati.
       if (onClose) {
-        onClose(); 
+        onClose();
       } else if (onBack) {
         onBack();
       } else {
@@ -308,7 +318,7 @@ const AddRaccoltaFondi = ({ onSubmit, onBack, onClose, isModal = false }) => {
       <style>{cssStyles}</style>
       <div className={`arf-page ${isModal ? "arf-page-modal" : ""}`}>
         <div className="arf-container">
-          
+
           {/* Freccia indietro / Chiudi */}
           {(onBack || onClose) && (
             <button
@@ -331,7 +341,7 @@ const AddRaccoltaFondi = ({ onSubmit, onBack, onClose, isModal = false }) => {
             <div className="arf-welcome-content">
               <h1 className="arf-welcome-title">Lancia una Missione.</h1>
               <p className="arf-welcome-subtitle">
-                Definisci un obiettivo chiaro e mobilita la community. 
+                Definisci un obiettivo chiaro e mobilita la community.
                 Le grandi cause hanno bisogno di grandi inizi.
               </p>
               <div className="arf-welcome-footer">
@@ -343,7 +353,7 @@ const AddRaccoltaFondi = ({ onSubmit, onBack, onClose, isModal = false }) => {
           {/* Pannello destro */}
           <div className="arf-right-panel">
             <div className="arf-form-container">
-              
+
               <div className="arf-logo-section">
                 <div className="arf-logo-wrapper">
                   <Coins className="arf-logo-icon" />
@@ -357,7 +367,7 @@ const AddRaccoltaFondi = ({ onSubmit, onBack, onClose, isModal = false }) => {
               <div className="arf-form-content">
                 <form onSubmit={handleSubmit} className="arf-story-form">
                   <div className="arf-fields-container">
-                    
+
                     <div className="arf-input-group">
                       <input
                         className="arf-input-field"
@@ -385,9 +395,9 @@ const AddRaccoltaFondi = ({ onSubmit, onBack, onClose, isModal = false }) => {
                           disabled={isLoading}
                         />
                       </div>
-                      
+
                       <div className="arf-input-group">
-                         <input
+                        <input
                           className="arf-input-field arf-date-input"
                           type="date"
                           value={dataChiusura}
@@ -417,8 +427,8 @@ const AddRaccoltaFondi = ({ onSubmit, onBack, onClose, isModal = false }) => {
                     <p className="arf-helper-text">
                       La raccolta sarà subito visibile.
                     </p>
-                    <button 
-                      type="submit" 
+                    <button
+                      type="submit"
                       className="arf-submit-button"
                       disabled={isLoading}
                       style={{ opacity: isLoading ? 0.7 : 1, cursor: isLoading ? 'wait' : 'pointer' }}

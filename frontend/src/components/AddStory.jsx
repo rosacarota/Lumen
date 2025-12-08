@@ -26,9 +26,17 @@ const AddStory = ({ onSubmit, onBack, storyToEdit }) => {
       setStoryType(storyToEdit.type || "text");
       setTitle(storyToEdit.title || "");
       setContent(storyToEdit.content || "");
-      setFile(null); 
+      setFile(null);
     }
   }, [storyToEdit]);
+
+  // Prevent scrolling when modal is open
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
 
   const resetForm = () => {
     setTitle("");
@@ -73,11 +81,11 @@ const AddStory = ({ onSubmit, onBack, storyToEdit }) => {
     else console.log("New story:", newStory);
 
     resetForm();
-    if (onBack) onBack(); 
+    if (onBack) onBack();
   };
-  
+
   const handleEditStory = async (event) => {
-    event.preventDefault(); 
+    event.preventDefault();
 
     if (!storyToEdit || !storyToEdit.id) {
       console.error("ID racconto mancante per la modifica");
@@ -96,10 +104,10 @@ const AddStory = ({ onSubmit, onBack, storyToEdit }) => {
       return;
     }
 
-    let imageBase64 = storyToEdit.imageBase64 || null; 
+    let imageBase64 = storyToEdit.imageBase64 || null;
     if (storyType === "photo" && file) {
       try {
-        imageBase64 = await toBase64(file); 
+        imageBase64 = await toBase64(file);
       } catch (error) {
         console.error("Errore nella conversione dell'immagine:", error);
         alert("Impossibile leggere il file immagine.");
@@ -120,7 +128,7 @@ const AddStory = ({ onSubmit, onBack, storyToEdit }) => {
     else console.log("Updated story:", updatedStory);
 
     resetForm();
-    if (onBack) onBack(); 
+    if (onBack) onBack();
   };
 
   const handleFileChange = (event) => {
@@ -161,14 +169,14 @@ const AddStory = ({ onSubmit, onBack, storyToEdit }) => {
   const dotTypes = ["text", "photo"];
 
   return (
-    <div className="modal-overlay" onClick={onBack}> 
+    <div className="modal-overlay" onClick={onBack}>
       <div className="add-story-container" onClick={(e) => e.stopPropagation()}>
-        
-        {onBack && ( 
+
+        {onBack && (
           <button
             type="button"
             className="close-back-button"
-            onClick={onBack} 
+            onClick={onBack}
             title="Chiudi"
           >
             <ArrowLeft size={20} />
@@ -196,7 +204,7 @@ const AddStory = ({ onSubmit, onBack, storyToEdit }) => {
               <div className="logo-wrapper">
                 {getHeaderIcon()}
                 <span className="logo-text">
-                  {storyToEdit ? "Modifica Racconto" : "Nuovo Racconto"} 
+                  {storyToEdit ? "Modifica Racconto" : "Nuovo Racconto"}
                 </span>
               </div>
               <p className="logo-subtitle">
@@ -208,9 +216,8 @@ const AddStory = ({ onSubmit, onBack, storyToEdit }) => {
               <div className="type-selector">
                 <button
                   type="button"
-                  className={`type-button ${
-                    storyType === "text" ? "active" : ""
-                  }`}
+                  className={`type-button ${storyType === "text" ? "active" : ""
+                    }`}
                   onClick={() => handleTypeChange("text")}
                 >
                   <FileText className="type-icon" />
@@ -219,9 +226,8 @@ const AddStory = ({ onSubmit, onBack, storyToEdit }) => {
 
                 <button
                   type="button"
-                  className={`type-button ${
-                    storyType === "photo" ? "active" : ""
-                  }`}
+                  className={`type-button ${storyType === "photo" ? "active" : ""
+                    }`}
                   onClick={() => handleTypeChange("photo")}
                 >
                   <Image className="type-icon" />
@@ -230,7 +236,7 @@ const AddStory = ({ onSubmit, onBack, storyToEdit }) => {
               </div>
 
               <form
-                onSubmit={storyToEdit ? handleEditStory : handleSubmit} 
+                onSubmit={storyToEdit ? handleEditStory : handleSubmit}
                 className="story-form"
               >
                 <div className="fields-container">
@@ -278,7 +284,7 @@ const AddStory = ({ onSubmit, onBack, storyToEdit }) => {
                             {Math.round(file.size / 1024)} KB) – clicca per
                             cambiare
                           </p>
-                        ) : storyToEdit?.imageBase64 ? ( 
+                        ) : storyToEdit?.imageBase64 ? (
                           <p className="file-info">
                             Foto esistente presente – puoi sostituirla cliccando
                             qui

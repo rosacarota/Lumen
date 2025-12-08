@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { X, Calendar, MapPin, Users, Image as ImageIcon, Edit, Trash2 } from 'lucide-react';
-import Swal from 'sweetalert2'; 
+import Swal from 'sweetalert2';
 import '../stylesheets/DettagliEvento.css';
 
 import { fetchDatiUtente } from '../services/PartecipazioneEventoService';
 import { rimuoviEvento } from '../services/EventoService';
 
-export default function DettagliEvento({ 
-  evento, 
+export default function DettagliEvento({
+  evento,
   onClose,
   onOpenParticipants,
   onModifica,
   onElimina
 }) {
-  
+
   const [currentUser, setCurrentUser] = useState(null);
   // NUOVO STATO: Per capire se l'immagine è orizzontale
   const [isLandscape, setIsLandscape] = useState(false);
@@ -35,29 +35,37 @@ export default function DettagliEvento({
     loadUser();
   }, []);
 
-  if (!evento) return null; 
+  // Prevent scrolling when modal is open
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
+
+  if (!evento) return null;
 
   // --- FUNZIONE PER CONTROLLARE LE DIMENSIONI IMMAGINE ---
   const handleImageLoad = (e) => {
     const { naturalWidth, naturalHeight } = e.target;
     // Se la larghezza è maggiore dell'altezza, è orizzontale (Landscape)
     if (naturalWidth > naturalHeight) {
-        setIsLandscape(true);
+      setIsLandscape(true);
     } else {
-        setIsLandscape(false);
+      setIsLandscape(false);
     }
   };
 
   const handleVediPartecipanti = () => {
     if (onOpenParticipants) {
-        onOpenParticipants();
+      onOpenParticipants();
     }
   };
 
   const handleElimina = async () => {
     const id = evento.idEvento || evento.id_evento || evento.id;
-    
-    onClose(); 
+
+    onClose();
 
     const result = await Swal.fire({
       title: 'Sei sicuro?',
@@ -71,23 +79,23 @@ export default function DettagliEvento({
     });
 
     if (result.isConfirmed) {
-        try {
-            await rimuoviEvento(id);
-            await Swal.fire({
-              icon: 'success',
-              title: 'Eliminato',
-              text: 'Evento eliminato con successo.',
-              confirmButtonColor: '#087886'
-            });
-            window.location.reload();
-        } catch (error) {
-            Swal.fire({
-              icon: 'error',
-              title: 'Errore',
-              text: "Errore durante l'eliminazione: " + error.message,
-              confirmButtonColor: '#d33'
-            });
-        }
+      try {
+        await rimuoviEvento(id);
+        await Swal.fire({
+          icon: 'success',
+          title: 'Eliminato',
+          text: 'Evento eliminato con successo.',
+          confirmButtonColor: '#087886'
+        });
+        window.location.reload();
+      } catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Errore',
+          text: "Errore durante l'eliminazione: " + error.message,
+          confirmButtonColor: '#d33'
+        });
+      }
     }
   };
 
@@ -101,37 +109,37 @@ export default function DettagliEvento({
   // --- LOGICHE DATI ---
   const getEnteEmail = () => {
     if (evento.ente) {
-        if (typeof evento.ente === 'string') return evento.ente;
-        return evento.ente.email || "";
+      if (typeof evento.ente === 'string') return evento.ente;
+      return evento.ente.email || "";
     }
     if (evento.utente) {
-        if (typeof evento.utente === 'string') return evento.utente;
-        return evento.utente.email || "";
+      if (typeof evento.utente === 'string') return evento.utente;
+      return evento.utente.email || "";
     }
     return "";
   };
 
   const getEnteName = () => {
     if (evento.ente) {
-        if (typeof evento.ente === 'string') return evento.ente;
-        return evento.ente.nome || evento.ente.email || "Ente Sconosciuto";
+      if (typeof evento.ente === 'string') return evento.ente;
+      return evento.ente.nome || evento.ente.email || "Ente Sconosciuto";
     }
     if (evento.utente) {
-        if (typeof evento.utente === 'string') return evento.utente;
-        return evento.utente.nome || evento.utente.email || "Ente Sconosciuto";
+      if (typeof evento.utente === 'string') return evento.utente;
+      return evento.utente.nome || evento.utente.email || "Ente Sconosciuto";
     }
     return "Ente Sconosciuto";
   };
 
   const getIndirizzoCompleto = () => {
     if (evento.indirizzo && typeof evento.indirizzo === 'object') {
-        const { strada, nCivico, citta, provincia } = evento.indirizzo;
-        let fullAddress = "";
-        if (strada) fullAddress += strada;
-        if (nCivico) fullAddress += ` ${nCivico}`;
-        if (citta) fullAddress += fullAddress ? `, ${citta}` : citta;
-        if (provincia) fullAddress += ` (${provincia})`;
-        return fullAddress || "Indirizzo non specificato";
+      const { strada, nCivico, citta, provincia } = evento.indirizzo;
+      let fullAddress = "";
+      if (strada) fullAddress += strada;
+      if (nCivico) fullAddress += ` ${nCivico}`;
+      if (citta) fullAddress += fullAddress ? `, ${citta}` : citta;
+      if (provincia) fullAddress += ` (${provincia})`;
+      return fullAddress || "Indirizzo non specificato";
     }
     if (evento.luogo && typeof evento.luogo === 'string') return evento.luogo;
     return "Luogo da definire";
@@ -141,26 +149,26 @@ export default function DettagliEvento({
   const emailUtenteLoggato = currentUser?.email || "";
   const normalize = (str) => str ? str.trim().toLowerCase() : "";
 
-  const isOwner = currentUser && 
-                  normalize(currentUser.ruolo) === 'ente' &&
-                  normalize(emailEnteEvento) === normalize(emailUtenteLoggato);
+  const isOwner = currentUser &&
+    normalize(currentUser.ruolo) === 'ente' &&
+    normalize(emailEnteEvento) === normalize(emailUtenteLoggato);
 
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-container" onClick={(e) => e.stopPropagation()}>
-        
+
         {/* 1. IMMAGINE DI COPERTINA */}
         {/* Aggiungiamo una classe dinamica 'landscape-mode' se l'immagine è larga */}
-        <div 
+        <div
           className={`modal-top-image ${isLandscape ? 'landscape-mode' : ''}`}
           style={(!isLandscape && evento.immagine) ? { backgroundImage: `url(${evento.immagine})` } : {}}
         >
           {evento.immagine ? (
-            <img 
-                src={evento.immagine} 
-                alt={evento.titolo} 
-                className="modal-image"
-                onLoad={handleImageLoad} // <--- Trigger per controllare le dimensioni
+            <img
+              src={evento.immagine}
+              alt={evento.titolo}
+              className="modal-image"
+              onLoad={handleImageLoad} // <--- Trigger per controllare le dimensioni
             />
           ) : (
             <div className="modal-placeholder">
@@ -168,7 +176,7 @@ export default function DettagliEvento({
               <span>Nessuna Immagine</span>
             </div>
           )}
-          
+
           <button className="btn-close-absolute" onClick={onClose}>
             <X size={20} />
           </button>
@@ -181,7 +189,7 @@ export default function DettagliEvento({
 
         {/* 2. CONTENUTO */}
         <div className="modal-content-scrollable">
-          
+
           <div className="modal-header">
             <h2 className="modal-title">{evento.titolo}</h2>
           </div>
@@ -229,9 +237,9 @@ export default function DettagliEvento({
                   <button className="btn-danger" onClick={handleElimina}>
                     <Trash2 size={16} /> Elimina
                   </button>
-                  
+
                   <button className="btn-edit" onClick={(e) => { e.stopPropagation(); onModifica && onModifica(evento); }}>
-                    <Edit size={16}/> Modifica
+                    <Edit size={16} /> Modifica
                   </button>
 
                   <button className="btn-primary" onClick={handleVediPartecipanti}>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MessageSquare, SendHorizontal, ArrowLeft, Calendar } from 'lucide-react';
 import { creaRichiestaServizio } from '../services/RichiestaServizioService';
 import '../stylesheets/RichiestaServizio.css';
@@ -51,6 +51,16 @@ const RichiestaServizio = ({ onClose, enteDestinatarioEmail, isModal = true }) =
             setIsLoading(false);
         }
     };
+
+    // Prevent scrolling when modal is open
+    useEffect(() => {
+        if (isModal) {
+            document.body.style.overflow = 'hidden';
+            return () => {
+                document.body.style.overflow = 'unset';
+            };
+        }
+    }, [isModal]);
 
     return (
         <div className={`rs-page ${isModal ? "rs-page-modal" : ""}`} onClick={onClose}>
