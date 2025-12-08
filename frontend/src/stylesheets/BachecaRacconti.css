@@ -122,46 +122,67 @@
     gap: 16px;
 }
 
-.story-card-footer {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
-    gap: 8px;
+.story-cards-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  gap: 8px;
 }
 
-.story-edit-button {
-    padding: 6px 14px;
-    border-radius: 999px;
-    border: 1px solid #d1d5db;
-    background: #ffffff;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--first-color);
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    transition: all 0.2s ease;
+.story-cards-edit-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  background: #087886;
+  border: 1px solid #087886;
+  color: white;
 }
 
-.story-edit-button:hover {
-    background: var(--bg-soft);
-    border-color: var(--second-color);
-    transform: translateY(-1px);
+.story-cards-edit-button:hover {
+  background: #065d67;
+  border-color: #065d67;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(8, 120, 134, 0.2);
 }
 
-.story-edit-button.delete-btn {
-    color: #dc2626;
-    border-color: #f87171;
+.story-cards-edit-button:active {
+  transform: translateY(0);
 }
 
-.story-edit-button.delete-btn:hover {
-    background: #fef2f2;
-    border-color: #ef4444;
-    color: #dc2626;
+.story-cards-delete-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  background: transparent;
+  border: 1px solid #b91c1c;
+  color: #b91c1c;
+}
+
+.story-cards-delete-btn:hover {
+  background: #FFF5F5;
+  border-color: #b91c1c;
+  color: #b91c1c;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(220, 38, 38, 0.1);
+}
+
+.story-cards-delete-btn:active {
+  transform: translateY(0);
 }
 
 .story-avatar {
