@@ -28,6 +28,10 @@ const Navbar = () => {
     navItems.push({ label: 'Servizi', path: '/DashboardRichiesteServizio' });
   }
 
+  if (currentUser.role === 'volontario') {
+    navItems.push({ label: 'Servizi', path: '/DashboardRichiesteServizio' });
+  }
+
   useEffect(() => {
     const token = localStorage.getItem('token');
 
@@ -186,6 +190,7 @@ const DropdownMenu = ({ role, onLogout, onClose }) => {
       case 'volontario':
         return [
           { label: 'Area Personale', icon: <Settings size={16} />, to: '/profilovolontario', onClick: handlePersonalAreaClick },
+          { label: 'Gestione servizi', icon: <FileText size={16} />, to: '/DashboardRichiesteServizio' },
           { label: 'Logout', icon: <LogOut size={16} />, action: onLogout, type: 'danger' }
         ];
       case 'ente':
