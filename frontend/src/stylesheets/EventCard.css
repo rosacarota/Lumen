@@ -17,7 +17,11 @@
   
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   position: relative;
-}
+  opacity: 0;
+  transform: translateY(16px);
+  animation: eventFadeUp 0.85s cubic-bezier(0.15, 0.85, 0.3, 1) 0s both;
+  }
+
 
 .event-card:hover {
   transform: translateY(-5px);
@@ -231,3 +235,15 @@
   background-color: rgba(124, 206, 107, 0.2);
   border-color: var(--third-color, #7CCE6B);
 }
+
+@keyframes eventFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
