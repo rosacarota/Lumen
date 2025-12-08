@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.hibernate.validator.internal.constraintvalidators.bv.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,7 @@ public class PartecipazioneEventoControl {
     private JwtUtil util;
 
     @GetMapping("/aggiungi")
-    public ResponseEntity<String> aggiungiPartecipazione( @RequestParam String token, @RequestParam int idEvento) {
+    public ResponseEntity<String> aggiungiPartecipazione(@RequestParam String token, @RequestParam int idEvento) {
 
         String ruolo = util.extractRuolo(token);
         String email = util.extractEmail(token);
@@ -56,7 +57,8 @@ public class PartecipazioneEventoControl {
             partecipazione.setEvento(evento);
             partecipazione.setVolontario(volontario);
 
-            List<Partecipazione> listaPartecipazioniEvento = partecipazioneEventoService.listaPartecipazioni(evento.getIdEvento());
+            List<Partecipazione> listaPartecipazioniEvento = partecipazioneEventoService
+                    .listaPartecipazioni(evento.getIdEvento());
 
             boolean giaPresente = listaPartecipazioniEvento.stream()
                     .anyMatch(p -> p.getVolontario().getEmail().equals(email));
@@ -74,12 +76,14 @@ public class PartecipazioneEventoControl {
             return new ResponseEntity<>("Aggiunta partecipazione avvenuta con successo", HttpStatus.CREATED);
 
         } catch (Exception e) {
-            return new ResponseEntity<>("Errore interno del server: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Errore interno del server: " + e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PostMapping("/modifica")
-    public ResponseEntity<String> modificaPartecipazione(@RequestBody Partecipazione nuovaPartecipazione, @RequestParam String token) {
+    public ResponseEntity<String> modificaPartecipazione(@RequestBody Partecipazione nuovaPartecipazione,
+            @RequestParam String token) {
 
         String ruolo = util.extractRuolo(token);
         String email = util.extractEmail(token);
@@ -91,17 +95,20 @@ public class PartecipazioneEventoControl {
                 return new ResponseEntity<>("Utente non trovato", HttpStatus.BAD_REQUEST);
             }
             if (!"Volontario".equalsIgnoreCase(ruolo)) {
-                return new ResponseEntity<>("Utente deve essere volontario per modificare la partecipazione", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("Utente deve essere volontario per modificare la partecipazione",
+                        HttpStatus.BAD_REQUEST);
             }
 
-            Partecipazione partecipazioneEsistente = partecipazioneEventoService.getPartecipazioneById(nuovaPartecipazione.getIdPartecipazione());
+            Partecipazione partecipazioneEsistente = partecipazioneEventoService
+                    .getPartecipazioneById(nuovaPartecipazione.getIdPartecipazione());
 
             if (partecipazioneEsistente == null) {
                 return new ResponseEntity<>("Partecipazione non trovata", HttpStatus.NOT_FOUND);
             }
 
             if (!partecipazioneEsistente.getVolontario().getEmail().equals(email)) {
-                return new ResponseEntity<>("Non hai i permessi per modificare questa partecipazione", HttpStatus.FORBIDDEN);
+                return new ResponseEntity<>("Non hai i permessi per modificare questa partecipazione",
+                        HttpStatus.FORBIDDEN);
             }
 
             partecipazioneEsistente.setData(new Date(System.currentTimeMillis()));
@@ -110,12 +117,14 @@ public class PartecipazioneEventoControl {
             return new ResponseEntity<>("Modifica avvenuta con successo", HttpStatus.OK);
 
         } catch (Exception e) {
-            return new ResponseEntity<>("Errore interno del server: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Errore interno del server: " + e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PostMapping("/rimuovi")
-    public ResponseEntity<String> eliminaPartecipazione(@RequestBody Partecipazione partecipazioneInput, @RequestParam String token) {
+    public ResponseEntity<String> eliminaPartecipazione(@RequestBody Partecipazione partecipazioneInput,
+            @RequestParam String token) {
 
         String ruolo = util.extractRuolo(token);
         String email = util.extractEmail(token);
@@ -127,29 +136,34 @@ public class PartecipazioneEventoControl {
                 return new ResponseEntity<>("Utente non trovato", HttpStatus.BAD_REQUEST);
             }
             if (!"Volontario".equalsIgnoreCase(ruolo)) {
-                return new ResponseEntity<>("Utente deve essere volontario per eliminare la partecipazione", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("Utente deve essere volontario per eliminare la partecipazione",
+                        HttpStatus.BAD_REQUEST);
             }
 
-            Partecipazione partecipazioneDaEliminare = partecipazioneEventoService.getPartecipazioneById(partecipazioneInput.getIdPartecipazione());
+            Partecipazione partecipazioneDaEliminare = partecipazioneEventoService
+                    .getPartecipazioneById(partecipazioneInput.getIdPartecipazione());
 
             if (partecipazioneDaEliminare == null) {
                 return new ResponseEntity<>("Partecipazione non trovata", HttpStatus.NOT_FOUND);
             }
 
             if (!partecipazioneDaEliminare.getVolontario().getEmail().equals(email)) {
-                return new ResponseEntity<>("Non hai i permessi per eliminare questa partecipazione", HttpStatus.FORBIDDEN);
+                return new ResponseEntity<>("Non hai i permessi per eliminare questa partecipazione",
+                        HttpStatus.FORBIDDEN);
             }
 
             partecipazioneEventoService.eliminaPartecipazione(partecipazioneDaEliminare.getIdPartecipazione());
             return new ResponseEntity<>("Eliminazione partecipazione avvenuta con successo", HttpStatus.OK);
 
         } catch (Exception e) {
-            return new ResponseEntity<>("Errore interno del server: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Errore interno del server: " + e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PostMapping("/visualizzaPartecipazioniEvento")
-    public ResponseEntity<?> visualizzaPartecipazioniEvento(@RequestBody Evento eventoInput, @RequestParam String token) {
+    public ResponseEntity<?> visualizzaPartecipazioniEvento(@RequestBody Evento eventoInput,
+            @RequestParam String token) {
 
         String email = util.extractEmail(token);
         String ruolo = util.extractRuolo(token);
@@ -158,55 +172,76 @@ public class PartecipazioneEventoControl {
             return new ResponseEntity<>("Token non valido", HttpStatus.UNAUTHORIZED);
         }
 
-		if (!"ente".equalsIgnoreCase(ruolo)) {
-			return new ResponseEntity<>("Utente deve essere ente per visualizzare le partecipazioni evento", HttpStatus.BAD_REQUEST);
-		}
+        if (!"ente".equalsIgnoreCase(ruolo)) {
+            return new ResponseEntity<>("Utente deve essere ente per visualizzare le partecipazioni evento",
+                    HttpStatus.BAD_REQUEST);
+        }
 
         try {
             Evento evento = partecipazioneEventoService.getEventoById(eventoInput.getIdEvento());
-			Utente ente = autenticazioneService.getUtente(email);
+            Utente ente = autenticazioneService.getUtente(email);
 
             if (evento == null) {
                 return new ResponseEntity<>("Evento non trovato", HttpStatus.BAD_REQUEST);
             }
 
-			if (!evento.getUtente().equals(ente)){
-                return new ResponseEntity<>("Impossibile visualizzare partecipazioni di eventi non propri", HttpStatus.UNAUTHORIZED);
-			}
+            if (!evento.getUtente().equals(ente)) {
+                return new ResponseEntity<>("Impossibile visualizzare partecipazioni di eventi non propri",
+                        HttpStatus.UNAUTHORIZED);
+            }
 
             List<Partecipazione> lista = partecipazioneEventoService.listaPartecipazioni(evento.getIdEvento());
             return ResponseEntity.ok(lista);
 
         } catch (Exception e) {
-            return new ResponseEntity<>("Errore interno del server: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Errore interno del server: " + e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PostMapping("/cronologiaPartecipazioni")
     public ResponseEntity<?> visualizzaCronologiaPartecipazioni(@RequestParam String token) {
-        if(token.isEmpty()){
+        if (token.isEmpty()) {
             return new ResponseEntity<>("Token non valido", HttpStatus.UNAUTHORIZED);
         }
-        String email = util.extractEmail(token);
-        String ruolo = util.extractRuolo(token);
 
-        if (!"volontario".equalsIgnoreCase(ruolo)) {
-            return new ResponseEntity<>("Utente deve essere volontario per avere una cronologia di partecipazioni", HttpStatus.BAD_REQUEST);
+        String email;
+        String ruolo;
+
+        if (token.contains("@")) {
+            email = token;
+            Utente utente = autenticazioneService.getUtente(email);
+            if (utente == null) {
+                return new ResponseEntity<>("Utente non trovato", HttpStatus.BAD_REQUEST);
+            }
+            ruolo = utente.getRuolo().name();
+        } else {
+            email = util.extractEmail(token);
+            ruolo = util.extractRuolo(token);
         }
 
-        try{
+        if (!"volontario".equalsIgnoreCase(ruolo)) {
+            return new ResponseEntity<>("Utente deve essere volontario per avere una cronologia di partecipazioni",
+                    HttpStatus.BAD_REQUEST);
+        }
+
+        try {
             List<PartecipazioneDTO> cronologia = partecipazioneEventoService.cronologiaPartecipazioni(email);
             return ResponseEntity.ok(cronologia);
-        }catch(Exception e){
-            return new ResponseEntity<>("Errore interno del server: \n---ERRORE NELLA CREAZIONE DELLA CRONOLOGIA---\n" + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                    "Errore interno del server: \n---ERRORE NELLA CREAZIONE DELLA CRONOLOGIA---\n" + e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GetMapping("/checkIscrizione/{idEvento}")
-    public ResponseEntity<Map<String, Object>> checkIscrizione(@PathVariable Integer idEvento, @RequestParam String token) {
+    public ResponseEntity<Map<String, Object>> checkIscrizione(@PathVariable Integer idEvento,
+            @RequestParam String token) {
         String email = util.extractEmail(token);
 
-        if (email == null) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if (email == null)
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 
         // Recupera la lista lato server (non esce dal backend)
         List<Partecipazione> lista = partecipazioneEventoService.listaPartecipazioni(idEvento);
