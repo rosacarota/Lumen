@@ -188,8 +188,7 @@ const cssStyles = `
 /* Modal */
 .arf-page-modal {
   position: fixed; inset: 0; z-index: 60;
-  background: rgba(235, 245, 246, 0.3); /* Leggerissimo teal/bianco trasparente */
-  backdrop-filter: blur(6px);
+  background: rgba(163, 244, 255, 0.32); /* Leggerissimo teal/bianco trasparente */
   display: flex; align-items: center; justify-content: center;
   padding: 20px;
 }
