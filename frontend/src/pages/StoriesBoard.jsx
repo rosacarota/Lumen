@@ -339,9 +339,6 @@ const StoriesBoard = () => {
                         ? (story.descrizione || story.content).slice(0, 110) + "..."
                         : (story.descrizione || story.content)}
                     </p>
-                    <button className="sidebar-story-button" type="button">
-                      LEGGI QUI
-                    </button>
                   </article>
                 );
               })}
