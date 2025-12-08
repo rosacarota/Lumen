@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
-  User, Mail, Phone, MapPin, Building2, Save, X,
-  Camera, Briefcase, Home, Map, ArrowLeft
+  User, Mail, Phone, MapPin, Building2, Building, Save, X,
+  Camera, Briefcase, Home, Map, ArrowLeft, MapPinHouse, Landmark
 } from 'lucide-react';
 import Swal from 'sweetalert2';
 import '../stylesheets/ModificaProfilo.css';
@@ -237,6 +237,7 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
                   />
                 </div>
                 <div className="input-group" style={{ flex: 1 }}>
+                  <MapPinHouse className="input-icon"/>
                   <input
                     type="text"
                     name="ncivico"
@@ -260,6 +261,7 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
                   />
                 </div>
                 <div className="input-group" style={{ flex: 1 }}>
+                  <Building className="input-icon" />
                   <input
                     type="text"
                     name="provincia"
@@ -271,6 +273,7 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
                   />
                 </div>
                 <div className="input-group" style={{ flex: 1 }}>
+                  <Landmark className="input-icon" />
                   <input
                     type="text"
                     name="cap"
