@@ -1,26 +1,36 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Calendar, Image as ImageIcon, ArrowLeft, SendHorizontal, MapPin, Clock } from "lucide-react";
 import "../stylesheets/AddEvento.css";
-import { addEvento, toBase64 } from "../services/EventoService"; 
+import { addEvento, toBase64 } from "../services/EventoService";
 
 const AddEvento = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE_DEFAULT", initialData }) => {
-  
+
   const [immagine, setImmagine] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [titolo, setTitolo] = useState("");
   const [descrizione, setDescrizione] = useState("");
-  
+
   // Indirizzo
   const [indirizzo, setIndirizzo] = useState({
-      strada: '', ncivico: '', citta: '', provincia: '', cap: ''
+    strada: '', ncivico: '', citta: '', provincia: '', cap: ''
   });
 
   // Date (Solo date, niente ore)
   const [dataInizio, setDataInizio] = useState("");
   const [dataFine, setDataFine] = useState("");
-  
+
   const [maxPartecipanti, setMaxPartecipanti] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  // Prevent background scrolling when modal is open
+  useEffect(() => {
+    if (isModal) {
+      document.body.style.overflow = 'hidden';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isModal]);
 
   const fileInputRef = useRef(null);
 
@@ -54,43 +64,43 @@ const AddEvento = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE_DEFAUL
     setIsLoading(true);
 
     try {
-        let immagineBase64 = null;
-        if (immagine) {
-            immagineBase64 = await toBase64(immagine);
-        }
+      let immagineBase64 = null;
+      if (immagine) {
+        immagineBase64 = await toBase64(immagine);
+      }
 
-        const eventoData = {
-            titolo: titolo.trim(),
-            descrizione: descrizione.trim(),
-            indirizzo, 
-            dataInizio, // Invia solo YYYY-MM-DD
-            dataFine,   // Invia solo YYYY-MM-DD
-            maxPartecipanti: parseInt(maxPartecipanti),
-            immagineBase64, 
-            ente: enteId,
-        };
+      const eventoData = {
+        titolo: titolo.trim(),
+        descrizione: descrizione.trim(),
+        indirizzo,
+        dataInizio, // Invia solo YYYY-MM-DD
+        dataFine,   // Invia solo YYYY-MM-DD
+        maxPartecipanti: parseInt(maxPartecipanti),
+        immagineBase64,
+        ente: enteId,
+      };
 
-        await addEvento(eventoData);
+      await addEvento(eventoData);
 
-        if (onSubmit) {
-            onSubmit(); 
-        } else if (onBack) {
-            onBack();
-        }
+      if (onSubmit) {
+        onSubmit();
+      } else if (onBack) {
+        onBack();
+      }
 
     } catch (error) {
-        console.error(error);
-        alert("Errore durante la pubblicazione: " + error.message);
+      console.error(error);
+      alert("Errore durante la pubblicazione: " + error.message);
     } finally {
-        setIsLoading(false);
+      setIsLoading(false);
     }
   };
 
   return (
     <div className={isModal ? "ae-modal-overlay" : "ae-page"} onClick={isModal ? onBack : undefined}>
-      
+
       <div className="ae-container" onClick={(e) => e.stopPropagation()}>
-        
+
         {onBack && (
           <button type="button" className="ae-close-back-button" onClick={onBack} title="Torna indietro">
             <ArrowLeft size={20} />
@@ -119,10 +129,10 @@ const AddEvento = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE_DEFAUL
             <div className="ae-form-content">
               <form onSubmit={handleSubmit} className="ae-story-form">
                 <div className="ae-fields-container">
-                  
+
                   {/* Upload Immagine */}
                   <div className="ae-image-upload-box" onClick={() => fileInputRef.current.click()}>
-                    <input type="file" ref={fileInputRef} onChange={handleImageChange} style={{ display: 'none' }} accept="image/*"/>
+                    <input type="file" ref={fileInputRef} onChange={handleImageChange} style={{ display: 'none' }} accept="image/*" />
                     {previewUrl ? (
                       <img src={previewUrl} alt="Preview" className="ae-image-preview" />
                     ) : (
@@ -138,31 +148,31 @@ const AddEvento = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE_DEFAUL
                   </div>
 
                   {/* DATE (Senza Ore) */}
-                  <div className="ae-section-label" style={{marginTop:'10px', fontSize:'0.9rem', color:'#666', display:'flex', alignItems:'center', gap:'5px'}}>
-                      <Clock size={14}/> Periodo Svolgimento
+                  <div className="ae-section-label" style={{ marginTop: '10px', fontSize: '0.9rem', color: '#666', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    <Clock size={14} /> Periodo Svolgimento
                   </div>
 
                   <div className="ae-row-split">
-                    <div className="ae-input-group" style={{flex: 1}}>
-                        <label className="ae-label-over">Data Inizio</label>
-                        <input className="ae-input-field ae-date-input" type="date" value={dataInizio} onChange={(e) => setDataInizio(e.target.value)} required />
+                    <div className="ae-input-group" style={{ flex: 1 }}>
+                      <label className="ae-label-over">Data Inizio</label>
+                      <input className="ae-input-field ae-date-input" type="date" value={dataInizio} onChange={(e) => setDataInizio(e.target.value)} required />
                     </div>
-                    <div className="ae-input-group" style={{flex: 1}}>
+                    <div className="ae-input-group" style={{ flex: 1 }}>
                       <label className="ae-label-over">Data Fine</label>
                       <input className="ae-input-field ae-date-input" type="date" value={dataFine} onChange={(e) => setDataFine(e.target.value)} min={dataInizio} required />
                     </div>
                   </div>
 
-                   <div className="ae-input-group">
-                        <label className="ae-label-over">Max Partecipanti</label>
-                        <input className="ae-input-field" type="number" value={maxPartecipanti} onChange={(e) => setMaxPartecipanti(e.target.value)} placeholder="Es. 50" min="1" required />
-                   </div>
+                  <div className="ae-input-group">
+                    <label className="ae-label-over">Max Partecipanti</label>
+                    <input className="ae-input-field" type="number" value={maxPartecipanti} onChange={(e) => setMaxPartecipanti(e.target.value)} placeholder="Es. 50" min="1" required />
+                  </div>
 
                   {/* INDIRIZZO */}
-                  <div className="ae-section-label" style={{marginTop:'10px', fontSize:'0.9rem', color:'#666', display:'flex', alignItems:'center', gap:'5px'}}>
-                      <MapPin size={14}/> Luogo Evento
+                  <div className="ae-section-label" style={{ marginTop: '10px', fontSize: '0.9rem', color: '#666', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    <MapPin size={14} /> Luogo Evento
                   </div>
-                  
+
                   <div className="ae-row-split">
                     <div className="ae-input-group" style={{ flex: 3 }}>
                       <input className="ae-input-field" type="text" name="strada" value={indirizzo.strada} onChange={handleAddressChange} placeholder="Via / Piazza" required />
@@ -173,15 +183,15 @@ const AddEvento = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE_DEFAUL
                   </div>
 
                   <div className="ae-row-split">
-                     <div className="ae-input-group" style={{ flex: 2 }}>
-                        <input className="ae-input-field" type="text" name="citta" value={indirizzo.citta} onChange={handleAddressChange} placeholder="Città" required />
-                     </div>
-                     <div className="ae-input-group" style={{ flex: 1 }}>
-                        <input className="ae-input-field" type="text" name="provincia" value={indirizzo.provincia} onChange={handleAddressChange} placeholder="PR" maxLength={2} required />
-                     </div>
-                     <div className="ae-input-group" style={{ flex: 1 }}>
-                        <input className="ae-input-field" type="text" name="cap" value={indirizzo.cap} onChange={handleAddressChange} placeholder="CAP" required />
-                     </div>
+                    <div className="ae-input-group" style={{ flex: 2 }}>
+                      <input className="ae-input-field" type="text" name="citta" value={indirizzo.citta} onChange={handleAddressChange} placeholder="Città" required />
+                    </div>
+                    <div className="ae-input-group" style={{ flex: 1 }}>
+                      <input className="ae-input-field" type="text" name="provincia" value={indirizzo.provincia} onChange={handleAddressChange} placeholder="PR" maxLength={2} required />
+                    </div>
+                    <div className="ae-input-group" style={{ flex: 1 }}>
+                      <input className="ae-input-field" type="text" name="cap" value={indirizzo.cap} onChange={handleAddressChange} placeholder="CAP" required />
+                    </div>
                   </div>
 
                   <div className="ae-input-group">
