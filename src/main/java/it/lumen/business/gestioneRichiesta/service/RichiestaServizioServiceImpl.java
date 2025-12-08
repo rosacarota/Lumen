@@ -63,26 +63,30 @@ public class RichiestaServizioServiceImpl implements RichiestaServizioService {
     public List<RichiestaServizio> getRichiesteByEmail(@Email(message = "Email non valida") String email) {
 
         List<RichiestaServizio> richiestaServizio = richiestaServizioDAO.findAllByEnteVolontario_Email(email);
-        System.out.println("MANNAGGIA QUEL PORCO DI DIO");
-
-        for(RichiestaServizio richiestaServizio1 : richiestaServizio) {
-            System.out.println("MANNAGGIA QUEL PORCO DI DIO");
-            Utente enteVolontario = richiestaServizio1.getEnteVolontario();
-            Utente beneficiario = richiestaServizio1.getBeneficiario();
-            try {
+        try {
+            for(RichiestaServizio richiestaServizio1 : richiestaServizio) {
+                Utente enteVolontario = richiestaServizio1.getEnteVolontario();
+                Utente beneficiario = richiestaServizio1.getBeneficiario();
                 enteVolontario.setImmagine(autenticazioneService.recuperaImmagine(enteVolontario.getImmagine()));
                 beneficiario.setImmagine(autenticazioneService.recuperaImmagine(beneficiario.getImmagine()));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
             }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         return richiestaServizio;
     }
-
     public List<RichiestaServizio>getRichiesteInAttesaByEmail(@Email(message = "Email non valida") String email) {
-
-        //Utente utente = utenteDAO.findByEmail(email);
-        List<RichiestaServizio> richiesta = richiestaServizioDAO.findAllByEmailInAttesa(email);
-        return richiesta;
+        List<RichiestaServizio> richiestaServizio = richiestaServizioDAO.findAllByEmailInAttesa(email);
+        try {
+            for(RichiestaServizio richiestaServizio1 : richiestaServizio) {
+                Utente enteVolontario = richiestaServizio1.getEnteVolontario();
+                Utente beneficiario = richiestaServizio1.getBeneficiario();
+                enteVolontario.setImmagine(autenticazioneService.recuperaImmagine(enteVolontario.getImmagine()));
+                beneficiario.setImmagine(autenticazioneService.recuperaImmagine(beneficiario.getImmagine()));
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return richiestaServizio;
     }
 }
