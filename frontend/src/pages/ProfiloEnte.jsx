@@ -94,7 +94,7 @@ const ProfiloEnte = () => {
     try {
       const statoParam = activeTab === 'corso' ? 'attivi' : (activeTab === 'svolti' ? 'terminati' : 'futuri');
       // Passiamo l'email del profilo caricato per evitare di ripescarla dallo storage
-      const data = await getCronologiaEventi(statoParam, targetProfile?.email);
+      const data = await getCronologiaEventi(statoParam);
 
       const mapped = Array.isArray(data) ? data.map(ev => ({
         ...ev,
