@@ -5,6 +5,7 @@ import AddStory from '../components/AddStory';
 import EditStory from "../components/EditStory";
 import DeleteStory from "../components/DeleteStory";
 import { fetchStories, addStory, editStory, deleteStory, fetchFilteredStories } from '../services/StoriesService';
+import { Link } from 'react-router-dom';
 
 const BachecaRacconti = ({ isOwner, targetEmail }) => {
     //const [stories, setStories] = useState([]);
@@ -126,29 +127,34 @@ const BachecaRacconti = ({ isOwner, targetEmail }) => {
                         <div className="stories-list" style={{ overflowY: 'auto', maxHeight: '100%', display: 'flex', flexDirection: 'column', gap: '15px' }}>
                             {filteredStories.map((story) => (
                                 <div key={story.id} className="story-item-container">
-                                    <div className="story-item">
-                                        <div className="story-avatar">
-                                            <span style={{ color: 'white', fontWeight: 'bold' }}>
-                                                {story.authorName ? story.authorName.charAt(0).toUpperCase() : 'U'}
-                                            </span>
-                                        </div>
-                                        <div className="story-info">
-                                            <h4>{story.title}</h4>
-                                            <p style={{ fontSize: '0.85rem', color: '#555', margin: '2px 0' }}>
-                                                {story.content.length > 50 
-                                                    ? story.content.substring(0, 50) + "..." 
-                                                    : story.content}
-                                            </p>
-                                            <span style={{ fontSize: '0.75rem', color: '#999' }}>
-                                                {new Date(story.createdAt).toLocaleDateString()} - {story.authorName}
-                                            </span>
-                                        </div>
-                                        {story.type === 'photo' && story.imageBase64 && (
-                                            <div style={{ width: '50px', height: '50px', borderRadius: '8px', overflow: 'hidden', marginLeft: 'auto' }}>
-                                                <img src={story.imageBase64} alt="anteprima" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    <Link 
+                                        to="/storie" 
+                                        style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}
+                                    >
+                                        <div className="story-item">
+                                            <div className="story-avatar">
+                                                <span style={{ color: 'white', fontWeight: 'bold' }}>
+                                                    {story.authorName ? story.authorName.charAt(0).toUpperCase() : 'U'}
+                                                </span>
                                             </div>
-                                        )}
-                                    </div>
+                                            <div className="story-info">
+                                                <h4>{story.title}</h4>
+                                                <p style={{ fontSize: '0.85rem', color: '#555', margin: '2px 0' }}>
+                                                    {story.content.length > 50 
+                                                        ? story.content.substring(0, 50) + "..." 
+                                                        : story.content}
+                                                </p>
+                                                <span style={{ fontSize: '0.75rem', color: '#999' }}>
+                                                    {new Date(story.createdAt).toLocaleDateString()} - {story.authorName}
+                                                </span>
+                                            </div>
+                                            {story.type === 'photo' && story.imageBase64 && (
+                                                <div style={{ width: '50px', height: '50px', borderRadius: '8px', overflow: 'hidden', marginLeft: 'auto' }}>
+                                                    <img src={story.imageBase64} alt="anteprima" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                </div>
+                                            )}
+                                        </div>
+                                    </Link>
                                     {isOwner && (
                                         <div className="story-card-footer">
                                             <button
