@@ -5,7 +5,7 @@
     background: white;
     border-radius: 24px;
     box-shadow: 0 20px 40px rgba(8, 120, 134, 0.08);
-    border: 1px solid rgba(0,0,0,0.03);
+    border: 1px solid rgba(0, 0, 0, 0.03);
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -26,7 +26,7 @@
 .cronologia-header h3 {
     margin: 0;
     color: var(--first-color);
-    font-weight: 800;
+    font-weight: 700;
     font-size: 1.1rem;
     letter-spacing: 0.5px;
     text-transform: uppercase;
@@ -62,7 +62,7 @@
 }
 
 .cronologia-item-wrapper {
-    margin-bottom: 0; 
+    margin-bottom: 0;
 }
 
 .empty-state-event {
