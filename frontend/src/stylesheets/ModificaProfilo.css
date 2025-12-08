@@ -11,18 +11,39 @@
 
 /* Animations (Importate dallo stile Login) */
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
 }
 
 @keyframes modalSlideUp {
-  from { opacity: 0; transform: translateY(30px) scale(0.95); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 /* Scrollbar Hide Logic */
@@ -30,6 +51,7 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -41,7 +63,8 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(8, 120, 134, 0.2); /* Tinted backdrop */
+  background-color: rgba(8, 120, 134, 0.2);
+  /* Tinted backdrop */
   backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
@@ -57,9 +80,11 @@
   height: 800px;
   max-height: 90vh;
   display: flex;
-  border-radius: 30px; /* Match Login */
+  border-radius: 30px;
+  /* Match Login */
   overflow: hidden;
-  box-shadow: 0 20px 60px rgba(8, 120, 134, 0.15); /* Match Login */
+  box-shadow: 0 20px 60px rgba(8, 120, 134, 0.15);
+  /* Match Login */
   background: var(--white);
   position: relative;
   animation: modalSlideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -67,7 +92,8 @@
 
 /* Left Panel (Stile .gradient-panel) */
 .preview-panel {
-  width: 40%; /* Leggermente ridotto per dare spazio al form */
+  width: 40%;
+  /* Leggermente ridotto per dare spazio al form */
   height: 100%;
   background: linear-gradient(135deg, var(--primary-teal) 0%, var(--mid-teal) 50%, var(--accent-green) 100%);
   position: relative;
@@ -84,23 +110,27 @@
 /* Decorazioni Sfondo (Stile .blur-circle) */
 .blur-circle-1 {
   position: absolute;
-  width: 300px; height: 300px;
+  width: 300px;
+  height: 300px;
   background: var(--accent-green);
   border-radius: 50%;
   filter: blur(80px);
   opacity: 0.5;
-  top: 10%; left: 10%;
+  top: 10%;
+  left: 10%;
   z-index: 0;
 }
 
 .blur-circle-2 {
   position: absolute;
-  width: 400px; height: 400px;
+  width: 400px;
+  height: 400px;
   background: var(--mid-teal);
   border-radius: 50%;
   filter: blur(80px);
   opacity: 0.5;
-  bottom: 10%; right: 10%;
+  bottom: 10%;
+  right: 10%;
   z-index: 0;
 }
 
@@ -113,6 +143,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  padding-top: 40px;
   animation: fadeInUp 0.6s ease-out;
 }
 
@@ -127,21 +159,21 @@
 }
 
 .back-button {
-    position: absolute;
-    top: -15px;
-    left: -15px;
-    z-index: 20005;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: none;
-    background: rgba(255, 255, 255, 0.95);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  position: absolute;
+  top: -15px;
+  left: -15px;
+  z-index: 20005;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
 /* Avatar Styling */
@@ -155,12 +187,8 @@
   width: 160px;
   height: 160px;
 
-  /* CENTRATURA: Questo porta il contenitore al centro orizzontalmente */
-  margin: 0 auto; 
-  margin-top: 210px; /* Il tuo margine inferiore desiderato */
-
   /* Stile del cerchio (Bordo e Ombra) */
-  position: absolute;
+  position: relative;
   border-radius: 50%;
   border: 4px solid #FFFFFF;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
@@ -170,22 +198,29 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden; /* Taglia l'immagine se sfora */
+  overflow: hidden;
+  /* Taglia l'immagine se sfora */
   z-index: 5;
+  margin-bottom: 20px;
+  /* Spacchettatura standard */
 }
 
 .avatar-image1 {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Mantiene le proporzioni riempiendo il cerchio */
+  object-fit: cover;
+  /* Mantiene le proporzioni riempiendo il cerchio */
   display: block;
-  border-radius: 50%; /* Sicurezza extra per arrotondare l'immagine */
+  border-radius: 50%;
+  /* Sicurezza extra per arrotondare l'immagine */
 }
 
 .avatar-wrapper {
-  width: 140px; height: 140px;
+  width: 140px;
+  height: 140px;
   border-radius: 50%;
-  border: 4px solid rgba(255, 255, 255, 0.3); /* Effetto vetro */
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  /* Effetto vetro */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -194,48 +229,56 @@
 }
 
 .avatar-image {
-  width: 100%; height: 100%;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
   object-fit: cover;
-  border: 4px solid white; 
+  border: 4px solid white;
 }
 
 
 
 .camera-button {
   position: absolute;
-  bottom: 5px; right: 5px;
+  bottom: 5px;
+  right: 5px;
   background: var(--primary-teal);
   border: 3px solid white;
-  width: 40px; height: 40px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: white;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   transition: transform 0.3s ease;
 }
 
-.camera-button:hover { transform: scale(1.1) rotate(15deg); }
+.camera-button:hover {
+  transform: scale(1.1) rotate(15deg);
+}
 
 /* Testi Preview */
 .preview-name {
   font-size: 28px;
   font-weight: 700;
-  margin-top: 390px; 
+  margin-top: 0;
+  margin-bottom: 10px;
   text-align: center;
   text-shadow: 0 2px 20px rgba(0, 0, 0, 0.15);
 }
 
 .role-badge {
-  font-size: 12px; 
-  text-transform: uppercase; 
+  font-size: 12px;
+  text-transform: uppercase;
   letter-spacing: 2px;
   background: rgba(255, 255, 255, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.4);
-  padding: 8px 18px; 
+  padding: 8px 18px;
   border-radius: 20px;
-  margin-bottom: 24px; 
+  margin-bottom: 24px;
   font-weight: 700;
   backdrop-filter: blur(4px);
   position: absolute;
@@ -257,12 +300,12 @@
 }
 
 .preview-bio {
-  font-size: 15px; 
+  font-size: 15px;
   line-height: 1.6;
-  text-align: center; 
-  opacity: 0.95; 
-  position: absolute;
-  bottom: 265px;
+  text-align: center;
+  opacity: 0.95;
+  position: relative;
+  bottom: auto;
   max-width: 90%;
   font-style: italic;
 }
@@ -274,65 +317,66 @@
   padding: 40px 50px;
   overflow-y: auto;
   height: 100%;
-  position: relative; 
+  position: relative;
   z-index: 1;
 }
 
-.form-wrapper { 
-  max-width: 500px; 
-  margin: 0 auto; 
+.form-wrapper {
+  max-width: 500px;
+  margin: 0 auto;
 }
 
 .page-title {
-  font-size: 26px; 
+  font-size: 26px;
   font-weight: 600;
-  color: var(--primary-teal); 
+  color: var(--primary-teal);
   margin-bottom: 8px;
 }
 
 .page-subtitle {
-  font-size: 14px; 
+  font-size: 14px;
   color: var(--text-gray);
-  margin-bottom: 30px; 
+  margin-bottom: 30px;
   padding-bottom: 20px;
   border-bottom: 1px solid var(--border-color);
 }
 
 /* Form Elements */
-.form-grid { 
-  display: flex; 
-  flex-direction: column; 
-  gap: 20px; 
+.form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .section-title {
-  font-size: 12px; 
+  font-size: 12px;
   font-weight: 700;
-  color: var(--primary-teal); 
+  color: var(--primary-teal);
   text-transform: uppercase;
-  letter-spacing: 1px; 
+  letter-spacing: 1px;
   margin-top: 10px;
   margin-bottom: 5px;
   opacity: 0.8;
 }
 
-.row-2, .row-3 { 
-  display: flex; 
-  gap: 16px; 
+.row-2,
+.row-3 {
+  display: flex;
+  gap: 16px;
 }
 
-.input-group { 
-  position: relative; 
-  width: 100%; 
+.input-group {
+  position: relative;
+  width: 100%;
 }
 
 .input-icon {
-  position: absolute; 
-  left: 16px; 
+  position: absolute;
+  left: 16px;
   top: 50%;
   transform: translateY(-50%);
-  width: 20px; 
-  height: 20px; 
+  width: 20px;
+  height: 20px;
   color: #9CA3AF;
   pointer-events: none;
   z-index: 2;
@@ -340,47 +384,53 @@
 
 /* Stile Input identico al Login (.input-field) */
 .input-field {
-  width: 100%; 
-  padding: 12px 16px 12px 44px; /* Spazio per icona */
+  width: 100%;
+  padding: 12px 16px 12px 44px;
+  /* Spazio per icona */
   border: 2px solid var(--border-color);
-  border-radius: 25px; /* Arrotondamento specifico Login */
+  border-radius: 25px;
+  /* Arrotondamento specifico Login */
   font-size: 14px;
-  outline: none; 
+  outline: none;
   transition: all 0.3s ease;
-  box-sizing: border-box; 
+  box-sizing: border-box;
   color: var(--text-dark);
-  font-weight: 500; 
+  font-weight: 500;
   background: white;
 }
 
 .input-field-no-icon {
-  width: 100%; 
+  width: 100%;
   padding: 12px 16px;
   border: 2px solid var(--border-color);
   border-radius: 25px;
   font-size: 14px;
-  outline: none; 
+  outline: none;
   transition: all 0.3s ease;
   box-sizing: border-box;
 }
 
 .textarea-field {
   width: 100%;
-  padding: 16px; 
+  padding: 16px;
   border: 2px solid var(--border-color);
-  border-radius: 20px; /* Textarea leggermente meno tonda */
+  border-radius: 20px;
+  /* Textarea leggermente meno tonda */
   font-size: 14px;
   outline: none;
   transition: all 0.3s ease;
-  font-family: inherit; 
+  font-family: inherit;
   resize: vertical;
   min-height: 100px;
 }
 
 /* States */
-.input-field:focus, .input-field-no-icon:focus, .textarea-field:focus {
+.input-field:focus,
+.input-field-no-icon:focus,
+.textarea-field:focus {
   border-color: var(--mid-teal);
-  box-shadow: 0 0 0 4px rgba(74, 175, 184, 0.1); /* Glow effect */
+  box-shadow: 0 0 0 4px rgba(74, 175, 184, 0.1);
+  /* Glow effect */
 }
 
 .input-field.has-error {
@@ -389,35 +439,35 @@
 }
 
 .input-field:disabled {
-  background-color: #F9FAFB; 
-  color: #9CA3AF; 
+  background-color: #F9FAFB;
+  color: #9CA3AF;
   border-color: #F3F4F6;
   cursor: not-allowed;
 }
 
 /* Actions (Footer) */
 .action-buttons {
-  display: flex; 
-  gap: 16px; 
+  display: flex;
+  gap: 16px;
   margin-top: 30px;
-  padding-top: 20px; 
+  padding-top: 20px;
 }
 
 /* Cancel Button (Style: Ghost/Link) */
 .btn-cancel {
-  flex: 1; 
-  padding: 14px; 
+  flex: 1;
+  padding: 14px;
   background: white;
   border: 2px solid var(--border-color);
-  color: var(--text-gray); 
+  color: var(--text-gray);
   border-radius: 25px;
-  font-size: 14px; 
-  font-weight: 600; 
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
-.btn-cancel:hover { 
+.btn-cancel:hover {
   background-color: #F9FAFB;
   border-color: #D1D5DB;
   color: var(--text-dark);
@@ -425,20 +475,20 @@
 
 /* Save Button (Style: .submit-button from Login) */
 .btn-save {
-  flex: 2; 
+  flex: 2;
   padding: 14px;
   background: linear-gradient(135deg, var(--primary-teal) 0%, var(--accent-green) 120%);
-  color: white; 
-  border: none; 
+  color: white;
+  border: none;
   border-radius: 25px;
-  font-size: 16px; 
-  font-weight: 600; 
+  font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(8, 120, 134, 0.3);
   transition: all 0.3s ease;
-  display: flex; 
-  align-items: center; 
-  justify-content: center; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
   gap: 8px;
 }
 
@@ -449,37 +499,39 @@
 
 /* Responsive (Match Login Media Query) */
 @media (max-width: 968px) {
-  .edit-container { 
-    flex-direction: column; 
-    height: auto; 
+  .edit-container {
+    flex-direction: column;
+    height: auto;
     max-height: none;
-    max-width: 100%; 
+    max-width: 100%;
     border-radius: 20px;
     margin: 10px;
   }
-  
+
   /* Su mobile nascondiamo il pannello gradiente per coerenza con il Login,
      oppure lo mettiamo in cima come header ridotto */
-  .preview-panel { 
-    width: 100%; 
-    padding: 30px 20px; 
+  .preview-panel {
+    width: 100%;
+    padding: 30px 20px;
     height: auto;
     min-height: 250px;
   }
-  
-  .form-panel { 
-    width: 100%; 
-    padding: 30px 20px; 
-    height: auto; 
-    overflow-y: visible; 
+
+  .form-panel {
+    width: 100%;
+    padding: 30px 20px;
+    height: auto;
+    overflow-y: visible;
   }
-  
-  .row-2, .row-3 { 
-    flex-direction: column; 
-    gap: 16px; 
+
+  .row-2,
+  .row-3 {
+    flex-direction: column;
+    gap: 16px;
   }
-  
-  .blur-circle-1, .blur-circle-2 {
+
+  .blur-circle-1,
+  .blur-circle-2 {
     transform: scale(0.6);
   }
 }

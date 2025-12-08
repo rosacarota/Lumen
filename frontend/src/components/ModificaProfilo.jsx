@@ -173,7 +173,6 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
             <div className="avatar-container1">
               <img
                 src={formData.immagine || "https://via.placeholder.com/150"}
-                alt="Avatar"
                 className="avatar-image1"
                 style={{ objectFit: 'cover' }}
               />
@@ -278,23 +277,24 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
                     value={formData.cap}
                     onChange={handleChange}
                     placeholder="CAP"
-                    className="input-field"
                   />
                 </div>
               </div>
 
               <div className="section-title"><Briefcase size={16} /> Dettagli</div>
-              <div className="input-group">
-                <Briefcase className="input-icon" />
-                <input
-                  type="text"
-                  name="ambito"
-                  value={formData.ambito}
-                  onChange={handleChange}
-                  placeholder="Ambito (es. Ambientale)"
-                  className="input-field"
-                />
-              </div>
+              {formData.ruolo?.toLowerCase() !== 'beneficiario' && (
+                <div className="input-group">
+                  <Briefcase className="input-icon" />
+                  <input
+                    type="text"
+                    name="ambito"
+                    value={formData.ambito}
+                    onChange={handleChange}
+                    placeholder="Ambito (es. Ambientale)"
+                    className="input-field"
+                  />
+                </div>
+              )}
               <div className="input-group">
                 <textarea
                   name="descrizione"
