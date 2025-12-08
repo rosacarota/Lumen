@@ -19,6 +19,7 @@ out/
 *.class
 mvnw
 mvnw.cmd
+uploads/
 
 # Node/React
 node_modules/
