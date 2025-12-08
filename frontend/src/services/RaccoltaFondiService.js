@@ -7,7 +7,12 @@ function getAuthToken() {
 
 
 export async function getRaccolteDiEnteEsterno(email) {
-  const res = await fetch(`${API_BASE_URL}/ottieniRaccolteDiEnteEsterno?email=${encodeURIComponent(email)}`, { method: "GET" });
+  const token = getAuthToken();
+  let url = `${API_BASE_URL}/ottieniRaccolteDiEnteEsterno?email=${encodeURIComponent(email)}`;
+  if (token) {
+    url += `&token=${token}`;
+  }
+  const res = await fetch(url, { method: "GET" });
   if (!res.ok) throw new Error(await res.text());
   return await res.json();
 }
