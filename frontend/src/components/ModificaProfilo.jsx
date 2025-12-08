@@ -150,34 +150,35 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
     <div className="modal-overlay" onClick={onClose}>
       <div className="edit-container" onClick={(e) => e.stopPropagation()}>
         
-        {/* --- LATO SINISTRO (Anteprima) --- */}
-        <div className="preview-panel">
-          <div className="preview-content">
-             <button className="back-button" onClick={onClose}>
-               <ArrowLeft size={18} />
-             </button>
-             
-             <div className="avatar-container">
-               <img 
-                 src={formData.immagine || "https://via.placeholder.com/150"} 
-                 alt="Avatar" 
-                 className="avatar-image" 
-                 style={{objectFit: 'cover'}}
-               />
-             </div>
-             
-             <h2 className="preview-name">{formData.nome}</h2>
-             <p className="preview-bio">{formData.descrizione || "Nessuna descrizione..."}</p>
-          </div>
-        </div>
+        {/* --- LATO SINISTRO --- */}
+<div className="preview-panel">
+  <div className="preview-content">
+      <button className="back-button" onClick={onClose}>
+        <ArrowLeft size={18} className='back-button-arrow'/>
+      </button>
+      
+      {/* 1. Il contenitore ORA contiene SOLO l'immagine */}
+      <div className="avatar-container1">
+        <img 
+          src={formData.immagine || "https://via.placeholder.com/150"} 
+          alt="Avatar" 
+          className="avatar-image1" 
+          style={{objectFit: 'cover'}}
+        />
+      </div> {/* <--- Il div si chiude qui, subito dopo l'immagine */}
+
+      {/* 2. I testi sono ora FUORI dal cerchio, quindi si vedranno sotto */}
+      <h2 className="preview-name">{formData.nome}</h2>
+      <p className="preview-bio">{formData.descrizione || "Nessuna descrizione..."}</p>
+  </div>
+</div>
 
         {/* --- LATO DESTRO (Form) --- */}
-        <div className="form-panel">
+        <div className="edit-form-panel">
           <div className="form-wrapper">
              
              <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
                 <h1 className="page-title">Modifica Profilo</h1>
-                <X onClick={onClose} style={{cursor:'pointer'}} />
              </div>
             
             <form onSubmit={handleSubmit} className="form-grid">
@@ -294,19 +295,19 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
               </div>
 
               {/* --- CAMPO IMMAGINE (FILE UPLOAD) --- */}
-              <div className="input-group">
+              <div className="input-group1">
                 <Camera className="input-icon" />
                 
                 <label className="file-upload-label" style={{display:'flex', flexDirection:'column', width:'100%'}}>
                     <span style={{cursor: 'pointer', color: '#555', marginBottom:'5px', fontSize:'0.9rem'}}>
-                       {formData.immagine ? "Clicca per sostituire foto" : "Carica una foto profilo"}
+                       {formData.immagine ? "Clicca qui per sostituire la foto profilo" : "Clicca qui per caricare una foto profilo"}
                     </span>
                     <input 
                       type="file" 
                       accept="image/*" 
                       onChange={handleImageUpload}
-                      className="input-field"
-                      style={{paddingTop: '6px'}} 
+                      className="input-field1"
+                      style={{display: 'none'}} 
                     />
                 </label>
               </div>
