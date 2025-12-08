@@ -322,7 +322,7 @@ const ProfiloEnte = () => {
                 )}
 
                 {activeSideTab === 'raccolte' && (
-                  <div className="raccolte-list">
+                  <div className="raccolte-list-container">
                     {lists.raccolte.length === 0 && <p className="no-data-msg">Nessuna raccolta attiva.</p>}
                     {lists.raccolte.map(r => (
                       <RaccoltaFondiCard key={r.id_raccolta} {...r} isOwner={isOwner && userRole === 'ente'} onTerminate={handleTerminateRaccolta} />
