@@ -4,6 +4,7 @@ import it.lumen.business.gestioneAutenticazione.service.AutenticazioneService;
 import it.lumen.data.dao.RichiestaServizioDAO;
 import it.lumen.data.dao.UtenteDAO;
 import it.lumen.data.dto.RichiestaServizioDTO;
+import it.lumen.data.dto.UtenteDTO;
 import it.lumen.data.entity.RichiestaServizio;
 import it.lumen.data.entity.Utente;
 import jakarta.transaction.Transactional;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.sql.Date;
 import java.util.List;
@@ -60,7 +62,21 @@ public class RichiestaServizioServiceImpl implements RichiestaServizioService {
 
     public List<RichiestaServizio> getRichiesteByEmail(@Email(message = "Email non valida") String email) {
 
-        return richiestaServizioDAO.findAllByEnteVolontario_Email(email);
+        List<RichiestaServizio> richiestaServizio = richiestaServizioDAO.findAllByEnteVolontario_Email(email);
+        System.out.println("MANNAGGIA QUEL PORCO DI DIO");
+
+        for(RichiestaServizio richiestaServizio1 : richiestaServizio) {
+            System.out.println("MANNAGGIA QUEL PORCO DI DIO");
+            Utente enteVolontario = richiestaServizio1.getEnteVolontario();
+            Utente beneficiario = richiestaServizio1.getBeneficiario();
+            try {
+                enteVolontario.setImmagine(autenticazioneService.recuperaImmagine(enteVolontario.getImmagine()));
+                beneficiario.setImmagine(autenticazioneService.recuperaImmagine(beneficiario.getImmagine()));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return richiestaServizio;
     }
 
     public List<RichiestaServizio>getRichiesteInAttesaByEmail(@Email(message = "Email non valida") String email) {
