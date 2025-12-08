@@ -7,17 +7,30 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
 
+/**
+ * Implementazione del servizio di gestione account.
+ * Fornisce le funzionalità per modificare i dati degli utenti.
+ */
 @Service
 public class GestioneAccountServiceImpl implements GestioneAccountService {
 
     private final UtenteDAO utenteDAO;
 
+    /**
+     * Costruttore per l'iniezione delle dipendenze.
+     *
+     * @param utenteDAO Il DAO per l'accesso ai dati degli utenti.
+     */
     @Autowired
     public GestioneAccountServiceImpl(UtenteDAO utenteDAO) {
         this.utenteDAO = utenteDAO;
     }
 
-
+    /**
+     * Modifica i dati di un utente nel database.
+     *
+     * @param utente L'oggetto Utente con i dati da salvare. Deve essere valido.
+     */
     @Override
     public void modificaUtente(@Valid Utente utente) {
         utenteDAO.save(utente);
