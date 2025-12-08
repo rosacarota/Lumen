@@ -123,7 +123,8 @@ const ProfiloEnte = () => {
       const mapped = rawList.map(item => ({
         ...item,
         id_raccolta: item.id || item.idRaccolta || item.idRaccoltaFondi,
-        ente: targetProfile.nome
+        ente: targetProfile.nome,
+        enteFoto: targetProfile.immagine
       }));
       setLists(prev => ({ ...prev, raccolte: mapped }));
     } catch (e) { console.error(e); }

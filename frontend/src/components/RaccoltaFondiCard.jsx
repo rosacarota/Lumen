@@ -18,6 +18,7 @@ export default function RaccoltaFondiCard({
   data_chiusura,
   dataChiusura,
   ente,
+  enteFoto,
   isOwner = false,
   onTerminate // <--- Questa è la funzione che arriva da ProfiloEnte
 }) {
@@ -60,8 +61,16 @@ export default function RaccoltaFondiCard({
     <div className="fund-card" id={`fund-${id_raccolta}`}>
       <div className="fund-header">
         <div className="fund-avatar">
-          {/* Gestione sicura se ente è un oggetto o una stringa */}
-          {typeof ente === 'string' ? ente.charAt(0).toUpperCase() : 'E'}
+          {/* Gestione sicura se ente è un oggetto o una stringa. Se c'è enteFoto, la usiamo */}
+          {enteFoto ? (
+            <img
+              src={enteFoto}
+              alt={typeof ente === 'string' ? ente : 'Avatar'}
+              style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
+            />
+          ) : (
+            typeof ente === 'string' ? ente.charAt(0).toUpperCase() : 'E'
+          )}
         </div>
         <div className="fund-meta">
           <span className="fund-brand">
