@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
@@ -34,7 +33,7 @@ public class RaccoltaFondiControl {
 
     @PostMapping("/avviaRaccoltaFondi")
     public ResponseEntity<String> avvioRaccoltaFondi(
-             @RequestBody RaccoltaFondi raccoltaFondi,
+            @RequestBody RaccoltaFondi raccoltaFondi,
             BindingResult result,
             @RequestParam String token) {
 
@@ -48,7 +47,9 @@ public class RaccoltaFondiControl {
             return ResponseEntity.badRequest().body(errorMsg.toString());
         }
 
-        if(raccoltaFondi.getDataChiusura().toInstant().isBefore(raccoltaFondi.getDataApertura().toInstant())){
+        raccoltaFondi.setDataApertura(Date.valueOf(LocalDate.now()));
+
+        if(raccoltaFondi.getDataChiusura().toLocalDate().isBefore(raccoltaFondi.getDataApertura().toLocalDate())){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("La data di avvio deve precedere la data di fine");
         }
 

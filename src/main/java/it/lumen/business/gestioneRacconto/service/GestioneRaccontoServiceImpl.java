@@ -185,7 +185,10 @@ public class GestioneRaccontoServiceImpl implements GestioneRaccontoService {
 
     public String recuperaImmagine(String pathImmagine) throws IOException {
 
-        if (pathImmagine == null || pathImmagine.trim().isEmpty()) {
+        if(pathImmagine == null || !(pathImmagine.endsWith("jpg") ||  pathImmagine.endsWith("jpeg") || pathImmagine.endsWith("png") || pathImmagine.endsWith("gif") ||  pathImmagine.endsWith("webp"))) {
+            return pathImmagine;
+        }
+        if (pathImmagine.trim().isEmpty()) {
             return null;
         }
 
