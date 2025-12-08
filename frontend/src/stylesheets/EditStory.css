@@ -3,7 +3,7 @@
   position: fixed;
   inset: 0;
   z-index: 2000;
-  background-color: rgba(0, 0, 0, 0.6);  /* UGUALE AD ADD STORY */
+  background-color:rgba(8, 120, 134, 0.2);
   backdrop-filter: blur(4px);
   
   /* Flexbox per centrare */

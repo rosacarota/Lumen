@@ -3,7 +3,7 @@
     position: fixed;
     inset: 0;
     z-index: 2000;
-    background: rgba(15, 23, 42, 0.55);
+    background: rgba(8, 120, 134, 0.2);
     display: flex;
     align-items: center; /*centrare il pop up*/
     justify-content: center;
