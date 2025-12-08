@@ -65,10 +65,12 @@ const InfoProfilo = ({ userData: propsData, onUpdate }) => {
         setIsEditing(true);
     };
 
-    const handleCloseModal = () => {
+    const handleCloseModal = (saved = false) => {
         setIsEditing(false);
-        if (onUpdate) onUpdate();
-        window.location.reload();
+        if (saved) {
+            if (onUpdate) onUpdate();
+            window.location.reload();
+        }
     };
 
     const renderActionButton = () => {
@@ -174,14 +176,14 @@ const InfoProfilo = ({ userData: propsData, onUpdate }) => {
                 />
             )}
             {!isOwner && showServiceModal && (
-                <RichiestaServizio 
+                <RichiestaServizio
                     isModal={true}
                     onClose={() => setShowServiceModal(false)}
-                    enteDestinatarioEmail={userData.email} 
+                    enteDestinatarioEmail={userData.email}
                 />
             )}
             {!isOwner && showAffiliationModal && (
-                <RichiestaAffiliazione 
+                <RichiestaAffiliazione
                     isModal={true}
                     onClose={() => setShowAffiliationModal(false)}
                     emailEnte={userData.email}

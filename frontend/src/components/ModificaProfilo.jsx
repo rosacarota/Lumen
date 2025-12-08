@@ -1,36 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  User, Mail, Phone, MapPin, Building2, Save, X, 
-  Camera, Briefcase, Home, Map, ArrowLeft 
+import {
+  User, Mail, Phone, MapPin, Building2, Save, X,
+  Camera, Briefcase, Home, Map, ArrowLeft
 } from 'lucide-react';
-import Swal from 'sweetalert2'; 
-import '../stylesheets/ModificaProfilo.css'; 
-import { updateUserProfile } from '../services/UserServices.js'; 
+import Swal from 'sweetalert2';
+import '../stylesheets/ModificaProfilo.css';
+import { updateUserProfile } from '../services/UserServices.js';
 
 export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
-  
+
   const [formData, setFormData] = useState({
-     nome: '', 
-     cognome: '', 
-     email: '', 
-     descrizione: '', 
-     recapitoTelefonico: '', 
-     ambito: '', 
-     ruolo: '', 
-     immagine: '', 
-     citta: '', 
-     provincia: '', 
-     cap: '', 
-     strada: '', 
-     ncivico: ''
+    nome: '',
+    cognome: '',
+    email: '',
+    descrizione: '',
+    recapitoTelefonico: '',
+    ambito: '',
+    ruolo: '',
+    immagine: '',
+    citta: '',
+    provincia: '',
+    cap: '',
+    strada: '',
+    ncivico: ''
   });
-  
+
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (isOpen && currentUser) {
       setFormData({
-        ...currentUser, 
+        ...currentUser,
         strada: currentUser.strada || '',
         ncivico: currentUser.ncivico || '',
         citta: currentUser.citta || '',
@@ -66,13 +66,13 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    
+
     try {
       // 1. Attendiamo che il server salvi i dati
       await updateUserProfile(formData);
-      
+
       // 2. Chiudiamo SUBITO il modale (così l'utente vede la pagina sotto)
-      onClose(); 
+      onClose(true);
 
       // 3. Mostriamo l'alert di successo
       Swal.fire({
@@ -84,7 +84,7 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
 
     } catch (error) {
       console.error("Errore salvataggio:", error);
-      
+
       // In caso di errore, NON chiudiamo il modale per permettere di riprovare,
       // ma mostriamo l'alert di errore sopra il modale.
       Swal.fire({
@@ -104,16 +104,16 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
         <>
           <div className="input-group">
             <Building2 className="input-icon" />
-            <input 
-              type="text" 
-              name="nome" 
-              value={formData.nome} 
-              onChange={handleChange} 
-              placeholder="Nome Ente" 
+            <input
+              type="text"
+              name="nome"
+              value={formData.nome}
+              onChange={handleChange}
+              placeholder="Nome Ente"
               className="input-field"
             />
           </div>
-          
+
         </>
       );
     } else {
@@ -121,23 +121,23 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
         <div className="row-2">
           <div className="input-group">
             <User className="input-icon" />
-            <input 
-              type="text" 
-              name="nome" 
-              value={formData.nome} 
-              onChange={handleChange} 
-              placeholder="Nome" 
+            <input
+              type="text"
+              name="nome"
+              value={formData.nome}
+              onChange={handleChange}
+              placeholder="Nome"
               className="input-field"
             />
           </div>
           <div className="input-group">
             <User className="input-icon" />
-            <input 
-              type="text" 
-              name="cognome" 
-              value={formData.cognome} 
-              onChange={handleChange} 
-              placeholder="Cognome" 
+            <input
+              type="text"
+              name="cognome"
+              value={formData.cognome}
+              onChange={handleChange}
+              placeholder="Cognome"
               className="input-field"
             />
           </div>
@@ -147,149 +147,149 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay" onClick={() => onClose(false)}>
       <div className="edit-container" onClick={(e) => e.stopPropagation()}>
-        
-        {/* --- LATO SINISTRO --- */}
-<div className="preview-panel">
-  <div className="preview-content">
-      <button className="back-button" onClick={onClose}>
-        <ArrowLeft size={18} className='back-button-arrow'/>
-      </button>
-      
-      {/* 1. Il contenitore ORA contiene SOLO l'immagine */}
-      <div className="avatar-container1">
-        <img 
-          src={formData.immagine || "https://via.placeholder.com/150"} 
-          alt="Avatar" 
-          className="avatar-image1" 
-          style={{objectFit: 'cover'}}
-        />
-      </div> {/* <--- Il div si chiude qui, subito dopo l'immagine */}
 
-      {/* 2. I testi sono ora FUORI dal cerchio, quindi si vedranno sotto */}
-      <h2 className="preview-name">{formData.nome}</h2>
-      <p className="preview-bio">{formData.descrizione || "Nessuna descrizione..."}</p>
-  </div>
-</div>
+        {/* --- LATO SINISTRO --- */}
+        <div className="preview-panel">
+          <div className="preview-content">
+            <button className="back-button" onClick={() => onClose(false)}>
+              <ArrowLeft size={18} className='back-button-arrow' />
+            </button>
+
+            {/* 1. Il contenitore ORA contiene SOLO l'immagine */}
+            <div className="avatar-container1">
+              <img
+                src={formData.immagine || "https://via.placeholder.com/150"}
+                alt="Avatar"
+                className="avatar-image1"
+                style={{ objectFit: 'cover' }}
+              />
+            </div> {/* <--- Il div si chiude qui, subito dopo l'immagine */}
+
+            {/* 2. I testi sono ora FUORI dal cerchio, quindi si vedranno sotto */}
+            <h2 className="preview-name">{formData.nome}</h2>
+            <p className="preview-bio">{formData.descrizione || "Nessuna descrizione..."}</p>
+          </div>
+        </div>
 
         {/* --- LATO DESTRO (Form) --- */}
         <div className="edit-form-panel">
           <div className="form-wrapper">
-             
-             <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-                <h1 className="page-title">Modifica Profilo</h1>
-             </div>
-            
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h1 className="page-title">Modifica Profilo</h1>
+            </div>
+
             <form onSubmit={handleSubmit} className="form-grid">
-              
-              <div className="section-title"><User size={16}/> Anagrafica</div>
+
+              <div className="section-title"><User size={16} /> Anagrafica</div>
               {renderAnagraficaFields()}
-              
-              <div className="section-title"><Phone size={16}/> Contatti</div>
+
+              <div className="section-title"><Phone size={16} /> Contatti</div>
               <div className="row-2">
-                 <div className="input-group">
-                    <Mail className="input-icon" />
-                    <input 
-                      type="email" 
-                      name="email" 
-                      value={formData.email} 
-                      disabled 
-                      className="input-field" 
-                      title="L'email non può essere modificata"
-                    />
-                 </div>
-                 <div className="input-group">
-                    <Phone className="input-icon" />
-                    <input 
-                      type="text" 
-                      name="recapitoTelefonico" 
-                      value={formData.recapitoTelefonico} 
-                      onChange={handleChange} 
-                      placeholder="Telefono" 
-                      className="input-field"
-                    />
-                 </div>
+                <div className="input-group">
+                  <Mail className="input-icon" />
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    disabled
+                    className="input-field"
+                    title="L'email non può essere modificata"
+                  />
+                </div>
+                <div className="input-group">
+                  <Phone className="input-icon" />
+                  <input
+                    type="text"
+                    name="recapitoTelefonico"
+                    value={formData.recapitoTelefonico}
+                    onChange={handleChange}
+                    placeholder="Telefono"
+                    className="input-field"
+                  />
+                </div>
               </div>
 
-              <div className="section-title"><MapPin size={16}/> Indirizzo</div>
+              <div className="section-title"><MapPin size={16} /> Indirizzo</div>
               <div className="row-3">
-                <div className="input-group" style={{flex: 2}}>
+                <div className="input-group" style={{ flex: 2 }}>
                   <Home className="input-icon" />
-                  <input 
-                    type="text" 
-                    name="strada" 
-                    value={formData.strada} 
-                    onChange={handleChange} 
-                    placeholder="Via" 
+                  <input
+                    type="text"
+                    name="strada"
+                    value={formData.strada}
+                    onChange={handleChange}
+                    placeholder="Via"
                     className="input-field"
                   />
                 </div>
-                <div className="input-group" style={{flex: 1}}>
-                  <input 
-                    type="text" 
-                    name="ncivico" 
-                    value={formData.ncivico} 
-                    onChange={handleChange} 
-                    placeholder="N." 
+                <div className="input-group" style={{ flex: 1 }}>
+                  <input
+                    type="text"
+                    name="ncivico"
+                    value={formData.ncivico}
+                    onChange={handleChange}
+                    placeholder="N."
                     className="input-field"
                   />
                 </div>
               </div>
               <div className="row-3">
-                 <div className="input-group" style={{flex: 2}}>
-                    <Map className="input-icon" />
-                    <input 
-                      type="text" 
-                      name="citta" 
-                      value={formData.citta} 
-                      onChange={handleChange} 
-                      placeholder="Città" 
-                      className="input-field"
-                    />
-                 </div>
-                 <div className="input-group" style={{flex: 1}}>
-                    <input 
-                      type="text" 
-                      name="provincia" 
-                      value={formData.provincia} 
-                      onChange={handleChange} 
-                      placeholder="PR" 
-                      maxLength={2} 
-                      className="input-field"
-                    />
-                 </div>
-                 <div className="input-group" style={{flex: 1}}>
-                    <input 
-                      type="text" 
-                      name="cap" 
-                      value={formData.cap} 
-                      onChange={handleChange} 
-                      placeholder="CAP" 
-                      className="input-field"
-                    />
-                 </div>
+                <div className="input-group" style={{ flex: 2 }}>
+                  <Map className="input-icon" />
+                  <input
+                    type="text"
+                    name="citta"
+                    value={formData.citta}
+                    onChange={handleChange}
+                    placeholder="Città"
+                    className="input-field"
+                  />
+                </div>
+                <div className="input-group" style={{ flex: 1 }}>
+                  <input
+                    type="text"
+                    name="provincia"
+                    value={formData.provincia}
+                    onChange={handleChange}
+                    placeholder="PR"
+                    maxLength={2}
+                    className="input-field"
+                  />
+                </div>
+                <div className="input-group" style={{ flex: 1 }}>
+                  <input
+                    type="text"
+                    name="cap"
+                    value={formData.cap}
+                    onChange={handleChange}
+                    placeholder="CAP"
+                    className="input-field"
+                  />
+                </div>
               </div>
 
-              <div className="section-title"><Briefcase size={16}/> Dettagli</div>
+              <div className="section-title"><Briefcase size={16} /> Dettagli</div>
               <div className="input-group">
                 <Briefcase className="input-icon" />
-                <input 
-                  type="text" 
-                  name="ambito" 
-                  value={formData.ambito} 
-                  onChange={handleChange} 
-                  placeholder="Ambito (es. Ambientale)" 
+                <input
+                  type="text"
+                  name="ambito"
+                  value={formData.ambito}
+                  onChange={handleChange}
+                  placeholder="Ambito (es. Ambientale)"
                   className="input-field"
                 />
               </div>
               <div className="input-group">
-                <textarea 
-                  name="descrizione" 
-                  value={formData.descrizione} 
-                  onChange={handleChange} 
-                  placeholder="Descrizione profilo..." 
-                  rows="4" 
+                <textarea
+                  name="descrizione"
+                  value={formData.descrizione}
+                  onChange={handleChange}
+                  placeholder="Descrizione profilo..."
+                  rows="4"
                   className="textarea-field"
                 />
               </div>
@@ -297,27 +297,27 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
               {/* --- CAMPO IMMAGINE (FILE UPLOAD) --- */}
               <div className="input-group1">
                 <Camera className="input-icon" />
-                
-                <label className="file-upload-label" style={{display:'flex', flexDirection:'column', width:'100%'}}>
-                    <span style={{cursor: 'pointer', color: '#555', marginBottom:'5px', fontSize:'0.9rem'}}>
-                       {formData.immagine ? "Clicca qui per sostituire la foto profilo" : "Clicca qui per caricare una foto profilo"}
-                    </span>
-                    <input 
-                      type="file" 
-                      accept="image/*" 
-                      onChange={handleImageUpload}
-                      className="input-field1"
-                      style={{display: 'none'}} 
-                    />
+
+                <label className="file-upload-label" style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+                  <span style={{ cursor: 'pointer', color: '#555', marginBottom: '5px', fontSize: '0.9rem' }}>
+                    {formData.immagine ? "Clicca qui per sostituire la foto profilo" : "Clicca qui per caricare una foto profilo"}
+                  </span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="input-field1"
+                    style={{ display: 'none' }}
+                  />
                 </label>
               </div>
 
               <div className="action-buttons">
-                <button type="button" className="btn-cancel" onClick={onClose}>
+                <button type="button" className="btn-cancel" onClick={() => onClose(false)}>
                   Annulla
                 </button>
                 <button type="submit" className="btn-save" disabled={loading}>
-                  {loading ? 'Salvataggio...' : <><Save size={18}/> Salva</>}
+                  {loading ? 'Salvataggio...' : <><Save size={18} /> Salva</>}
                 </button>
               </div>
 
