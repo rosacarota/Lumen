@@ -7,6 +7,8 @@ import java.util.List;
 
 
 public interface RichiestaServizioService {
+
+
     void creaRichiestaServizio(RichiestaServizioDTO richiestaDTO);
     public void accettaRichiestaServizio(RichiestaServizio richiestaServizio);
     public void rifiutaRichiestaServizio(RichiestaServizio richiestaServizio);
