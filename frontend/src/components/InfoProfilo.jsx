@@ -43,6 +43,9 @@ const InfoProfilo = ({ userData: propsData, onUpdate }) => {
                     }
                 }
                 setUserData(profile);
+                if (profile && profile.immagine) {
+                    localStorage.setItem('userImage', profile.immagine);
+                }
             } catch (error) {
                 console.error("Errore caricamento profilo:", error);
             } finally {

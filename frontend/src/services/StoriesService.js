@@ -40,6 +40,7 @@ function mapStoryFromApi(apiStory) {
     authorRole: apiStory.autoreRuolo,
     type: apiStory.immagine ? "photo" : "text",
     utente: apiStory.utente, // Preserva l'oggetto utente completo con ruolo, immagine, etc.
+    authorAvatar: (typeof apiStory.utente === 'object' && apiStory.utente?.immagine) ? apiStory.utente.immagine : null,
   };
 }
 
@@ -94,7 +95,7 @@ export async function fetchFilteredStories(email) {
   const attr = "email";
   const value = email;
   const obj = {
-      [attr]: value
+    [attr]: value
   };
   const payload = JSON.stringify(obj);
 

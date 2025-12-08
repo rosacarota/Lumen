@@ -2,8 +2,15 @@ const API_BASE_URL = "http://localhost:8080/raccoltaFondi";
 
 function getAuthToken() {
   return localStorage.getItem("token");
- }
+}
 
+
+
+export async function getRaccolteDiEnteEsterno(email) {
+  const res = await fetch(`${API_BASE_URL}/ottieniRaccolteDiEnteEsterno?email=${encodeURIComponent(email)}`, { method: "GET" });
+  if (!res.ok) throw new Error(await res.text());
+  return await res.json();
+}
 
 
 export async function getRaccolteDiEnte() {

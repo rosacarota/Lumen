@@ -18,7 +18,7 @@ import DeleteStory from '../components/DeleteStory.jsx';
 
 import { fetchUserProfile, fetchUserPublicProfile } from '../services/UserServices.js';
 import { getCronologiaEventi } from '../services/EventoService.js';
-import { getRaccolteDiEnte, terminaRaccolta } from '../services/RaccoltaFondiService.js';
+import { getRaccolteDiEnte, terminaRaccolta, getRaccolteDiEnteEsterno } from '../services/RaccoltaFondiService.js';
 import { fetchStories, fetchFilteredStories, addStory, editStory, deleteStory } from '../services/StoriesService.js';
 
 import '../stylesheets/ProfiloEnte.css';
@@ -118,7 +118,12 @@ const ProfiloEnte = () => {
     if (!targetProfile) return;
     setLoading(prev => ({ ...prev, raccolte: true }));
     try {
-      const res = await getRaccolteDiEnte();
+      let res;
+      if (isOwner) {
+        res = await getRaccolteDiEnte();
+      } else {
+        res = await getRaccolteDiEnteEsterno(targetProfile.email);
+      }
       const rawList = Array.isArray(res) ? res : (res.content || []);
       const mapped = rawList.map(item => ({
         ...item,
@@ -137,7 +142,21 @@ const ProfiloEnte = () => {
     try {
       // Usiamo la fetch filtrata per email, passando quella del profilo
       const filtered = await fetchFilteredStories(targetProfile.email);
-      setLists(prev => ({ ...prev, storie: filtered }));
+
+      const cachedImage = localStorage.getItem('userImage');
+
+      const enrichedStories = filtered.map(st => {
+        let avatarSource = st.authorAvatar || targetProfile.immagine || cachedImage;
+        if (avatarSource && !avatarSource.startsWith('http') && !avatarSource.startsWith('data:')) {
+          avatarSource = `${avatarSource}`;
+        }
+        return {
+          ...st,
+          authorAvatar: avatarSource
+        };
+      });
+
+      setLists(prev => ({ ...prev, storie: enrichedStories }));
     } catch (e) { console.error(e); }
     finally { setLoading(prev => ({ ...prev, storie: false })); }
   };
@@ -268,7 +287,15 @@ const ProfiloEnte = () => {
                           <div key={storia.id} className="story-card-sidebar" style={styles.storyCard}>
                             <div className="story-header" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                               <div style={styles.storyAvatar}>
-                                {storia.authorName ? storia.authorName.charAt(0).toUpperCase() : 'E'}
+                                {storia.authorAvatar ? (
+                                  <img
+                                    src={storia.authorAvatar}
+                                    alt="Avatar"
+                                    style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
+                                  />
+                                ) : (
+                                  storia.authorName ? storia.authorName.charAt(0).toUpperCase() : 'E'
+                                )}
                               </div>
                               <div style={{ flex: 1 }}>
                                 <h4 style={{ margin: 0, fontSize: '0.95rem' }}>{storia.title}</h4>
