@@ -15,7 +15,7 @@ const CronologiaEventi = () => {
             setIsLoading(true);
             try {
                 const [partecipazioniRaw, catalogoEventi] = await Promise.all([
-                    getCronologiaEventi(),
+                    getCronologiaEventi(localStorage.getItem("searchUser")),
                     fetchEvents()
                 ]);
                 const partecipazioni = Array.isArray(partecipazioniRaw) ? partecipazioniRaw : [];
@@ -49,7 +49,7 @@ const CronologiaEventi = () => {
                         <div className="cronologia-icon-wrapper">
                             <CalendarClock size={40} color="#4AAFB8" />
                         </div>
-                        <p>Non hai ancora partecipato a nessun evento.</p>
+                        <p>L'utente non ha ancora partecipato a eventi.</p>
                     </div>
                 ) : (
                     <div className="cronologia-list">

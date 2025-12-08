@@ -6,9 +6,17 @@ function getAuthToken() {
 
 export const getCronologiaEventi = async () => {
   try {
+    let url = null;
     const token = getAuthToken();
     if (!token) return [];
-    const url = `${API_URL}/partecipazione/cronologiaPartecipazioni?token=${encodeURIComponent(token)}`;
+    else {
+      if (localStorage.getItem("email") === localStorage.getItem("searchEmail")) {
+        url = `${API_URL}/partecipazione/cronologiaPartecipazioni?token=${encodeURIComponent(token)}`;
+      }
+      else {
+        url = `${API_URL}/partecipazione/cronologiaPartecipazioni?token=${encodeURIComponent(localStorage.getItem("searchEmail"))}`;
+      }
+    }
 
     const response = await fetch(url, {
             method: 'POST',
