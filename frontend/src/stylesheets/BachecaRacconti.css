@@ -101,23 +101,68 @@
     gap: 12px;
 }
 
-.story-item {
+.story-item-container {
     background: var(--bg-main);
     padding: 16px;
     border-radius: 12px;
+    border: 1px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.story-item-container:hover {
+    background: white;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+    border-color: rgba(74, 175, 184, 0.3);
+}
+
+.story-item {
     display: flex;
     align-items: center;
     gap: 16px;
-    border: 1px solid transparent;
-    transition: all 0.3s ease;
     cursor: pointer;
 }
 
-.story-item:hover {
-    background: white;
-    transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
-    border-color: rgba(74, 175, 184, 0.3);
+.story-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    gap: 8px;
+}
+
+.story-edit-button {
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid #d1d5db;
+    background: #ffffff;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--first-color);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+
+.story-edit-button:hover {
+    background: var(--bg-soft);
+    border-color: var(--second-color);
+    transform: translateY(-1px);
+}
+
+.story-edit-button.delete-btn {
+    color: #dc2626;
+    border-color: #f87171;
+}
+
+.story-edit-button.delete-btn:hover {
+    background: #fef2f2;
+    border-color: #ef4444;
+    color: #dc2626;
 }
 
 .story-avatar {
