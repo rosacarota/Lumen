@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import jakarta.transaction.Transactional;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Service
@@ -20,14 +21,14 @@ public class RaccoltaFondiServiceImpl implements RaccoltaFondiService {
 
     @Override
     @Transactional
-    public void avviaRaccoltaFondi(RaccoltaFondi raccoltaFondi){raccoltaFondiDAO.save(raccoltaFondi);}
+    public void avviaRaccoltaFondi(@Valid RaccoltaFondi raccoltaFondi){raccoltaFondiDAO.save(raccoltaFondi);}
 
     @Override
     @Transactional
     public void terminaRaccoltaFondi(int idRaccolta){raccoltaFondiDAO.removeRaccoltaFondiByIdRaccoltaFondi(idRaccolta);}
 
     @Override
-    public List <RaccoltaFondi> ottieniRaccolteDiEnte(Utente utente){
+    public List <RaccoltaFondi> ottieniRaccolteDiEnte(@Valid Utente utente){
         return raccoltaFondiDAO.findAllByEnte_Email(utente.getEmail());
     }
 

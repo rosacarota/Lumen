@@ -3,6 +3,7 @@ package it.lumen.business.gestioneRicercaUtente.service;
 import it.lumen.business.gestioneAutenticazione.service.AutenticazioneService;
 import it.lumen.business.gestioneAutenticazione.service.AutenticazioneServiceImpl;
 import it.lumen.data.dto.UtenteDTO;
+import jakarta.validation.constraints.Email;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import it.lumen.data.dao.UtenteDAO;
@@ -52,7 +53,7 @@ public class RicercaUtenteServiceImpl implements RicercaUtenteService {
     }
 
     @Override
-    public UtenteDTO getUtenteByEmail(String email){
+    public UtenteDTO getUtenteByEmail(@Email(message = "Email non valida") String email){
 
         if (email == null){return null;}
         Utente utente = utenteDAO.findByEmail(email);

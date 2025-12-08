@@ -4,6 +4,7 @@ import it.lumen.business.gestioneAutenticazione.service.AutenticazioneService;
 import it.lumen.data.dao.EventoDAO;
 import it.lumen.data.entity.Evento;
 import it.lumen.data.entity.Utente;
+import jakarta.validation.constraints.Email;
 import org.springframework.stereotype.Service;
 
 import java.io.FileNotFoundException;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import jakarta.transaction.Transactional;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 
 @Service
@@ -38,14 +40,14 @@ public class GestioneEventoServiceImpl implements GestioneEventoService {
 
     @Override
     @Transactional
-    public Evento aggiungiEvento(Evento evento) {
+    public Evento aggiungiEvento(@Valid Evento evento) {
 
         return eventoDAO.save(evento);
     }
 
     @Override
     @Transactional
-    public Evento modificaEvento(Evento evento) {
+    public Evento modificaEvento(@Valid Evento evento) {
 
         try {
             String path = salvaImmagine(evento.getImmagine());
@@ -83,7 +85,7 @@ public class GestioneEventoServiceImpl implements GestioneEventoService {
     }
 
     @Override
-    public List<Evento> cronologiaEventi(String email, String stato) {
+    public List<Evento> cronologiaEventi(@Email(message = "Email non valida")String email, String stato) {
         Date oggi = new Date();
 
 

@@ -5,9 +5,11 @@ import it.lumen.data.dao.RaccontoDAO;
 import it.lumen.data.entity.Racconto;
 import it.lumen.data.entity.Utente;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.Email;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
@@ -36,7 +38,7 @@ public class GestioneRaccontoServiceImpl implements GestioneRaccontoService {
 
     @Override
     @Transactional
-    public Racconto aggiungiRacconto(Racconto racconto) {
+    public Racconto aggiungiRacconto(@Valid Racconto racconto) {
         if (racconto.getImmagine() != null && !racconto.getImmagine().isEmpty()) {
             try {
                 String fileName = salvaImmagine(racconto.getImmagine());
@@ -50,7 +52,7 @@ public class GestioneRaccontoServiceImpl implements GestioneRaccontoService {
 
     @Override
     @Transactional
-    public Racconto modificaRacconto(Racconto nuovoRacconto) {
+    public Racconto modificaRacconto(@Valid Racconto nuovoRacconto) {
         // Recupera il racconto esistente dal DB
         Racconto vecchioRacconto = raccontoDAO.getRaccontoByIdRacconto(nuovoRacconto.getIdRacconto());
         if (vecchioRacconto == null) {
@@ -126,7 +128,7 @@ public class GestioneRaccontoServiceImpl implements GestioneRaccontoService {
     }
 
     @Override
-    public List<Racconto> listaRaccontiUtente(String email) {
+    public List<Racconto> listaRaccontiUtente(@Email(message = "Email non valida") String email) {
         List<Racconto> racconti = raccontoDAO.findAllByUtente_Email(email);
         for (Racconto racconto : racconti) {
 

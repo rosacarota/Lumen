@@ -4,9 +4,11 @@ import it.lumen.data.dao.AffiliazioneDAO;
 import it.lumen.data.dao.UtenteDAO;
 import it.lumen.data.entity.Affiliazione;
 import it.lumen.data.entity.Utente;
+import jakarta.validation.constraints.Email;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Service
@@ -22,7 +24,7 @@ public class AffiliazioneServiceImpl implements AffiliazioneService {
     }
 
     @Override
-    public void richiediAffiliazione(Affiliazione affiliazione) {
+    public void richiediAffiliazione(@Valid Affiliazione affiliazione) {
         affiliazioneDAO.save(affiliazione);
     }
 
@@ -33,13 +35,13 @@ public class AffiliazioneServiceImpl implements AffiliazioneService {
 
 
     @Override
-    public List<Utente> getAffiliati(String email) {
+    public List<Utente> getAffiliati(@Email(message = "Email non valida") String email) {
        Utente ente = utenteDAO.findByEmail(email);
        return affiliazioneDAO.findVolontariAffiliati(ente);
     }
 
     @Override
-    public List<Affiliazione> getAffiliazioni(Utente ente) {
+    public List<Affiliazione> getAffiliazioni(@Valid Utente ente) {
         return affiliazioneDAO.findAffiliatibyEnte(ente);
     }
 
@@ -61,7 +63,7 @@ public class AffiliazioneServiceImpl implements AffiliazioneService {
     }
 
     @Override
-    public boolean checkAffiliazione(String volontario) {
+    public boolean checkAffiliazione(@Email(message = "Email non valida") String volontario) {
         return affiliazioneDAO.existsByVolontario_Email(volontario);
     }
 

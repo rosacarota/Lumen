@@ -2,6 +2,7 @@ package it.lumen.business.gestioneAutenticazione.service;
 
 import it.lumen.data.dao.UtenteDAO;
 import it.lumen.data.entity.Utente;
+import jakarta.validation.constraints.Email;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import it.lumen.security.Encrypter;
@@ -26,7 +27,7 @@ public class AutenticazioneServiceImpl implements AutenticazioneService {
     }
 
     @Override
-    public Utente login(String email, String password) {
+    public Utente login(@Email(message = "Email non valida")String email, String password) {
         Encrypter encrypter = new Encrypter();
         Utente utente = utenteDAO.findByEmail(email);
         if (utente == null) return null;
@@ -38,7 +39,7 @@ public class AutenticazioneServiceImpl implements AutenticazioneService {
     }
 
     @Override
-    public Utente getUtente(String email){
+    public Utente getUtente(@Email(message = "Email non valida")String email){
        return utenteDAO.findByEmail(email);
     }
 

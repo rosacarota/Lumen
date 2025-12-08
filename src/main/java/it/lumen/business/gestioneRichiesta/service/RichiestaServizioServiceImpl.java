@@ -7,9 +7,11 @@ import it.lumen.data.dto.RichiestaServizioDTO;
 import it.lumen.data.entity.RichiestaServizio;
 import it.lumen.data.entity.Utente;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.Email;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.sql.Date;
 import java.util.List;
@@ -47,21 +49,21 @@ public class RichiestaServizioServiceImpl implements RichiestaServizioService {
 
     @Override
     @Transactional
-    public void accettaRichiestaServizio(RichiestaServizio richiestaServizio) {
+    public void accettaRichiestaServizio(@Valid RichiestaServizio richiestaServizio) {
         richiestaServizio.setStato(RichiestaServizio.StatoRichiestaServizio.valueOf("Accettata"));
         richiestaServizioDAO.save(richiestaServizio);}   //Cambio stato: InAttesa -> Accettato
 
     @Override
     @Transactional
     //----------------------------------------------------------TO ARGUE----------------------------------------------------------
-    public void rifiutaRichiestaServizio(RichiestaServizio richiestaServizio) {richiestaServizioDAO.delete(richiestaServizio);} //Rimozione della richiesta dal database
+    public void rifiutaRichiestaServizio(@Valid RichiestaServizio richiestaServizio) {richiestaServizioDAO.delete(richiestaServizio);} //Rimozione della richiesta dal database
 
-    public List<RichiestaServizio> getRichiesteByEmail(String email) {
+    public List<RichiestaServizio> getRichiesteByEmail(@Email(message = "Email non valida") String email) {
 
         return richiestaServizioDAO.findAllByEnteVolontario_Email(email);
     }
 
-    public List<RichiestaServizio>getRichiesteInAttesaByEmail(String email) {
+    public List<RichiestaServizio>getRichiesteInAttesaByEmail(@Email(message = "Email non valida") String email) {
 
         //Utente utente = utenteDAO.findByEmail(email);
         List<RichiestaServizio> richiesta = richiestaServizioDAO.findAllByEmailInAttesa(email);

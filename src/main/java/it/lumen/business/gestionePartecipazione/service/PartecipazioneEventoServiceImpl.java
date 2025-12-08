@@ -6,6 +6,7 @@ import it.lumen.data.dao.UtenteDAO;
 import it.lumen.data.dto.PartecipazioneDTO;
 import it.lumen.data.entity.Evento;
 import it.lumen.data.entity.Utente;
+import jakarta.validation.constraints.Email;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,7 @@ import it.lumen.data.dao.PartecipazioneDAO;
 import it.lumen.data.entity.Partecipazione;
 import jakarta.transaction.Transactional;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,14 +35,14 @@ public class PartecipazioneEventoServiceImpl implements PartecipazioneEventoServ
     }
 	@Override
 	@Transactional
-	public void aggiungiPartecipazione(Partecipazione partecipazione) {
+	public void aggiungiPartecipazione(@Valid Partecipazione partecipazione) {
 
 		partecipazioneDAO.save(partecipazione);
 
 	}
 	@Override
 	@Transactional
-	public void modificaPartecipazione(Partecipazione partecipazione) {
+	public void modificaPartecipazione(@Valid Partecipazione partecipazione) {
 		partecipazioneDAO.save(partecipazione);
 		
 	}
@@ -60,7 +62,7 @@ public class PartecipazioneEventoServiceImpl implements PartecipazioneEventoServ
 
     @Override
     @Transactional
-    public List<PartecipazioneDTO> cronologiaPartecipazioni(String email){
+    public List<PartecipazioneDTO> cronologiaPartecipazioni(@Email(message = "Email non valida")String email){
 
         Utente utente = autenticazioneService.getUtente(email);
 
