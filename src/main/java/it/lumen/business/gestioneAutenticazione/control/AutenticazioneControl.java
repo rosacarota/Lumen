@@ -12,20 +12,38 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Controller REST per la gestione dell'autenticazione utente.
+ * Espone l'endpoint per il login.
+ */
 @RestController
 @RequestMapping("/login")
 public class AutenticazioneControl {
     private final AutenticazioneService autenticazioneService;
     private final JwtUtil jwtUtil;
 
+    /**
+     * Costruttore per l'iniezione delle dipendenze.
+     *
+     * @param autenticazioneService Servizio di autenticazione.
+     * @param jwtUtil               Utility per la gestione dei token JWT.
+     */
     @Autowired
     public AutenticazioneControl(AutenticazioneService autenticazioneService, JwtUtil jwtUtil) {
         this.autenticazioneService = autenticazioneService;
         this.jwtUtil = jwtUtil;
     }
 
+    /**
+     * Gestisce la richiesta di login.
+     *
+     * @param credentials Mappa contenente "email" e "password".
+     * @return Una ResponseEntity contenente un oggetto {@link SessionUser} con il
+     *         token JWT se il login ha successo,
+     *         o un messaggio di errore se le credenziali non sono valide.
+     */
     @PostMapping
-    public ResponseEntity<?>login(@RequestBody Map<String, String> credentials) {
+    public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
         String email = credentials.get("email");
         String password = credentials.get("password");
 

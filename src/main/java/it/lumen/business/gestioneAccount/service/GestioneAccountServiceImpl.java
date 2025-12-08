@@ -27,9 +27,7 @@ public class GestioneAccountServiceImpl implements GestioneAccountService {
     }
 
     /**
-     * Modifica i dati di un utente nel database.
-     *
-     * @param utente L'oggetto Utente con i dati da salvare. Deve essere valido.
+     * {@inheritDoc}
      */
     @Override
     public void modificaUtente(@Valid Utente utente) {

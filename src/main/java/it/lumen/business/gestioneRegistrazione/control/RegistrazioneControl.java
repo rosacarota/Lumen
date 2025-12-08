@@ -14,17 +14,33 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Controller REST per la gestione della registrazione degli utenti.
+ */
 @RestController
 @RequestMapping("/registrazione")
 public class RegistrazioneControl {
 
     private final RegistrazioneService registrazioneService;
 
+    /**
+     * Costruttore per l'iniezione delle dipendenze.
+     *
+     * @param registrazioneService Servizio per la gestione della registrazione.
+     */
     @Autowired
     public RegistrazioneControl(RegistrazioneService registrazioneService) {
         this.registrazioneService = registrazioneService;
     }
 
+    /**
+     * Endpoint per la registrazione di un nuovo utente.
+     * Effettua la validazione dei dati in ingresso e gestisce eventuali errori.
+     *
+     * @param utente L'oggetto Utente da registrare, validato automaticamente.
+     * @param result Il risultato della validazione.
+     * @return Una ResponseEntity contenente un messaggio di successo o errore.
+     */
     @PostMapping
     public ResponseEntity<Map<String, String>> registraUtente(@Valid @RequestBody Utente utente, BindingResult result) {
 
