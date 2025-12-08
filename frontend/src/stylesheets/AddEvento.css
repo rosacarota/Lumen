@@ -14,7 +14,6 @@
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
   width: 100%; height: 100%;
-  /* Sfondo leggermente colorato come richiesto dallo stile moderno */
   background-color: rgba(8, 120, 134, 0.2); 
   backdrop-filter: blur(8px); 
   z-index: 20000;
@@ -22,6 +21,7 @@
   padding: 20px;
   box-sizing: border-box;
   animation: ae-fadeIn 0.3s ease-out;
+  overflow-y: auto; /* Scroll abilitato sull'overlay */
 }
 
 /* Pagina normale (non modale) */
@@ -29,6 +29,7 @@
   display: flex; align-items: center; justify-content: center;
   min-height: 100vh; padding: 20px;
   background: linear-gradient(135deg, #F7FBFB 0%, #E9FBE7 100%);
+  overflow-y: auto;
 }
 
 /* --- CONTENITORE CARD --- */
@@ -36,16 +37,15 @@
   position: relative;
   width: 100%; max-width: 980px;
   display: flex;
-  /* Stondatura aumentata a 30px per matchare il Login */
   border-radius: 30px; 
   overflow: hidden;
-  /* Ombra identica al Login */
   box-shadow: 0 20px 60px rgba(8, 120, 134, 0.15); 
   background: white;
   min-height: 550px;
   max-height: 90vh;
   z-index: 20001;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  margin: auto; 
 }
 
 /* --- PULSANTE INDIETRO/CHIUDI --- */
@@ -57,7 +57,6 @@
   border-radius: 50%;
   border: none;
   background: white;
-  /* Ombra più morbida */
   box-shadow: 0 4px 12px rgba(8, 120, 134, 0.15);
   display: flex; align-items: center; justify-content: center;
   cursor: pointer;
@@ -111,9 +110,9 @@
 .ae-right-panel {
   flex: 1.2;
   background: white;
-  padding: 40px 60px; /* Padding aumentato per respiro */
+  padding: 40px 60px;
   display: flex; align-items: center; justify-content: center;
-  overflow-y: auto;
+  overflow-y: auto; 
   position: relative;
   z-index: 1;
 }
@@ -124,7 +123,7 @@
 
 .ae-form-container { width: 100%; max-width: 500px; }
 
-.ae-logo-section { margin-bottom: 30px; }
+.ae-logo-section { margin-top: 30px; }
 .ae-logo-wrapper { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
 .ae-logo-icon { width: 32px; height: 32px; color: #087886; }
 .ae-logo-text { font-size: 24px; font-weight: 700; color: #087886; }
@@ -140,12 +139,11 @@
   text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.9;
 }
 
-/* INPUTS - Stile Pillola (Match Login) */
+/* INPUTS */
 .ae-input-field, .ae-text-area {
   width: 100%; 
   padding: 12px 20px;
   border: 2px solid #E5E7EB; 
-  /* Cambio cruciale da 12px a 25px */
   border-radius: 25px; 
   font-size: 14px; outline: none;
   transition: all 0.3s ease; box-sizing: border-box;
@@ -156,7 +154,7 @@
 .ae-text-area { 
   min-height: 100px; 
   resize: vertical; 
-  border-radius: 20px; /* Textarea leggermente meno tonda */
+  border-radius: 20px;
 }
 
 .ae-input-field:focus, .ae-text-area:focus {
@@ -171,7 +169,7 @@
   width: 100%; height: 160px;
   border: 2px dashed #E5E7EB;
   background: #F9FAFB; 
-  border-radius: 20px; /* Coerente con lo stile */
+  border-radius: 20px;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer; overflow: hidden; position: relative;
   transition: all 0.3s ease;
@@ -200,7 +198,7 @@
 .ae-submit-button {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   padding: 14px 40px; border: none; 
-  border-radius: 25px; /* Pill shape */
+  border-radius: 25px;
   background: linear-gradient(135deg, #087886 0%, #7CCE6B 120%);
   color: white; font-size: 16px; font-weight: 600;
   cursor: pointer; 
@@ -213,25 +211,49 @@
   box-shadow: 0 8px 20px rgba(8, 120, 134, 0.4);
 }
 
-/* --- RESPONSIVE --- */
+/* --- RESPONSIVE FIX (Modificato) --- */
 @media (max-width: 968px) {
-  /* Adattamento stile login: una colonna */
+  
+  .ae-modal-overlay {
+    align-items: flex-start; 
+    padding: 10px; 
+  }
+
   .ae-container { 
     flex-direction: column;
     max-height: none; 
     height: auto;
     border-radius: 20px;
+    margin: auto 0; 
+    overflow: visible;
+    width: 100%; /* Assicura che il container occupi la larghezza disponibile */
   }
   
   .ae-left-panel { display: none; }
   
   .ae-right-panel { 
-    padding: 40px 24px; 
+    padding: 40px 20px; /* Padding laterale ridotto */
     width: 100%;
+    overflow-y: visible;
+    height: auto;
+    display: block; 
+    box-sizing: border-box; /* Assicura che il padding non sballi la width */
+  }
+
+  /* --- FIX CENTRATURA FORM --- */
+  .ae-form-container {
+    margin: 0 auto; /* Questo centra il blocco del form orizzontalmente */
+    width: 100%;    /* Occupa tutto lo spazio disponibile... */
+    max-width: 500px; /* ...fino a un massimo di 500px */
   }
   
   .ae-close-back-button {
     top: 15px; left: 15px;
     background: #F3F4F6;
+  }
+  
+  .ae-row-split {
+    flex-direction: column;
+    gap: 20px;
   }
 }
