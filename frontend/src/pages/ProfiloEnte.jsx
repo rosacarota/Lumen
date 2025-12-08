@@ -94,7 +94,7 @@ const ProfiloEnte = () => {
     try {
       const statoParam = activeTab === 'corso' ? 'attivi' : (activeTab === 'svolti' ? 'terminati' : 'futuri');
       // Passiamo l'email del profilo caricato per evitare di ripescarla dallo storage
-      const data = await getCronologiaEventi(statoParam, targetProfile?.email);
+      const data = await getCronologiaEventi(statoParam);
 
       const mapped = Array.isArray(data) ? data.map(ev => ({
         ...ev,
@@ -123,7 +123,8 @@ const ProfiloEnte = () => {
       const mapped = rawList.map(item => ({
         ...item,
         id_raccolta: item.id || item.idRaccolta || item.idRaccoltaFondi,
-        ente: targetProfile.nome
+        ente: targetProfile.nome,
+        enteFoto: targetProfile.immagine
       }));
       setLists(prev => ({ ...prev, raccolte: mapped }));
     } catch (e) { console.error(e); }
