@@ -134,9 +134,19 @@ const BachecaRacconti = ({ isOwner, targetEmail }) => {
                                     >
                                         <div className="story-item">
                                             <div className="story-avatar">
-                                                <span style={{ color: 'white', fontWeight: 'bold' }}>
-                                                    {story.authorName ? story.authorName.charAt(0).toUpperCase() : 'U'}
-                                                </span>
+                                                {story.authorAvatar ? (
+                                                    <img 
+                                                        src={story.authorAvatar.startsWith('data:image') 
+                                                            ? story.authorAvatar 
+                                                            : `data:image/jpeg;base64,${story.authorAvatar}`} 
+                                                        alt={story.authorName} 
+                                                        style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} 
+                                                    />
+                                                ) : (
+                                                    <span style={{ color: 'white', fontWeight: 'bold' }}>
+                                                        {story.authorName ? story.authorName.charAt(0).toUpperCase() : 'U'}
+                                                    </span>
+                                                )}
                                             </div>
                                             <div className="story-info">
                                                 <h4>{story.title}</h4>
@@ -146,7 +156,7 @@ const BachecaRacconti = ({ isOwner, targetEmail }) => {
                                                         : story.content}
                                                 </p>
                                                 <span style={{ fontSize: '0.75rem', color: '#999' }}>
-                                                    {new Date(story.createdAt).toLocaleDateString()} - {story.authorName}
+                                                    {new Date(story.createdAt).toLocaleDateString()}
                                                 </span>
                                             </div>
                                             {story.type === 'photo' && story.imageBase64 && (
