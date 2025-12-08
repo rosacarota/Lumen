@@ -34,7 +34,7 @@ public class Utente implements Serializable {
     }
 
     /**
-     * Email dell'utente, funge da identificativo univoco (Username).
+     * Email dell'utente, funge da identificativo univoco.
      */
     @Id
     @Column(name = "email", nullable = false, length = 255)
