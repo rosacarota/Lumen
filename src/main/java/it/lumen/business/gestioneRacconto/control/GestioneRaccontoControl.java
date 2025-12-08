@@ -159,7 +159,17 @@ try {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
+
+
         List<Racconto> lista = gestioneRaccontoService.listaRaccontiUtente(email);
+        try {
+            for  (Racconto racconto : lista) {
+                Utente utente = racconto.getUtente();
+                utente.setImmagine(autenticazioneService.recuperaImmagine(utente.getImmagine()));
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         return ResponseEntity.ok(lista);
 
