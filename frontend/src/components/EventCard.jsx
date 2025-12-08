@@ -10,11 +10,10 @@ import DettagliEvento from './DettagliEvento';
 import VisualizzaPartecipantiEvento from './VisualizzaPartecipantiEvento';
 import ModifyEvento from './ModifyEvento';
 
-import { 
-  iscrivitiEvento, 
-  rimuoviIscrizione, 
-  checkUserParticipation, 
-  fetchDatiUtente 
+import {
+  iscrivitiEvento,
+  rimuoviIscrizione,
+  checkUserParticipation
 } from '../services/PartecipazioneEventoService';
 
 import { rimuoviEvento } from '../services/EventoService';
@@ -23,7 +22,7 @@ import { rimuoviEvento } from '../services/EventoService';
 const API_BASE_URL = "http://localhost:8080";
 
 export default function EventCard({ event, showParticipate = true }) {
-  
+
   const navigate = useNavigate();
 
   const safeId = event.id || event.idEvento || event.id_evento;
@@ -34,7 +33,7 @@ export default function EventCard({ event, showParticipate = true }) {
   const startDate = event.startDate || event.dataInizio || event.data_inizio;
   const maxParticipants = event.maxParticipants || event.maxPartecipanti || event.maxpartecipanti;
   const image = event.image || event.immagine;
-  
+
   const organizerNameMapped = event.organizerName;
 
   const [isParticipating, setIsParticipating] = useState(false);
@@ -43,7 +42,7 @@ export default function EventCard({ event, showParticipate = true }) {
   const [userRole, setUserRole] = useState("");
   const [activeModal, setActiveModal] = useState(null);
 
-  const fullDate = startDate 
+  const fullDate = startDate
     ? new Date(startDate).toLocaleDateString('it-IT', { day: 'numeric', month: 'short', year: 'numeric' })
     : "Data da definire";
 
@@ -51,16 +50,16 @@ export default function EventCard({ event, showParticipate = true }) {
   const getOrganizerName = () => {
     if (organizerNameMapped) return organizerNameMapped;
     if (event.utente) {
-        if (typeof event.utente === 'object') return event.utente.nome || event.utente.email || "Ente";
-        return event.utente;
+      if (typeof event.utente === 'object') return event.utente.nome || event.utente.email || "Ente";
+      return event.utente;
     }
     if (event.ente) {
-        if (typeof event.ente === 'object') return event.ente.nome || event.ente.email || "Ente";
-        return event.ente;
+      if (typeof event.ente === 'object') return event.ente.nome || event.ente.email || "Ente";
+      return event.ente;
     }
     return "Ente";
   };
-  
+
   const displayOrganizerName = getOrganizerName();
 
   // ---------------------------------------------------------
@@ -71,10 +70,10 @@ export default function EventCard({ event, showParticipate = true }) {
   const getOrganizerImage = () => {
     if (event.organizerImage) return event.organizerImage;
     if (event.utente && typeof event.utente === 'object' && event.utente.immagine) {
-        return event.utente.immagine;
+      return event.utente.immagine;
     }
     if (event.ente && typeof event.ente === 'object' && event.ente.immagine) {
-        return event.ente.immagine;
+      return event.ente.immagine;
     }
     return null;
   };
@@ -90,26 +89,19 @@ export default function EventCard({ event, showParticipate = true }) {
   const rawImage = getOrganizerImage();
   const finalAvatarUrl = getAvatarUrl(rawImage);
   const avatarLetter = (displayOrganizerName || "E").charAt(0).toUpperCase();
-  
+
   // ---------------------------------------------------------
 
   const handleEnteClick = (e) => {
     e.stopPropagation();
-    localStorage.setItem("searchEmail", event.utente.email); 
+    localStorage.setItem("searchEmail", event.utente.email);
     navigate('/ProfiloEnte');
   };
 
   useEffect(() => {
     const initializeCard = async () => {
-      let ruoloFinale = "";
-      try {
-        const datiUtente = await fetchDatiUtente();
-        if (datiUtente && datiUtente.ruolo) ruoloFinale = datiUtente.ruolo;
-      } catch (e) {}
-
-      if (!ruoloFinale) {
-        ruoloFinale = localStorage.getItem("ruolo") || localStorage.getItem("userRole");
-      }
+      // Usiamo direttamente il localStorage invece di fare una fetch inutile
+      const ruoloFinale = localStorage.getItem("ruolo") || localStorage.getItem("userRole") || "";
       setUserRole(ruoloFinale);
 
       const isVolontario = ruoloFinale && ruoloFinale.toLowerCase() === "volontario";
@@ -128,18 +120,18 @@ export default function EventCard({ event, showParticipate = true }) {
   };
 
   const handleUpdateSuccess = () => {
-    setActiveModal(null); 
-    window.location.reload(); 
+    setActiveModal(null);
+    window.location.reload();
   };
 
   const handleEliminaEvento = async () => {
     if (window.confirm(`Sei sicuro di voler eliminare l'evento "${title}"?`)) {
-        try {
-            await rimuoviEvento(safeId);
-            window.location.reload();
-        } catch (error) {
-            alert("Errore: " + error.message);
-        }
+      try {
+        await rimuoviEvento(safeId);
+        window.location.reload();
+      } catch (error) {
+        alert("Errore: " + error.message);
+      }
     }
   };
 
@@ -163,8 +155,8 @@ export default function EventCard({ event, showParticipate = true }) {
       if (!idDaCancellare) {
         const status = await checkUserParticipation(safeId);
         if (status.isParticipating && status.idPartecipazione) {
-            idDaCancellare = status.idPartecipazione;
-            setParticipationId(status.idPartecipazione);
+          idDaCancellare = status.idPartecipazione;
+          setParticipationId(status.idPartecipazione);
         }
       }
 
@@ -214,17 +206,17 @@ export default function EventCard({ event, showParticipate = true }) {
             {/* QUI HO INSERITO IL CODICE JSX PER L'AVATAR */}
             <div className="event-avatar">
               {finalAvatarUrl ? (
-                <img 
-                  src={finalAvatarUrl} 
-                  alt={displayOrganizerName} 
+                <img
+                  src={finalAvatarUrl}
+                  alt={displayOrganizerName}
                   className="event-avatar-img"
-                  onError={(e) => { 
-                    e.target.style.display = 'none'; 
-                    e.target.nextSibling.style.display = 'flex'; 
-                  }} 
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.nextSibling.style.display = 'flex';
+                  }}
                 />
               ) : null}
-  
+
               {/* Fallback Lettera */}
               <span style={{ display: finalAvatarUrl ? 'none' : 'flex' }}>
                 {avatarLetter}
@@ -233,8 +225,8 @@ export default function EventCard({ event, showParticipate = true }) {
             {/* ----------------------------------------------------- */}
 
             <div className="event-meta">
-              <span 
-                className="event-brand" 
+              <span
+                className="event-brand"
                 onClick={handleEnteClick}
                 style={{ cursor: 'pointer' }}
                 title="Vai al profilo Ente"
@@ -248,8 +240,8 @@ export default function EventCard({ event, showParticipate = true }) {
           <div className="event-body">
             <h3 className="event-title">{title}</h3>
             <p className="event-description">
-              {description && description.length > 60 
-                ? description.substring(0, 60) + "..." 
+              {description && description.length > 60
+                ? description.substring(0, 60) + "..."
                 : description || "Nessuna descrizione."}
             </p>
           </div>
@@ -297,30 +289,30 @@ export default function EventCard({ event, showParticipate = true }) {
 
       {/* MODALI */}
       {activeModal === 'details' && (
-        <DettagliEvento 
-          evento={event.raw || event} 
+        <DettagliEvento
+          evento={event.raw || event}
           onClose={() => setActiveModal(null)}
           onOpenParticipants={() => setActiveModal('participants')}
           onElimina={handleEliminaEvento}
-          onModifica={handleOpenModifica} 
+          onModifica={handleOpenModifica}
         />
       )}
 
       {activeModal === 'participants' && (
-        <VisualizzaPartecipantiEvento 
+        <VisualizzaPartecipantiEvento
           idEvento={safeId}
-          titoloEvento={title} 
+          titoloEvento={title}
           onClose={() => setActiveModal(null)}
-          onBack={() => setActiveModal('details')} 
+          onBack={() => setActiveModal('details')}
         />
       )}
 
       {activeModal === 'edit' && (
         <ModifyEvento
-            isOpen={true}
-            onClose={() => setActiveModal('details')} 
-            eventToEdit={event.raw || event}         
-            onUpdate={handleUpdateSuccess}           
+          isOpen={true}
+          onClose={() => setActiveModal('details')}
+          eventToEdit={event.raw || event}
+          onUpdate={handleUpdateSuccess}
         />
       )}
     </>

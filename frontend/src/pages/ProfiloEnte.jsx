@@ -19,7 +19,7 @@ import DeleteStory from '../components/DeleteStory.jsx';
 import { fetchUserProfile, fetchUserPublicProfile } from '../services/UserServices.js';
 import { getCronologiaEventi } from '../services/EventoService.js';
 import { getRaccolteDiEnte, terminaRaccolta } from '../services/RaccoltaFondiService.js';
-import { fetchStories, addStory, editStory, deleteStory } from '../services/StoriesService.js';
+import { fetchStories, fetchFilteredStories, addStory, editStory, deleteStory } from '../services/StoriesService.js';
 
 import '../stylesheets/ProfiloEnte.css';
 
@@ -93,7 +93,8 @@ const ProfiloEnte = () => {
     setLoading(prev => ({ ...prev, eventi: true }));
     try {
       const statoParam = activeTab === 'corso' ? 'attivi' : (activeTab === 'svolti' ? 'terminati' : 'futuri');
-      const data = await getCronologiaEventi(statoParam);
+      // Passiamo l'email del profilo caricato per evitare di ripescarla dallo storage
+      const data = await getCronologiaEventi(statoParam, targetProfile?.email);
 
       const mapped = Array.isArray(data) ? data.map(ev => ({
         ...ev,
@@ -133,24 +134,25 @@ const ProfiloEnte = () => {
     if (!targetProfile) return;
     setLoading(prev => ({ ...prev, storie: true }));
     try {
-      const allStories = await fetchStories();
-      const filtered = allStories
-        .filter(s => String(s.authorName || "").trim().toLowerCase() === String(targetProfile.nome || "").trim().toLowerCase())
-        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      // Usiamo la fetch filtrata per email, passando quella del profilo
+      const filtered = await fetchFilteredStories(targetProfile.email);
       setLists(prev => ({ ...prev, storie: filtered }));
     } catch (e) { console.error(e); }
     finally { setLoading(prev => ({ ...prev, storie: false })); }
   };
 
+  // 1. Load Profile Data ONLY ONCE on mount
   useEffect(() => {
-    const init = async () => {
-      const profile = await loadData();
-      const target = profile || profileData;
-      if (target) {
-        await Promise.all([loadEventi(target), loadRaccolte(target), loadStorie(target)]);
-      }
-    };
-    init();
+    loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // 2. Load related data only when profile is available or changes identity
+  useEffect(() => {
+    if (profileData) {
+      // Parallel fetch of related entities
+      Promise.all([loadEventi(profileData), loadRaccolte(profileData), loadStorie(profileData)]);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profileData?.email]);
 
