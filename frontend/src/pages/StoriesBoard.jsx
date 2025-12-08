@@ -43,14 +43,10 @@ const StoriesBoard = () => {
         if (response.ok) {
           const userData = await response.json();
 
-          // --- DEBUG: VEDI COSA RESTITUISCE IL BACKEND ---
-          console.log("DATI UTENTE LOGGATO (datiUtente):", userData);
-
           // Cerchiamo l'email in vari campi possibili
           const emailTrovata = userData.email || userData.username || userData.mail;
 
           if (emailTrovata) {
-            console.log("Email utente impostata a:", emailTrovata);
             setCurrentUserEmail(emailTrovata);
           } else {
             console.warn("ATTENZIONE: Il backend non ha restituito un campo 'email' per l'utente loggato!");
@@ -68,7 +64,6 @@ const StoriesBoard = () => {
     try {
       setLoading(true);
       const data = await fetchStories();
-      console.log("STORIE SCARICATE:", data); // Debug storie
       setStories(data);
       setError(null);
     } catch (err) {
@@ -255,7 +250,7 @@ const StoriesBoard = () => {
                           </span>
                         </Link>
                         <span className="story-author-role">
-                          {story.authorRole || (story.utente ? "Utente" : "")}
+                          {getStoryOwnerRole(story) || "Utente"}
                         </span>
                       </div>
                       <span className={`story-type-pill type-${story.type}`}>
@@ -327,7 +322,7 @@ const StoriesBoard = () => {
                           {authorName}
                         </span>
                         <span className="sidebar-author-role">
-                          {story.authorRole || "Utente"}
+                          {getStoryOwnerRole(story) || "Utente"}
                         </span>
                       </div>
                     </div>
