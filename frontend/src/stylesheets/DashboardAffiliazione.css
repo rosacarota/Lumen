@@ -389,6 +389,17 @@
   animation: dashFadeUp 0.75s cubic-bezier(0.15, 0.85, 0.3, 1);
 }
 
+.dashaff-sidebar h3 {
+  animation: dashFadeUp 0.85s cubic-bezier(0.15, 0.85, 0.3, 1);
+  animation-delay: 0.05s;
+}
+
+.dashaff-sidebar .subtitle {
+  animation: dashFadeUp 0.85s cubic-bezier(0.15, 0.85, 0.3, 1);
+  animation-delay: 0.1s;
+}
+
+
 .dashaff-accept:active {
   box-shadow: 0 0 10px rgba(8, 120, 134, 0.4);
 }
