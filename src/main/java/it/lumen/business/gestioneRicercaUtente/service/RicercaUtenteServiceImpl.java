@@ -62,6 +62,7 @@ public class RicercaUtenteServiceImpl implements RicercaUtenteService {
         dto.setNome(utente.getNome());
         dto.setCognome(utente.getCognome());
         dto.setEmail(utente.getEmail());
+        dto.setRecapitoTelefonico(utente.getRecapitoTelefonico());
         dto.setRuolo(utente.getRuolo());
         dto.setAmbito(utente.getAmbito());
         dto.setDescrizione(utente.getDescrizione());
