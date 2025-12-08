@@ -502,26 +502,51 @@
   .edit-container {
     flex-direction: column;
     height: auto;
-    max-height: none;
+    max-height: 95vh;
+    /* Increase height usage on mobile */
     max-width: 100%;
-    border-radius: 20px;
-    margin: 10px;
+    margin: 0;
+    border-radius: 0;
+    /* Full screen feel on very small devices if needed, or keeping radius small */
+    overflow-y: auto;
+    /* Allow scrolling the entire container if needed */
   }
 
-  /* Su mobile nascondiamo il pannello gradiente per coerenza con il Login,
-     oppure lo mettiamo in cima come header ridotto */
+  /* Make the modal act more like a full page on mobile */
+  .modal-overlay {
+    padding: 0;
+    align-items: flex-end;
+    /* Slide up from bottom or just fill */
+  }
+
   .preview-panel {
     width: 100%;
-    padding: 30px 20px;
+    padding: 20px;
     height: auto;
-    min-height: 250px;
+    min-height: auto;
+    flex-shrink: 0;
   }
 
-  .form-panel {
+  .avatar-container1 {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 15px;
+  }
+
+  .preview-name {
+    font-size: 22px;
+  }
+
+  .edit-form-panel {
+    /* Fixed class name from .form-panel */
     width: 100%;
-    padding: 30px 20px;
+    padding: 25px 20px;
     height: auto;
     overflow-y: visible;
+  }
+
+  .page-title {
+    font-size: 22px;
   }
 
   .row-2,
@@ -533,5 +558,10 @@
   .blur-circle-1,
   .blur-circle-2 {
     transform: scale(0.6);
+  }
+
+  /* Buttons stack on very small screens */
+  .action-buttons {
+    flex-direction: column;
   }
 }

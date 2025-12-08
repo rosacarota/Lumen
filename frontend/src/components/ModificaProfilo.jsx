@@ -277,6 +277,7 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
                     value={formData.cap}
                     onChange={handleChange}
                     placeholder="CAP"
+                    className="input-field"
                   />
                 </div>
               </div>
@@ -307,18 +308,17 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
               </div>
 
               {/* --- CAMPO IMMAGINE (FILE UPLOAD) --- */}
+              {/* --- CAMPO IMMAGINE (FILE UPLOAD) --- */}
               <div className="input-group1">
-                <Camera className="input-icon" />
-
-                <label className="file-upload-label" style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-                  <span style={{ cursor: 'pointer', color: '#555', marginBottom: '5px', fontSize: '0.9rem' }}>
-                    {formData.immagine ? "Clicca qui per sostituire la foto profilo" : "Clicca qui per caricare una foto profilo"}
+                <label className="file-upload-label" style={{ display: 'flex', alignItems: 'center', width: '100%', cursor: 'pointer', gap: '10px', justifyContent: 'center' }}>
+                  <Camera size={20} color="#087886" />
+                  <span style={{ color: '#555', fontSize: '0.9rem', fontWeight: '500' }}>
+                    {formData.immagine ? "Sostituisci foto profilo" : "Carica foto profilo"}
                   </span>
                   <input
                     type="file"
                     accept="image/*"
                     onChange={handleImageUpload}
-                    className="input-field1"
                     style={{ display: 'none' }}
                   />
                 </label>
