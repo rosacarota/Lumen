@@ -113,4 +113,13 @@ public class RaccoltaFondiControl {
 
         return ResponseEntity.ok(raccoltaFondiService.ottieniRaccolteDiEnte(utente));
     }
+
+    @GetMapping("/ottieniRaccolteDiEnteEsterno")
+    public ResponseEntity<?> ottieniRaccolteDiEnteEsterno(@RequestParam String email) {
+        if (email == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("utente non trovato");
+
+        Utente utente = autenticazioneService.getUtente(email);
+
+        return ResponseEntity.ok(raccoltaFondiService.ottieniRaccolteDiEnte(utente));
+    }
 }
