@@ -2,9 +2,9 @@ import React, { useState, useEffect, useMemo } from 'react';
 import Swal from 'sweetalert2';
 import { Trash2, Plus, Pencil, Calendar, Image as ImageIcon } from 'lucide-react';
 
-import Navbar from '../components/Navbar.jsx';
+
 import InfoProfilo from '../components/InfoProfilo.jsx';
-import Footer from '../components/Footer.jsx';
+
 import EventCard from '../components/EventCard.jsx';
 import RaccoltaFondiCard from '../components/RaccoltaFondiCard.jsx';
 
@@ -204,7 +204,7 @@ const ProfiloEnte = () => {
 
   return (
     <div className="ente-page-wrapper">
-      <Navbar />
+
       <InfoProfilo userData={profileData} isOwner={isOwner} onUpdate={loadData} />
       <div className="main-container">
         <section className="event-section">
@@ -304,7 +304,7 @@ const ProfiloEnte = () => {
           </div>
         </section>
       </div>
-      <Footer />
+
 
       {isOwner && userRole === 'ente' && modals.addEvento && <AddEvento onBack={() => toggleModal('addEvento', false)} onSubmit={() => { toggleModal('addEvento', false); loadEventi(profileData); }} isModal={true} enteId={profileData?.id} />}
       {isOwner && userRole === 'ente' && modals.raccolta && <ModalWrapper onClose={() => toggleModal('raccolta', false)}><AddRaccoltaFondi enteLogged={profileData} onClose={() => { toggleModal('raccolta', false); loadRaccolte(profileData); }} isModal={true} /></ModalWrapper>}

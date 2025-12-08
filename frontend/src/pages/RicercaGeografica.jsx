@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+
 import VisualizzaRicercaGeografica from '../components/VisualizzaRicercaGeografica';
 import { Users, HeartHandshake, GraduationCap, Leaf, HeartPulse, Siren, Loader2 } from 'lucide-react';
 import '../stylesheets/RicercaGeografica.css';
@@ -44,7 +43,7 @@ const RicercaGeografica = () => {
 
     return (
         <div className="geo-page">
-            <Navbar />
+
 
             <div className="geo-hero">
                 <div className="geo-hero-inner">
@@ -133,12 +132,12 @@ const RicercaGeografica = () => {
 
                     {/* Logica di rendering condizionale per Loading, Errori e Risultati */}
                     {isLoading ? (
-                        <div className="geo-loading" style={{textAlign: 'center', padding: '3rem'}}>
-                            <Loader2 className="animate-spin" size={48} style={{margin: '0 auto', color: 'var(--primary-color)'}}/>
-                            <p style={{marginTop: '1rem', color: '#666'}}>Ricerca profili compatibili in corso...</p>
+                        <div className="geo-loading" style={{ textAlign: 'center', padding: '3rem' }}>
+                            <Loader2 className="animate-spin" size={48} style={{ margin: '0 auto', color: 'var(--primary-color)' }} />
+                            <p style={{ marginTop: '1rem', color: '#666' }}>Ricerca profili compatibili in corso...</p>
                         </div>
                     ) : error ? (
-                        <div className="geo-error" style={{textAlign: 'center', padding: '2rem', color: '#ef4444'}}>
+                        <div className="geo-error" style={{ textAlign: 'center', padding: '2rem', color: '#ef4444' }}>
                             <p>{error}</p>
                         </div>
                     ) : filteredResults.length > 0 ? (
@@ -167,7 +166,7 @@ const RicercaGeografica = () => {
 
             </div>
 
-            <Footer />
+
         </div>
     );
 };

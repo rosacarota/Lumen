@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-import '../stylesheets/DashboardRichiesteServizio.css'; 
+
+import '../stylesheets/DashboardRichiesteServizio.css';
 import {
   Check, X, Mail, Phone, Calendar, MapPin, User, Loader2, FileText
 } from "lucide-react";
@@ -10,10 +9,10 @@ import {
 import Swal from 'sweetalert2';
 
 // Importiamo le funzioni dal tuo Service
-import { 
-  getRichiesteServizio, 
-  accettaRichiestaServizio, 
-  rifiutaRichiestaServizio 
+import {
+  getRichiesteServizio,
+  accettaRichiestaServizio,
+  rifiutaRichiestaServizio
 } from "../services/RichiestaServizioService";
 
 export default function DashboardRichiesteServizio() {
@@ -72,7 +71,7 @@ export default function DashboardRichiesteServizio() {
 
         // Chiamata API (Usiamo la funzione di accettazione per confermare/chiudere)
         await accettaRichiestaServizio(req);
-        
+
         // Aggiorniamo stato locale (Rimuove la card dalla lista)
         setRichieste(prev => prev.filter(r => r.idRichiestaServizio !== req.idRichiestaServizio));
 
@@ -151,8 +150,8 @@ export default function DashboardRichiesteServizio() {
 
   return (
     <div className="dash-req-page">
-      <Navbar /> 
-      
+
+
       <div className="dash-req-container">
         {/* HEADER */}
         <div className="dash-req-header">
@@ -162,7 +161,7 @@ export default function DashboardRichiesteServizio() {
 
         {/* AREA SCROLLABILE */}
         <div className="dash-req-scroll-area">
-          
+
           {loading ? (
             <div className="dash-req-loading">
               <Loader2 className="animate-spin" size={40} />
@@ -180,7 +179,7 @@ export default function DashboardRichiesteServizio() {
             <div className="dash-req-grid">
               {richieste.map((req) => (
                 <div className="req-card" key={req.idRichiestaServizio}>
-                  
+
                   {/* HEADER CARD */}
                   <div className="req-card-header">
                     <div className="req-avatar">
@@ -195,8 +194,8 @@ export default function DashboardRichiesteServizio() {
                       </div>
                     </div>
                     <div className="req-date-badge">
-                       <Calendar size={12} style={{ marginRight: '4px' }}/>
-                       {formatDate(req.dataRichiesta)}
+                      <Calendar size={12} style={{ marginRight: '4px' }} />
+                      {formatDate(req.dataRichiesta)}
                     </div>
                   </div>
 
@@ -206,19 +205,19 @@ export default function DashboardRichiesteServizio() {
                       <FileText size={16} /> <span>Dettagli Richiesta</span>
                     </div>
                     <p className="req-text">{req.testo}</p>
-                    
+
                     <div className="req-divider"></div>
 
                     <div className="req-contacts">
                       <div className="req-contact-item">
-                        <Mail size={16} /> 
+                        <Mail size={16} />
                         <a href={`mailto:${req.beneficiario?.email}`}>
                           {req.beneficiario?.email || "Email non disponibile"}
                         </a>
                       </div>
                       {req.beneficiario?.recapitoTelefonico && (
                         <div className="req-contact-item">
-                          <Phone size={16} /> 
+                          <Phone size={16} />
                           <a href={`tel:${req.beneficiario.recapitoTelefonico}`}>
                             {req.beneficiario.recapitoTelefonico}
                           </a>
@@ -229,14 +228,14 @@ export default function DashboardRichiesteServizio() {
 
                   {/* FOOTER CARD */}
                   <div className="req-card-footer">
-                     {/* Passiamo l'intero oggetto 'req' alle funzioni */}
-                     <button className="btn-reject" onClick={() => handleRifiuta(req)}>
-                       <X size={18} /> Rifiuta
-                     </button>
-                     {/* Bottone modificato in TERMINA */}
-                     <button className="btn-accept" onClick={() => handleTermina(req)}>
-                       <Check size={18} /> Accetta
-                     </button>
+                    {/* Passiamo l'intero oggetto 'req' alle funzioni */}
+                    <button className="btn-reject" onClick={() => handleRifiuta(req)}>
+                      <X size={18} /> Rifiuta
+                    </button>
+                    {/* Bottone modificato in TERMINA */}
+                    <button className="btn-accept" onClick={() => handleTermina(req)}>
+                      <Check size={18} /> Accetta
+                    </button>
                   </div>
                 </div>
               ))}
@@ -245,7 +244,7 @@ export default function DashboardRichiesteServizio() {
         </div>
       </div>
 
-      <Footer />
+
     </div>
   );
 }

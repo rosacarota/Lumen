@@ -3,8 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { User, Lock, Mail, Building2, Heart, Users, HeartHandshake, Pencil, Camera, Eye, EyeOff, Phone, AlertCircle } from 'lucide-react';
 import { registerUser, loginUser } from '../services/loginService';
 import { validateForm } from '../utils/loginValidation';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+
 import '../stylesheets/LoginPage.css';
 
 export default function LoginPage() {
@@ -336,7 +335,7 @@ export default function LoginPage() {
 
   return (
     <div className="login-page-wrapper">
-      <Navbar />
+
       <div className="login-page">
         <div className="login-container hide-scrollbar" style={{ height: containerHeight }}>
 
@@ -582,7 +581,7 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
-      <Footer />
+
     </div>
   );
 }

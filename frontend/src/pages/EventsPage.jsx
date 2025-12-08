@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import '../stylesheets/EventsPage.css';
-import Navbar from '../components/Navbar';
+
 import EventCard from '../components/EventCard';
-import Footer from '../components/Footer';
+
 import Swal from 'sweetalert2';
 
 // Servizi
@@ -38,7 +38,7 @@ export default function EventsPage() {
   return (
     // USIAMO LA CLASSE DEL NUOVO CSS
     <div className="events-page-wrapper">
-      <Navbar />
+
 
       <div className="main-container">
         <div className="content-box">
@@ -74,7 +74,7 @@ export default function EventsPage() {
       </div>
 
       {/* IL FOOTER ORA È DENTRO IL WRAPPER, COSÌ VIENE SPINTO GIÙ */}
-      <Footer />
+
     </div>
   );
 }

@@ -1,6 +1,8 @@
 // src/App.jsx
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 import LoginPage from './pages/LoginPage';
 import Home from './pages/Home';
 import EventsPage from './pages/EventsPage';
@@ -17,10 +19,7 @@ import RisultatiRicerca from './pages/RisultatiRicerca';
 function App() {
   return (
     <div className="App">
-
-
-
-
+      <Navbar />
       {/* ROUTING se volete modificare/aggiungere la vostra pagina cambiate il path e il component */}
       <Routes>
         {/* Rotta di default: Va alla home */}
@@ -46,6 +45,7 @@ function App() {
         {/* Qualsiasi altro URL porta al Login */}
         <Route path="*" element={<Navigate to="/home" replace />} />
       </Routes>
+      <Footer />
     </div>
   );
 }

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import Navbar from '../components/Navbar';
+
 import InfoProfilo from '../components/InfoProfilo';
 import BachecaRacconti from '../components/BachecaRacconti';
 import CronologiaEventi from '../components/CronologiaEventi';
-import Footer from '../components/Footer';
+
 import '../stylesheets/ProfiloVolontario.css';
 
 import { fetchUserProfile, fetchUserPublicProfile } from '../services/UserServices';
@@ -64,7 +64,7 @@ const ProfiloVolontario = () => {
 
     return (
         <div className="voluntary-page-wrapper">
-            <Navbar />
+
             <div className="voluntary-container">
 
                 <section className="profile-section-v">
@@ -85,7 +85,7 @@ const ProfiloVolontario = () => {
                     </section>
                 </div>
             </div>
-            <Footer />
+
         </div>
     );
 };

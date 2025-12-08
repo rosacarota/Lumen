@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+
 import "../stylesheets/DashboardAffiliazione.css";
 import {
   Trash2,
@@ -140,7 +139,7 @@ export default function DashboardAffiliazione() {
 
   return (
     <div className="dashaff-page">
-      <Navbar />
+
 
       <div className="dashaff-container">
 
@@ -204,10 +203,10 @@ export default function DashboardAffiliazione() {
                           <h3>{v.nome} {v.cognome}</h3>
                           <div className="dashaff-badges">
                             {v.ambito && (
-                              <span><Briefcase size={14}/> {v.ambito}</span>
+                              <span><Briefcase size={14} /> {v.ambito}</span>
                             )}
                             {v.citta && (
-                              <span className="gray"><MapPin size={14}/> {v.citta}</span>
+                              <span className="gray"><MapPin size={14} /> {v.citta}</span>
                             )}
                           </div>
                         </div>
@@ -216,7 +215,7 @@ export default function DashboardAffiliazione() {
                           className="dashaff-remove"
                           onClick={() => handleRemove(v.idAffiliazione)}
                         >
-                          <Trash2 size={16}/> Rimuovi
+                          <Trash2 size={16} /> Rimuovi
                         </button>
                       </div>
                     ))}
@@ -230,7 +229,7 @@ export default function DashboardAffiliazione() {
               <>
                 {loadingRichieste ? (
                   <div className="dashaff-loading">
-                    <Loader2 className="animate-spin" size={40}/>
+                    <Loader2 className="animate-spin" size={40} />
                   </div>
                 ) : errorRichieste ? (
                   <div className="dashaff-error">{errorRichieste}</div>
@@ -242,7 +241,7 @@ export default function DashboardAffiliazione() {
                           {r.immagine ? (
                             <img src={r.immagine} alt="" />
                           ) : (
-                            <User size={24} color="#087886"/>
+                            <User size={24} color="#087886" />
                           )}
                         </div>
 
@@ -251,7 +250,7 @@ export default function DashboardAffiliazione() {
                           <p className="dashaff-desc">{r.descrizione}</p>
                           {r.ambito && (
                             <div className="dashaff-badges">
-                              <span><Briefcase size={14}/> {r.ambito}</span>
+                              <span><Briefcase size={14} /> {r.ambito}</span>
                             </div>
                           )}
                         </div>
@@ -261,14 +260,14 @@ export default function DashboardAffiliazione() {
                             className="dashaff-accept"
                             onClick={() => handleAccettaRichiesta(r.idAffiliazione)}
                           >
-                            <Check size={16}/> Accetta
+                            <Check size={16} /> Accetta
                           </button>
 
                           <button
                             className="dashaff-remove"
                             onClick={() => handleRifiutaRichiesta(r.idAffiliazione)}
                           >
-                            <Trash2 size={16}/> Rifiuta
+                            <Trash2 size={16} /> Rifiuta
                           </button>
                         </div>
                       </div>
@@ -288,7 +287,7 @@ export default function DashboardAffiliazione() {
 
               {loadingRichieste ? (
                 <div className="dashaff-loading small">
-                  <Loader2 className="animate-spin" size={30}/>
+                  <Loader2 className="animate-spin" size={30} />
                 </div>
               ) : ultimeRichieste.length > 0 ? (
                 <div className="dashaff-sidebar-list">
@@ -298,14 +297,14 @@ export default function DashboardAffiliazione() {
                         {r.immagine ? (
                           <img src={r.immagine} alt="" />
                         ) : (
-                          <User size={18} color="#087886"/>
+                          <User size={18} color="#087886" />
                         )}
                       </div>
 
                       <div className="dashaff-sidebar-info">
                         <strong>{r.nome} {r.cognome}</strong>
                         <div className="dashaff-sidebar-meta">
-                          <Clock size={12}/> In attesa
+                          <Clock size={12} /> In attesa
                         </div>
                       </div>
                     </div>
@@ -328,7 +327,7 @@ export default function DashboardAffiliazione() {
 
       </div>
 
-      <Footer />
+
     </div>
   );
 }

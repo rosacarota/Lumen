@@ -1,7 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+
 import { ArrowRight, Heart, Users, ShieldCheck, BookOpen } from 'lucide-react';
 import '../stylesheets/Home.css';
 
@@ -31,7 +30,7 @@ const Home = () => {
   return (
     <>
       <div className="page-wrapper">
-        <Navbar />
+
         <section className="hero-section">
           <div className="hero-container">
 
@@ -138,7 +137,7 @@ const Home = () => {
         </section>
 
       </div>
-      <Footer />
+
     </>
   );
 };

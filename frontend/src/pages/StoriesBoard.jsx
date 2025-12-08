@@ -4,8 +4,7 @@ import AddStory from "../components/AddStory";
 import EditStory from "../components/EditStory";
 import DeleteStory from "../components/DeleteStory";
 import "../stylesheets/StoriesBoard.css";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+
 
 import {
   fetchStories,
@@ -164,7 +163,7 @@ const StoriesBoard = () => {
 
   return (
     <>
-      <Navbar />
+
 
       <div className="stories-page" id="storie">
         <div className="stories-container">
@@ -375,7 +374,7 @@ const StoriesBoard = () => {
         />
       )}
 
-      <Footer />
+
     </>
   );
 };

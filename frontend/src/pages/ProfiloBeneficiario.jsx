@@ -1,8 +1,8 @@
 import React from 'react';
-import Navbar from '../components/Navbar';
+
 import InfoProfilo from '../components/InfoProfilo';
 import BachecaRacconti from '../components/BachecaRacconti';
-import Footer from '../components/Footer';
+
 import '../stylesheets/ProfiloBeneficiario.css';
 
 const ProfiloBeneficiario = () => {
@@ -14,7 +14,7 @@ const ProfiloBeneficiario = () => {
 
   return (
     <div className="beneficiary-page-wrapper">
-      <Navbar />
+
       <div className="beneficiary-container">
         <section className="profile-section-b">
           <InfoProfilo />
@@ -23,7 +23,7 @@ const ProfiloBeneficiario = () => {
           <BachecaRacconti isOwner={isOwner} targetEmail={targetEmail} />
         </section>
       </div>
-      <Footer />
+
     </div>
   );
 };

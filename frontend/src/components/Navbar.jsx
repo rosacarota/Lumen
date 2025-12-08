@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Search, User, ChevronDown, LogOut, Settings, FileText, Briefcase, Users, Calendar, Heart, LogIn, Earth } from 'lucide-react';
 import '../stylesheets/Navbar.css';
 import LogoLumen from '../assets/logo-lumen.png';
@@ -14,6 +14,8 @@ const Navbar = () => {
   });
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const lastTokenRef = useRef(null);
 
   const navItems = [
     { label: 'Chi siamo', path: '/chisiamo' },
@@ -28,6 +30,8 @@ const Navbar = () => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
+
+    // Helper to fetch data
     const fetchUserDirectly = async () => {
       try {
         const response = await fetch(`http://localhost:8080/account/datiUtente?token=${token}`, {
@@ -60,10 +64,23 @@ const Navbar = () => {
       }
     };
 
-    if (token) {
-      fetchUserDirectly();
+    if (token !== lastTokenRef.current) {
+      lastTokenRef.current = token;
+
+      if (token) {
+        fetchUserDirectly();
+      } else {
+        // Token removed -> Reset to Guest
+        setCurrentUser({
+          username: 'Utente',
+          role: 'guest',
+          immagine: null,
+          isLoggedIn: false
+        });
+        localStorage.removeItem('ruolo');
+      }
     }
-  }, []);
+  }, [location.pathname]);
 
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
@@ -143,7 +160,7 @@ const Navbar = () => {
               )}
               <ChevronDown size={16} className={`arrow-icon ${isDropdownOpen ? 'rotated' : ''}`} />
             </div>
-            {isDropdownOpen && <DropdownMenu role={currentUser.role} onLogout={handleLogout} />}
+            {isDropdownOpen && <DropdownMenu role={currentUser.role} onLogout={handleLogout} onClose={() => setIsDropdownOpen(false)} />}
           </div>
         </div>
       </nav>
@@ -151,7 +168,7 @@ const Navbar = () => {
   );
 };
 
-const DropdownMenu = ({ role, onLogout }) => {
+const DropdownMenu = ({ role, onLogout, onClose }) => {
   const safeRole = role ? role.toLowerCase() : 'guest';
 
   // Helper to handle navigation to personal area ensuring searchEmail is reset to self
@@ -179,6 +196,7 @@ const DropdownMenu = ({ role, onLogout }) => {
           { label: 'Logout', icon: <LogOut size={16} />, action: onLogout, type: 'danger' }
         ];
       case 'guest':
+        return [{ label: 'Login', icon: <LogIn size={16} />, to: '/login' }];
       default:
         return [{ label: 'Login', icon: <LogIn size={16} />, to: '/login' }];
     }
@@ -201,6 +219,7 @@ const DropdownMenu = ({ role, onLogout }) => {
             onClick={(e) => {
               e.stopPropagation();
               if (item.onClick) item.onClick();
+              if (onClose) onClose();
             }}
           >
             <span className="row-icon">{item.icon}</span>{item.label}

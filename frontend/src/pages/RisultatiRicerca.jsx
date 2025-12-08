@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+
 import { MapPin, Briefcase, User, Building2, ArrowRight, Heart, Map, SearchX } from 'lucide-react';
 import '../stylesheets/RisultatiRicerca.css';
 import RicercaService from '../services/RicercaService.js';
@@ -67,7 +66,7 @@ const SearchResults = () => {
 
   return (
     <div className="sr-page-wrapper">
-      <Navbar />
+
 
       <main className="sr-main-content">
         <div className="sr-container">
@@ -196,7 +195,7 @@ const SearchResults = () => {
         </div>
       </main>
 
-      <Footer />
+
     </div>
   );
 };
