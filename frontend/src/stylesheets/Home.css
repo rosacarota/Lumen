@@ -52,7 +52,7 @@
 
 .hero-badge {
   display: inline-block;
-  background-color: var(--bg-soft);
+  background-color: #E9FBE7;
   color: var(--first-color);
   font-size: 0.85rem;
   font-weight: 700;
@@ -302,7 +302,7 @@
 
 /* SFONDO GRIGIO DISTINTO */
 .stories-section {
-  background-color: var(--bg-soft); 
+  background-color: #E9FBE7; 
 }
 
 /* SFONDO BIANCO */
