@@ -116,33 +116,70 @@
   animation: fadeInUp 0.6s ease-out;
 }
 
-.back-button {
-  align-self: flex-start;
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: white;
-  padding: 10px 20px;
-  border-radius: 25px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: auto;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(4px);
+.back-button-arrow {
+  color: #087886;
 }
 
 .back-button:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: translateX(-3px);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+  background: #ffffff;
+}
+
+.back-button {
+    position: absolute;
+    top: -15px;
+    left: -15px;
+    z-index: 20005;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
 /* Avatar Styling */
 .avatar-container {
   position: relative;
-  margin-bottom: 24px;
+  margin-bottom: 54px;
+}
+
+.avatar-container1 {
+  /* Imposta dimensioni fisse per creare il cerchio */
+  width: 160px;
+  height: 160px;
+
+  /* CENTRATURA: Questo porta il contenitore al centro orizzontalmente */
+  margin: 0 auto; 
+  margin-top: 210px; /* Il tuo margine inferiore desiderato */
+
+  /* Stile del cerchio (Bordo e Ombra) */
+  position: absolute;
+  border-radius: 50%;
+  border: 4px solid #FFFFFF;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  background-color: white;
+
+  /* Centratura del contenuto interno (l'immagine) */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden; /* Taglia l'immagine se sfora */
+  z-index: 5;
+}
+
+.avatar-image1 {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Mantiene le proporzioni riempiendo il cerchio */
+  display: block;
+  border-radius: 50%; /* Sicurezza extra per arrotondare l'immagine */
 }
 
 .avatar-wrapper {
@@ -162,6 +199,8 @@
   object-fit: cover;
   border: 4px solid white; 
 }
+
+
 
 .camera-button {
   position: absolute;
@@ -183,7 +222,7 @@
 .preview-name {
   font-size: 28px;
   font-weight: 700;
-  margin-bottom: 12px; 
+  margin-top: 390px; 
   text-align: center;
   text-shadow: 0 2px 20px rgba(0, 0, 0, 0.15);
 }
@@ -199,6 +238,22 @@
   margin-bottom: 24px; 
   font-weight: 700;
   backdrop-filter: blur(4px);
+  position: absolute;
+}
+
+.input-group1 {
+  border: 2px dashed #4aafb8;
+  background: #f0faff;
+  border-radius: 12px;
+  padding: 15px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.input-group1:hover {
+  background: #e9fbe7;
+  border-color: #7cce6b;
 }
 
 .preview-bio {
@@ -206,18 +261,20 @@
   line-height: 1.6;
   text-align: center; 
   opacity: 0.95; 
+  position: absolute;
+  bottom: 265px;
   max-width: 90%;
   font-style: italic;
 }
 
 /* Right Panel (Stile .form-panel) */
-.form-panel {
+.edit-form-panel {
   width: 60%;
   background: white;
   padding: 40px 50px;
   overflow-y: auto;
   height: 100%;
-  position: relative;
+  position: relative; 
   z-index: 1;
 }
 
