@@ -347,14 +347,34 @@
   width: 100%;
 }
 
-.back-button {
-  background: none;
-  border: none;
-  color: #6B7280;
+/* Sostituisci la vecchia classe .back-button1 con questa */
+
+.modern-back-button {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: white;
+  border: 1px solid #E5E7EB; /* Grigio chiaro sottile */
+  color: #6B7280; /* Grigio icona */
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  font-size: 14px;
-  margin-bottom: 16px;
-  transition: color 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-left: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04); /* Ombra leggerissima */
+}
+
+.modern-back-button:hover {
+  border-color: #087886; /* Il tuo colore primario */
+  color: #087886;
+  background: #F0FDFA; /* Sfondo chiarissimo teal */
+  transform: translateX(-4px); /* Movimento fluido verso sinistra */
+  box-shadow: 0 4px 12px rgba(8, 120, 134, 0.15);
+}
+
+.modern-back-button:active {
+  transform: translateX(-4px) scale(0.95);
 }
 
 /* Avatar */

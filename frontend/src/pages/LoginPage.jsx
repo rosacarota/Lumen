@@ -1,6 +1,10 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Lock, Mail, Building2, Heart, Users, HeartHandshake, Pencil, Camera, Eye, EyeOff, Phone, AlertCircle } from 'lucide-react';
+// Aggiungi ArrowLeft alla lista degli import
+import { 
+  User, Lock, Mail, Building2, Heart, Users, HeartHandshake, 
+  Pencil, Camera, Eye, EyeOff, Phone, AlertCircle, ArrowLeft 
+} from 'lucide-react';
 import { registerUser, loginUser } from '../services/loginService';
 import { validateForm } from '../utils/loginValidation';
 
@@ -406,7 +410,13 @@ export default function LoginPage() {
 
                 ) : !isLogin && userType && step === 1 ? (
                   <div className="registration-form">
-                    <button onClick={() => { setUserType(null); setErrors({}); setApiError(""); }} className="back-button">← Indietro</button>
+                                        <button 
+                      onClick={() => { setUserType(null); setErrors({}); setApiError(""); }} 
+                      className="modern-back-button"
+                      aria-label="Torna indietro"
+                    >
+                      <ArrowLeft size={20} strokeWidth={2.5} />
+                    </button>
                     <h2 className="form-title">Registrazione {userType.charAt(0).toUpperCase() + userType.slice(1)}</h2>
                     {renderRegistrationFields()}
                     <button onClick={handleNextStep} className="submit-button">CONTINUA</button>
@@ -414,7 +424,7 @@ export default function LoginPage() {
 
                 ) : !isLogin && userType && step === 2 ? (
                   <div className="registration-form">
-                    <h2 className="form-title">Personalizzazione</h2>
+                    <h2 className="form-title">Personalizzazione del profilo</h2>
 
                     <div className="image-upload-container">
                       <div className="image-preview-wrapper">
