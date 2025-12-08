@@ -58,7 +58,7 @@
 }
 
 .dash-req-header h1 {
-  font-size: 34px;
+  font-size: 2rem;
   font-weight: 700;
   color: var(--first-color); /* Turchese scuro */
   margin-bottom: 8px;
@@ -69,7 +69,7 @@
 .dash-req-header p {
   text-align: left;
   color: var(--text-gray);
-  font-size: 16px;
+  font-size: 1rem;
   max-width: 600px;
 
 }

@@ -183,7 +183,11 @@ export default function DashboardRichiesteServizio() {
                   {/* HEADER CARD */}
                   <div className="req-card-header">
                     <div className="req-avatar">
-                      {req.beneficiario?.img}
+                      <img
+              src={req.beneficiario.immagine
+              }
+              style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
+            />
                     </div>
                     <div className="req-user-info">
                       <h3>{req.beneficiario?.nome} {req.beneficiario?.cognome}</h3>
