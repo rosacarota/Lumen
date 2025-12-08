@@ -167,10 +167,10 @@ const BachecaRacconti = ({ isOwner, targetEmail }) => {
                                         </div>
                                     </Link>
                                     {isOwner && (
-                                        <div className="story-card-footer">
+                                        <div className="story-cards-footer">
                                             <button
                                                 type="button"
-                                                className="story-edit-button"
+                                                className="story-cards-edit-button"
                                                 onClick={() => setEditingStory(story)}
                                             >
                                                 Modifica
@@ -178,7 +178,7 @@ const BachecaRacconti = ({ isOwner, targetEmail }) => {
 
                                             <button
                                                 type="button"
-                                                className="story-edit-button delete-btn"
+                                                className="story-cards-delete-btn"
                                                 onClick={() => setStoryToDelete(story)}
                                             >
                                                 Elimina
