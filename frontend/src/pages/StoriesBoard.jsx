@@ -154,7 +154,8 @@ const StoriesBoard = () => {
   };
 
 
-  const latestStories = stories.slice(0, 3);
+  const latestStories = [...stories].reverse().slice(0, 3);
+
 
   return (
     <>
@@ -190,7 +191,7 @@ const StoriesBoard = () => {
 
           <div className="stories-layout">
             <section className="stories-main">
-              {stories.map((story) => {
+              {[...stories].reverse().map((story) => {
                 const authorName = getAuthorName(story);
                 const storyOwnerRole = getStoryOwnerRole(story);
                 const myEmail = currentUserEmail ? currentUserEmail.trim().toLowerCase() : "";
