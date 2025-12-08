@@ -83,9 +83,7 @@ export default function RaccoltaFondiCard({
       <div className="fund-body">
         <h3 className="fund-title">{titolo || "Titolo Raccolta"}</h3>
         <p className="fund-description">
-          {descrizione
-            ? (descrizione.length > 70 ? descrizione.substring(0, 70) + '...' : descrizione)
-            : "Sostieni questa causa ..."}
+          {descrizione || "Sostieni questa causa ..."}
         </p>
       </div>
 
