@@ -154,8 +154,6 @@ public class GestioneEventoControl {
 
     @GetMapping("/cronologiaEventi")
     public ResponseEntity<List<Evento>> cronologiaEvento(@RequestParam Map<String, String> param, @RequestParam String token) {
-
-
         String email= util.extractEmail(token);
 
         if (email == null) {
@@ -179,7 +177,32 @@ public class GestioneEventoControl {
         }
 
         return ResponseEntity.ok(listaEventi);
+    }
 
+    @GetMapping("/cronologiaEventiEnteEsterno")
+    public ResponseEntity<List<Evento>> cronologiaEventiEsterni(@RequestParam Map<String, String> param, @RequestParam String email) {
+
+        if (email == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        String stato = param.get("stato");
+        List<Evento> listaEventi = gestioneEventoService.cronologiaEventi(email, stato);
+
+
+        if (listaEventi == null || listaEventi.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        for (Evento evento : listaEventi) {
+            try {
+                evento.setImmagine(gestioneEventoService.recuperaImmagine(evento.getImmagine()));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return ResponseEntity.ok(listaEventi);
     }
 
     @GetMapping("/tuttiGliEventi")
