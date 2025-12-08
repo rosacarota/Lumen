@@ -254,9 +254,17 @@ const StoriesBoard = () => {
                           {getStoryOwnerRole(story) || "Utente"}
                         </span>
                       </div>
-                      <span className={`story-type-pill type-${story.type}`}>
-                        {typeLabel(story.type)}
-                      </span>
+
+                      <div style={{ marginLeft: "auto", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "4px" }}>
+                        <span className={`story-type-pill type-${story.type}`} style={{ margin: 0 }}>
+                          {typeLabel(story.type)}
+                        </span>
+                        {story.createdAt && (
+                          <span className="story-date">
+                            {new Date(story.createdAt).toLocaleDateString("it-IT")}
+                          </span>
+                        )}
+                      </div>
                     </div>
 
                     <h2 className="story-card-title">{story.titolo || story.title}</h2>
