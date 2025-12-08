@@ -18,36 +18,56 @@ import java.sql.Date;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+/**
+ * Entity che rappresenta un racconto o testimonianza pubblicato da un utente.
+ */
 public class Racconto {
 
+    /**
+     * Identificativo univoco del racconto.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "IDRacconto")
     private Integer idRacconto;
 
+    /**
+     * Titolo del racconto.
+     */
     @Column(name = "titolo", nullable = false, length = 255)
     @NotBlank(message = "Il titolo non può essere vuoto")
     @Size(max = 255, message = "Il titolo deve massimo di 255 caratteri")
     @Pattern(regexp = "^[a-zA-Z0-9\\s,.!?'-]{0,255}$", message = "Il titolo contiene caratteri non validi")
     private String titolo;
 
+    /**
+     * Contenuto testuale del racconto.
+     */
     @Column(name = "descrizione", nullable = false, columnDefinition = "TEXT")
     @NotBlank(message = "La descrizione non può essere vuota")
     private String descrizione;
 
+    /**
+     * Data di pubblicazione del racconto.
+     */
     @Column(name = "datapubblicazione", nullable = false)
-   // @NotNull(message = "La data di creazione non può essere nulla")
+    // @NotNull(message = "La data di creazione non può essere nulla")
     private Date dataPubblicazione;
 
+    /**
+     * Utente che ha scritto il racconto.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "utente")
-    @JsonIgnoreProperties({"indirizzo", "password", "ambito", "recapitoTelefonico", "descrizione", "hibernateLazyInitializer"})
+    @JsonIgnoreProperties({ "indirizzo", "password", "ambito", "recapitoTelefonico", "descrizione",
+            "hibernateLazyInitializer" })
     private Utente utente;
 
-
+    /**
+     * Percorso o URL dell'immagine associata al racconto.
+     */
     @Column(name = "immagine", length = 255)
-    @Pattern(regexp = "^[a-zA-Z0-9\\s._/\\\\:-]*\\.(jpg|jpeg|png|gif|webp)$",
-           message = "Formato immagine non supportato. Usa jpg, jpeg, png, gif o webp")
+    @Pattern(regexp = "^[a-zA-Z0-9\\s._/\\\\:-]*\\.(jpg|jpeg|png|gif|webp)$", message = "Formato immagine non supportato. Usa jpg, jpeg, png, gif o webp")
     private String immagine;
 
 }
