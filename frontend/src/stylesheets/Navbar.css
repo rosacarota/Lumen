@@ -79,16 +79,38 @@ body {
 
 .logo-circle {
   width: 48px;
-  /* Leggermente ridotto per header classico */
   height: 48px;
-  background-color: var(--bg-main);
-  /* Contrasto grigio su header bianco */
+  background-color: var(--bg-main); /* Assicurati che questa var sia definita, o usa #F3F4F6 */
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border: 0px solid rgba(0, 0, 0, 0.04); /* Bordo quasi invisibile per definizione */
+  
+  /* --- NUOVE AGGIUNTE PER L'ANIMAZIONE --- */
+  cursor: pointer; /* Importante per far capire che è interattivo */
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); /* Effetto "molla" molto morbido */
+  box-shadow: 0 2px 5px rgba(0,0,0,0); /* Ombra iniziale invisibile */
+}
+
+.logo-circle:hover {
+  /* Si ingrandisce leggermente */
+  transform: scale(1.1);
+  
+  /* Sfondo diventa bianco puro per risaltare */
+  background-color: #ffffff;
+  
+  /* Bordo si colora leggermente del tuo colore primario */
+  border-color: rgba(8, 120, 134, 0.2);
+  
+  /* Ombra diffusa colorata (effetto glow elegante) */
+  box-shadow: 0 8px 20px rgba(8, 120, 134, 0.15);
+}
+
+.logo-circle:hover .logo-icon {
+  transform: scale(0.95); 
+  transition: transform 0.4s ease;
 }
 
 .logo-circle img {
