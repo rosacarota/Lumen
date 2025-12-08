@@ -83,7 +83,7 @@
   filter: brightness(1.03);
 }
 
-/* ================= LAYOUT 2 COLONNE ================= */
+/* LAYOUT 2 COLONNE*/
 
 .stories-layout {
   display: grid;
@@ -92,7 +92,7 @@
   align-items: flex-start;
 }
 
-/* ================= COLONNA SINISTRA: FEED ================= */
+/* COLONNA SINISTRA: FEED */
 
 .stories-main {
   display: flex;
@@ -227,32 +227,57 @@
 }
 
 /* Pulsanti Modifica / Elimina */
-
-.story-edit-button {
-  padding: 6px 14px;
-  border-radius: 999px;
-  border: 1px solid #d1d5db;
-  background: #ffffff;
-  font-size: 12px;
-  font-weight: 600;
-  color: #087886;
-  cursor: pointer;
-  display: inline-flex;
+.story-card-footer .story-edit-button {
+  display: flex;
   align-items: center;
-  gap: 6px;
-  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.04);
-  transition: background 0.15s ease, border-color 0.15s ease,
-    box-shadow 0.15s ease, transform 0.1s ease;
+  justify-content: center;
+  padding: 8px 14px;
+  border-radius: 12px;          /* forma rettangolare arrotondata */
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  border: 1px solid #E5E7EB;
+  background: #ffffff;
+  color: #6B7280;
 }
 
-.story-edit-button:hover {
-  background: #e9fbe7;
-  border-color: #4aafb8;
-  box-shadow: 0 4px 10px rgba(8, 120, 134, 0.15);
-  transform: translateY(-1px);
+/* MODIFICA */
+.story-card-footer .story-edit-button:first-child {
+  background: #087886;
+  border: none;
+  color: white;
 }
 
-/* ================= COLONNA DESTRA: ULTIME STORIE ================= */
+/* ELIMINA */
+.story-card-footer .story-edit-button:last-child {
+  margin-left: 8px;
+  background: transparent;
+  border: 1px solid #E5E7EB;
+  color: #6B7280;
+}
+
+/* Hover Modifica */
+.story-card-footer .story-edit-button:first-child:hover {
+  background: #065d67;   
+  transform: translateY(-2px);
+}
+
+/* Hover Elimina */
+.story-card-footer .story-edit-button:last-child:hover {
+  background: #FFF5F5;   
+  border-color: #b91c1c;
+  color: #b91c1c;
+  transform: translateY(-2px);
+}
+
+/* Active per entrambi */
+.story-card-footer .story-edit-button:active {
+  transform: translateY(0);
+}
+
+
+/* COLONNA DESTRA: ULTIME STORIE*/
 
 .stories-sidebar {
   align-self: flex-start;
@@ -363,7 +388,7 @@
   color: #b91c1c;
 }
 
-/* ================= RESPONSIVE ================= */
+/* RESPONSIVE */
 
 @media (max-width: 960px) {
   .stories-layout {
