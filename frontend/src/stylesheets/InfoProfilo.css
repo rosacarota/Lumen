@@ -7,10 +7,10 @@
     position: relative;
     background: linear-gradient(to bottom right, var(--first-color) 0%, var(--second-color) 40%, var(--third-color) 100%);
     overflow: hidden;
-    min-height: 25vh; 
+    min-height: 25vh;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end; 
+    justify-content: flex-end;
     z-index: 1;
 }
 
@@ -25,34 +25,32 @@
 }
 
 .hero-wrapper::before {
-    width: 400px; 
+    width: 400px;
     height: 400px;
-    top: -80px; 
+    top: -80px;
     left: 5%;
-    background: radial-gradient(circle, var(--third-color) 0%, rgba(255,255,255,0) 70%);
+    background: radial-gradient(circle, var(--third-color) 0%, rgba(255, 255, 255, 0) 70%);
 }
 
 .hero-wrapper::after {
-    width: 500px; 
+    width: 500px;
     height: 500px;
-    bottom: -100px; 
+    bottom: -100px;
     right: 5%;
-    background: radial-gradient(circle, var(--second-color) 0%, rgba(255,255,255,0) 70%);
+    background: radial-gradient(circle, var(--second-color) 0%, rgba(255, 255, 255, 0) 70%);
 }
 
 .hero-cover {
-    height: 150px;
     width: 100%;
     background-color: transparent;
-    flex-grow: 1; 
+    flex-grow: 1;
 }
 
 .hero-info-bar {
     background: linear-gradient(to top, rgba(8, 120, 134, 0.8) 0%, rgba(8, 120, 134, 0) 100%);
-    padding-bottom: 30px;
-    padding-top: 30px; 
     display: flex;
     justify-content: center;
+    padding-top: 5%;
     position: relative;
     width: 100%;
     z-index: 2;
@@ -70,15 +68,15 @@
 
 .owner-details-grid {
     display: flex;
-    flex-wrap: wrap; 
-    gap: 15px;       
+    flex-wrap: wrap;
+    gap: 15px;
     margin-top: 15px;
     margin-bottom: 20px;
-    background-color: rgba(255, 255, 255, 0.2); 
+    background-color: rgba(255, 255, 255, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.4);
     border-radius: 12px;
     padding: 12px 18px;
-    width: fit-content; 
+    width: fit-content;
     max-width: 100%;
 }
 
@@ -86,7 +84,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    color: white; 
+    color: white;
     font-size: 0.9rem;
     font-weight: 500;
 }
@@ -100,18 +98,18 @@
     height: 160px;
     background-color: white;
     border-radius: 50%;
-    border: 5px solid #ffffff; 
-    margin-top: 9px; 
+    border: 5px solid #ffffff;
+    margin-top: 9px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     z-index: 10;
     color: var(--first-color);
     font-weight: bold;
     font-size: 1.2rem;
-    overflow: hidden; 
+    overflow: hidden;
     position: relative;
 }
 
@@ -136,13 +134,13 @@
 .ente-text {
     color: white;
     margin-top: 10px;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
-.ente-text h1 { 
-    font-size: 3rem; 
-    font-weight: bold; 
-    margin-bottom: 5px; 
+.ente-text h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 5px;
     line-height: 1.2;
 }
 
@@ -152,10 +150,10 @@
     margin-bottom: 10px;
 }
 
-.ente-text p { 
-    font-size: 1.1rem; 
-    opacity: 0.95; 
-    max-width: 600px; 
+.ente-text p {
+    font-size: 1.1rem;
+    opacity: 0.95;
+    max-width: 600px;
     line-height: 1.5;
 }
 
@@ -167,18 +165,18 @@
 }
 
 .pill {
-  background-color: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(5px);
-  padding: 8px 20px;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: white;
-  border: 1px solid rgba(255,255,255,0.4);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: background-color 0.2s;
+    background-color: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(5px);
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s;
 }
 
 .edit-btn {
@@ -190,29 +188,29 @@
 }
 
 .follow-btn {
-  background: white;
-  color: var(--first-color);
-  border: none;
-  border-radius: 25px;
-  padding: 8px 28px;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease;
-  text-transform: uppercase;
+    background: white;
+    color: var(--first-color);
+    border: none;
+    border-radius: 25px;
+    padding: 8px 28px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    text-transform: uppercase;
 }
 
 .follow-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
 }
 
-.follow-btn.following { 
-    background: rgba(0,0,0,0.4); 
-    color: white; 
-    border: 1px solid white; 
-    box-shadow: none; 
+.follow-btn.following {
+    background: rgba(0, 0, 0, 0.4);
+    color: white;
+    border: 1px solid white;
+    box-shadow: none;
 }
 
 @media (max-width: 768px) {
@@ -221,7 +219,7 @@
         gap: 10px;
         width: 100%;
     }
-    
+
     .hero-content-inner {
         flex-direction: column;
         text-align: center;
@@ -230,7 +228,7 @@
     .ente-text p {
         margin: 0 auto;
     }
-    
+
     .stats-row {
         justify-content: center;
     }
