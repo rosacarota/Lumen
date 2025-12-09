@@ -18,16 +18,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-
+/**
+ * Controller REST per la gestione delle operazioni relative agli Eventi,
+ * come l'aggiunta, modifica, eliminazione e visualizzazione di tutti gli eventi dell'Ente o solo parte degli eventi tramite filtro.
+ */
 @RestController
 @RequestMapping("/evento")
 public class GestioneEventoControl {
 
 
-
     private final GestioneEventoService gestioneEventoService;
     private final JwtUtil util;
     private final AutenticazioneService autenticazioneService;
+    /**
+     * Costruttore per l'iniezione delle dipendenze.
+     * @param gestioneEventoService Servizio per la gestione degli Eventi.
+     * @param util Utility per la gestione dei JWT.
+     * @param autenticazioneService Servizio per la gestione dell'autenticazione.
+     */
     public GestioneEventoControl(GestioneEventoService gestioneEventoService, JwtUtil util, AutenticazioneService autenticazioneService) {
         this.gestioneEventoService = gestioneEventoService;
         this.util = util;
@@ -35,6 +43,13 @@ public class GestioneEventoControl {
     }
 
 
+    /**
+     * Pubblicazione dell'evento di un Ente autenticato tramite token.
+     * @param evento Oggetto Evento contenente i dati dell'Evento.
+     * @param token Il token JWT dell'Ente per verificarne l'identità.
+     * @return Una ResponseEntity contenente l'oggetto Evento
+     *         (inclusa l'immagine in base64).
+     */
     @PostMapping("/aggiungiEvento")
     public ResponseEntity<String> aggiuntaEvento(@RequestBody Evento evento, @RequestParam String token) {
 
@@ -68,6 +83,13 @@ public class GestioneEventoControl {
         }
     }
 
+    /**
+     * Modifica di un Evento di un Ente autenticato tramite token.
+     * @param nuovoEvento Oggetto Evento con i nuovi dati.
+     * @param token Il token JWT dell'Ente per verificarne l'identità.
+     * @return Una ResponseEntity contenente l'oggetto Evento modificato
+     *         (inclusa l'immagine in base64).
+     */
     @PostMapping("/modificaEvento")
     public ResponseEntity<String> modificaEvento(@RequestBody Evento nuovoEvento,  @RequestParam String token) {
 
@@ -117,6 +139,12 @@ public class GestioneEventoControl {
     }
 
 
+    /**
+     * Eliminazione di un Evento di un Ente autenticato tramite token.
+     * @param body Mappa contenente l'identificativo dell'oggetto Evento da eliminare.
+     * @param token Il token JWT dell'Ente per verificarne l'identità.
+     * @return Una ResponseEntity contenente l'esito dell'operazione.
+     */
     @PostMapping("/rimuoviEvento")
     public ResponseEntity<String> rimuoviEvento(@RequestBody Map<String, Integer> body, @RequestParam String token) {
 
@@ -152,6 +180,12 @@ public class GestioneEventoControl {
 
     }
 
+    /**
+     * Visualizzazione degli Eventi di un Ente autenticato tramite token.
+     * @param param Mappa contenente l'email dell'Ente che ha pubblicato l'evento.
+     * @param token Il token JWT dell'Ente per verificarne l'identità.
+     * @return Una ResponseEntity contenente la lista degli Eventi dell'Ente.
+     */
     @GetMapping("/cronologiaEventi")
     public ResponseEntity<List<Evento>> cronologiaEvento(@RequestParam Map<String, String> param, @RequestParam String token) {
         String email= util.extractEmail(token);
@@ -179,6 +213,13 @@ public class GestioneEventoControl {
         return ResponseEntity.ok(listaEventi);
     }
 
+
+    /**
+     * Visualizzazione degli Eventi di un Ente autenticato tramite email.
+     * @param param Mappa contenente l'email dell'Ente che ha pubblicato l'evento.
+     * @param email L'email associata all'Ente
+     * @return Una ResponseEntity contenente la lista degli Eventi dell'Ente.
+     */
     @GetMapping("/cronologiaEventiEnteEsterno")
     public ResponseEntity<List<Evento>> cronologiaEventiEsterni(@RequestParam Map<String, String> param, @RequestParam String email) {
 
@@ -205,6 +246,10 @@ public class GestioneEventoControl {
         return ResponseEntity.ok(listaEventi);
     }
 
+    /**
+     * Visualizzazione da parte di un Utente di tutti gli Eventi.
+     * @return Una ResponseEntity contenente la lista di tutti gli Eventi degli Enti
+     */
     @GetMapping("/tuttiGliEventi")
     public ResponseEntity<List<Evento>> cronologiaEvento(){
         List<Evento> eventi = gestioneEventoService.tuttiGliEventi();
@@ -223,6 +268,13 @@ public class GestioneEventoControl {
     }
 
 
+
+    /**
+     * Decodifica una stringa in formato Base64, la converte in un file immagine e la salva
+     * @param base64String La stringa che rappresenta l'immagine in formato Base64.
+     * @return Il percorso relativo (URL-friendly) dell'immagine salvata.
+     * @throws IOException Se si verificano errori durante la scrittura del file.
+     */
     public String salvaImmagine(String base64String) throws IOException {
 
         if (base64String == null || base64String.trim().isEmpty()) {
