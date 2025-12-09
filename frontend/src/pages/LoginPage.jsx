@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 // Aggiungi ArrowLeft alla lista degli import
 import {
   User, Lock, Mail, Building2, Heart, Users, HeartHandshake,
@@ -24,7 +24,8 @@ export default function LoginPage() {
 
   // Gestione Errori
   const [errors, setErrors] = useState({});
-  const [apiError, setApiError] = useState(""); // Per errori generali (es. Login fallito)
+  const location = useLocation();
+  const [apiError, setApiError] = useState(location.state?.message || ""); // Per errori generali (es. Login fallito o redirect)
 
   const navigate = useNavigate();
 

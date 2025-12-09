@@ -24,6 +24,15 @@ const LoadingFallback = () => (
   </div>
 );
 
+const ProtectedRoute = ({ children }) => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    return <Navigate to="/login" state={{ message: "Devi prima accedere per visualizzare questa pagina" }} replace />;
+  }
+  return children;
+};
+
+// Modifica App component per usare ProtectedRoute
 function App() {
   return (
     <div className="App">
@@ -37,19 +46,21 @@ function App() {
           {/* Rotta Home: Dove si va dalla home */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/chisiamo" element={<ChiSiamo />} />
-          <Route path="/storie" element={<StoriesBoard />} />
-          <Route path="/eventi" element={<EventsPage />} />
-          <Route path="/DashboardAffiliazione" element={<DashboardAffiliazione />} />
-          <Route path="/DashboardRichiesteServizio" element={<DashboardRichiesteServizio />} />
+
+          {/* Rotte Protette */}
+          <Route path="/storie" element={<ProtectedRoute><StoriesBoard /></ProtectedRoute>} />
+          <Route path="/eventi" element={<ProtectedRoute><EventsPage /></ProtectedRoute>} />
+          <Route path="/DashboardAffiliazione" element={<ProtectedRoute><DashboardAffiliazione /></ProtectedRoute>} />
+          <Route path="/DashboardRichiesteServizio" element={<ProtectedRoute><DashboardRichiesteServizio /></ProtectedRoute>} />
 
           {/* Rotte Profili */}
-          <Route path="/profiloente" element={<ProfiloEnte />} />
-          <Route path="/profilovolontario" element={<ProfiloVolontario />} />
-          <Route path="/profilobeneficiario" element={<ProfiloBeneficiario />} />
+          <Route path="/profiloente" element={<ProtectedRoute><ProfiloEnte /></ProtectedRoute>} />
+          <Route path="/profilovolontario" element={<ProtectedRoute><ProfiloVolontario /></ProtectedRoute>} />
+          <Route path="/profilobeneficiario" element={<ProtectedRoute><ProfiloBeneficiario /></ProtectedRoute>} />
 
           {/* Rotta Ricerca Geografica */}
-          <Route path="/ricercageografica" element={<RicercaGeografica />} />
-          <Route path="/cerca" element={<RisultatiRicerca />} />
+          <Route path="/ricercageografica" element={<ProtectedRoute><RicercaGeografica /></ProtectedRoute>} />
+          <Route path="/cerca" element={<ProtectedRoute><RisultatiRicerca /></ProtectedRoute>} />
 
           {/* Qualsiasi altro URL porta al Login */}
           <Route path="*" element={<Navigate to="/home" replace />} />
