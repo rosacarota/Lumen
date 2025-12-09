@@ -1,8 +1,41 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react'; // Aggiungi useState
 import { useNavigate } from 'react-router-dom';
-
-import { ArrowRight, Heart, Users, ShieldCheck, BookOpen } from 'lucide-react';
+import { ArrowRight, Users, ShieldCheck, BookOpen } from 'lucide-react';
 import '../stylesheets/Home.css';
+
+// --- COMPONENTE PER L'ANIMAZIONE DEI NUMERI ---
+const CountUp = ({ end, duration = 2000, suffix = "" }) => {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    let startTime = null;
+    const start = 0;
+    
+    // Funzione di Easing per rendere l'animazione più naturale (rallenta alla fine)
+    const easeOutExpo = (x) => {
+      return x === 1 ? 1 : 1 - Math.pow(2, -10 * x);
+    };
+
+    const animate = (currentTime) => {
+      if (!startTime) startTime = currentTime;
+      const timeElapsed = currentTime - startTime;
+      const progress = Math.min(timeElapsed / duration, 1);
+      
+      // Calcola il numero corrente basato sull'easing
+      const currentCount = Math.floor(easeOutExpo(progress) * (end - start) + start);
+      
+      setCount(currentCount);
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+
+    requestAnimationFrame(animate);
+  }, [end, duration]);
+
+  return <>{count}{suffix}</>;
+};
 
 const Home = () => {
   const navigate = useNavigate();
@@ -22,7 +55,7 @@ const Home = () => {
     };
 
     window.addEventListener('scroll', revealOnScroll);
-    revealOnScroll(); // Check on load
+    revealOnScroll(); 
 
     return () => window.removeEventListener('scroll', revealOnScroll);
   }, []);
@@ -55,23 +88,35 @@ const Home = () => {
                 </button>
               </div>
 
+              {/* --- STATISTICHE ANIMATE --- */}
               <div className="hero-stats">
                 <div className="stat-item">
-                  <strong>2k+</strong> <span>Volontari</span>
+                  <strong>
+                    {/* Target numero da raggiungere */}
+                    <CountUp end={2} suffix="k+" duration={800} />
+                  </strong> 
+                  <span>Volontari</span>
                 </div>
                 <div className="stat-divider"></div>
                 <div className="stat-item">
-                  <strong>150+</strong> <span>Enti</span>
+                  <strong>
+                    <CountUp end={150} suffix="+" duration={2500} />
+                  </strong> 
+                  <span>Enti</span>
                 </div>
                 <div className="stat-divider"></div>
                 <div className="stat-item">
-                  <strong>500+</strong> <span>Eventi</span>
+                  <strong>
+                    <CountUp end={500} suffix="+" duration={2200} />
+                  </strong> 
+                  <span>Eventi</span>
                 </div>
               </div>
+              {/* --------------------------- */}
+
             </div>
 
             <div className="hero-visual">
-              {/* Usa un'immagine reale o questo placeholder di Unsplash */}
               <div className="image-wrapper">
                 <img
                   src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
@@ -83,53 +128,45 @@ const Home = () => {
           </div>
         </section>
 
-        {/* 3. FEATURES SECTION (Breve panoramica) */}
+        {/* ... (Il resto delle sezioni FEATURES, STORIES, EVENTS rimangono uguali) ... */}
+        
         <section className="features-section reveal fade-up">
-          <div className="features-grid">
-
+           {/* ... Contenuto Features ... */}
+           <div className="features-grid">
             <div className="feature-card">
               <div className="icon-box"><Users size={24} /></div>
               <h3>Connettiti</h3>
               <p>Trova le associazioni più vicine a te e unisciti a una community attiva.</p>
             </div>
-
             <div className="feature-card">
               <div className="icon-box"><ShieldCheck size={24} /></div>
               <h3>Sicurezza</h3>
               <p>Ogni ente e volontario è verificato per garantire un aiuto sicuro e trasparente.</p>
             </div>
-
             <div className="feature-card">
               <div className="icon-box"><BookOpen size={24} /></div>
               <h3>Racconta</h3>
               <p>Condividi la tua esperienza e ispira la community.</p>
             </div>
-
           </div>
         </section>
 
-        {/* 4. STORIES SECTION */}
         <section className="stories-section reveal fade-left">
-          <div className="section-content">
+           {/* ... Contenuto Storie ... */}
+           <div className="section-content">
             <h2>Storie di Cambiamento</h2>
-            <p>
-              Ogni giorno, volontari ed enti lavorano insieme per creare un impatto reale.
-              Leggi le loro esperienze e lasciati ispirare dalle storie di chi sta facendo la differenza.
-            </p>
+            <p>Ogni giorno, volontari ed enti lavorano insieme per creare un impatto reale...</p>
             <button className="btn btn-primary" onClick={() => navigate('/storie')}>
               Vai alla Bacheca Storie <ArrowRight size={18} />
             </button>
           </div>
         </section>
 
-        {/* 5. EVENTS SECTION */}
         <section className="events-section reveal fade-right">
-          <div className="section-content">
+           {/* ... Contenuto Eventi ... */}
+           <div className="section-content">
             <h2>Partecipa agli Eventi</h2>
-            <p>
-              Non perdere l'occasione di contribuire attivamente.
-              Scopri gli eventi, le raccolte fondi e le iniziative in programma vicino a te.
-            </p>
+            <p>Non perdere l'occasione di contribuire attivamente...</p>
             <button className="btn btn-secondary" onClick={() => navigate('/eventi')}>
               Esplora Eventi <ArrowRight size={18} />
             </button>
@@ -137,7 +174,6 @@ const Home = () => {
         </section>
 
       </div>
-
     </>
   );
 };

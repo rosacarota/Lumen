@@ -156,6 +156,10 @@
 .stat-item strong {
   font-size: 1.5rem;
   color: var(--text-main);
+  /* AGGIUNTA IMPORTANTE: */
+  font-variant-numeric: tabular-nums; /* Mantiene la larghezza dei numeri costante durante l'animazione */
+  min-width: 60px; /* Opzionale: riserva spazio per evitare scatti nel layout */
+  display: inline-block; /* Necessario per min-width */
 }
 
 .stat-item span {
