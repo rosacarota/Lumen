@@ -183,7 +183,7 @@ const SearchResults = () => {
             </div>
           )}
 
-          {userRole === 'beneficiario' && (
+          {(
             <div className="sr-geo-banner">
               <div className="sr-geo-content">
                 <div className="sr-geo-text">
