@@ -8,7 +8,6 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.Email;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import javax.validation.Valid;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -33,7 +32,7 @@ public class GestioneRaccontoServiceImpl implements GestioneRaccontoService {
     /**
      * Costruttore per l'iniezione delle dipendenze.
      *
-     * @param raccontoDAO Il DAO per l'accesso ai dati dei racconti
+     * @param raccontoDAO Il DAO per l'accesso ai dati dei racconti.
      */
     @Autowired
     public GestioneRaccontoServiceImpl(RaccontoDAO raccontoDAO) {
