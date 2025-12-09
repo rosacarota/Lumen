@@ -38,6 +38,13 @@ public class Encrypter {
      * @return true se la password in chiaro corrisponde all'hash, false altrimenti.
      */
     public boolean checkPassword(String rawPassword, String encodedPassword) {
+        if (encodedPassword == null || encodedPassword.isEmpty())
+            return false;
+        // Se la password nel DB non sembra un hash BCrypt (che inizia con $2a$...),
+        // prova confronto in chiaro
+        if (!encodedPassword.startsWith("$") && !encodedPassword.startsWith("{")) {
+            return rawPassword.equals(encodedPassword);
+        }
         return passwordEncoder().matches(rawPassword, encodedPassword);
     }
 }

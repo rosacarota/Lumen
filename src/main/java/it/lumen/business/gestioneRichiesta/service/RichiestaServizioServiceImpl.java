@@ -26,7 +26,8 @@ public class RichiestaServizioServiceImpl implements RichiestaServizioService {
     private final UtenteDAO utenteDAO;
 
     @Autowired
-    public RichiestaServizioServiceImpl(RichiestaServizioDAO richiestaServizioDAO, AutenticazioneService autenticazioneService, UtenteDAO utenteDAO) {
+    public RichiestaServizioServiceImpl(RichiestaServizioDAO richiestaServizioDAO,
+            AutenticazioneService autenticazioneService, UtenteDAO utenteDAO) {
         this.richiestaServizioDAO = richiestaServizioDAO;
         this.autenticazioneService = autenticazioneService;
         this.utenteDAO = utenteDAO;
@@ -34,10 +35,10 @@ public class RichiestaServizioServiceImpl implements RichiestaServizioService {
 
     @Override
     @Transactional
-    public void creaRichiestaServizio(RichiestaServizioDTO  richiestaServizioDTO) {
+    public void creaRichiestaServizio(RichiestaServizioDTO richiestaServizioDTO) {
         Utente volontario = autenticazioneService.getUtente(richiestaServizioDTO.getEnteVolontario());
         Utente beneficiario = autenticazioneService.getUtente(richiestaServizioDTO.getBeneficiario());
-        if(volontario == null || beneficiario == null) {
+        if (volontario == null || beneficiario == null) {
             throw new IllegalArgumentException("Utenti non trovati");
         }
         RichiestaServizio richiesta = new RichiestaServizio();
@@ -53,18 +54,22 @@ public class RichiestaServizioServiceImpl implements RichiestaServizioService {
     @Transactional
     public void accettaRichiestaServizio(@Valid RichiestaServizio richiestaServizio) {
         richiestaServizio.setStato(RichiestaServizio.StatoRichiestaServizio.valueOf("Accettata"));
-        richiestaServizioDAO.save(richiestaServizio);}   //Cambio stato: InAttesa -> Accettato
+        richiestaServizioDAO.save(richiestaServizio);
+    } // Cambio stato: InAttesa -> Accettato
 
     @Override
     @Transactional
-    //----------------------------------------------------------TO ARGUE----------------------------------------------------------
-    public void rifiutaRichiestaServizio(@Valid RichiestaServizio richiestaServizio) {richiestaServizioDAO.delete(richiestaServizio);} //Rimozione della richiesta dal database
+    // ----------------------------------------------------------TO
+    // ARGUE----------------------------------------------------------
+    public void rifiutaRichiestaServizio(@Valid RichiestaServizio richiestaServizio) {
+        richiestaServizioDAO.delete(richiestaServizio);
+    } // Rimozione della richiesta dal database
 
     public List<RichiestaServizio> getRichiesteByEmail(@Email(message = "Email non valida") String email) {
 
         List<RichiestaServizio> richiestaServizio = richiestaServizioDAO.findAllByEnteVolontario_Email(email);
         try {
-            for(RichiestaServizio richiestaServizio1 : richiestaServizio) {
+            for (RichiestaServizio richiestaServizio1 : richiestaServizio) {
                 Utente enteVolontario = richiestaServizio1.getEnteVolontario();
                 Utente beneficiario = richiestaServizio1.getBeneficiario();
                 enteVolontario.setImmagine(autenticazioneService.recuperaImmagine(enteVolontario.getImmagine()));
@@ -75,10 +80,11 @@ public class RichiestaServizioServiceImpl implements RichiestaServizioService {
         }
         return richiestaServizio;
     }
-    public List<RichiestaServizio>getRichiesteInAttesaByEmail(@Email(message = "Email non valida") String email) {
+
+    public List<RichiestaServizio> getRichiesteInAttesaByEmail(@Email(message = "Email non valida") String email) {
         List<RichiestaServizio> richiestaServizio = richiestaServizioDAO.findAllByEmailInAttesa(email);
         try {
-            for(RichiestaServizio richiestaServizio1 : richiestaServizio) {
+            for (RichiestaServizio richiestaServizio1 : richiestaServizio) {
                 Utente enteVolontario = richiestaServizio1.getEnteVolontario();
                 Utente beneficiario = richiestaServizio1.getBeneficiario();
                 enteVolontario.setImmagine(autenticazioneService.recuperaImmagine(enteVolontario.getImmagine()));

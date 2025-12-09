@@ -3,9 +3,7 @@ package it.lumen.data.dto;
 import it.lumen.data.entity.RichiestaServizio;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Email;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.sql.Date;
 
@@ -17,6 +15,8 @@ import java.sql.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 public class RichiestaServizioDTO {
 
     /** Identificativo univoco della richiesta di servizio. */
