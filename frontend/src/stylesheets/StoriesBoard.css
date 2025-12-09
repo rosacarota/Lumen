@@ -18,10 +18,6 @@
   padding: 24px 28px 32px;
 }
 
-a {
-  text-decoration: none;
-}
-
 /* HERO HEADER */
 
 .stories-hero {
@@ -31,8 +27,7 @@ a {
   gap: 24px;
   margin-bottom: 28px;
   padding: 18px 22px;
-  background: #e9fbe7;
-  /* box verde sotto il titolo */
+  background: #e9fbe7;   /* box verde sotto il titolo */
   border-radius: 22px;
   border: 1px solid #c4e9d2;
   box-shadow: 0 10px 25px rgba(8, 120, 134, 0.08);
@@ -79,21 +74,20 @@ a {
   align-items: center;
   justify-content: center;
   box-shadow: 0 4px 10px rgba(8, 120, 134, 0.3);
-  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out, filter 0.15s ease-out;
 }
 
 .stories-add-button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(8, 120, 134, 0.4);
-  filter: brightness(1.03);
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 8px 18px rgba(8, 134, 88, 0.2);
+  filter: brightness(1.05);
 }
 
 /* LAYOUT 2 COLONNE*/
 
 .stories-layout {
   display: grid;
-  grid-template-columns: minmax(0, 3fr) minmax(260px, 1.2fr);
-  /* feed + colonna destra */
+  grid-template-columns: minmax(0, 3fr) minmax(260px, 1.2fr); /* feed + colonna destra */
   gap: 24px;
   align-items: flex-start;
 }
@@ -112,17 +106,17 @@ a {
   padding: 18px 20px;
   border: 1px solid #e5e7eb;
   box-shadow: 0 8px 18px rgba(15, 23, 42, 0.04);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
 }
 
 /*animazione InUp per racconti*/
 .stories-main .story-card {
-  animation: fadeInUp 0.85s cubic-bezier(0.15, 0.85, 0.3, 1);
+  animation: fadeInUp 0.85s cubic-bezier(0.15, 0.85, 0.3, 1); 
 }
 
 .story-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.075);
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 8px 18px rgba(8, 134, 88, 0.2);
 }
 
 .story-card-header {
@@ -238,8 +232,7 @@ a {
   align-items: center;
   justify-content: center;
   padding: 8px 14px;
-  border-radius: 12px;
-  /* forma rettangolare arrotondata */
+  border-radius: 12px;          /* forma rettangolare arrotondata */
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -266,13 +259,13 @@ a {
 
 /* Hover Modifica */
 .story-card-footer .story-edit-button:first-child:hover {
-  background: #065d67;
+  background: #065d67;   
   transform: translateY(-2px);
 }
 
 /* Hover Elimina */
 .story-card-footer .story-edit-button:last-child:hover {
-  background: #FFF5F5;
+  background: #FFF5F5;   
   border-color: #b91c1c;
   color: #b91c1c;
   transform: translateY(-2px);
@@ -320,12 +313,12 @@ a {
   padding: 10px 12px 12px;
   border: 1px solid #e5e7eb;
   box-shadow: 0 4px 10px rgba(15, 23, 42, 0.04);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
 }
 
 .sidebar-story-card:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 8px 18px rgba(8, 134, 100, 0.25);
 }
 
 .sidebar-story-header {
