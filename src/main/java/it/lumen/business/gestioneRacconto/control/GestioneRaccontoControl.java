@@ -14,6 +14,10 @@ import java.sql.Date;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Controller REST per la gestione delle operazioni relative ai racconti,
+ * come la pubblicazione, modifica, eliminazione e visualizzazione dei racconti dell'utente.
+ */
 @RestController
 @RequestMapping("/racconto")
 public class GestioneRaccontoControl {
@@ -23,6 +27,13 @@ public class GestioneRaccontoControl {
     private final AutenticazioneService autenticazioneService;
     private final JwtUtil jwtUtil;
 
+    /**
+     * Costruttore per l'iniezione delle dipendenze.
+     *
+     * @param gestioneRaccontoService  Servizio per la gestione dei racconti.
+     * @param jwtUtil                Utility per la gestione dei JWT.
+     * @param autenticazioneService Servizio per la gestione dell'autenticazione.
+     */
     public GestioneRaccontoControl(GestioneRaccontoService gestioneRaccontoService, JwtUtil util, AutenticazioneService autenticazioneService, JwtUtil jwtUtil) {
             this.gestioneRaccontoService = gestioneRaccontoService;
             this.util = util;
@@ -30,7 +41,14 @@ public class GestioneRaccontoControl {
         this.jwtUtil = jwtUtil;
     }
 
-
+    /**
+     * Pubblicazione di un racconto di un utente autenticato tramite token.
+     *
+     * @param racconto Oggetto Racconto contenente i dati del racconto.
+     * @param token Il token JWT dell'utente.
+     * @return Una ResponseEntity contenente l'oggetto Racconto
+     *         (inclusa l'immagine in base64).
+     */
     @PostMapping("/aggiungi")
     public ResponseEntity<Racconto> aggiuntaRacconto(@RequestBody Racconto racconto, @RequestParam String token) {
         try {
@@ -58,7 +76,14 @@ public class GestioneRaccontoControl {
     }
 
 
-
+    /**
+     * Modifica di un racconto di un utente autenticato tramite token.
+     *
+     * @param nuovoRacconto Oggetto Racconto con i nuovi dati.
+     * @param token Il token JWT dell'utente per verificare l'identità dell'utente.
+     * @return Una ResponseEntity contenente l'oggetto Racconto modificato
+     *         (inclusa l'immagine in base64).
+     */
     @PostMapping("/modifica")
     public ResponseEntity<Racconto> modificaRacconto(@RequestBody Racconto nuovoRacconto, @RequestParam String token) {
         try {
@@ -107,7 +132,13 @@ public class GestioneRaccontoControl {
     }
 
 
-
+    /**
+     * Eliminazione di un racconto di un utente autenticato tramite token.
+     *
+     * @param body Mappa contenente l'identificativo dell'oggetto Racconto da eliminare.
+     * @param token Il token JWT dell'utente per verificare l'identità dell'utente.
+     * @return Una ResponseEntity contenente l'esito dell'operazione.
+     */
     @PostMapping("/rimuovi")
     public ResponseEntity<String> rimuoviRacconto(@RequestBody Map<String, Integer> body, @RequestParam String token) {
 
@@ -146,6 +177,13 @@ try {
     }
 
 
+    /**
+     * Visualizzazione dei racconti di un utente autenticato tramite token.
+     *
+     * @param emailParam Mappa contenente l'email dell'utente che ha pubblicato i racconti.
+     * @param token Il token JWT dell'utente per verificare l'identità dell'utente.
+     * @return Una ResponseEntity contenente la lista dei racconti dell'utente.
+     */
     @PostMapping("/visualizza")
     public ResponseEntity<List<Racconto>> visualizzaRaccontiUtente(@RequestParam String token, @RequestBody Map<String, String> emailParam) {
 
@@ -175,6 +213,10 @@ try {
 
     }
 
+    /**
+     * Visualizzazione da parte di un utente di tutti i racconti.
+     * @param token Il token JWT dell'utente per verificare l'identità dell'utente.
+     */
     @GetMapping("/visualizzaTutti")
     public ResponseEntity<List<Racconto>>  visualizzaTuttiRacconti(@RequestParam String token) {
 
