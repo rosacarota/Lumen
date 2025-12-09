@@ -24,18 +24,31 @@ import jakarta.transaction.Transactional;
 
 import javax.validation.Valid;
 
+/**
+ * Implementazione del servizio di gestione degli Eventi.
+ * Fornisce le funzionalità per aggiungere, modificare, eliminare e visualizzare gli eventi degli Enti.
+ */
 @Service
 public class GestioneEventoServiceImpl implements GestioneEventoService {
 
     private final EventoDAO eventoDAO;
     private final AutenticazioneService autenticazioneService;
 
+    /**
+     * Costruttore per l'iniezione delle dipendenze.
+     *
+     * @param eventoDAO Il DAO per l'accesso ai dati degli Eventi
+     * @param autenticazioneService L'interfaccia per i servizi di autenticazione degli Utenti
+     */
     @Autowired
     public GestioneEventoServiceImpl(EventoDAO eventoDAO, AutenticazioneService autenticazioneService) {
         this.eventoDAO = eventoDAO;
         this.autenticazioneService = autenticazioneService;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
     public Evento aggiungiEvento(@Valid Evento evento) {
@@ -43,6 +56,9 @@ public class GestioneEventoServiceImpl implements GestioneEventoService {
         return eventoDAO.save(evento);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
     public Evento modificaEvento(@Valid Evento evento) {
@@ -80,12 +96,18 @@ public class GestioneEventoServiceImpl implements GestioneEventoService {
         return eventoDAO.save(evento);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
     public void eliminaEvento(int idEvento) {
         eventoDAO.removeEventoByIdEvento(idEvento);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean checkId(int idEvento) {
 
@@ -93,6 +115,9 @@ public class GestioneEventoServiceImpl implements GestioneEventoService {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Evento getEventoById(int idEvento) {
 
@@ -105,6 +130,9 @@ public class GestioneEventoServiceImpl implements GestioneEventoService {
         return evento;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Evento> cronologiaEventi(@Email(message = "Email non valida") String email, String stato) {
         Date oggi = new Date();
@@ -132,6 +160,10 @@ public class GestioneEventoServiceImpl implements GestioneEventoService {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public List<Evento> tuttiGliEventi() {
         List<Evento> eventList = eventoDAO.findAll();
 
@@ -147,6 +179,10 @@ public class GestioneEventoServiceImpl implements GestioneEventoService {
         return eventList;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String recuperaImmagine(String pathImmagine) throws IOException {
 
         if (pathImmagine == null || !(pathImmagine.endsWith("jpg") || pathImmagine.endsWith("jpeg")
