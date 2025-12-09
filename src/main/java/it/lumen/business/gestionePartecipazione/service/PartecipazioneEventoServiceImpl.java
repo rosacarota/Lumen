@@ -18,6 +18,10 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
+/**
+ * Implementazione del servizio sulla gestione delle partecipazioni agli eventi.
+ */
 @Service
 public class PartecipazioneEventoServiceImpl implements PartecipazioneEventoService{
 
@@ -26,6 +30,14 @@ public class PartecipazioneEventoServiceImpl implements PartecipazioneEventoServ
     private final UtenteDAO utenteDAO;
     private final AutenticazioneService autenticazioneService;
 
+    /**
+     * Costruttore per la classe {@link PartecipazioneEventoServiceImpl}.
+     *
+     * @param partecipazioneDAO Oggetto DAO per l'accesso ai dati delle partecipazioni.
+     * @param eventoDAO Oggetto DAO per l'accesso ai dati degli eventi.
+     * @param utenteDAO Oggetto DAO per l'accesso ai dati degli utenti.
+     * @param autenticazioneService Servizio per l'autenticazione.
+     */
     @Autowired
 	public PartecipazioneEventoServiceImpl(PartecipazioneDAO partecipazioneDAO, EventoDAO eventoDAO, UtenteDAO utenteDAO, AutenticazioneService autenticazioneService) {
         this.eventoDAO = eventoDAO;
@@ -33,6 +45,9 @@ public class PartecipazioneEventoServiceImpl implements PartecipazioneEventoServ
         this.utenteDAO = utenteDAO;
         this.autenticazioneService = autenticazioneService;
     }
+	/**
+     * {@inheritDoc}
+	 */
 	@Override
 	@Transactional
 	public void aggiungiPartecipazione(@Valid Partecipazione partecipazione) {
@@ -40,12 +55,18 @@ public class PartecipazioneEventoServiceImpl implements PartecipazioneEventoServ
 		partecipazioneDAO.save(partecipazione);
 
 	}
+	/**
+     * {@inheritDoc}
+	 */
 	@Override
 	@Transactional
 	public void modificaPartecipazione(@Valid Partecipazione partecipazione) {
 		partecipazioneDAO.save(partecipazione);
 		
 	}
+	/**
+     * {@inheritDoc}
+	 */
 	@Override
 	@Transactional
 	public void eliminaPartecipazione(Integer idPartecipazione) {
@@ -53,6 +74,9 @@ public class PartecipazioneEventoServiceImpl implements PartecipazioneEventoServ
 		partecipazioneDAO.removePartecipazioneByIdPartecipazione(idPartecipazione);
 	}
 
+	/**
+     * {@inheritDoc}
+	 */
 	@Override
 	@Transactional
 	public List<Partecipazione> listaPartecipazioni(Integer idEvento){
@@ -60,6 +84,9 @@ public class PartecipazioneEventoServiceImpl implements PartecipazioneEventoServ
 		return partecipazioneDAO.findAllByEvento_IdEvento(idEvento);
 	}
 
+	/**
+     * {@inheritDoc}
+	 */
     @Override
     @Transactional
     public List<PartecipazioneDTO> cronologiaPartecipazioni(@Email(message = "Email non valida")String email){
@@ -80,11 +107,17 @@ public class PartecipazioneEventoServiceImpl implements PartecipazioneEventoServ
         return cronologia;
     }
 
+	/**
+     * {@inheritDoc}
+	 */
     @Override
     public Evento getEventoById(Integer idEvento) {
         return eventoDAO.findEventoByIdEvento(idEvento);
     }
 
+	/**
+     * {@inheritDoc}
+	 */
     @Override
     public Partecipazione getPartecipazioneById(Integer idPartecipazione) {
        return partecipazioneDAO.getPartecipazioneByIdPartecipazione(idPartecipazione);
