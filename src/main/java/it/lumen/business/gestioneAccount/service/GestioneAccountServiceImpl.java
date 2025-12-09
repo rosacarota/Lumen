@@ -31,6 +31,30 @@ public class GestioneAccountServiceImpl implements GestioneAccountService {
      */
     @Override
     public void modificaUtente(@Valid Utente utente) {
-        utenteDAO.save(utente);
+        Utente existingUtente = utenteDAO.findByEmail(utente.getEmail());
+        if (existingUtente != null) {
+            existingUtente.setNome(utente.getNome());
+            existingUtente.setCognome(utente.getCognome());
+            existingUtente.setPassword(utente.getPassword());
+            existingUtente.setDescrizione(utente.getDescrizione());
+            existingUtente.setRecapitoTelefonico(utente.getRecapitoTelefonico());
+            existingUtente.setRuolo(utente.getRuolo());
+            existingUtente.setAmbito(utente.getAmbito());
+            existingUtente.setImmagine(utente.getImmagine());
+
+            if (existingUtente.getIndirizzo() != null && utente.getIndirizzo() != null) {
+                existingUtente.getIndirizzo().setCitta(utente.getIndirizzo().getCitta());
+                existingUtente.getIndirizzo().setProvincia(utente.getIndirizzo().getProvincia());
+                existingUtente.getIndirizzo().setCap(utente.getIndirizzo().getCap());
+                existingUtente.getIndirizzo().setStrada(utente.getIndirizzo().getStrada());
+                existingUtente.getIndirizzo().setNCivico(utente.getIndirizzo().getNCivico());
+            } else if (utente.getIndirizzo() != null) {
+                existingUtente.setIndirizzo(utente.getIndirizzo());
+            }
+
+            utenteDAO.save(existingUtente);
+        } else {
+            utenteDAO.save(utente);
+        }
     }
 }
