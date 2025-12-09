@@ -39,6 +39,28 @@
     gap: 32px;
 }
 
+.affiliation-header {
+    background-color: white;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid var(--bg-soft);
+    z-index: 2;
+}
+
+.affiliation-header h3 {
+    margin: 0;
+    color: var(--first-color);
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
 .voluntary-events-section {
     width: 320px;
     flex-shrink: 0;
@@ -47,7 +69,6 @@
 .voluntary-stories-section {
     flex: 1;
     min-width: 0;
-    /* Prevents flex item from overflowing */
 }
 
 .voluntary-events-section .cronologia-card {
@@ -121,7 +142,6 @@
 
 .voluntary-events-section .event-description {
     display: none !important;
-    /* Nascondiamo la descrizione per compattezza */
 }
 
 .voluntary-events-section .event-detail-row {

@@ -76,13 +76,10 @@ const ProfiloVolontario = () => {
                 }
             }
 
-            // Carica affiliante se abbiamo un profilo
             if (finalProfileStr?.email) {
                 try {
                     let response = await AffiliazioneService.getAffiliante(finalProfileStr.email);
                     console.log("RESPONSE GET AFFILIANTE:", response);
-
-                    // WORKAROUND: Se il backend restituisce l'email del volontario invece che dell'ente
                     if (response && response.email === finalProfileStr.email && response.nome) {
                         try {
                             console.log("Tentativo recupero email ente via ricerca per nome:", response.nome);
@@ -127,7 +124,6 @@ const ProfiloVolontario = () => {
                     />
                 </section>
                 <div className="voluntary-split-layout">
-                    {/* SINISTRA: BOX AFFILIAZIONE */}
                     <section className="voluntary-left-sidebar">
                         {affiliante && (
                             <div
@@ -144,8 +140,8 @@ const ProfiloVolontario = () => {
                                 onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
                                 onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
                             >
-                                <div style={{ padding: '16px 20px', borderBottom: '1px solid #f3f4f6' }}>
-                                    <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600 }}>Affiliazione</h3>
+                                <div className="affiliation-header">
+                                    <h3>Affiliazione</h3>
                                 </div>
                                 <div style={{ padding: '20px' }}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -170,8 +166,6 @@ const ProfiloVolontario = () => {
                             </div>
                         )}
                     </section>
-
-                    {/* CENTRO: STORIE */}
                     <section className="voluntary-stories-section">
                         <BachecaRacconti
                             isOwner={isOwner}
