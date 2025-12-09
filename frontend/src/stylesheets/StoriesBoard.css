@@ -18,6 +18,10 @@
   padding: 24px 28px 32px;
 }
 
+a {
+  text-decoration: none;
+}
+
 /* HERO HEADER */
 
 .stories-hero {
@@ -27,7 +31,8 @@
   gap: 24px;
   margin-bottom: 28px;
   padding: 18px 22px;
-  background: #e9fbe7;   /* box verde sotto il titolo */
+  background: #e9fbe7;
+  /* box verde sotto il titolo */
   border-radius: 22px;
   border: 1px solid #c4e9d2;
   box-shadow: 0 10px 25px rgba(8, 120, 134, 0.08);
@@ -87,7 +92,8 @@
 
 .stories-layout {
   display: grid;
-  grid-template-columns: minmax(0, 3fr) minmax(260px, 1.2fr); /* feed + colonna destra */
+  grid-template-columns: minmax(0, 3fr) minmax(260px, 1.2fr);
+  /* feed + colonna destra */
   gap: 24px;
   align-items: flex-start;
 }
@@ -111,7 +117,7 @@
 
 /*animazione InUp per racconti*/
 .stories-main .story-card {
-  animation: fadeInUp 0.85s cubic-bezier(0.15, 0.85, 0.3, 1); 
+  animation: fadeInUp 0.85s cubic-bezier(0.15, 0.85, 0.3, 1);
 }
 
 .story-card:hover {
@@ -232,7 +238,8 @@
   align-items: center;
   justify-content: center;
   padding: 8px 14px;
-  border-radius: 12px;          /* forma rettangolare arrotondata */
+  border-radius: 12px;
+  /* forma rettangolare arrotondata */
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -259,13 +266,13 @@
 
 /* Hover Modifica */
 .story-card-footer .story-edit-button:first-child:hover {
-  background: #065d67;   
+  background: #065d67;
   transform: translateY(-2px);
 }
 
 /* Hover Elimina */
 .story-card-footer .story-edit-button:last-child:hover {
-  background: #FFF5F5;   
+  background: #FFF5F5;
   border-color: #b91c1c;
   color: #b91c1c;
   transform: translateY(-2px);

@@ -1,31 +1,22 @@
-const API_BASE_URL = "http://localhost:8080"; 
-
-const getToken = () => localStorage.getItem("token") || "";
+import api, { getAuthToken } from '../utils/api';
 
 // --- 1. RECUPERA TUTTI GLI EVENTI (Bacheca Generale) ---
 export const fetchEvents = async () => {
-  const url = new URL(`${API_BASE_URL}/evento/tuttiGliEventi`);
   try {
-    const response = await fetch(url.toString(), { 
-      method: 'GET', 
-      headers: { 'Content-Type': 'application/json' }
-    });
-    if (response.status === 204 || !response.ok) return [];
-    return await response.json();
+    const data = await api.get("/evento/tuttiGliEventi");
+    // api.get returns JSON. Original check for 204 or status check is implicitly handled by api.get (throws on !ok).
+    return data;
   } catch (error) { return []; }
 };
 
 // --- 2. CONTROLLA PARTECIPAZIONE SINGOLA ---
 export const checkUserParticipation = async (idEvento) => {
-  const token = getToken();
+  const token = getAuthToken();
   if (!token) return { isParticipating: false, idPartecipazione: null };
   try {
-    const response = await fetch(`${API_BASE_URL}/partecipazione/checkIscrizione/${idEvento}?token=${encodeURIComponent(token)}`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' }
-    });
-    if (!response.ok) return { isParticipating: false, idPartecipazione: null };
-    return await response.json();
+    // api.get auto-appends token.
+    const data = await api.get(`/partecipazione/checkIscrizione/${idEvento}`);
+    return data;
   } catch (error) {
     return { isParticipating: false, idPartecipazione: null };
   }
@@ -33,84 +24,68 @@ export const checkUserParticipation = async (idEvento) => {
 
 // --- 3. ISCRIVITI ---
 export const iscrivitiEvento = async (idEvento) => {
-  const token = getToken();
+  // Original called GET with token and idEvento as query params.
   try {
-    const response = await fetch(`${API_BASE_URL}/partecipazione/aggiungi?token=${encodeURIComponent(token)}&idEvento=${idEvento}`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' }
-    });
-    if (response.ok) return { success: true };
-    const text = await response.text();
-    if (text.toLowerCase().includes("partecipa già")) return { success: true };
-    return { success: false, message: text };
+    const res = await api.get("/partecipazione/aggiungi", { idEvento });
+    // api.get returns JSON if content-type is json, else text.
+    // Assuming backend returns text or empty body on success?
+    // Original: valid response is ok.
+
+    // If res is object (JSON), success.
+
+    // Original checked text for "partecipa già".
+    if (typeof res === 'string' && res.toLowerCase().includes("partecipa già")) return { success: true };
+
+    return { success: true };
   } catch (error) {
-    return { success: false, message: "Errore di connessione" };
+    // error is Error object. message might be the text from backend if it failed.
+    return { success: false, message: error.message || "Errore di connessione" };
   }
 };
 
 // --- 4. RIMUOVI ISCRIZIONE ---
 export const rimuoviIscrizione = async (idPartecipazione) => {
-  const token = getToken();
   try {
-    const response = await fetch(`${API_BASE_URL}/partecipazione/rimuovi?token=${encodeURIComponent(token)}`, {
-      method: 'POST', 
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ idPartecipazione: idPartecipazione })
-    });
-    if (response.ok) return { success: true };
-    return { success: false, message: await response.text() };
+    // api.post auto-appends token.
+    await api.post("/partecipazione/rimuovi", { idPartecipazione: idPartecipazione });
+    return { success: true };
   } catch (error) {
-    return { success: false, message: "Errore connessione" };
+    return { success: false, message: error.message || "Errore connessione" };
   }
 };
 
 // --- 5. LISTA PARTECIPANTI (Per Enti) ---
 export const fetchPartecipanti = async (idEvento) => {
-  const token = getToken();
   const payload = {
-      idEvento: parseInt(idEvento),
-      maxPartecipanti: 0
+    idEvento: parseInt(idEvento),
+    maxPartecipanti: 0
   };
   try {
-    const response = await fetch(`${API_BASE_URL}/partecipazione/visualizzaPartecipazioniEvento?token=${encodeURIComponent(token)}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    if (!response.ok) return [];
-    const lista = await response.json();
+    const lista = await api.post("/partecipazione/visualizzaPartecipazioniEvento", payload);
+    if (!Array.isArray(lista)) return [];
     return lista.map(p => p.volontario);
-  } catch (error) { 
-    return []; 
+  } catch (error) {
+    return [];
   }
 };
 
 // --- 6. DATI UTENTE ---
 export const fetchDatiUtente = async () => {
-  const token = getToken();
+  const token = getAuthToken();
   if (!token) return null;
   try {
-    const response = await fetch(`${API_BASE_URL}/account/datiUtente?token=${encodeURIComponent(token)}`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' }
-    });
-    if (!response.ok) return null;
-    return await response.json(); 
+    const data = await api.get("/account/datiUtente");
+    return data;
   } catch (error) { return null; }
 };
 
 // --- 7. NUOVA FUNZIONE: RECUPERA I MIEI EVENTI (Cronologia Volontario) ---
 export const getEventiSvolti = async () => {
-  const token = getToken();
+  const token = getAuthToken();
   if (!token) return [];
   try {
-    const response = await fetch(`${API_BASE_URL}/partecipazione/visualizzaEventiUtente?token=${encodeURIComponent(token)}`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' }
-    });
-    if (response.status === 204) return [];
-    if (!response.ok) return [];
-    return await response.json();
+    const data = await api.get("/partecipazione/visualizzaEventiUtente");
+    return data;
   } catch (error) {
     console.error("Errore recupero miei eventi:", error);
     return [];

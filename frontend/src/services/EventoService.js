@@ -1,9 +1,4 @@
-const API_URL = "http://localhost:8080";
-
-// Funzione per recuperare il token (Usa localStorage per la produzione)
-function getAuthToken() {
-  return localStorage.getItem("token");
-}
+import api, { getAuthToken } from '../utils/api';
 
 export const toBase64 = (file) =>
   new Promise((resolve, reject) => {
@@ -19,16 +14,11 @@ export const getCronologiaEventi = async (stato = null) => {
     const email = localStorage.getItem("searchEmail");
     if (!email) return [];
 
-    let url = `${API_URL}/evento/cronologiaEventiEnteEsterno?email=${encodeURIComponent(email)}`;
-    if (stato) url += `&stato=${stato}`;
+    const params = { email };
+    if (stato) params.stato = stato;
 
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-    });
-
-    if (response.status === 204 || !response.ok) return [];
-    return await response.json();
+    const data = await api.get("/evento/cronologiaEventiEnteEsterno", params);
+    return data;
   } catch (error) {
     console.error("Errore API Cronologia:", error);
     return [];
@@ -43,8 +33,6 @@ export const getEventiFuturi = async () => {
 
 // 2. AGGIUNGI EVENTO
 export const addEvento = async (eventoInput) => {
-  const token = getAuthToken();
-
   const payload = {
     titolo: eventoInput.titolo,
     descrizione: eventoInput.descrizione,
@@ -61,20 +49,20 @@ export const addEvento = async (eventoInput) => {
     }
   };
 
-  const response = await fetch(`${API_URL}/evento/aggiungiEvento?token=${encodeURIComponent(token)}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
+  try {
+    const res = await api.post("/evento/aggiungiEvento", payload);
 
-  if (!response.ok) throw new Error("Errore aggiunta evento");
-  try { return JSON.parse(await response.text()); } catch (e) { return true; }
+    if (typeof res === 'string') {
+      try { return JSON.parse(res); } catch { return true; }
+    }
+    return res;
+  } catch (error) {
+    throw new Error("Errore aggiunta evento: " + error.message);
+  }
 };
 
 // 3. MODIFICA EVENTO
 export const updateEvento = async (eventoModificato) => {
-  const token = getAuthToken();
-
   const payload = {
     idEvento: eventoModificato.idEvento,
     titolo: eventoModificato.titolo,
@@ -93,16 +81,7 @@ export const updateEvento = async (eventoModificato) => {
     }
   };
 
-  const response = await fetch(`${API_URL}/evento/modificaEvento?token=${encodeURIComponent(token)}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(text || "Errore modifica evento");
-  }
+  await api.post("/evento/modificaEvento", payload);
   return true;
 };
 
@@ -112,18 +91,7 @@ export const deleteEvento = async (idEvento) => {
 };
 
 export const rimuoviEvento = async (idEvento) => {
-  const token = getAuthToken();
   const payload = { idEvento: idEvento };
-
-  const response = await fetch(`${API_URL}/evento/rimuoviEvento?token=${encodeURIComponent(token)}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
-  });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(errorText || "Impossibile eliminare l'evento.");
-  }
+  await api.post("/evento/rimuoviEvento", payload);
   return true;
 };

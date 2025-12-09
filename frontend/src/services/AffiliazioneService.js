@@ -1,4 +1,5 @@
-const API_URL = 'http://localhost:8080/affiliazione';
+import api from '../utils/api';
+
 const MOCK = false;
 
 class AffiliazioneService {
@@ -8,12 +9,8 @@ class AffiliazioneService {
       return false;
     }
 
-    const params = new URLSearchParams({ emailEnte, token });
 
-    const response = await fetch(`${API_URL}/check?${params}`);
-    if (!response.ok) throw new Error("Errore check affiliazione");
-
-    return await response.json(); // boolean
+    return await api.get("/affiliazione/check", { emailEnte });
   }
 
   // INVIA RICHIESTA DI AFFILIAZIONE
@@ -23,24 +20,13 @@ class AffiliazioneService {
       return "Richiesta di affiliazione inviata con successo (mock)";
     }
 
-    const params = new URLSearchParams({ token });
     const body = {
       descrizione,
       ente: { email: emailEnte }
     };
 
-    const response = await fetch(`${API_URL}/richiedi?${params}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body)
-    });
-
-    const text = await response.text();
-    if (!response.ok) {
-      throw new Error(text || `Errore nella richiesta: ${response.status}`);
-    }
-
-    return text; 
+    const res = await api.post("/affiliazione/richiedi", body);
+    return typeof res === 'object' ? JSON.stringify(res) : res;
   }
 
   // RICHIESTE IN ATTESA
@@ -67,15 +53,8 @@ class AffiliazioneService {
       ];
     }
 
-    const params = new URLSearchParams({ token });
-    const response = await fetch(`${API_URL}/richiesteInAttesa?${params}`);
+    const raw = await api.get("/affiliazione/richiesteInAttesa");
 
-    if (!response.ok) {
-      const text = await response.text();
-      throw new Error(`Errore richieste: ${response.status} - ${text}`);
-    }
-
-    const raw = await response.json();
     const mapped = raw.map((item) => ({
       idAffiliazione: item.richiesta.idAffiliazione,
       descrizione: item.richiesta.descrizione,
@@ -97,18 +76,8 @@ class AffiliazioneService {
       return "Affiliazione accettata (mock)";
     }
 
-    const params = new URLSearchParams({ idAffiliazione, token });
-
-    const response = await fetch(`${API_URL}/accetta?${params}`, {
-      method: "GET"
-    });
-
-    const text = await response.text();
-    if (!response.ok) {
-      throw new Error(text || "Errore durante l'accettazione");
-    }
-
-    return text;
+    const res = await api.get("/affiliazione/accetta", { idAffiliazione });
+    return typeof res === 'object' ? JSON.stringify(res) : res;
   }
 
   // RIFIUTA AFFILIAZIONE
@@ -118,18 +87,8 @@ class AffiliazioneService {
       return "Affiliazione rifiutata (mock)";
     }
 
-    const params = new URLSearchParams({ idAffiliazione, token });
-
-    const response = await fetch(`${API_URL}/rifiuta?${params}`, {
-      method: "GET"
-    });
-
-    const text = await response.text();
-    if (!response.ok) {
-      throw new Error(text || "Errore durante il rifiuto");
-    }
-
-    return text;
+    const res = await api.get("/affiliazione/rifiuta", { idAffiliazione });
+    return typeof res === 'object' ? JSON.stringify(res) : res;
   }
 
   // LISTA AFFILIATI
@@ -152,14 +111,7 @@ class AffiliazioneService {
       ];
     }
 
-    const params = new URLSearchParams({ token });
-
-    const response = await fetch(`${API_URL}/listaAffiliati?${params}`);
-    if (!response.ok) {
-      throw new Error(`Errore lista affiliati: ${response.status}`);
-    }
-
-    return await response.json(); // lista UtenteDTO (nome, cognome, ambito, immagine)
+    return await api.get("/affiliazione/listaAffiliati");
   }
 }
 

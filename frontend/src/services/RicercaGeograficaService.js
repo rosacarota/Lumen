@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import api from '../utils/api';
 
 const useRicercaGeografica = () => {
     const [results, setResults] = useState([]);
@@ -25,29 +26,17 @@ const useRicercaGeografica = () => {
         }
 
         try {
-            const response = await fetch(`http://localhost:8080/ricercaUtente/ricercaGeografica?token=${encodeURIComponent(token)}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    category: category,
-                    subcategory: ''
-                })
+            const data = await api.post("/ricercaUtente/ricercaGeografica", {
+                category: category,
+                subcategory: ''
             });
 
-            if (response.ok) {
-                const data = await response.json();
-                setResults(data);
-            } else {
-                console.error('Errore API:', response.status);
-                setResults([]);
-                setError(`Errore del server: ${response.status}`);
-            }
+            setResults(data);
         } catch (err) {
-            console.error('Errore di rete:', err);
+            console.error('Errore di rete/API:', err);
             setResults([]);
-            setError("Errore di connessione al server");
+            // err.message contains the error text from api.js if available
+            setError(err.message || "Errore di connessione al server");
         } finally {
             setIsLoading(false);
         }

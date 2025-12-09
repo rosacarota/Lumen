@@ -1,10 +1,5 @@
 // UserServices.js
-
-const API_BASE_URL = "http://localhost:8080";
-
-function getAuthToken() {
-  return localStorage.getItem("token");
-}
+import api from '../utils/api';
 
 // ==========================================
 // 1. MAPPER
@@ -58,19 +53,9 @@ function mapUserToApi(formData) {
  * SCARICA IL PROFILO PRIVATO (Utente Loggato)
  */
 export async function fetchUserProfile() {
-  const token = getAuthToken();
-  if (!token) return null;
-
   try {
-    const response = await fetch(`${API_BASE_URL}/account/datiUtente?token=${token}`, {
-      method: "GET",
-    });
-
-    if (!response.ok) throw new Error(`Errore server fetch: ${response.status}`);
-
-    const data = await response.json();
+    const data = await api.get("/account/datiUtente");
     return mapApiToUser(data);
-
   } catch (error) {
     console.error("Errore fetchUserProfile:", error);
     throw error;
@@ -80,42 +65,21 @@ export async function fetchUserProfile() {
 
 export async function fetchUserPublicProfile(email) {
   try {
-    const response = await fetch(`${API_BASE_URL}/ricercaUtente/datiUtente`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-    });
-
-    if (!response.ok) throw new Error(`Errore server fetch: ${response.status}`);
-
-    const data = await response.json();
+    const data = await api.post("/ricercaUtente/datiUtente", { email });
     return mapApiToUser(data);
 
   } catch (error) {
-    console.error("Errore fetchUserProfile:", error);
+    console.error("Errore fetchUserPublicProfile:", error);
     throw error;
   }
 }
 
-/**
- * AGGIORNA IL PROFILO
- */
 export async function updateUserProfile(formData) {
-  const token = getAuthToken();
-  if (!token) throw new Error("Sessione scaduta.");
-
   const payload = mapUserToApi(formData);
 
   try {
-    const response = await fetch(`${API_BASE_URL}/account/modificaUtente?token=${token}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-
-    if (!response.ok) throw new Error(await response.text());
+    await api.post("/account/modificaUtente", payload);
     return true;
-
   } catch (error) {
     console.error("Errore updateUserProfile:", error);
     throw error;

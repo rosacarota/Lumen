@@ -1,17 +1,9 @@
-const API_URL = "http://localhost:8080";
-
-const getAuthToken = () => localStorage.getItem("token");
+import api from '../utils/api';
 
 export const creaRichiestaServizio = async (richiestaData) => {
-  const token = getAuthToken();
   try {
-    const response = await fetch(`${API_URL}/richiestaServizio/creaRichiestaServizio?token=${token}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(richiestaData),
-    });
-    if (!response.ok) throw new Error(await response.text());
-    return await response.text();
+    const res = await api.post("/richiestaServizio/creaRichiestaServizio", richiestaData);
+    return typeof res === 'object' ? JSON.stringify(res) : res;
   } catch (error) {
     console.error("Errore API:", error);
     throw error;
@@ -20,13 +12,8 @@ export const creaRichiestaServizio = async (richiestaData) => {
 
 export const accettaRichiestaServizio = async (richiestaServizio) => {
   try {
-    const response = await fetch(`${API_URL}/richiestaServizio/accettaRichiestaServizio`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(richiestaServizio),
-    });
-    if (!response.ok) throw new Error(await response.text());
-    return await response.text();
+    const res = await api.post("/richiestaServizio/accettaRichiestaServizio", richiestaServizio);
+    return typeof res === 'object' ? JSON.stringify(res) : res;
   } catch (error) {
     console.error("Errore API:", error);
     throw error;
@@ -35,13 +22,8 @@ export const accettaRichiestaServizio = async (richiestaServizio) => {
 
 export const rifiutaRichiestaServizio = async (richiestaServizio) => {
   try {
-    const response = await fetch(`${API_URL}/richiestaServizio/rifiutaRichiestaServizio`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(richiestaServizio),
-    });
-    if (!response.ok) throw new Error(await response.text());
-    return await response.text();
+    const res = await api.post("/richiestaServizio/rifiutaRichiestaServizio", richiestaServizio);
+    return typeof res === 'object' ? JSON.stringify(res) : res;
   } catch (error) {
     console.error("Errore API:", error);
     throw error;
@@ -49,14 +31,9 @@ export const rifiutaRichiestaServizio = async (richiestaServizio) => {
 };
 
 export const getRichiesteServizio = async () => {
-  const token = getAuthToken();
   try {
-    const response = await fetch(`${API_URL}/richiestaServizio/getRichiestaInAttesa?token=${token}`, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    });
-    if (!response.ok) throw new Error("Errore recupero richieste");
-    return await response.json();
+    const data = await api.get("/richiestaServizio/getRichiestaInAttesa");
+    return data;
   } catch (error) {
     console.error("Errore API:", error);
     return []; // Importante: ritorna array vuoto in caso di errore per evitare crash
