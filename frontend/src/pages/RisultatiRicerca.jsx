@@ -12,9 +12,13 @@ const SearchResults = () => {
   const [activeFilter, setActiveFilter] = useState("Tutti");
   const [error, setError] = useState(null);
 
+  const [userRole, setUserRole] = useState(null);
   const location = useLocation();
 
   useEffect(() => {
+    const role = localStorage.getItem('ruolo');
+    setUserRole(role ? role.toLowerCase() : null);
+
     const queryParams = new URLSearchParams(location.search);
     const query = queryParams.get('q') || '';
     setSearchTerm(query);
@@ -179,18 +183,20 @@ const SearchResults = () => {
             </div>
           )}
 
-          <div className="sr-geo-banner">
-            <div className="sr-geo-content">
-              <div className="sr-geo-text">
-                <h3>Non sei soddisfatto della ricerca?</h3>
-                <p>Esplora la mappa interattiva e trova enti e volontari vicino a te.</p>
+          {userRole === 'beneficiario' && (
+            <div className="sr-geo-banner">
+              <div className="sr-geo-content">
+                <div className="sr-geo-text">
+                  <h3>Non sei soddisfatto della ricerca?</h3>
+                  <p>Esplora la mappa interattiva e trova enti e volontari vicino a te.</p>
+                </div>
+                <Link to="/ricercageografica" className="sr-geo-button">
+                  <Map size={20} />
+                  Prova la Ricerca Geografica
+                </Link>
               </div>
-              <Link to="/ricercageografica" className="sr-geo-button">
-                <Map size={20} />
-                Prova la Ricerca Geografica
-              </Link>
             </div>
-          </div>
+          )}
 
         </div>
       </main>
