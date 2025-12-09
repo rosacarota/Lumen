@@ -2,6 +2,7 @@ package it.lumen.business.gestioneRichiesta.service;
 
 import it.lumen.data.dao.AffiliazioneDAO;
 import it.lumen.data.dao.UtenteDAO;
+import it.lumen.data.dto.UtenteDTO;
 import it.lumen.data.entity.Affiliazione;
 import it.lumen.data.entity.Utente;
 import jakarta.validation.constraints.Email;
@@ -99,4 +100,11 @@ public class AffiliazioneServiceImpl implements AffiliazioneService {
         return affiliazioneDAO.existsByVolontario_Email(volontario);
     }
 
+    public UtenteDTO getAffiliante(String email){
+        List<Affiliazione> affiliazione = affiliazioneDAO.findByVolontario(utenteDAO.findByEmail(email));
+        UtenteDTO utenteDTO = new UtenteDTO();
+        utenteDTO.setEmail(email);
+        utenteDTO.setNome(affiliazione.get(0).getEnte().getNome());
+        return utenteDTO;
+    }
 }

@@ -1,5 +1,6 @@
 package it.lumen.data.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import it.lumen.data.entity.Indirizzo;
@@ -19,6 +20,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({ "nome", "cognome", "email", "ruolo", "immagine" })
+@JsonIgnoreProperties({"idAffiliazione"})
 public class UtenteDTO {
 
     /** Indirizzo email. */

@@ -319,5 +319,11 @@ public class AffiliazioneControl {
                     .body("Errore nel recupero richieste: " + e.getMessage());
         }
     }
-
+    @GetMapping("/getAffiliante")
+    public ResponseEntity<?> getAffiliante(@RequestParam String email) {
+        if (email == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Utente non trovato");
+        }
+        return ResponseEntity.ok(affiliazioneService.getAffiliante(email));
+    }
 }

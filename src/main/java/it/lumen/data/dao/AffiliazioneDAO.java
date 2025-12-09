@@ -65,4 +65,6 @@ public interface AffiliazioneDAO extends JpaRepository<Affiliazione, Integer> {
      */
     @Transactional
     void removeByIdAffiliazione(int id);
+
+    List<Affiliazione> findByVolontario(Utente volontario);
 }

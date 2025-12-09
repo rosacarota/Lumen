@@ -1,5 +1,6 @@
 package it.lumen.business.gestioneRichiesta.service;
 
+import it.lumen.data.dto.UtenteDTO;
 import it.lumen.data.entity.Affiliazione;
 import it.lumen.data.entity.Utente;
 
@@ -73,4 +74,6 @@ public interface AffiliazioneService {
      * @return true se esiste un'affiliazione, false altrimenti.
      */
     public boolean checkAffiliazione(String volontario);
+
+    public UtenteDTO getAffiliante(String email);
 }
