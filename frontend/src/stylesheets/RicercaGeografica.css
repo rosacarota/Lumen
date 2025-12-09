@@ -1,0 +1,334 @@
+.geo-page {
+    min-height: 100vh;
+    background-color: #F7FBFB;
+    font-family: 'Segoe UI', sans-serif;
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- HERO SECTION --- */
+.geo-hero {
+    background: linear-gradient(135deg, #087886 0%, #4AAFB8 100%);
+    padding: 80px 20px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 40px;
+}
+
+.geo-hero-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 50px;
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 10;
+}
+
+.geo-hero-content {
+    flex: 1;
+    text-align: left;
+    max-width: 600px;
+}
+
+.geo-hero h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 20px;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+}
+
+.geo-hero p {
+    font-size: 1.1rem;
+    opacity: 0.95;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Mascot */
+.geo-mascot-container {
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: center;
+    margin-top: 0;
+    position: relative;
+    z-index: 10;
+}
+
+.geo-mascot {
+    max-width: 280px;
+    /* Slightly larger since it's on the side */
+    height: auto;
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.2));
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-15px);
+    }
+
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+/* Decorative Circles */
+.geo-circle {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    pointer-events: none;
+}
+
+.c1 {
+    width: 300px;
+    height: 300px;
+    top: -100px;
+    left: -100px;
+}
+
+.c2 {
+    width: 500px;
+    height: 500px;
+    bottom: -200px;
+    right: -100px;
+}
+
+/* --- MAIN CONTENT --- */
+.geo-main-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px 60px;
+    width: 100%;
+    flex: 1;
+}
+
+.geo-section-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.geo-section-header h2 {
+    color: #087886;
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.geo-section-header p {
+    color: #64748b;
+}
+
+/* --- GRID AMBITI --- */
+.geo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+    margin-bottom: 60px;
+}
+
+.geo-card {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    border: 2px solid transparent;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.geo-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    border-color: #e2e8f0;
+}
+
+.geo-card.selected {
+    border-color: #087886;
+    background-color: #f0fdfe;
+    box-shadow: 0 10px 25px rgba(8, 120, 134, 0.15);
+}
+
+.geo-card-icon {
+    width: 70px;
+    height: 70px;
+    background: #E9FBE7;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #087886;
+    margin-bottom: 20px;
+    transition: all 0.3s;
+}
+
+.geo-card.selected .geo-card-icon {
+    background: #087886;
+    color: white;
+    transform: scale(1.1);
+}
+
+.geo-card h3 {
+    margin: 0 0 10px;
+    color: #334155;
+    font-size: 1.25rem;
+}
+
+.geo-card p {
+    margin: 0;
+    color: #64748b;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+/* Checkmark indicator for selected state */
+.geo-card-check {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 24px;
+    height: 24px;
+}
+
+.check-dot {
+    width: 12px;
+    height: 12px;
+    background-color: #087886;
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px #cffafe;
+}
+
+/* --- RESULTS SECTION --- */
+.geo-results-section {
+    background-color: white;
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    min-height: 300px;
+}
+
+.geo-results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 15px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.geo-results-title-group {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.geo-results-header h3 {
+    margin: 0;
+    color: #334155;
+    font-size: 1.5rem;
+}
+
+.geo-count-badge {
+    background-color: #f1f5f9;
+    color: #64748b;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+/* Role Filter */
+.geo-role-filter {
+    display: flex;
+    gap: 10px;
+    background-color: #f8fafc;
+    padding: 5px;
+    border-radius: 12px;
+}
+
+.geo-filter-btn {
+    border: none;
+    background: transparent;
+    padding: 8px 16px;
+    border-radius: 8px;
+    color: #64748b;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+}
+
+.geo-filter-btn:hover {
+    color: #087886;
+    background-color: rgba(8, 120, 134, 0.05);
+}
+
+.geo-filter-btn.active {
+    background-color: white;
+    color: #087886;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.geo-results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 25px;
+}
+
+.geo-no-results {
+    text-align: center;
+    padding: 50px;
+    color: #94a3b8;
+    font-size: 1.1rem;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .geo-hero-inner {
+        flex-direction: column;
+        text-align: center;
+        gap: 30px;
+    }
+
+    .geo-hero-content {
+        text-align: center;
+        max-width: 100%;
+    }
+
+    .geo-hero h1 {
+        font-size: 2.5rem;
+    }
+
+    .geo-mascot {
+        max-width: 200px;
+    }
+
+    .geo-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .geo-results-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .geo-results-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}

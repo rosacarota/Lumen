@@ -1,187 +1,320 @@
 import React, { useState, useEffect } from 'react';
-import { CalendarDays, MapPin, Users, Clock, Info, UserPlus, UserCheck, Image as ImageIcon } from 'lucide-react';
+// 1. Importiamo useNavigate
+import { useNavigate } from 'react-router-dom';
+import { CalendarDays, MapPin, Users, Info, UserPlus, UserCheck, Image as ImageIcon } from 'lucide-react';
+import Swal from 'sweetalert2';
 import '../stylesheets/EventCard.css';
 
-// Importiamo i servizi aggiornati
-import { iscrivitiEvento, rimuoviIscrizione, checkUserParticipation } from '../services/PartecipazioneEventiService';
+// MODALI
+import DettagliEvento from './DettagliEvento';
+import VisualizzaPartecipantiEvento from './VisualizzaPartecipantiEvento';
+import ModifyEvento from './ModifyEvento';
 
-export default function EventCard({
-  id_evento,  // IMPORTANTE: Assicurati che dal backend arrivi come "idEvento" o "id_evento"
-  titolo,
-  descrizione,
-  luogo,
-  data_inizio,
-  data_fine,
-  maxpartecipanti,
-  immagine,
-  ente,
-  showParticipate = true
-}) {
+import {
+  iscrivitiEvento,
+  rimuoviIscrizione,
+  checkUserParticipation
+} from '../services/PartecipazioneEventoService';
 
-  // Stati locali
+import { rimuoviEvento } from '../services/EventoService';
+
+// DEFINIZIONE URL BACKEND
+const API_BASE_URL = "http://localhost:8080";
+
+export default function EventCard({ event, showParticipate = true }) {
+
+  const navigate = useNavigate();
+
+  const safeId = event.id || event.idEvento || event.id_evento;
+
+  const title = event.title || event.titolo;
+  const description = event.description || event.descrizione;
+  const location = event.location || (event.indirizzo ? "Vedi dettagli" : event.luogo);
+  const startDate = event.startDate || event.dataInizio || event.data_inizio;
+  const maxParticipants = event.maxParticipants || event.maxPartecipanti || event.maxpartecipanti;
+  const image = event.image || event.immagine;
+
+  const organizerNameMapped = event.organizerName;
+
   const [isParticipating, setIsParticipating] = useState(false);
-  const [participationId, setParticipationId] = useState(null); // Serve per la cancellazione
+  const [participationId, setParticipationId] = useState(null);
   const [loadingBtn, setLoadingBtn] = useState(false);
+  const [userRole, setUserRole] = useState("");
+  const [activeModal, setActiveModal] = useState(null);
 
-  // Formattazione Date (rimasta uguale)
-  const formatDateRange = (start, end) => {
-    if (!start || !end) return { fullDate: "Data da definire", timeRange: "--:--" };
-    const s = new Date(start);
-    const e = new Date(end);
-    const dateOpts = { day: 'numeric', month: 'short', year: 'numeric' };
-    const timeOpts = { hour: '2-digit', minute: '2-digit' };
-    return {
-      fullDate: s.toLocaleDateString('it-IT', dateOpts),
-      timeRange: `${s.toLocaleTimeString('it-IT', timeOpts)} - ${e.toLocaleTimeString('it-IT', timeOpts)}`
-    };
+  const fullDate = startDate
+    ? new Date(startDate).toLocaleDateString('it-IT', { day: 'numeric', month: 'short', year: 'numeric' })
+    : "Data da definire";
+
+  // --- CALCOLO NOME ---
+  const getOrganizerName = () => {
+    if (organizerNameMapped) return organizerNameMapped;
+    if (event.utente) {
+      if (typeof event.utente === 'object') return event.utente.nome || event.utente.email || "Ente";
+      return event.utente;
+    }
+    if (event.ente) {
+      if (typeof event.ente === 'object') return event.ente.nome || event.ente.email || "Ente";
+      return event.ente;
+    }
+    return "Ente";
   };
 
-  const { fullDate, timeRange } = formatDateRange(data_inizio, data_fine);
+  const displayOrganizerName = getOrganizerName();
 
-  // --- CONTROLLO INIZIALE ---
-  // Appena appare la card, controlliamo se l'utente è già iscritto
+  // ---------------------------------------------------------
+  // QUI SONO LE FUNZIONI NUOVE PER L'IMMAGINE
+  // ---------------------------------------------------------
+
+  // 1. Trova la stringa dell'immagine nei dati
+  const getOrganizerImage = () => {
+    if (event.organizerImage) return event.organizerImage;
+    if (event.utente && typeof event.utente === 'object' && event.utente.immagine) {
+      return event.utente.immagine;
+    }
+    if (event.ente && typeof event.ente === 'object' && event.ente.immagine) {
+      return event.ente.immagine;
+    }
+    return null;
+  };
+
+  // 2. Costruisce l'URL completo
+  const getAvatarUrl = (img) => {
+    if (!img) return null;
+    if (img.startsWith("http") || img.startsWith("data:")) return img;
+    return `${API_BASE_URL}${img.startsWith('/') ? '' : '/'}${img}`;
+  };
+
+  // 3. Variabili finali da usare nel return
+  const rawImage = getOrganizerImage();
+  const finalAvatarUrl = getAvatarUrl(rawImage);
+  const avatarLetter = (displayOrganizerName || "E").charAt(0).toUpperCase();
+
+  // ---------------------------------------------------------
+
+  const handleEnteClick = (e) => {
+    e.stopPropagation();
+    localStorage.setItem("searchEmail", event.utente.email);
+    navigate('/ProfiloEnte');
+  };
+
   useEffect(() => {
-    const checkStatus = async () => {
-      if (showParticipate) {
-        const status = await checkUserParticipation(id_evento);
+    const initializeCard = async () => {
+      // Usiamo direttamente il localStorage invece di fare una fetch inutile
+      const ruoloFinale = localStorage.getItem("ruolo") || localStorage.getItem("userRole") || "";
+      setUserRole(ruoloFinale);
+
+      const isVolontario = ruoloFinale && ruoloFinale.toLowerCase() === "volontario";
+
+      if (showParticipate && isVolontario && safeId) {
+        const status = await checkUserParticipation(safeId);
         setIsParticipating(status.isParticipating);
         setParticipationId(status.idPartecipazione);
       }
     };
-    checkStatus();
-  }, [id_evento, showParticipate]);
+    if (safeId) initializeCard();
+  }, [safeId, showParticipate]);
 
+  const handleOpenModifica = () => {
+    setActiveModal('edit');
+  };
 
-  // --- GESTIONE CLICK ---
+  const handleUpdateSuccess = () => {
+    setActiveModal(null);
+    window.location.reload();
+  };
+
+  const handleEliminaEvento = async () => {
+    if (window.confirm(`Sei sicuro di voler eliminare l'evento "${title}"?`)) {
+      try {
+        await rimuoviEvento(safeId);
+        window.location.reload();
+      } catch (error) {
+        alert("Errore: " + error.message);
+      }
+    }
+  };
+
   const handleToggleParticipation = async (e) => {
     e.stopPropagation();
     if (loadingBtn) return;
     setLoadingBtn(true);
 
     if (!isParticipating) {
-      // --- CASO 1: VOGLIO ISCRIVERMI ---
-      const result = await iscrivitiEvento(id_evento);
-
+      const result = await iscrivitiEvento(safeId);
       if (result.success) {
-        alert("Iscrizione avvenuta con successo!");
+        Swal.fire({ icon: 'success', title: 'Iscrizione effettuata!', text: `Ti sei iscritto a: ${title}`, timer: 2000, showConfirmButton: false });
         setIsParticipating(true);
-        // Ricarichiamo lo stato per ottenere il nuovo ID partecipazione
-        const status = await checkUserParticipation(id_evento);
-        setParticipationId(status.idPartecipazione);
+        const status = await checkUserParticipation(safeId);
+        if (status.idPartecipazione) setParticipationId(status.idPartecipazione);
       } else {
-        alert("Errore: " + (result.message || "Impossibile iscriversi"));
+        Swal.fire({ icon: 'error', title: 'Errore', text: result.message || "Impossibile iscriversi" });
+      }
+    } else {
+      let idDaCancellare = participationId;
+      if (!idDaCancellare) {
+        const status = await checkUserParticipation(safeId);
+        if (status.isParticipating && status.idPartecipazione) {
+          idDaCancellare = status.idPartecipazione;
+          setParticipationId(status.idPartecipazione);
+        }
       }
 
-    } else {
-      // --- CASO 2: VOGLIO CANCELLARMI ---
-      if (!participationId) {
-        alert("Errore: ID partecipazione mancante.");
+      if (!idDaCancellare) {
+        Swal.fire({ icon: 'error', title: 'Errore tecnico', text: 'ID partecipazione non trovato.' });
         setLoadingBtn(false);
         return;
       }
 
-      const conferma = window.confirm("Vuoi davvero annullare la partecipazione?");
-      if (conferma) {
-        const result = await rimuoviIscrizione(participationId);
+      const confirmResult = await Swal.fire({
+        title: 'Sei sicuro?',
+        text: "Vuoi davvero annullare la tua partecipazione?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sì, annulla!'
+      });
 
+      if (confirmResult.isConfirmed) {
+        const result = await rimuoviIscrizione(idDaCancellare);
         if (result.success) {
-          alert("Partecipazione annullata.");
+          Swal.fire('Annullata!', 'La tua partecipazione è stata cancellata.', 'success');
           setIsParticipating(false);
           setParticipationId(null);
         } else {
-          alert("Errore: " + (result.message || "Impossibile annullare"));
+          Swal.fire({ icon: 'error', title: 'Errore', text: result.message || "Impossibile annullare" });
         }
       }
     }
-
     setLoadingBtn(false);
   };
 
   return (
-    <div className="event-card" id={`event-${id_evento}`}>
+    <>
+      <div className="event-card">
+        {image ? (
+          <img src={image} alt={title} className="event-cover" />
+        ) : (
+          <div className="event-cover placeholder-cover">
+            <ImageIcon size={48} strokeWidth={1} />
+          </div>
+        )}
 
-      {immagine ? (
-        <img src={immagine} alt={titolo} className="event-cover" />
-      ) : (
-        <div className="event-cover placeholder-cover">
-          <ImageIcon size={48} strokeWidth={1} />
-        </div>
-      )}
+        <div className="event-content">
+          <div className="event-header">
+            {/* QUI HO INSERITO IL CODICE JSX PER L'AVATAR */}
+            <div className="event-avatar">
+              {finalAvatarUrl ? (
+                <img
+                  src={finalAvatarUrl}
+                  alt={displayOrganizerName}
+                  className="event-avatar-img"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.nextSibling.style.display = 'flex';
+                  }}
+                />
+              ) : null}
 
-      <div className="event-content">
-        <div className="event-header">
-          <div className="event-avatar">
-            {immagine ? (
-              <img src={immagine} alt={ente} className="event-avatar-img" />
-            ) : (
-              <span>{ente ? ente.charAt(0).toUpperCase() : 'E'}</span>
+              {/* Fallback Lettera */}
+              <span style={{ display: finalAvatarUrl ? 'none' : 'flex' }}>
+                {avatarLetter}
+              </span>
+            </div>
+            {/* ----------------------------------------------------- */}
+
+            <div className="event-meta">
+              <span
+                className="event-brand"
+                onClick={handleEnteClick}
+                style={{ cursor: 'pointer' }}
+                title="Vai al profilo Ente"
+              >
+                {displayOrganizerName}
+              </span>
+              <span className="event-role">ORGANIZZATORE</span>
+            </div>
+          </div>
+
+          <div className="event-body">
+            <h3 className="event-title">{title}</h3>
+            <p className="event-description">
+              {description && description.length > 60
+                ? description.substring(0, 60) + "..."
+                : description || "Nessuna descrizione."}
+            </p>
+          </div>
+
+          <div className="event-details">
+            <div className="event-detail-row">
+              <span className="event-icon"><CalendarDays size={18} /></span>
+              <span>{fullDate}</span>
+            </div>
+            <div className="event-detail-row">
+              <span className="event-icon"><MapPin size={18} /></span>
+              <span>{location}</span>
+            </div>
+            {maxParticipants && (
+              <div className="event-detail-row">
+                <span className="event-icon"><Users size={18} /></span>
+                <span>Max {maxParticipants}</span>
+              </div>
             )}
           </div>
-          <div className="event-meta">
-            <span className="event-brand">{ente || "Ente Sconosciuto"}</span>
-            <span className="event-role">Organizzatore</span>
-          </div>
-        </div>
 
-        <div className="event-body">
-          <h3 className="event-title">{titolo || "Titolo Evento"}</h3>
-          <p className="event-description">
-            {descrizione
-              ? (descrizione.length > 60 ? descrizione.substring(0, 60) + '...' : descrizione)
-              : "Nessuna descrizione disponibile."}
-          </p>
-        </div>
-
-        <div className="event-details">
-          <div className="event-detail-row">
-            <span className="event-icon"><CalendarDays size={18} /></span>
-            <span>{fullDate}</span>
-          </div>
-          <div className="event-detail-row">
-            <span className="event-icon"><Clock size={18} /></span>
-            <span>{timeRange}</span>
-          </div>
-          <div className="event-detail-row">
-            <span className="event-icon"><MapPin size={18} /></span>
-            <span>{luogo || "Luogo da definire"}</span>
-          </div>
-          {maxpartecipanti && (
-            <div className="event-detail-row">
-              <span className="event-icon"><Users size={18} /></span>
-              <span>Max {maxpartecipanti} partecipanti</span>
-            </div>
-          )}
-        </div>
-
-        <div className="event-footer">
-          <button className="event-btn btn-secondary">
-            <Info size={18} />
-            Dettagli
-          </button>
-
-          {showParticipate && (
-            <button
-              className={`event-btn btn-primary ${isParticipating ? 'btn-active' : ''}`}
-              onClick={handleToggleParticipation}
-              disabled={loadingBtn}
-              style={{ opacity: loadingBtn ? 0.7 : 1 }}
-            >
-              {loadingBtn ? "..." : isParticipating ? (
-                <>
-                  <UserCheck size={18} />
-                  Iscritto
-                </>
-              ) : (
-                <>
-                  <UserPlus size={18} />
-                  Partecipa
-                </>
-              )}
+          <div className="event-footer">
+            <button className="event-btn btn-secondary" onClick={() => setActiveModal('details')}>
+              <Info size={18} />
+              Dettagli
             </button>
-          )}
+
+            {showParticipate && userRole && userRole.toLowerCase() === "volontario" && (
+              <button
+                className={`event-btn btn-primary ${isParticipating ? 'btn-active' : ''}`}
+                onClick={handleToggleParticipation}
+                disabled={loadingBtn}
+                style={{ opacity: loadingBtn ? 0.7 : 1 }}
+              >
+                {loadingBtn ? "..." : isParticipating ? (
+                  <> <UserCheck size={18} /> Iscritto </>
+                ) : (
+                  <> <UserPlus size={18} /> Partecipa </>
+                )}
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
-    </div>
+      {/* MODALI */}
+      {activeModal === 'details' && (
+        <DettagliEvento
+          evento={event.raw || event}
+          onClose={() => setActiveModal(null)}
+          onOpenParticipants={() => setActiveModal('participants')}
+          onElimina={handleEliminaEvento}
+          onModifica={handleOpenModifica}
+        />
+      )}
+
+      {activeModal === 'participants' && (
+        <VisualizzaPartecipantiEvento
+          idEvento={safeId}
+          titoloEvento={title}
+          onClose={() => setActiveModal(null)}
+          onBack={() => setActiveModal('details')}
+        />
+      )}
+
+      {activeModal === 'edit' && (
+        <ModifyEvento
+          isOpen={true}
+          onClose={() => setActiveModal('details')}
+          eventToEdit={event.raw || event}
+          onUpdate={handleUpdateSuccess}
+        />
+      )}
+    </>
   );
 }

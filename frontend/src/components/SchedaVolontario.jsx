@@ -1,50 +1,79 @@
-import React from 'react';
-import { Mail, Phone } from 'lucide-react'; // Assicurati di aver installato: npm install lucide-react
-import '../stylesheets/SchedaVolontario.css'; // Creeremo questo CSS sotto
+import React, { useState } from 'react';
+import { User, Mail, Phone, Briefcase } from 'lucide-react'; 
+import '../stylesheets/SchedaVolontario.css';
 
-export default function SchedaVolontario({ utente }) {
-  // Se utente è null/undefined, non renderizzare nulla per evitare errori
+// COSTANTE BACKEND (O importala dal service se preferisci)
+const API_BASE_URL = "http://localhost:8080";
+
+export default function SchedaVolontario({ utente, onClick }) {
+  // Stato per gestire se l'immagine fallisce il caricamento
+  const [imgError, setImgError] = useState(false);
+
   if (!utente) return null;
 
-  const { nome, cognome, immagine, descrizione, email, recapitoTelefonico } = utente;
+  const { nome, cognome, immagine, descrizione, email, recapitoTelefonico, ambito } = utente;
+  const iniziali = `${nome?.charAt(0) || ''}${cognome?.charAt(0) || ''}`;
+
+  // Funzione per costruire l'URL corretto dell'immagine
+  const getImageUrl = (img) => {
+    if (!img) return null;
+    // Se è già un URL completo (es. https://...) o Base64 (data:image...), lo usiamo così com'è
+    if (img.startsWith("http") || img.startsWith("data:")) {
+        return img;
+    }
+    // Altrimenti, se è un percorso relativo (es. /profile_images/...), ci attacchiamo il dominio del backend
+    return `${API_BASE_URL}${img.startsWith('/') ? '' : '/'}${img}`;
+  };
+
+  const finalImageSrc = getImageUrl(immagine);
 
   return (
-    <div className="volunteer-card">
+    <div 
+      className="volunteer-card-horizontal" 
+      onClick={onClick}
+      style={{ cursor: onClick ? 'pointer' : 'default' }}
+    >
       
-      {/* Header con Immagine e Nome */}
-      <div className="vol-header">
-        <div className="vol-avatar">
-          {immagine ? (
-            <img src={immagine} alt={`${nome} ${cognome}`} className="vol-img" />
+      {/* SEZIONE SINISTRA: AVATAR + DATI PRINCIPALI */}
+      <div className="vol-left-group">
+        <div className="vol-avatar-horiz">
+          {/* LOGICA: Mostra immagine SOLO se esiste E non ha dato errore */}
+          {!imgError && finalImageSrc ? (
+            <img 
+              src={finalImageSrc} 
+              alt={`${nome} ${cognome}`} 
+              className="vol-img"
+              onError={() => setImgError(true)} // Se non la trova, attiva il fallback
+            />
           ) : (
-            // Iniziali se non c'è immagine
-            <span className="vol-initials">
-              {nome?.charAt(0)}{cognome?.charAt(0)}
-            </span>
+            <span className="vol-initials">{iniziali}</span>
           )}
         </div>
         
-        <div className="vol-info">
+        <div className="vol-main-info">
           <h3 className="vol-name">{nome} {cognome}</h3>
-          <span className="vol-badge">Volontario</span>
+          
+          <div className="vol-badges-row">
+            <span className="vol-badge"><User size={14} strokeWidth={2.5} style={{ marginRight: '6px' }} />Volontario</span>
+            {ambito && (
+              <span className="vol-ambito">
+                <Briefcase size={12} style={{marginRight: '4px'}}/> 
+                {ambito}
+              </span>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Descrizione */}
-      <div className="vol-body">
-        <p className="vol-desc">
-          {descrizione || "Nessuna descrizione."}
-        </p>
-      </div>
-
-      {/* Contatti */}
-      <div className="vol-footer">
-        <div className="vol-contact-row">
+      {/* SEZIONE DESTRA: CONTATTI */}
+      <div className="vol-contacts-group">
+        <div className="vol-contact-item">
           <Mail size={16} className="vol-icon" />
           <span>{email}</span>
         </div>
+        
         {recapitoTelefonico && (
-          <div className="vol-contact-row">
+          <div className="vol-contact-item">
             <Phone size={16} className="vol-icon" />
             <span>{recapitoTelefonico}</span>
           </div>

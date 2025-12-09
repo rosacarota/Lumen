@@ -15,7 +15,6 @@
     --white: #FFFFFF;
     --shadow-soft: 0 10px 40px rgba(8, 120, 134, 0.08);
     --shadow-hover: 0 20px 50px rgba(8, 120, 134, 0.15);
-    --gradient-hero: linear-gradient(135deg, var(--bg-soft) 0%, #E0F2F4 100%);
 }
 
 body {
@@ -30,6 +29,8 @@ body {
     /* Remove potential double padding */
     min-height: auto;
     /* Override global min-height if set */
+    background-color: var(--bg-main);
+    overflow-y: hidden;
 }
 
 /* Container */
@@ -42,7 +43,7 @@ body {
 
 /* Hero Section Enhanced */
 .about-hero {
-    background: linear-gradient(180deg, rgba(233, 251, 231, 0.5) 0%, rgba(247, 251, 251, 1) 100%);
+    background-color: var(--bg-main);
     padding: 100px 0 120px;
     text-align: center;
     position: relative;
@@ -75,7 +76,7 @@ body {
     right: -100px;
     width: 400px;
     height: 400px;
-    background: radial-gradient(circle, rgba(74, 175, 184, 0.2) 0%, transparent 70%);
+    background-color: var(--bg-main);
     border-radius: 50%;
     filter: blur(60px);
     animation: floatBlob 20s infinite ease-in-out;
@@ -89,7 +90,7 @@ body {
     left: -100px;
     width: 350px;
     height: 350px;
-    background: radial-gradient(circle, rgba(124, 206, 107, 0.2) 0%, transparent 70%);
+    background-color: var(--bg-main);
     border-radius: 50%;
     filter: blur(60px);
     animation: floatBlob 25s infinite ease-in-out reverse;
@@ -228,8 +229,8 @@ body {
 
 .role-card:hover {
     transform: translateY(-10px);
-    box-shadow: var(--shadow-hover);
-    border-color: var(--second-color);
+    box-shadow: 0 15px 35px -5px rgba(8, 119, 134, 0.253);
+    
 }
 
 .icon-wrapper {

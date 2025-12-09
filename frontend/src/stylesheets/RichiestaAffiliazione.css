@@ -96,7 +96,6 @@
     border-radius: 50%;
     filter: blur(80px);
     opacity: 0.5;
-    animation: pulse 5s ease-in-out infinite;
 }
 
 .ra-circle-1 {
@@ -105,7 +104,6 @@
     background: #7cce6b;
     top: 10%;
     left: 10%;
-    animation-duration: 4s;
 }
 
 .ra-circle-2 {
@@ -114,7 +112,6 @@
     background: #4aafb8;
     bottom: 10%;
     right: 10%;
-    animation-duration: 5s;
 }
 
 .ra-welcome-content {
@@ -320,7 +317,7 @@
 .ra-page-modal {
     position: fixed;
     inset: 0;
-    z-index: 60;
+    z-index: 10000;
     background: rgba(15, 23, 42, 0.55);
     display: flex;
     align-items: center;

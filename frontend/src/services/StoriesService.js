@@ -1,12 +1,5 @@
-const API_BASE_URL = "http://localhost:8080";
+import api from '../utils/api';
 
-// Recupera token dalla sessione (o localStorage se ti serve)
-/* Se usi localStorage, sostituisci la funzione */
-function getAuthToken() {
-  return localStorage.getItem("token");
-}
-
-// Converte un file immagine in Base64
 export const toBase64 = (file) =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -14,105 +7,83 @@ export const toBase64 = (file) =>
     reader.onload = () => resolve(reader.result);
     reader.onerror = (error) => reject(error);
   });
-
-// ====================== MAPPATURE ======================
-
-// JSON → Oggetto UI
 function mapStoryFromApi(apiStory) {
+  let authorEmail = "";
+  let authorName = "Utente";
+
+  if (apiStory.utente) {
+    if (typeof apiStory.utente === 'object') {
+      authorEmail = apiStory.utente.email || "";
+      authorName = apiStory.utente.nome || apiStory.autoreNome || "Utente";
+    } else {
+      authorEmail = String(apiStory.utente);
+      authorName = apiStory.autoreNome || "Utente";
+    }
+  }
+
+  if (!authorEmail && apiStory.autoreEmail) {
+    authorEmail = apiStory.autoreEmail;
+  }
+
   return {
     id: apiStory.idRacconto,
     title: apiStory.titolo,
     content: apiStory.descrizione,
     imageBase64: apiStory.immagine || null,
     createdAt: apiStory.dataPubblicazione,
-
-    authorName: apiStory.autoreNome,  
+    authorEmail: authorEmail.trim().toLowerCase(),
+    authorName: authorName,
     authorRole: apiStory.autoreRuolo,
     type: apiStory.immagine ? "photo" : "text",
+    utente: apiStory.utente, // Preserva l'oggetto utente completo con ruolo, immagine, etc.
+    authorAvatar: (typeof apiStory.utente === 'object' && apiStory.utente?.immagine) ? apiStory.utente.immagine : null,
   };
 }
 
-// Oggetto UI → JSON per aggiunta racconto
 function mapNewStoryToApi(newStory) {
   return {
     titolo: newStory.title,
     descrizione: newStory.content,
-    immagine: newStory.imageBase64 || null, // BASE64
+    immagine: newStory.imageBase64 || null,
   };
 }
 
-// Oggetto UI → JSON per modifica racconto
 function mapUpdatedStoryToApi(updatedStory) {
   return {
     idRacconto: updatedStory.id,
     titolo: updatedStory.title,
     descrizione: updatedStory.content,
     dataPubblicazione: updatedStory.createdAt,
-    immagine: updatedStory.imageBase64 || null, // BASE64
+    immagine: updatedStory.imageBase64 || null,
   };
 }
 
-// ====================== API CALLS ======================
-
-// VISUALIZZA RACCONTI
-export async function fetchStories() {
-  const token = getAuthToken();
-
-  const res = await fetch(`${API_BASE_URL}/racconto/visualizza?token=${token}`, {
-    method: "GET",
-  });
-
-  if (!res.ok) throw new Error("Errore nel caricamento delle storie");
-
-  const data = await res.json();
-  return data.map(mapStoryFromApi);
+export async function fetchStories(targetEmail = null) {
+  const data = await api.get("/racconto/visualizzaTutti");
+  const allStories = data.map(mapStoryFromApi);
+  return allStories;
 }
 
-// AGGIUNGI RACCONTO CON IMMAGINE BASE64
+export async function fetchFilteredStories(email) {
+  const payload = { email };
+  const data = await api.post("/racconto/visualizza", payload);
+  const filteredStories = data.map(mapStoryFromApi);
+  return filteredStories;
+}
+
 export async function addStory(newStory) {
-  const token = getAuthToken();
   const payload = mapNewStoryToApi(newStory);
-
-  const res = await fetch(`${API_BASE_URL}/racconto/aggiungi?token=${token}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-
-  if (!res.ok) throw new Error("Errore durante l'aggiunta del racconto");
-
-  const created = await res.json();
+  const created = await api.post("/racconto/aggiungi", payload);
   return mapStoryFromApi(created);
 }
 
-// MODIFICA RACCONTO CON IMMAGINE BASE64
 export async function editStory(updatedStory) {
-  const token = getAuthToken();
   const payload = mapUpdatedStoryToApi(updatedStory);
-
-  const res = await fetch(`${API_BASE_URL}/racconto/modifica?token=${token}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-
-  if (!res.ok) throw new Error("Errore durante la modifica del racconto");
-
-  const saved = await res.json();
+  const saved = await api.post("/racconto/modifica", payload);
   return mapStoryFromApi(saved);
 }
 
-// RIMUOVI RACCONTO
 export async function deleteStory(storyId) {
-  const token = getAuthToken();
-
-  const res = await fetch(`${API_BASE_URL}/racconto/rimuovi?token=${token}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ idRacconto: storyId }),
-  });
-
-  if (!res.ok) throw new Error("Errore durante la rimozione del racconto");
-
+  await api.post("/racconto/rimuovi", { idRacconto: storyId });
   return true;
 }

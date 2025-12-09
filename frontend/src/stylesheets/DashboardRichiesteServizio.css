@@ -1,0 +1,300 @@
+:root {
+  /* -- Sfondi -- */
+  --bg-main: #F7FBFB; /* Bianco freddo per la pagina */
+  --bg-soft: #F0F5F5; /* Per header card o aree secondarie */
+
+  /* -- Colori Principali -- */
+  --first-color: #087886; /* Turchese: Testi Principali, Bottoni Primari */
+  --second-color: #4AAFB8; /* Azzurro: Icone, Bordi Focus, Link */
+  --third-color: #7CCE6B;  /* Verde: Hover Bottone, Successo */
+
+  /* -- Testi Neutri (Necessari per la leggibilità) -- */
+  --text-dark: #1e293b;
+  --text-gray: #64748b;
+  --danger-red: #ef4444;
+  --danger-bg: #fef2f2;
+}
+
+/* ================= PAGINA INTERA ================= */
+.dash-req-page {
+  height: 100vh; /* Occupa tutta l'altezza */
+  background-color: var(--bg-main);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Blocca scroll pagina principale */
+  font-family: 'Inter', sans-serif; /* Assicurati di avere un font pulito */
+  align-items: center;
+}
+
+.dash-req-container {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  height: 98%;
+  background-color: white;
+  text-align: left;
+  width: 100%;
+  border-radius: 28px;
+  /* Angoli molto arrotondati */
+  box-shadow: 0 18px 50px rgba(8, 120, 134, 0.18);
+  margin: 3% 0px;
+
+}
+
+/* ================= HEADER CENTRATO ================= */
+.dash-req-header {
+  text-align: left;
+  margin-bottom: 25px;
+  flex-shrink: 0;
+  align-items: baseline;
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid #f3f4f6;
+  padding: 20px  20px ;
+ 
+}
+
+.dash-req-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--first-color); /* Turchese scuro */
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+
+}
+
+.dash-req-header p {
+  text-align: left;
+  color: var(--text-gray);
+  font-size: 1rem;
+  max-width: 600px;
+
+}
+
+/* ================= LOADING & EMPTY STATES ================= */
+.dash-req-loading, .dash-req-empty {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: var(--second-color); /* Azzurro */
+}
+
+/* ================= AREA SCROLLABILE ================= */
+.dash-req-scroll-area {
+  flex: 1;
+  padding: 10px; /* Padding per non tagliare le ombre */
+  padding-right: 15px; /* Spazio per la scrollbar */
+}
+
+/* ================= GRIGLIA CARD ================= */
+.dash-req-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 24px;
+  padding-bottom: 40px;
+}
+
+/* ================= CARD DESIGN ================= */
+.req-card {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 6px -1px rgba(8, 120, 134, 0.05), 0 2px 4px -1px rgba(8, 120, 134, 0.03);
+  border: 1px solid var(--bg-soft);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s, box-shadow 0.2s;
+  overflow: hidden;
+}
+
+.req-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 25px -5px rgba(8, 120, 134, 0.1), 0 10px 10px -5px rgba(8, 120, 134, 0.04);
+
+}
+
+/* --- Card Header --- */
+.req-card-header {
+  padding: 20px 24px;
+  background-color: var(--bg-soft); /* Sfondo soft */
+  border-bottom: 1px solid #eef2f6;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+}
+
+.req-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid var(--second-color); /* Bordo azzurro */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--first-color);
+}
+
+.req-user-info h3 {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.req-location {
+  font-size: 13px;
+  color: var(--text-gray);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.req-date-badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  font-size: 11px;
+  background: white;
+  padding: 5px 10px;
+  border-radius: 20px;
+  color: var(--first-color);
+  border: 1px solid var(--second-color);
+  font-weight: 700;
+}
+
+/* --- Card Body --- */
+.req-card-body {
+  padding: 24px;
+  flex: 1;
+}
+
+.req-desc-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--first-color); /* Titolo Turchese */
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  letter-spacing: 0.5px;
+}
+
+.req-text {
+  font-size: 15px;
+  color: var(--text-dark);
+  line-height: 1.6;
+  background-color: var(--bg-main); /* Sfondo chiarissimo */
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px dashed #cbd5e1;
+}
+
+.req-divider {
+  height: 1px;
+  background-color: #eef2f6;
+  margin: 20px 0;
+}
+
+/* Contatti */
+.req-contacts {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.req-contact-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: var(--text-gray);
+  background: white;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.req-contact-item svg {
+  color: var(--second-color); /* Icone Azzurre */
+}
+
+.req-contact-item a {
+  color: var(--text-dark);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+
+
+
+
+/* --- Card Footer --- */
+.req-card-footer {
+  padding: 20px 24px;
+  border-top: 1px solid #eef2f6;
+  display: flex;
+  gap: 16px;
+  background: white;
+}
+
+.req-card-footer button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+/* Bottone Accetta (Turchese -> Verde hover) */
+.btn-accept {
+  background-color: var(--first-color);
+  color: white;
+  box-shadow: 0 4px 10px rgba(8, 120, 134, 0.2);
+}
+
+.btn-accept:hover {
+  
+  box-shadow: 0 6px 12px rgba(203, 203, 203, 0.3);
+  transform: translateY(-2px);
+}
+
+/* Bottone Rifiuta */
+.btn-reject {
+  background-color: white;
+  border: 1px solid #e2e8f0 !important;
+  color: var(--text-gray);
+}
+
+.btn-reject:hover {
+  background-color: var(--danger-bg);
+  color: var(--danger-red);
+  border-color: var(--danger-red) !important;
+  box-shadow: 0 6px 12px rgba(203, 203, 203, 0.3);
+  transform: translateY(-2px);
+}
+
+/* Responsive Mobile */
+@media (max-width: 600px) {
+  .dash-req-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .dash-req-header h1 {
+    font-size: 26px;
+  }
+}

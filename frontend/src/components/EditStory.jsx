@@ -2,15 +2,17 @@ import { useState, useEffect, useRef } from "react";
 import { Image, FileText, ArrowLeft, X } from "lucide-react";
 import "../stylesheets/EditStory.css";
 
+import { editStory } from "../services/StoriesService";
+
 const EditStory = ({ story, onCancel, onSave }) => {
   const [storyType, setStoryType] = useState(story.type === "photo" ? "photo" : "text");
   const [title, setTitle] = useState(story.title || "");
   const [content, setContent] = useState(story.content || "");
   const [file, setFile] = useState(null);
-  const [imageRemoved, setImageRemoved] = useState(false); // nuova flag per rimuovere immagine
+  const [imageRemoved, setImageRemoved] = useState(false); // flag per rimuovere immagine
   const fileInputRef = useRef(null);
 
-  // Converti file in Base64
+  // Convertire file in Base64
   const toBase64 = (file) =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -28,6 +30,14 @@ const EditStory = ({ story, onCancel, onSave }) => {
     setImageRemoved(false);
     if (fileInputRef.current) fileInputRef.current.value = "";
   }, [story]);
+
+  // Prevent scrolling when modal is open
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -60,13 +70,20 @@ const EditStory = ({ story, onCancel, onSave }) => {
       createdAt: story.createdAt, // mantieni la data originale
     };
 
-    onSave && onSave(updatedStory);
+    try {
+      await editStory(updatedStory);
+      if (onSave) onSave(); // Richiama il refresh
+      if (onCancel) onCancel(); // Chiudi modale
+    } catch (err) {
+      console.error(err);
+      alert("Errore durante il salvataggio delle modifiche");
+    }
   };
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     setFile(selectedFile || null);
-    setImageRemoved(false); // se carico un file nuovo, non rimuovere
+    setImageRemoved(false);
   };
 
   const handleTypeChange = (type) => {
@@ -86,6 +103,13 @@ const EditStory = ({ story, onCancel, onSave }) => {
   const getHelperPlaceholder = () => {
     const base = "Aggiorna il racconto: cosa è successo, chi hai incontrato, come ti sei sentito...";
     return storyType === "photo" ? `Descrizione foto o link. ${base}` : base;
+  };
+  
+  const getStoryOwnerRole = (story) => {
+    if (story.utente && story.utente.ruolo) {
+      return story.utente.ruolo;
+    }
+    return story.authorRole || "";
   };
 
   return (
@@ -110,6 +134,9 @@ const EditStory = ({ story, onCancel, onSave }) => {
             <p className="edit-meta-row">
               <span className="edit-meta-label">Ruolo:</span>
               <span className="edit-meta-value">{story.authorRole}</span>
+              <span className="story-author-role">
+              {getStoryOwnerRole(story) || "Utente"}
+              </span>
             </p>
           </div>
         </div>
@@ -157,9 +184,12 @@ const EditStory = ({ story, onCancel, onSave }) => {
                       Nuovo file selezionato: <strong>{file.name}</strong> ({Math.round(file.size / 1024)} KB) – clicca per cambiare
                     </p>
                   ) : story.imageBase64 && !imageRemoved ? (
-                    <div className="edit-image-preview">
+                    <div className="edit-image-preview"
+                      onClick={(e) => e.stopPropagation()}  >
                       <img src={story.imageBase64} alt="Immagine corrente" className="edit-preview-img" />
-                      <button type="button" className="edit-remove-image-button" onClick={handleRemoveImage} title="Rimuovi immagine">
+                      <button type="button" className="edit-remove-image-button" onClick={(e) => {
+                        e.stopPropagation(); handleRemoveImage();
+                      }} title="Rimuovi immagine">
                         <X size={16} />
                       </button>
                     </div>

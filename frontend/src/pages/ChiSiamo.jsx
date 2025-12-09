@@ -1,6 +1,5 @@
 import React from 'react';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+
 import { Target, Users, Heart, Search, Calendar, MessageCircle } from 'lucide-react';
 import '../stylesheets/ChiSiamo.css';
 
@@ -28,7 +27,7 @@ const ChiSiamo = () => {
     return (
         <>
             <div className="page-wrapper">
-                <Navbar />
+
 
                 <section className="about-hero">
                     <div className="about-container">
@@ -115,7 +114,7 @@ const ChiSiamo = () => {
                 </section>
 
             </div>
-            <Footer />
+
         </>
     );
 };

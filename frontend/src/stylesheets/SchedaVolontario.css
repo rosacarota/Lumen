@@ -1,91 +1,154 @@
-.volunteer-card {
+/* --- CARD ORIZZONTALE --- */
+.volunteer-card-horizontal {
   background-color: white;
   border-radius: 16px;
-  padding: 24px;
-  border: 1px solid rgba(0,0,0,0.05);
-  box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+  padding: 16px 24px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+  
+  /* Layout Orizzontale */
   display: flex;
-  flex-direction: column;
-  gap: 16px;
-  transition: transform 0.2s ease;
-  min-width: 280px; /* Assicura una larghezza minima */
+  align-items: center;
+  justify-content: space-between; /* Spazia Sinistra e Destra */
+  gap: 20px;
+  
+  transition: all 0.2s ease;
 }
 
-.volunteer-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(8, 120, 134, 0.1);
+.volunteer-card-horizontal:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
   border-color: #087886;
 }
 
-.vol-header {
+/* --- GRUPPO SINISTRO (Avatar + Info) --- */
+.vol-left-group {
   display: flex;
   align-items: center;
   gap: 16px;
+  flex: 1; /* Prende lo spazio necessario */
 }
 
-.vol-avatar {
+.vol-avatar-horiz {
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background-color: #F0F5F5;
+  overflow: hidden;
+  background-color: white; /* O #f1f5f9 */
+  border: 2px solid #087886; /* Teal border come nella foto */
+  color: #087886;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid #087886;
-  overflow: hidden;
+  flex-shrink: 0;
 }
 
-.vol-img { width: 100%; height: 100%; object-fit: cover; }
-
-.vol-initials {
-  font-weight: 700;
-  color: #087886;
-  text-transform: uppercase;
+.vol-img { 
+  width: 100%; 
+  height: 100%; 
+  object-fit: cover; /* Ritaglia l'immagine per riempire il cerchio senza deformarla */
+  display: block;
 }
 
-.vol-info { display: flex; flex-direction: column; }
+.vol-initials { font-weight: 700; font-size: 1.1rem; text-transform: uppercase; }
+
+.vol-main-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
 
 .vol-name {
   margin: 0;
   font-size: 1.1rem;
   font-weight: 700;
-  color: #1e293b;
+  color: #0f172a;
+}
+
+.vol-badges-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .vol-badge {
   background-color: #dcfce7;
   color: #166534;
-  font-size: 0.75rem;
-  font-weight: 600;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
   padding: 2px 8px;
-  border-radius: 12px;
-  width: fit-content;
+  border-radius: 6px;
 }
 
-.vol-desc {
-  font-size: 0.9rem;
-  color: #64748b;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+.vol-ambito {
+  display: inline-flex;
+  align-items: center;
+  background-color: #f1f5f9;
+  color: #0e7490; /* Teal testo */
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 6px;
 }
 
-.vol-footer {
-  margin-top: auto;
-  padding-top: 16px;
-  border-top: 1px solid #f1f5f9;
+/* --- GRUPPO DESTRO (Contatti) --- */
+.vol-contacts-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 8px;              /* Spazio uniforme tra email e telefono */
+  align-items: flex-end; /* Allinea tutto rigorosamente a DESTRA */
+  justify-content: center; /* Centra verticalmente rispetto all'avatar */
+  min-width: 220px;      /* Dà una larghezza minima per evitare schiacciamenti */
 }
 
-.vol-contact-row {
+/* --- SINGOLO CONTATTO (Pillola) --- */
+.vol-contact-item {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  align-items: center;   /* Allinea Icona e Testo sulla stessa riga */
+  justify-content: flex-start; 
+  gap: 10px;             /* Spazio tra icona e testo */
+  
   font-size: 0.85rem;
-  color: #334155;
+  color: #475569;
+  background-color: #f8fafc;
+  border: 1px solid #f1f5f9;
+  
+  /* Padding bilanciato per renderli ordinati */
+  padding: 8px 16px;     
+  border-radius: 8px;
+  
+  white-space: nowrap;   /* Evita che il testo vada a capo */
+  transition: all 0.2s ease;
+  width: fit-content;    /* La larghezza si adatta al contenuto */
 }
 
-.vol-icon { color: #4AAFB8; }
+.vol-contact-item:hover {
+  border-color: #087886;
+  background-color: #f0fdfa;
+  color: #087886;
+}
+
+.vol-icon {
+  color: #087886;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0; /* L'icona non si deve mai schiacciare */
+}
+
+/* --- RESPONSIVE (Per schermi piccoli diventa verticale) --- */
+@media (max-width: 640px) {
+  .volunteer-card-horizontal {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  .vol-contacts-group {
+    width: 100%;
+    align-items: flex-start;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}

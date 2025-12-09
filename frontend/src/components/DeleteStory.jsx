@@ -1,8 +1,31 @@
+import { useEffect } from "react";
 import { X, Trash2 } from "lucide-react";
 import "../stylesheets/DeleteStory.css";
 
+import { deleteStory } from "../services/StoriesService";
+
 const DeleteStory = ({ story, onCancel, onConfirm }) => {
   if (!story) return null;
+
+  // Prevent scrolling when modal is open
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
+
+  const handleDelete = async () => {
+    try {
+      // Gestisce sia id che idRacconto a seconda del JSON
+      const idToDelete = story.id || story.idRacconto;
+      await deleteStory(idToDelete);
+      if (onConfirm) onConfirm(); // Refresh e chiusura delegati al padre
+    } catch (err) {
+      console.error(err);
+      alert("Errore durante l'eliminazione del racconto");
+    }
+  };
 
   return (
     <div className="delete-story-overlay">
@@ -74,7 +97,7 @@ const DeleteStory = ({ story, onCancel, onConfirm }) => {
             <button
               type="button"
               className="delete-confirm-button"
-              onClick={onConfirm}
+              onClick={handleDelete}
             >
               <Trash2 className="delete-confirm-icon" />
               <span>Conferma eliminazione</span>

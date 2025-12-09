@@ -1,53 +1,32 @@
-const API_BASE_URL = "http://localhost:8080/raccoltaFondi";
+import api from '../utils/api';
 
-function getAuthToken() {
-
-  return localStorage.getItem("token");
+export async function getRaccolteDiEnteEsterno(email) {
+  // api.get("/raccoltaFondi/ottieniRaccolteDiEnteEsterno?email=...") auto-appends token if present
+  const data = await api.get("/raccoltaFondi/ottieniRaccolteDiEnteEsterno", { email });
+  return data;
 }
 
 export async function getRaccolteDiEnte() {
-  const token = getAuthToken();
-  const res = await fetch(`${API_BASE_URL}/ottieniRaccolteDiEnte?token=${token}`, { method: "GET" });
-  if (!res.ok) {
-    const errorText = await res.text();
-    throw new Error(errorText || "Errore nel caricamento delle raccolte fondi");
-  }
-  const data = await res.json();
+  const data = await api.get("/raccoltaFondi/ottieniRaccolteDiEnte");
   return data;
 }
 
 export async function createRaccolta(raccoltaData) {
-  const token = getAuthToken();
-  console.log("Invio richiesta con token:", token); // Controllo console browser
-
-  const res = await fetch(`${API_BASE_URL}/avviaRaccoltaFondi?token=${token}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(raccoltaData),
-  });
-
-  if (!res.ok) {
-    // Qui catturiamo l'errore che viene dal backend (es. "Token scaduto" o "Utente non trovato")
-    const errorText = await res.text();
-    console.error("Errore Backend:", errorText);
-    throw new Error(errorText || "Errore durante l'avvio della raccolta fondi");
-  }
-  
-  const data = await res.text();
-  return data;
+  // api.post auto-appends token
+  // returns json or text. Original returned text.
+  const res = await api.post("/raccoltaFondi/avviaRaccoltaFondi", raccoltaData);
+  // Post usually returns text here.
+  return typeof res === 'object' ? JSON.stringify(res) : res;
 }
 
-export async function terminaRaccolta(raccoltaData) {
-  const token = getAuthToken();
-  const res = await fetch(`${API_BASE_URL}/terminaRaccoltaFondi?token=${token}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(raccoltaData),
-  });
-  if (!res.ok) {
-    const errorText = await res.text();
-    throw new Error(errorText || "Errore durante la chiusura della raccolta fondi");
-  }
-  const data = await res.text();
-  return data;
+export async function terminaRaccolta(fullData) {
+  // Id numerico della raccolta
+  const idNumerico = parseInt(fullData.id_raccolta || fullData.id, 10);
+  if (isNaN(idNumerico)) throw new Error("ID raccolta non valido");
+
+  // This is a GET request in original code:
+  // `${API_BASE_URL}/terminaRaccoltaFondi?idRaccolta=${idNumerico}&token=${token}`
+
+  const res = await api.get("/raccoltaFondi/terminaRaccoltaFondi", { idRaccolta: idNumerico });
+  return typeof res === 'object' ? JSON.stringify(res) : res;
 }

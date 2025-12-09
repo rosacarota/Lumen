@@ -1,48 +1,44 @@
-/* Overlay scuro del popup – CENTRATO E PULITO */
+
+/* Overlay scuro del popup */
 .edit-story-overlay {
   position: fixed;
   inset: 0;
-  z-index: 80;
-  background: rgba(15, 23, 42, 0.55);
-  backdrop-filter: blur(3px);
+  z-index: 2000;
+  background-color:rgba(8, 120, 134, 0.2);
+  backdrop-filter: blur(4px);
   
-  /* Flexbox per centrare perfettamente */
+  /* Flexbox per centrare */
   display: flex;
   justify-content: center; /* Orizzontale */
-  align-items: center;     /* Verticale (era flex-start) */
-  
-  padding: 20px;           /* Uniforme, rimosso il 90px sopra */
-  overflow-y: auto;        /* Scroll se serve */
+  align-items: flex-start;    
+  padding: 100px 20px 40px;           
+  overflow-y: auto;        
+  animation: fadeIn 0.3s ease-out;
 }
 
-/* Card principale – PIÙ GRANDE E CENTRATA */
+/* Card principale */
 .edit-story-modal {
   background: #ffffff;
   border-radius: 24px;
   width: 100%;
-  
-  /* Aumentato da 780px a 980px per matchare il container originale */
   max-width: 980px; 
-  
-  /* Importante per il centraggio sicuro */
   margin: auto;
-  
-  /* Aumentato leggermente per dare respiro */
   min-height: 480px; 
-  
   box-shadow: 0 20px 60px rgba(8, 120, 134, 0.25);
   display: flex;
   position: relative;
   overflow: hidden;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.45s ease-out forwards;
 }
 
-/* --- IL RESTO DEL CSS RIMANE INVARIATO --- */
 
 /* bottone per chiusura */
 .edit-close-button {
   position: absolute;
   top: 18px;
-  left: 18px; /* Nota: nel primo era left, qui è right, va bene così */
+  left: 18px; 
   width: 36px;
   height: 36px;
   border-radius: 999px;
@@ -54,7 +50,7 @@
   justify-content: center;
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
-  z-index: 20; /* Aumentato z-index per sicurezza */
+  z-index: 20; 
 }
 
 .edit-close-button:hover {
@@ -105,6 +101,9 @@
 .edit-meta-box {
   position: relative;
   z-index: 1;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.6s ease-out forwards;
 }
 
 .edit-title {
@@ -334,4 +333,47 @@
   font-weight: 700;
   cursor: pointer;
   box-shadow: 0;
+}
+
+.edit-image-preview {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 14px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.06);
+  width: auto;           
+  max-width: 100%;
+}
+
+.edit-preview-img {
+  width: 140px;
+  height: 140px;
+  border-radius: 12px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.edit-remove-image-button {
+  margin-left: auto;
+  border: none;
+  background: #fee2e2;
+  color: #b91c1c;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+}
+
+.edit-remove-image-button:hover {
+  background: #fecaca;
+  box-shadow: 0 2px 6px rgba(185, 28, 28, 0.3);
+  transform: translateY(-1px);
 }

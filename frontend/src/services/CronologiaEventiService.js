@@ -1,29 +1,28 @@
 const API_URL = "http://localhost:8080";
 
-function getAuthToken(){
-    /*return "eyJhbGciOiJIUzI1NiJ9.eyJydW9sbyI6IkVudGUiLCJzdWIiOiJlc2VtcGlvZW1haWxAZ21haWwuY29tIiwiaWF0IjoxNzY0Mjg0MTk2LCJleHAiOjE3NjQ4ODQxOTZ9.seiXyoUBe2wj9rtkARCQTpaWwvbtsXtWR5seQnPMG_k";*/
-    return localStorage.getItem("token");
+function getAuthToken() {
+  return localStorage.getItem("token");
 }
 
-export const getCronologiaEventi = async (stato = null) => {
+export const getCronologiaEventi = async () => {
   try {
+    let url = null;
     const token = getAuthToken();
-    
-    // Costruisco l'URL di base con il token
-    let url = `${API_URL}/evento/cronologiaEventi?token=${token}`;
-
-    // Se c'è lo stato, lo accodo alla stringa con la '&'
-    if (stato) {
-      url += `&stato=${stato}`;
+    if (!token) return [];
+    else {
+      if (localStorage.getItem("email") === localStorage.getItem("searchEmail")) {
+        url = `${API_URL}/partecipazione/cronologiaPartecipazioni?token=${encodeURIComponent(token)}`;
+      }
+      else {
+        url = `${API_URL}/partecipazione/cronologiaPartecipazioni?token=${encodeURIComponent(localStorage.getItem("searchEmail"))}`;
+      }
     }
 
-    // Eseguo la fetch usando la stringa URL costruita
     const response = await fetch(url, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
     });
 
-    // Gestione status 204 (No Content) -> Ritorna lista vuota
     if (response.status === 204) {
       return [];
     }
@@ -33,9 +32,23 @@ export const getCronologiaEventi = async (stato = null) => {
       throw new Error(errorText || 'Errore nel recupero della cronologia eventi');
     }
 
-    return await response.json();
+    const data = await response.json();
+    
+    return data.map(dto => ({
+            id: dto.idEvento,
+            titolo: dto.nomeEvento,
+            data_inizio: dto.data,
+            descrizione: "Dettagli non disponibili in cronologia",
+            luogo: "Vedi dettagli",
+            immagine: null,
+            ente: "Ente Organizzatore"
+    }));
   } catch (error) {
     console.error("Errore API Cronologia Eventi:", error);
-    throw error;
+    return [];
   }
+};
+
+export const getEventiFuturi = async () => {
+  return await getCronologiaEventi('futuri');
 };
