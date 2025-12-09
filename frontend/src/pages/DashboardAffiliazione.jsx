@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import AffiliazioneService from "../services/AffiliazioneService";
 import { useNavigate } from "react-router-dom";
+import Swal from 'sweetalert2';
 
 export default function DashboardAffiliazione() {
   const [volontari, setVolontari] = useState([]);
@@ -37,6 +38,7 @@ export default function DashboardAffiliazione() {
     try {
       const token = localStorage.getItem("token");
       const data = await AffiliazioneService.getListaAffiliati(token);
+      console.log("Dati Affiliati Caricati:", data);
       setVolontari(Array.isArray(data) ? data : []);
     } catch (err) {
       setErrorAffiliati("Impossibile caricare i volontari affiliati.");
@@ -71,23 +73,47 @@ export default function DashboardAffiliazione() {
 
   // RIMUOVI AFFILIATO
   const handleRemove = async (idAffiliazione) => {
-    if (!window.confirm("Confermi la rimozione?")) return;
+    const result = await Swal.fire({
+      title: 'Sei sicuro?',
+      text: "Confermi la rimozione dell'affiliato?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sì, rimuovi',
+      cancelButtonText: 'Annulla'
+    });
+
+    if (!result.isConfirmed) return;
 
     try {
       const token = localStorage.getItem("token");
+      console.log("Rimuovi affiliato con ID:", idAffiliazione, typeof idAffiliazione);
       await AffiliazioneService.rifiutaAffiliazione(idAffiliazione, token);
 
       setVolontari(prev =>
         prev.filter(v => v.idAffiliazione !== idAffiliazione)
       );
+      Swal.fire('Rimosso!', 'Affiliazione rimossa con successo.', 'success');
     } catch (err) {
-      alert("Errore durante la rimozione: " + err.message);
+      Swal.fire('Errore', "Errore durante la rimozione: " + err.message, 'error');
     }
   };
 
   // ACCETTA 
   const handleAccettaRichiesta = async (idAffiliazione) => {
-    if (!window.confirm("Confermi l’accettazione?")) return;
+    const result = await Swal.fire({
+      title: 'Accetta richiesta',
+      text: "Confermi l’accettazione della richiesta?",
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#087886',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sì, accetta',
+      cancelButtonText: 'Annulla'
+    });
+
+    if (!result.isConfirmed) return;
 
     try {
       const token = localStorage.getItem("token");
@@ -100,14 +126,26 @@ export default function DashboardAffiliazione() {
 
       // ricarico gli affiliati aggiornati
       loadAffiliati();
+      Swal.fire('Accettata!', 'Richiesta accettata con successo.', 'success');
     } catch (err) {
-      alert("Errore durante l'accettazione: " + err.message);
+      Swal.fire('Errore', "Errore durante l'accettazione: " + err.message, 'error');
     }
   };
 
   // RIFIUTA 
   const handleRifiutaRichiesta = async (idAffiliazione) => {
-    if (!window.confirm("Confermi il rifiuto?")) return;
+    const result = await Swal.fire({
+      title: 'Rifiuta richiesta',
+      text: "Confermi il rifiuto della richiesta?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sì, rifiuta',
+      cancelButtonText: 'Annulla'
+    });
+
+    if (!result.isConfirmed) return;
 
     try {
       const token = localStorage.getItem("token");
@@ -117,8 +155,9 @@ export default function DashboardAffiliazione() {
       setRichieste(prev =>
         prev.filter(r => r.idAffiliazione !== idAffiliazione)
       );
+      Swal.fire('Rifiutata!', 'Richiesta rifiutata.', 'success');
     } catch (err) {
-      alert("Errore durante il rifiuto: " + err.message);
+      Swal.fire('Errore', "Errore durante il rifiuto: " + err.message, 'error');
     }
   };
 

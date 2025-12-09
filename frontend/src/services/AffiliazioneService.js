@@ -87,7 +87,7 @@ class AffiliazioneService {
       return "Affiliazione rifiutata (mock)";
     }
 
-    const res = await api.get("/affiliazione/rifiuta", { idAffiliazione });
+    const res = await api.get("/affiliazione/rifiuta", { idAffiliazione: Number(idAffiliazione) });
     return typeof res === 'object' ? JSON.stringify(res) : res;
   }
 

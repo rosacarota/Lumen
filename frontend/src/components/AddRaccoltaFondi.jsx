@@ -273,15 +273,6 @@ const AddRaccoltaFondi = ({ onSubmit, onBack, onClose, isModal = false }) => {
 
       const responseMessage = await createRaccolta(nuovaRaccoltaPayload);
 
-      // 1. Alert temporizzato elegante (senza blocco utente)
-      await Swal.fire({
-        icon: 'success',
-        title: 'Pubblicata!',
-        text: 'La tua raccolta fondi è ora online.',
-        timer: 500, // Si chiude da solo dopo 1.5 secondi
-        showConfirmButton: false
-      });
-
       // 2. Notifica eventuali handler esterni (opzionale)
       if (onSubmit) {
         onSubmit(responseMessage);
