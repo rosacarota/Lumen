@@ -6,6 +6,7 @@ import {
 import Swal from 'sweetalert2';
 import '../stylesheets/ModificaProfilo.css';
 import { updateUserProfile } from '../services/UserServices.js';
+import { REGEX } from '../utils/loginValidation.js';
 
 export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
 
@@ -25,6 +26,7 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
     ncivico: ''
   });
 
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -41,8 +43,11 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
         ambito: currentUser.ambito || '',
         immagine: currentUser.immagine || ''
       });
+      setErrors({});
     }
   }, [isOpen, currentUser]);
+
+  // ... (useEffect for scroll lock remains same, skipped in replacement content if not targetted) 
 
   // Prevent scrolling when modal is open
   useEffect(() => {
@@ -61,6 +66,8 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    // Clear error on change
+    if (errors[name]) setErrors(prev => ({ ...prev, [name]: null }));
   };
 
   const handleImageUpload = (e) => {
@@ -74,9 +81,55 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
     }
   };
 
+  const validate = () => {
+    const newErrors = {};
+    const isEnte = formData.ruolo === 'Ente';
+
+    // Nome / Nome Ente
+    if (!formData.nome?.trim()) newErrors.nome = "Il nome è obbligatorio";
+    else {
+      if (isEnte) {
+        if (!REGEX.ALPHANUMERIC_NAME.test(formData.nome)) newErrors.nome = "Caratteri non validi (solo lettere e numeri)";
+      } else {
+        if (!REGEX.ONLY_LETTERS.test(formData.nome)) newErrors.nome = "Il nome può contenere solo lettere";
+      }
+    }
+
+    // Cognome (solo se non Ente)
+    if (!isEnte) {
+      if (!formData.cognome?.trim()) newErrors.cognome = "Il cognome è obbligatorio";
+      else if (!REGEX.ONLY_LETTERS.test(formData.cognome)) newErrors.cognome = "Il cognome può contenere solo lettere";
+    }
+
+    // Telefono
+    if (formData.recapitoTelefonico && !REGEX.PHONE.test(formData.recapitoTelefonico)) {
+      newErrors.recapitoTelefonico = "Il numero deve essere di 10 cifre";
+    }
+
+    // Indirizzo (Opzionali ma validati se presenti)
+    if (formData.citta && !REGEX.ONLY_LETTERS.test(formData.citta)) newErrors.citta = "La città può contenere solo lettere";
+    if (formData.provincia && !REGEX.PROVINCIA.test(formData.provincia)) newErrors.provincia = "Formato: 2 lettere maiuscole (es. MI)";
+    if (formData.cap && !REGEX.CAP.test(formData.cap)) newErrors.cap = "Il CAP deve essere di 5 cifre";
+    if (formData.ncivico && !REGEX.CIVICO.test(formData.ncivico)) newErrors.ncivico = "Solo numeri";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   // --- MODIFICA IMPORTANTE QUI ---
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validate()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Dati non validi',
+        text: 'Controlla i campi evidenziati in rosso.',
+        confirmButtonColor: '#087886'
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -110,6 +163,8 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
     }
   };
 
+  const ErrorMsg = ({ field }) => errors[field] ? <div style={{ color: '#e74c3c', fontSize: '0.8rem', marginTop: '4px' }}>{errors[field]}</div> : null;
+
   const renderAnagraficaFields = () => {
     if (formData.ruolo === 'Ente') {
       return (
@@ -122,10 +177,10 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
               value={formData.nome}
               onChange={handleChange}
               placeholder="Nome Ente"
-              className="input-field"
+              className={`input-field ${errors.nome ? 'input-error' : ''}`}
             />
           </div>
-
+          <ErrorMsg field="nome" />
         </>
       );
     } else {
@@ -139,9 +194,10 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
               value={formData.nome}
               onChange={handleChange}
               placeholder="Nome"
-              className="input-field"
+              className={`input-field ${errors.nome ? 'input-error' : ''}`}
             />
           </div>
+
           <div className="input-group">
             <User className="input-icon" />
             <input
@@ -150,7 +206,7 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
               value={formData.cognome}
               onChange={handleChange}
               placeholder="Cognome"
-              className="input-field"
+              className={`input-field ${errors.cognome ? 'input-error' : ''}`}
             />
           </div>
         </div>
@@ -196,6 +252,7 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
 
               <div className="section-title"><User size={16} /> Anagrafica</div>
               {renderAnagraficaFields()}
+              {/* Errors for names are inside renderAnagraficaFields now */}
 
               <div className="section-title"><Phone size={16} /> Contatti</div>
               <div className="row-2">
@@ -218,10 +275,12 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
                     value={formData.recapitoTelefonico}
                     onChange={handleChange}
                     placeholder="Telefono"
-                    className="input-field"
+                    className={`input-field ${errors.recapitoTelefonico ? 'input-error' : ''}`}
+                    maxLength={10}
                   />
                 </div>
               </div>
+              <div style={{ textAlign: 'right' }}><ErrorMsg field="recapitoTelefonico" /></div>
 
               <div className="section-title"><MapPin size={16} /> Indirizzo</div>
               <div className="row-3">
@@ -244,10 +303,15 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
                     value={formData.ncivico}
                     onChange={handleChange}
                     placeholder="N."
-                    className="input-field"
+                    className={`input-field ${errors.ncivico ? 'input-error' : ''}`}
                   />
                 </div>
               </div>
+              <div style={{ display: 'flex' }}>
+                <div style={{ flex: 2 }}></div>
+                <div style={{ flex: 1 }}><ErrorMsg field="ncivico" /></div>
+              </div>
+
               <div className="row-3">
                 <div className="input-group" style={{ flex: 2 }}>
                   <Map className="input-icon" />
@@ -257,7 +321,7 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
                     value={formData.citta}
                     onChange={handleChange}
                     placeholder="Città"
-                    className="input-field"
+                    className={`input-field ${errors.citta ? 'input-error' : ''}`}
                   />
                 </div>
                 <div className="input-group" style={{ flex: 1 }}>
@@ -269,7 +333,7 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
                     onChange={handleChange}
                     placeholder="PR"
                     maxLength={2}
-                    className="input-field"
+                    className={`input-field ${errors.provincia ? 'input-error' : ''}`}
                   />
                 </div>
                 <div className="input-group" style={{ flex: 1 }}>
@@ -280,9 +344,15 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
                     value={formData.cap}
                     onChange={handleChange}
                     placeholder="CAP"
-                    className="input-field"
+                    maxLength={5}
+                    className={`input-field ${errors.cap ? 'input-error' : ''}`}
                   />
                 </div>
+              </div>
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <div style={{ flex: 2 }}><ErrorMsg field="citta" /></div>
+                <div style={{ flex: 1 }}><ErrorMsg field="provincia" /></div>
+                <div style={{ flex: 1 }}><ErrorMsg field="cap" /></div>
               </div>
 
               <div className="section-title"><Briefcase size={16} /> Dettagli</div>

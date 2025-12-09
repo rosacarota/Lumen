@@ -2,6 +2,8 @@ import { useState, useRef, useEffect } from "react";
 import { Calendar, Image as ImageIcon, ArrowLeft, SendHorizontal, MapPin, Clock } from "lucide-react";
 import "../stylesheets/AddEvento.css";
 import { addEvento, toBase64 } from "../services/EventoService";
+import { REGEX } from "../utils/loginValidation";
+import Swal from 'sweetalert2';
 
 const AddEvento = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE_DEFAULT", initialData }) => {
 
@@ -52,14 +54,33 @@ const AddEvento = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE_DEFAUL
 
     // Validazione Date
     if (new Date(dataFine) < new Date(dataInizio)) {
-      alert("La data di fine deve essere uguale o successiva alla data di inizio.");
+      Swal.fire('Attenzione', "La data di fine deve essere uguale o successiva alla data di inizio.", 'warning');
       return;
     }
 
     if (parseInt(maxPartecipanti) <= 0) {
-      alert("Il numero di partecipanti deve essere positivo.");
+      Swal.fire('Attenzione', "Il numero di partecipanti deve essere positivo.", 'warning');
       return;
     }
+
+    // --- NUOVE VALIDAZIONI REGEX ---
+    if (!REGEX.CIVICO.test(indirizzo.ncivico)) {
+      Swal.fire('Dati non validi', "Il numero civico deve essere numerico.", 'warning');
+      return;
+    }
+    if (!REGEX.ONLY_LETTERS.test(indirizzo.citta)) {
+      Swal.fire('Dati non validi', "La città può contenere solo lettere.", 'warning');
+      return;
+    }
+    if (!REGEX.PROVINCIA.test(indirizzo.provincia)) {
+      Swal.fire('Dati non validi', "La provincia deve essere di 2 lettere maiuscole (es. RM).", 'warning');
+      return;
+    }
+    if (!REGEX.CAP.test(indirizzo.cap)) {
+      Swal.fire('Dati non validi', "Il CAP deve essere di 5 cifre.", 'warning');
+      return;
+    }
+    // -------------------------------
 
     setIsLoading(true);
 
@@ -90,7 +111,7 @@ const AddEvento = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE_DEFAUL
 
     } catch (error) {
       console.error(error);
-      alert("Errore durante la pubblicazione: " + error.message);
+      Swal.fire('Errore', "Errore durante la pubblicazione: " + error.message, 'error');
     } finally {
       setIsLoading(false);
     }
