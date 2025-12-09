@@ -134,7 +134,7 @@ const Navbar = () => {
             />
           </div>
 
-          {currentUser.role === 'beneficiario' && (
+          {currentUser.isLoggedIn && (
             <Link to="/ricercageografica" className="icon-btn" title="Ricerca Geografica">
               <Earth size={20} />
             </Link>

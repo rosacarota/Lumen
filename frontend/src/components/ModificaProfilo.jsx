@@ -106,11 +106,21 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
       newErrors.recapitoTelefonico = "Il numero deve essere di 10 cifre";
     }
 
-    // Indirizzo (Opzionali ma validati se presenti)
-    if (formData.citta && !REGEX.ONLY_LETTERS.test(formData.citta)) newErrors.citta = "La città può contenere solo lettere";
-    if (formData.provincia && !REGEX.PROVINCIA.test(formData.provincia)) newErrors.provincia = "Formato: 2 lettere maiuscole (es. MI)";
-    if (formData.cap && !REGEX.CAP.test(formData.cap)) newErrors.cap = "Il CAP deve essere di 5 cifre";
-    if (formData.ncivico && !REGEX.CIVICO.test(formData.ncivico)) newErrors.ncivico = "Solo numeri";
+    // Indirizzo: Se uno dei campi è compilato, tutti (eccetto civico) diventano obbligatori
+    const hasAnyAddress = formData.strada || formData.ncivico || formData.citta || formData.provincia || formData.cap;
+
+    if (hasAnyAddress) {
+      if (!formData.strada?.trim()) newErrors.strada = "Via obbligatoria";
+      if (!formData.citta?.trim()) newErrors.citta = "Città richiesta";
+      if (!formData.provincia?.trim()) newErrors.provincia = "Provincia richiesta";
+      if (!formData.cap?.trim()) newErrors.cap = "CAP richiesto";
+
+      // Validazioni formato se presenti (o se obbligati e l'utente ha scritto qualcosa di sbagliato)
+      if (formData.citta && !REGEX.ONLY_LETTERS.test(formData.citta)) newErrors.citta = "Solo lettere";
+      if (formData.provincia && !REGEX.PROVINCIA.test(formData.provincia)) newErrors.provincia = "2 lettere maiuscole (es. MI)";
+      if (formData.cap && !REGEX.CAP.test(formData.cap)) newErrors.cap = "Deve essere 5 cifre";
+      if (formData.ncivico && !REGEX.CIVICO.test(formData.ncivico)) newErrors.ncivico = "Solo numeri";
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -121,12 +131,7 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
     e.preventDefault();
 
     if (!validate()) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Dati non validi',
-        text: 'Controlla i campi evidenziati in rosso.',
-        confirmButtonColor: '#087886'
-      });
+      // Swal.fire removed as per user request (red texts are enough)
       return;
     }
 
@@ -292,7 +297,7 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
                     value={formData.strada}
                     onChange={handleChange}
                     placeholder="Via"
-                    className="input-field"
+                    className={`input-field ${errors.strada ? 'input-error' : ''}`}
                   />
                 </div>
                 <div className="input-group" style={{ flex: 1 }}>
@@ -307,8 +312,8 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
                   />
                 </div>
               </div>
-              <div style={{ display: 'flex' }}>
-                <div style={{ flex: 2 }}></div>
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <div style={{ flex: 2 }}><ErrorMsg field="strada" /></div>
                 <div style={{ flex: 1 }}><ErrorMsg field="ncivico" /></div>
               </div>
 
