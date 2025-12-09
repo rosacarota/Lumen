@@ -104,6 +104,13 @@ const EditStory = ({ story, onCancel, onSave }) => {
     const base = "Aggiorna il racconto: cosa è successo, chi hai incontrato, come ti sei sentito...";
     return storyType === "photo" ? `Descrizione foto o link. ${base}` : base;
   };
+  
+  const getStoryOwnerRole = (story) => {
+    if (story.utente && story.utente.ruolo) {
+      return story.utente.ruolo;
+    }
+    return story.authorRole || "";
+  };
 
   return (
     <div className="edit-story-overlay">
@@ -127,6 +134,9 @@ const EditStory = ({ story, onCancel, onSave }) => {
             <p className="edit-meta-row">
               <span className="edit-meta-label">Ruolo:</span>
               <span className="edit-meta-value">{story.authorRole}</span>
+              <span className="story-author-role">
+              {getStoryOwnerRole(story) || "Utente"}
+              </span>
             </p>
           </div>
         </div>
