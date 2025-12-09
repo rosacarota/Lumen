@@ -94,27 +94,25 @@ export default function DashboardAffiliazione() {
       setVolontari(prev =>
         prev.filter(v => v.idAffiliazione !== idAffiliazione)
       );
-      Swal.fire('Rimosso!', 'Affiliazione rimossa con successo.', 'success');
+      Swal.fire({
+        icon: 'success',
+        title: 'Rimosso!',
+        text: 'Affiliazione rimossa con successo.',
+        confirmButtonColor: '#087886'
+      });
     } catch (err) {
-      Swal.fire('Errore', "Errore durante la rimozione: " + err.message, 'error');
+      Swal.fire({
+        icon: 'error',
+        title: 'Errore',
+        text: "Errore durante la rimozione: " + err.message,
+        confirmButtonColor: '#d33'
+      });
     }
   };
 
   // ACCETTA 
   const handleAccettaRichiesta = async (idAffiliazione) => {
-    const result = await Swal.fire({
-      title: 'Accetta richiesta',
-      text: "Confermi l’accettazione della richiesta?",
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonColor: '#087886',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Sì, accetta',
-      cancelButtonText: 'Annulla'
-    });
-
-    if (!result.isConfirmed) return;
-
+    // Confirm removed as per request
     try {
       const token = localStorage.getItem("token");
       await AffiliazioneService.accettaAffiliazione(idAffiliazione, token);
@@ -126,9 +124,13 @@ export default function DashboardAffiliazione() {
 
       // ricarico gli affiliati aggiornati
       loadAffiliati();
-      Swal.fire('Accettata!', 'Richiesta accettata con successo.', 'success');
     } catch (err) {
-      Swal.fire('Errore', "Errore durante l'accettazione: " + err.message, 'error');
+      Swal.fire({
+        icon: 'error',
+        title: 'Errore',
+        text: "Errore durante l'accettazione: " + err.message,
+        confirmButtonColor: '#d33'
+      });
     }
   };
 
@@ -155,9 +157,19 @@ export default function DashboardAffiliazione() {
       setRichieste(prev =>
         prev.filter(r => r.idAffiliazione !== idAffiliazione)
       );
-      Swal.fire('Rifiutata!', 'Richiesta rifiutata.', 'success');
+      Swal.fire({
+        icon: 'success',
+        title: 'Rifiutata!',
+        text: 'Richiesta rifiutata.',
+        confirmButtonColor: '#087886'
+      });
     } catch (err) {
-      Swal.fire('Errore', "Errore durante il rifiuto: " + err.message, 'error');
+      Swal.fire({
+        icon: 'error',
+        title: 'Errore',
+        text: "Errore durante il rifiuto: " + err.message,
+        confirmButtonColor: '#d33'
+      });
     }
   };
 

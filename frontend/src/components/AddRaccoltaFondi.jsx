@@ -251,7 +251,12 @@ const AddRaccoltaFondi = ({ onSubmit, onBack, onClose, isModal = false }) => {
     event.preventDefault();
 
     if (parseFloat(obiettivo) <= 0) {
-      Swal.fire('Attenzione', "L'obiettivo deve essere maggiore di zero.", 'warning');
+      Swal.fire({
+        icon: 'warning',
+        title: 'Attenzione',
+        text: "L'obiettivo deve essere maggiore di zero.",
+        confirmButtonColor: '#087886'
+      });
       return;
     }
 
@@ -291,7 +296,12 @@ const AddRaccoltaFondi = ({ onSubmit, onBack, onClose, isModal = false }) => {
 
     } catch (error) {
       console.error("Errore creazione:", error);
-      Swal.fire('Errore', error.message || "Errore sconosciuto", 'error');
+      Swal.fire({
+        icon: 'error',
+        title: 'Errore',
+        text: error.message || "Errore sconosciuto",
+        confirmButtonColor: '#d33'
+      });
     } finally {
       setIsLoading(false);
     }

@@ -120,12 +120,22 @@ const ModifyEvento = ({ isOpen, onClose, eventToEdit, onUpdate }) => {
 
       await updateEvento(payload);
 
-      Swal.fire("Modificato!", "L'evento è stato aggiornato.", "success");
+      Swal.fire({
+        icon: 'success',
+        title: 'Modificato!',
+        text: "L'evento è stato aggiornato.",
+        confirmButtonColor: '#087886'
+      });
       if (onUpdate) onUpdate();
       onClose();
 
     } catch (error) {
-      Swal.fire("Errore", error.message, "error");
+      Swal.fire({
+        icon: 'error',
+        title: 'Errore',
+        text: error.message,
+        confirmButtonColor: '#d33'
+      });
     } finally {
       setIsLoading(false);
     }

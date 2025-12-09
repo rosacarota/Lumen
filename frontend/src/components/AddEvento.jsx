@@ -54,30 +54,60 @@ const AddEvento = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE_DEFAUL
 
     // Validazione Date
     if (new Date(dataFine) < new Date(dataInizio)) {
-      Swal.fire('Attenzione', "La data di fine deve essere uguale o successiva alla data di inizio.", 'warning');
+      Swal.fire({
+        icon: 'warning',
+        title: 'Attenzione',
+        text: "La data di fine deve essere uguale o successiva alla data di inizio.",
+        confirmButtonColor: '#087886'
+      });
       return;
     }
 
     if (parseInt(maxPartecipanti) <= 0) {
-      Swal.fire('Attenzione', "Il numero di partecipanti deve essere positivo.", 'warning');
+      Swal.fire({
+        icon: 'warning',
+        title: 'Attenzione',
+        text: "Il numero di partecipanti deve essere positivo.",
+        confirmButtonColor: '#087886'
+      });
       return;
     }
 
     // --- NUOVE VALIDAZIONI REGEX ---
     if (!REGEX.CIVICO.test(indirizzo.ncivico)) {
-      Swal.fire('Dati non validi', "Il numero civico deve essere numerico.", 'warning');
+      Swal.fire({
+        icon: 'warning',
+        title: 'Dati non validi',
+        text: "Il numero civico deve essere numerico.",
+        confirmButtonColor: '#087886'
+      });
       return;
     }
     if (!REGEX.ONLY_LETTERS.test(indirizzo.citta)) {
-      Swal.fire('Dati non validi', "La città può contenere solo lettere.", 'warning');
+      Swal.fire({
+        icon: 'warning',
+        title: 'Dati non validi',
+        text: "La città può contenere solo lettere.",
+        confirmButtonColor: '#087886'
+      });
       return;
     }
     if (!REGEX.PROVINCIA.test(indirizzo.provincia)) {
-      Swal.fire('Dati non validi', "La provincia deve essere di 2 lettere maiuscole (es. RM).", 'warning');
+      Swal.fire({
+        icon: 'warning',
+        title: 'Dati non validi',
+        text: "La provincia deve essere di 2 lettere maiuscole (es. RM).",
+        confirmButtonColor: '#087886'
+      });
       return;
     }
     if (!REGEX.CAP.test(indirizzo.cap)) {
-      Swal.fire('Dati non validi', "Il CAP deve essere di 5 cifre.", 'warning');
+      Swal.fire({
+        icon: 'warning',
+        title: 'Dati non validi',
+        text: "Il CAP deve essere di 5 cifre.",
+        confirmButtonColor: '#087886'
+      });
       return;
     }
     // -------------------------------
@@ -111,7 +141,12 @@ const AddEvento = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE_DEFAUL
 
     } catch (error) {
       console.error(error);
-      Swal.fire('Errore', "Errore durante la pubblicazione: " + error.message, 'error');
+      Swal.fire({
+        icon: 'error',
+        title: 'Errore',
+        text: "Errore durante la pubblicazione: " + error.message,
+        confirmButtonColor: '#d33'
+      });
     } finally {
       setIsLoading(false);
     }
