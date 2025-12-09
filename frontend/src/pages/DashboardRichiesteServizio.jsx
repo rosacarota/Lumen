@@ -238,7 +238,7 @@ export default function DashboardRichiesteServizio() {
                     </button>
                     {/* Bottone modificato in TERMINA */}
                     <button className="btn-accept" onClick={() => handleTermina(req)}>
-                      <Check size={18} /> Accetta
+                      <Check size={18} /> Termina Richiesta
                     </button>
                   </div>
                 </div>
