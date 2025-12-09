@@ -184,7 +184,6 @@
   flex-direction: column;
   gap: 2px;
   flex-grow: 1;
-  max-width: 180px;
 }
 
 .ente-page-wrapper .input-group label {
@@ -220,7 +219,7 @@
   scrollbar-color: var(--second-color) rgba(255, 255, 255, 0.3);
 }
 
-.ente-page-wrapper .event-grid{
+.ente-page-wrapper .event-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;

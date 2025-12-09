@@ -1,9 +1,9 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 // Aggiungi ArrowLeft alla lista degli import
-import { 
-  User, Lock, Mail, Building2, Heart, Users, HeartHandshake, 
-  Pencil, Camera, Eye, EyeOff, Phone, AlertCircle, ArrowLeft 
+import {
+  User, Lock, Mail, Building2, Heart, Users, HeartHandshake,
+  Pencil, Camera, Eye, EyeOff, Phone, AlertCircle, ArrowLeft
 } from 'lucide-react';
 import { registerUser, loginUser } from '../services/loginService';
 import { validateForm } from '../utils/loginValidation';
@@ -409,9 +409,10 @@ export default function LoginPage() {
                   </div>
 
                 ) : !isLogin && userType && step === 1 ? (
-                  <div className="registration-form">
-                                        <button 
-                      onClick={() => { setUserType(null); setErrors({}); setApiError(""); }} 
+                  <form className="registration-form" onSubmit={(e) => { e.preventDefault(); handleNextStep(); }}>
+                    <button
+                      type="button"
+                      onClick={() => { setUserType(null); setErrors({}); setApiError(""); }}
                       className="modern-back-button"
                       aria-label="Torna indietro"
                     >
@@ -419,11 +420,11 @@ export default function LoginPage() {
                     </button>
                     <h2 className="form-title">Registrazione {userType.charAt(0).toUpperCase() + userType.slice(1)}</h2>
                     {renderRegistrationFields()}
-                    <button onClick={handleNextStep} className="submit-button">CONTINUA</button>
-                  </div>
+                    <button type="submit" className="submit-button">CONTINUA</button>
+                  </form>
 
                 ) : !isLogin && userType && step === 2 ? (
-                  <div className="registration-form">
+                  <form className="registration-form" onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
                     <h2 className="form-title">Personalizzazione del profilo</h2>
 
                     <div className="image-upload-container">
@@ -434,7 +435,7 @@ export default function LoginPage() {
                           <Camera size={40} color="#9CA3AF" />
                         )}
                         <input type="file" ref={fileInputRef} onChange={handleImageUpload} accept="image/*" style={{ display: 'none' }} />
-                        <button onClick={() => fileInputRef.current.click()} className="image-edit-button">
+                        <button type="button" onClick={() => fileInputRef.current.click()} className="image-edit-button">
                           <Pencil size={16} color="white" />
                         </button>
                       </div>
@@ -522,12 +523,12 @@ export default function LoginPage() {
                         className={getInputNoIconClassName('provincia')}
                       />
 
-                      <button onClick={handleSubmit} className="submit-button">COMPLETA REGISTRAZIONE</button>
+                      <button type="submit" className="submit-button">COMPLETA REGISTRAZIONE</button>
                     </div>
-                  </div>
+                  </form>
 
                 ) : (
-                  <div className="login-form">
+                  <form className="login-form" onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
                     <div className="avatar-wrapper1">
                       <User className="avatar-icon" />
                     </div>
@@ -566,9 +567,9 @@ export default function LoginPage() {
                         <ErrorMsg field="password" />
                       </div>
                     </div>
-                    <button onClick={handleSubmit} className="submit-button">LOGIN</button>
+                    <button type="submit" className="submit-button">LOGIN</button>
 
-                  </div>
+                  </form>
                 )}
 
                 {!isLogin && (

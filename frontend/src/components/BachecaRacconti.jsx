@@ -4,79 +4,51 @@ import '../stylesheets/BachecaRacconti.css';
 import AddStory from '../components/AddStory';
 import EditStory from "../components/EditStory";
 import DeleteStory from "../components/DeleteStory";
-import { addStory, editStory, deleteStory, fetchFilteredStories } from '../services/StoriesService';
+import { fetchFilteredStories } from '../services/StoriesService';
 import { Link } from 'react-router-dom';
 
 const BachecaRacconti = ({ isOwner, targetEmail }) => {
-    //const [stories, setStories] = useState([]);
     const [filteredStories, setFilteredStories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isAddStoryOpen, setIsAddStoryOpen] = useState(false);
     const [editingStory, setEditingStory] = useState(null);
     const [storyToDelete, setStoryToDelete] = useState(null);
 
-    /*const loadStories = async () => {
-        if (!targetEmail) return;
-
-        setLoading(true);
-        try {
-            const data = await fetchStories(targetEmail);
-            setStories(data);
-        } catch (error) {
-            console.error("Errore caricamento storie:", error);
-        } finally {
-            setLoading(false);
-        }
-    };*/
-
     const loadFilteredStories = async () => {
-        targetEmail = localStorage.getItem("searchEmail");
-        console.log(targetEmail)
-        if(!targetEmail)return;
+        let emailToSearch = targetEmail;
+        if (!emailToSearch) emailToSearch = localStorage.getItem("searchEmail");
+        // console.log(emailToSearch) // Commentato log
+        if (!emailToSearch) return;
+
         setLoading(true);
         try {
-            const filteredData = await fetchFilteredStories(targetEmail);
+            const filteredData = await fetchFilteredStories(emailToSearch);
             const sortedData = [...filteredData].reverse();
             setFilteredStories(sortedData);
-        }catch(error){console.error("Errore durante il caricamento delle storie dell'utente: ", error);}
-        finally {setLoading(false);}
+        } catch (error) { console.error("Errore durante il caricamento delle storie dell'utente: ", error); }
+        finally { setLoading(false); }
     };
 
     useEffect(() => {
-        //loadStories();
         loadFilteredStories();
     }, [targetEmail]);
 
-    const handleSaveStory = async (newStoryData) => {
-        try {
-            await addStory(newStoryData);
-            setIsAddStoryOpen(false);
-            await loadFilteredStories();
-        } catch (error) {
-            alert("Errore durante la pubblicazione: " + error.message);
-        }
+    // Callback chiamata dopo l'aggiunta con successo
+    const handleAddSuccess = async () => {
+        setIsAddStoryOpen(false);
+        await loadFilteredStories();
     };
 
-    const handleSaveEditedStory = async (updatedStory) => {
-        try {
-            await editStory(updatedStory);
-            setEditingStory(null);
-            await loadFilteredStories();
-        } catch (error) {
-            alert("Errore modifica: " + error.message);
-        }
+    // Callback chiamata dopo la modifica con successo
+    const handleEditSuccess = async () => {
+        setEditingStory(null);
+        await loadFilteredStories();
     };
 
-    const handleDeleteConfirm = async () => {
-        if (!storyToDelete) return;
-        try {
-            const idToDelete = storyToDelete.id || storyToDelete.idRacconto;
-            await deleteStory(idToDelete);
-            setStoryToDelete(null);
-            await loadFilteredStories();
-        } catch (error) {
-            alert("Errore eliminazione: " + error.message);
-        }
+    // Callback chiamata dopo l'eliminazione con successo
+    const handleDeleteSuccess = async () => {
+        setStoryToDelete(null);
+        await loadFilteredStories();
     };
 
     return (
@@ -85,13 +57,13 @@ const BachecaRacconti = ({ isOwner, targetEmail }) => {
                 <div className="stories-header">
                     <h3>BACHECA RACCONTI</h3>
                     {!loading && filteredStories.length > 0 && isOwner && (
-                        <button 
-                            className="header-add-btn" 
+                        <button
+                            className="header-add-btn"
                             onClick={() => setIsAddStoryOpen(true)}
                             title="Aggiungi racconto"
-                            style={{ 
-                                background: 'none', border: 'none', cursor: 'pointer', 
-                                color: '#087886', position: 'absolute', right: '20px' 
+                            style={{
+                                background: 'none', border: 'none', cursor: 'pointer',
+                                color: '#087886', position: 'absolute', right: '20px'
                             }}
                         >
                             <Plus size={24} />
@@ -111,8 +83,8 @@ const BachecaRacconti = ({ isOwner, targetEmail }) => {
                             <p>Non ci sono racconti attivi.</p>
                             {isOwner && (
                                 <>
-                                    <div 
-                                        className="empty-icon-wrapper add-action" 
+                                    <div
+                                        className="empty-icon-wrapper add-action"
                                         onClick={() => setIsAddStoryOpen(true)}
                                         title="Crea una nuova storia"
                                     >
@@ -124,23 +96,23 @@ const BachecaRacconti = ({ isOwner, targetEmail }) => {
                         </div>
 
                     ) : (
-                        
+
                         <div className="stories-list" style={{ overflowY: 'auto', maxHeight: '100%', display: 'flex', flexDirection: 'column', gap: '15px' }}>
                             {filteredStories.map((story) => (
                                 <div key={story.id} className="story-item-container">
-                                    <Link 
-                                        to="/storie" 
+                                    <Link
+                                        to="/storie"
                                         style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}
                                     >
                                         <div className="story-item">
                                             <div className="story-avatar">
                                                 {story.authorAvatar ? (
-                                                    <img 
-                                                        src={story.authorAvatar.startsWith('data:image') 
-                                                            ? story.authorAvatar 
-                                                            : `data:image/jpeg;base64,${story.authorAvatar}`} 
-                                                        alt={story.authorName} 
-                                                        style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} 
+                                                    <img
+                                                        src={story.authorAvatar.startsWith('data:image')
+                                                            ? story.authorAvatar
+                                                            : `data:image/jpeg;base64,${story.authorAvatar}`}
+                                                        alt={story.authorName}
+                                                        style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }}
                                                     />
                                                 ) : (
                                                     <span style={{ color: 'white', fontWeight: 'bold' }}>
@@ -151,8 +123,8 @@ const BachecaRacconti = ({ isOwner, targetEmail }) => {
                                             <div className="story-info">
                                                 <h4>{story.title}</h4>
                                                 <p style={{ fontSize: '0.85rem', color: '#555', margin: '2px 0' }}>
-                                                    {story.content.length > 50 
-                                                        ? story.content.substring(0, 50) + "..." 
+                                                    {story.content.length > 50
+                                                        ? story.content.substring(0, 50) + "..."
                                                         : story.content}
                                                 </p>
                                                 <span style={{ fontSize: '0.75rem', color: '#999' }}>
@@ -194,7 +166,7 @@ const BachecaRacconti = ({ isOwner, targetEmail }) => {
             {isOwner && isAddStoryOpen && (
                 <AddStory
                     onClose={() => setIsAddStoryOpen(false)}
-                    onSubmit={handleSaveStory}
+                    onSubmit={handleAddSuccess}
                     onBack={() => setIsAddStoryOpen(false)}
                 />
             )}
@@ -202,14 +174,14 @@ const BachecaRacconti = ({ isOwner, targetEmail }) => {
                 <EditStory
                     story={editingStory}
                     onCancel={() => setEditingStory(null)}
-                    onSave={handleSaveEditedStory}
+                    onSave={handleEditSuccess}
                 />
             )}
             {isOwner && storyToDelete && (
                 <DeleteStory
                     story={storyToDelete}
                     onCancel={() => setStoryToDelete(null)}
-                    onConfirm={handleDeleteConfirm}
+                    onConfirm={handleDeleteSuccess}
                 />
             )}
         </>

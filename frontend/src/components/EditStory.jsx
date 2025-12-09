@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { Image, FileText, ArrowLeft, X } from "lucide-react";
 import "../stylesheets/EditStory.css";
 
+import { editStory } from "../services/StoriesService";
+
 const EditStory = ({ story, onCancel, onSave }) => {
   const [storyType, setStoryType] = useState(story.type === "photo" ? "photo" : "text");
   const [title, setTitle] = useState(story.title || "");
@@ -68,7 +70,14 @@ const EditStory = ({ story, onCancel, onSave }) => {
       createdAt: story.createdAt, // mantieni la data originale
     };
 
-    onSave && onSave(updatedStory);
+    try {
+      await editStory(updatedStory);
+      if (onSave) onSave(); // Richiama il refresh
+      if (onCancel) onCancel(); // Chiudi modale
+    } catch (err) {
+      console.error(err);
+      alert("Errore durante il salvataggio delle modifiche");
+    }
   };
 
   const handleFileChange = (e) => {

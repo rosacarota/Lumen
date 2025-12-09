@@ -172,7 +172,7 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
             {/* 1. Il contenitore ORA contiene SOLO l'immagine */}
             <div className="avatar-container1">
               <img
-                src={formData.immagine || "https://via.placeholder.com/150"}
+                src={formData.immagine}
                 className="avatar-image1"
                 style={{ objectFit: 'cover' }}
               />
@@ -237,7 +237,7 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
                   />
                 </div>
                 <div className="input-group" style={{ flex: 1 }}>
-                  <MapPinHouse className="input-icon"/>
+                  <MapPinHouse className="input-icon" />
                   <input
                     type="text"
                     name="ncivico"

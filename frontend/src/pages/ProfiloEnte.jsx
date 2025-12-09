@@ -19,7 +19,7 @@ import DeleteStory from '../components/DeleteStory.jsx';
 import { fetchUserProfile, fetchUserPublicProfile } from '../services/UserServices.js';
 import { getCronologiaEventi } from '../services/EventoService.js';
 import { getRaccolteDiEnte, terminaRaccolta, getRaccolteDiEnteEsterno } from '../services/RaccoltaFondiService.js';
-import { fetchStories, fetchFilteredStories, addStory, editStory, deleteStory } from '../services/StoriesService.js';
+import { fetchFilteredStories } from '../services/StoriesService.js';
 
 import '../stylesheets/ProfiloEnte.css';
 
@@ -183,12 +183,9 @@ const ProfiloEnte = () => {
   }, [activeTab]);
 
   // --- HANDLERS ---
-  const handleStoryAction = async (action, data) => {
+  const handleStoryAction = async (action) => {
     try {
-      if (action === 'add') await addStory(data);
-      if (action === 'edit') await editStory(data);
-      if (action === 'delete') await deleteStory(data.id);
-
+      // Le operazioni API sono ora gestite dentro i componenti
       toggleModal(action === 'add' ? 'addStory' : action === 'edit' ? 'editStory' : 'deleteStory', false);
       setSelectedStory(null);
       await loadStorie(profileData);
@@ -340,9 +337,9 @@ const ProfiloEnte = () => {
       {isOwner && userRole === 'ente' && modals.raccolta && <ModalWrapper onClose={() => toggleModal('raccolta', false)}><AddRaccoltaFondi enteLogged={profileData} onClose={() => { toggleModal('raccolta', false); loadRaccolte(profileData); }} isModal={true} /></ModalWrapper>}
       {!isOwner && userRole === 'volontario' && modals.affiliazione && <RichiestaAffiliazione onClose={() => toggleModal('affiliazione', false)} emailEnte={profileData?.email} isModal={true} />}
       {!isOwner && userRole === 'beneficiario' && modals.servizio && <ModalWrapper onClose={() => toggleModal('servizio', false)}><RichiestaServizio onClose={() => toggleModal('servizio', false)} emailEnte={profileData?.email} /></ModalWrapper>}
-      {isOwner && userRole === 'ente' && modals.addStory && <AddStory onBack={() => toggleModal('addStory', false)} onSubmit={(d) => handleStoryAction('add', d)} />}
-      {isOwner && userRole === 'ente' && modals.editStory && selectedStory && <EditStory story={selectedStory} onCancel={() => { toggleModal('editStory', false); setSelectedStory(null); }} onSave={(d) => handleStoryAction('edit', d)} />}
-      {isOwner && userRole === 'ente' && modals.deleteStory && selectedStory && <DeleteStory story={selectedStory} onCancel={() => { toggleModal('deleteStory', false); setSelectedStory(null); }} onConfirm={() => handleStoryAction('delete', selectedStory)} />}
+      {isOwner && userRole === 'ente' && modals.addStory && <AddStory onBack={() => toggleModal('addStory', false)} onSubmit={() => handleStoryAction('add')} />}
+      {isOwner && userRole === 'ente' && modals.editStory && selectedStory && <EditStory story={selectedStory} onCancel={() => { toggleModal('editStory', false); setSelectedStory(null); }} onSave={() => handleStoryAction('edit')} />}
+      {isOwner && userRole === 'ente' && modals.deleteStory && selectedStory && <DeleteStory story={selectedStory} onCancel={() => { toggleModal('deleteStory', false); setSelectedStory(null); }} onConfirm={() => handleStoryAction('delete')} />}
     </div>
   );
 };

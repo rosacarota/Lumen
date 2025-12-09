@@ -3,7 +3,10 @@ import { Image, FileText, SendHorizontal, ArrowLeft } from "lucide-react";
 // Assicurati che il percorso del CSS sia corretto
 import "../stylesheets/AddStory.css";
 
+import { addStory, editStory } from "../services/StoriesService";
+
 // FIX: Usiamo 'onBack' per la chiusura e 'storyToEdit' per la modifica
+// onSubmit ora funge da callback di successo (refresh lista storie)
 const AddStory = ({ onSubmit, onBack, storyToEdit }) => {
   const [storyType, setStoryType] = useState("text");
   const [title, setTitle] = useState("");
@@ -77,11 +80,15 @@ const AddStory = ({ onSubmit, onBack, storyToEdit }) => {
       createdAt: new Date().toISOString(),
     };
 
-    if (onSubmit) onSubmit(newStory);
-    else console.log("New story:", newStory);
-
-    resetForm();
-    if (onBack) onBack();
+    try {
+      await addStory(newStory);
+      if (onSubmit) onSubmit(); // Richiama il refresh delle storie
+      resetForm();
+      if (onBack) onBack();
+    } catch (err) {
+      console.error(err);
+      alert("Errore durante la creazione del racconto");
+    }
   };
 
   const handleEditStory = async (event) => {
@@ -124,11 +131,15 @@ const AddStory = ({ onSubmit, onBack, storyToEdit }) => {
       createdAt: new Date().toISOString(),
     };
 
-    if (onSubmit) onSubmit(updatedStory);
-    else console.log("Updated story:", updatedStory);
-
-    resetForm();
-    if (onBack) onBack();
+    try {
+      await editStory(updatedStory);
+      if (onSubmit) onSubmit(); // Richiama il refresh
+      resetForm();
+      if (onBack) onBack();
+    } catch (err) {
+      console.error(err);
+      alert("Errore durante il salvataggio delle modifiche");
+    }
   };
 
   const handleFileChange = (event) => {

@@ -7,10 +7,7 @@ import "../stylesheets/StoriesBoard.css";
 
 
 import {
-  fetchStories,
-  addStory,
-  editStory,
-  deleteStory,
+  fetchStories
 } from "../services/StoriesService";
 
 const StoriesBoard = () => {
@@ -81,57 +78,12 @@ const StoriesBoard = () => {
   const openAddStory = () => setIsAddStoryOpen(true);
   const closeAddStory = () => setIsAddStoryOpen(false);
 
-  const handleSubmitStory = async (newStory) => {
-    try {
-      await addStory(newStory);
-      await loadStories();
-      setIsAddStoryOpen(false);
-    } catch (err) {
-      console.error(err);
-      alert("Errore durante la creazione del racconto");
-    }
-  };
+  // Gestione modali per modifica e cancellazione
+  const openEditStory = (story) => setEditingStory(story);
+  const closeEditStory = () => setEditingStory(null);
 
-  const openEditStory = (story) => {
-    setEditingStory(story);
-  };
-
-  const closeEditStory = () => {
-    setEditingStory(null);
-  };
-
-  const handleSaveEditedStory = async (updatedStory) => {
-    try {
-      await editStory(updatedStory);
-      await loadStories();
-      setEditingStory(null);
-    } catch (err) {
-      console.error(err);
-      alert("Errore durante il salvataggio delle modifiche");
-    }
-  };
-
-  const openDeleteStory = (story) => {
-    setStoryToDelete(story);
-  };
-
-  const closeDeleteStory = () => {
-    setStoryToDelete(null);
-  };
-
-  const handleDeleteConfirm = async () => {
-    if (!storyToDelete) return;
-    try {
-      // Gestisce sia id che idRacconto a seconda del JSON
-      const idToDelete = storyToDelete.id || storyToDelete.idRacconto;
-      await deleteStory(idToDelete);
-      await loadStories();
-      setStoryToDelete(null);
-    } catch (err) {
-      console.error(err);
-      alert("Errore durante l'eliminazione del racconto");
-    }
-  };
+  const openDeleteStory = (story) => setStoryToDelete(story);
+  const closeDeleteStory = () => setStoryToDelete(null);
 
   const typeLabel = (type) => {
     if (type === "photo") return "Foto";
@@ -356,7 +308,7 @@ const StoriesBoard = () => {
 
       {isAddStoryOpen && (
         <AddStory
-          onSubmit={handleSubmitStory}
+          onSubmit={() => { loadStories(); closeAddStory(); }}
           onBack={closeAddStory}
           isModal={true}
         />
@@ -366,7 +318,7 @@ const StoriesBoard = () => {
         <EditStory
           story={editingStory}
           onCancel={closeEditStory}
-          onSave={handleSaveEditedStory}
+          onSave={() => { loadStories(); closeEditStory(); }}
         />
       )}
 
@@ -374,7 +326,7 @@ const StoriesBoard = () => {
         <DeleteStory
           story={storyToDelete}
           onCancel={closeDeleteStory}
-          onConfirm={handleDeleteConfirm}
+          onConfirm={() => { loadStories(); closeDeleteStory(); }}
         />
       )}
 
