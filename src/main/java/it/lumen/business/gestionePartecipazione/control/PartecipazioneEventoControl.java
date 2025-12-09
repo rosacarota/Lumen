@@ -20,6 +20,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * REST controller per la gestione delle partecipazione agli eventi.
+ */
 @RestController
 @RequestMapping("/partecipazione")
 public class PartecipazioneEventoControl {
@@ -33,6 +36,13 @@ public class PartecipazioneEventoControl {
     @Autowired
     private JwtUtil util;
 
+	/**
+	 * Aggiunta di un volontario alla lista partecipazione di un evento.
+     * @param token Token JWT per verificare e prendere l'oggetto utente.
+	 * @param idEvento id dell'evento
+	 *
+     * @return Una ResponseEntity con l'esito dell'operazione.
+	 */
     @GetMapping("/aggiungi")
     public ResponseEntity<String> aggiungiPartecipazione(@RequestParam String token, @RequestParam int idEvento) {
 
@@ -81,6 +91,13 @@ public class PartecipazioneEventoControl {
         }
     }
 
+	/**
+	 * Modifica della partecipazione di un volontario.
+	 * @param nuovaPartecipazione Oggetto partecipazione che sostituisce l'attuale partecipazione del volontario.
+     * @param token Token JWT per verificare e prendere l'oggetto utente.
+	 * 
+     * @return Una ResponseEntity con l'esito dell'operazione.
+	 */
     @PostMapping("/modifica")
     public ResponseEntity<String> modificaPartecipazione(@RequestBody Partecipazione nuovaPartecipazione,
             @RequestParam String token) {
@@ -122,6 +139,13 @@ public class PartecipazioneEventoControl {
         }
     }
 
+	/**
+	 * Rimozione della partecipazione di un volontario da un evento.
+	 * @param partecipazioneInput Oggetto partecipazione da eliminare.
+     * @param token Token JWT per verificare e prendere l'oggetto utente.
+	 * 
+     * @return Una ResponseEntity con l'esito dell'operazione.
+	 */
     @PostMapping("/rimuovi")
     public ResponseEntity<String> eliminaPartecipazione(@RequestBody Partecipazione partecipazioneInput,
             @RequestParam String token) {
@@ -161,6 +185,14 @@ public class PartecipazioneEventoControl {
         }
     }
 
+	/**
+	 * Recupero di una lista delle partecipazioni di un evento.
+	 * @param eventoInput Evento da cui prendere le partecipazioni.
+     * @param token Il token JWT dell'utente autenticato per verificare
+     *              l'identità.
+	 * 
+     * @return Una ResponseEntity con la lista delle partecipazioni.
+	 */
     @PostMapping("/visualizzaPartecipazioniEvento")
     public ResponseEntity<?> visualizzaPartecipazioniEvento(@RequestBody Evento eventoInput,
             @RequestParam String token) {
@@ -199,6 +231,13 @@ public class PartecipazioneEventoControl {
         }
     }
 
+	/**
+	 * Recupero della cronologia delle partecipazioni effettuate di un volontario.
+     * @param token Il token JWT dell'utente autenticato per verificarne
+     *              l'identità e recuperarne l'email.
+	 * 
+     * @return Una ResponseEntity con la lista delle partecipazioni effettuate in precedenza.
+	 */
     @PostMapping("/cronologiaPartecipazioni")
     public ResponseEntity<?> visualizzaCronologiaPartecipazioni(@RequestParam String token) {
         if (token.isEmpty()) {
@@ -235,6 +274,15 @@ public class PartecipazioneEventoControl {
         }
     }
 
+	/**
+	 * Controlla se il volontario partecipa ad un evento.
+	 *
+	 * @param idEvento id dell'evento preso dall'url.
+     * @param token Il token JWT dell'utente autenticato per verificarne
+     *              l'identità e recuperarne l'email.
+	 *
+	 * @return Una ResponseEntity con una variabile booleana.
+	 */
     @GetMapping("/checkIscrizione/{idEvento}")
     public ResponseEntity<Map<String, Object>> checkIscrizione(@PathVariable Integer idEvento,
             @RequestParam String token) {
