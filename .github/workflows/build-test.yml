@@ -52,13 +52,3 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./target/surefire-reports/TEST-*.xml
 
-      - name: Build WAR application
-        run: mvn package -DskipTests
-
-      - name: Upload WAR artifact
-        uses: actions/upload-artifact@v4
-        if: success()
-        with:
-          name: backend-${{ github.sha }}
-          path: target/*.war
-          retention-days: 30
