@@ -190,7 +190,7 @@ const StoriesBoard = () => {
                       {/* ------------------------- */}
 
                       <div className="story-author-info">
-                        <Link
+                        <Link style={{ textDecoration: "none" }}
                           to={`/profilo${storyOwnerRole ? storyOwnerRole.toLowerCase() : ''}`}
                           className="sr-profile-link"
                           onClick={() => {
