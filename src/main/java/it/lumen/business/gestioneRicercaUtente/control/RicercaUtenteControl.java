@@ -67,9 +67,6 @@ public class RicercaUtenteControl {
         String emailUtente = jwtUtil.extractEmail(token);
         Utente utenteLoggato = autenticazioneService.getUtente(emailUtente);
 
-        if(utenteLoggato.getRuolo() != Utente.Ruolo.Beneficiario){
-            return ResponseEntity.badRequest().body(null);
-        }
 
         if (utenteLoggato == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
