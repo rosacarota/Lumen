@@ -114,6 +114,11 @@
     border: 1px solid #E5E7EB;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
     gap: 16px;
+    transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+  }
+  .dashaff-card:hover {
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 10px 20px rgba(8, 120, 134, 0.18);
   }
   
   /* Avatar */
@@ -270,7 +275,7 @@
     border-radius: 10px;
   }
   
-  /* ================== COLONNA DESTRA (SIDEBAR) ================== */
+  /* COLONNA DESTRA (SIDEBAR) */
   .dashaff-right {}
   
   .dashaff-sidebar {
@@ -279,6 +284,12 @@
     border: 1px solid #E5E7EB;
     padding: 20px;
     box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+  }
+
+  .dashaff-sidebar:hover {
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 8px 18px rgba(8, 120, 134, 0.20);
   }
   
   .dashaff-sidebar h3 {
@@ -358,8 +369,8 @@
     font-weight: 600;
     cursor: pointer;
   }
-  
-  /* ================== RESPONSIVE ================== */
+
+  /* RESPONSIVE*/
   @media (max-width: 900px) {
     .dashaff-layout {
       grid-template-columns: 1fr;
@@ -411,8 +422,6 @@
   transform: translateY(16px);
   animation: dashFadeUp 0.85s cubic-bezier(0.15, 0.85, 0.3, 1) 0.15s both;
 }
-
-
 
 .dashaff-accept:active {
   box-shadow: 0 0 10px rgba(8, 120, 134, 0.4);
