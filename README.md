@@ -112,10 +112,8 @@ Apri `http://localhost:5173` per vedere l'app in azione!
 ## Project Team
 ### Project Managers
 
-* [Luigi Guida](https://github.com/Fxller)
-
 *  [Rosa Carotenuto](https://github.com/rosacarota)
-
+*  [Luigi Guida](https://github.com/Fxller)
 
 ### Team Members
 
