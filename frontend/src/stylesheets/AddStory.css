@@ -53,8 +53,9 @@
   min-height: 480px;
   max-height: 90vh;
   z-index: 20001;
-  transition: min-height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), 
-  max-height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.45s ease-out forwards;
 }
 
 /* --- PULSANTE INDIETRO (Freccia) --- */
