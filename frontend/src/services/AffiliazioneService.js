@@ -113,6 +113,15 @@ class AffiliazioneService {
 
     return await api.get("/affiliazione/listaAffiliati");
   }
+
+  // GET AFFILIANTE
+  async getAffiliante(emailVolontario) {
+    if (MOCK) {
+      console.log("[MOCK] getAffiliante chiamato per:", emailVolontario);
+      return { email: "ente@mock.com", nome: "Ente Mock" };
+    }
+    return await api.get("/affiliazione/getAffiliante", { email: emailVolontario });
+  }
 }
 
 export default new AffiliazioneService();

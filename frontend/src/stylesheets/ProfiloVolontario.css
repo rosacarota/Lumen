@@ -144,6 +144,11 @@
     overflow-y: auto;
 }
 
+.voluntary-left-sidebar {
+    width: 300px;
+    flex-shrink: 0;
+}
+
 .voluntary-events-section .event-btn {
     padding: 8px !important;
     font-size: 0.8rem !important;
@@ -175,6 +180,11 @@
     }
 
     .voluntary-events-section {
+        width: 100%;
+        margin-bottom: 32px;
+    }
+
+    .voluntary-left-sidebar {
         width: 100%;
         margin-bottom: 32px;
     }
