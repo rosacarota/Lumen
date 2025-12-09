@@ -10,8 +10,8 @@ const CountUp = ({ end, duration = 2000, suffix = "" }) => {
   useEffect(() => {
     let startTime = null;
     const start = 0;
-    
-    // Funzione di Easing per rendere l'animazione più naturale (rallenta alla fine)
+
+    // animazione del capiscwermii
     const easeOutExpo = (x) => {
       return x === 1 ? 1 : 1 - Math.pow(2, -10 * x);
     };
