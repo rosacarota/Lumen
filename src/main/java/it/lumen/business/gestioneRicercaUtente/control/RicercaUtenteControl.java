@@ -70,6 +70,10 @@ public class RicercaUtenteControl {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
+        if (nome.length() > 100) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Il nome è troppo lungo"));
+        }
+
         List<UtenteDTO> listaUtentiDTO = ricercaUtenteService.getUtentiPerNome(nome);
         return ResponseEntity.ok(listaUtentiDTO);
     }
