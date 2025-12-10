@@ -31,8 +31,6 @@
   animation: sr-slideInUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-/* ... (resto del CSS invariato) ... */
-
 /* --- LAYOUT PAGINA --- */
 .sr-page-wrapper {
   display: flex;
@@ -111,7 +109,6 @@
   box-shadow: 0 2px 8px rgba(8, 120, 134, 0.3);
 }
 
-/* --- NUOVO WRAPPER BIANCO PER RISULTATI --- */
 .sr-results-wrapper {
   background: white;
   border-radius: 24px;

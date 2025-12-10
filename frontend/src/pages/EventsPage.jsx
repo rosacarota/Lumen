@@ -37,7 +37,7 @@ export default function EventsPage() {
 
   return (
     // USIAMO LA CLASSE DEL NUOVO CSS
-    <div className="events-page-wrapper page-enter-animation">
+    <div className="events-page-wrapper">
 
 
       <div className="main-container">
@@ -59,10 +59,10 @@ export default function EventsPage() {
 
             {!loading && events.map((event, index) => (
               <EventCard
-                // Usiamo l'ID se c'è, altrimenti l'indice come fallback per evitare errori di key
+                // si usa l'ID se c'è, altrimenti l'indice come fallback per evitare errori di key
                 key={event.id || event.idEvento || index}
 
-                // Passiamo l'intero oggetto "pulito" dal service
+                // si passa l'intero oggetto "pulito" dal service
                 event={event}
 
                 showParticipate={true}

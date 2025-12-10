@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { User, Mail, Phone, Briefcase } from 'lucide-react'; 
 import '../stylesheets/SchedaVolontario.css';
 
-// COSTANTE BACKEND (O importala dal service se preferisci)
+// COSTANTE BACKEND 
 const API_BASE_URL = "http://localhost:8080";
 
 export default function SchedaVolontario({ utente, onClick }) {
@@ -17,11 +17,11 @@ export default function SchedaVolontario({ utente, onClick }) {
   // Funzione per costruire l'URL corretto dell'immagine
   const getImageUrl = (img) => {
     if (!img) return null;
-    // Se è già un URL completo (es. https://...) o Base64 (data:image...), lo usiamo così com'è
+    // Se è già un URL completo, lo usiamo com'è
     if (img.startsWith("http") || img.startsWith("data:")) {
         return img;
     }
-    // Altrimenti, se è un percorso relativo (es. /profile_images/...), ci attacchiamo il dominio del backend
+    // Altrimenti, se è un percorso relativo (es./profile_images/...), ci attacchiamo il dominio del backend
     return `${API_BASE_URL}${img.startsWith('/') ? '' : '/'}${img}`;
   };
 
@@ -37,7 +37,7 @@ export default function SchedaVolontario({ utente, onClick }) {
       {/* SEZIONE SINISTRA: AVATAR + DATI PRINCIPALI */}
       <div className="vol-left-group">
         <div className="vol-avatar-horiz">
-          {/* LOGICA: Mostra immagine SOLO se esiste E non ha dato errore */}
+          {/* LOGICA: Mostra immagine solo se esiste e non ha dato errore */}
           {!imgError && finalImageSrc ? (
             <img 
               src={finalImageSrc} 

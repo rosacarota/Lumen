@@ -2,14 +2,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
 
 :root {
-    /* Fallback/Local variables if not defined globally */
+   
     --bg-main: #F7FBFB;
     --bg-soft: #F0F5F5;
     --first-color: #087886;
     --second-color: #4AAFB8;
     --third-color: #7CCE6B;
 
-    /* Missing variables defined here */
+  
     --text-main: #1A2B3C;
     --text-sub: #5A6B7C;
     --white: #FFFFFF;
@@ -26,9 +26,9 @@ body {
 .page-wrapper {
     overflow-x: hidden;
     padding-top: 0;
-    /* Remove potential double padding */
+   
     min-height: auto;
-    /* Override global min-height if set */
+ 
     background-color: var(--bg-main);
     overflow-y: hidden;
 }
@@ -41,7 +41,7 @@ body {
     padding: 0 24px;
 }
 
-/* Hero Section Enhanced */
+
 .about-hero {
     background-color: var(--bg-main);
     padding: 100px 0 120px;
@@ -157,7 +157,7 @@ body {
     position: relative;
     z-index: 1;
     animation: fadeInUp 0.8s ease-out 0.2s backwards;
-    /* Delay for staggered effect */
+   
 }
 
 /* Content Section */

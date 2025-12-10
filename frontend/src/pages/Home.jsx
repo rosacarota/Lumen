@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'; // Aggiungi useState
+import React, { useState, useEffect } from 'react'; // Aggiunta useState
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Users, ShieldCheck, BookOpen } from 'lucide-react';
 import '../stylesheets/Home.css';
@@ -112,7 +112,7 @@ const Home = () => {
                   <span>Eventi</span>
                 </div>
               </div>
-              {/* --------------------------- */}
+              {}
 
             </div>
 
@@ -128,7 +128,7 @@ const Home = () => {
           </div>
         </section>
 
-        {/* ... (Il resto delle sezioni FEATURES, STORIES, EVENTS rimangono uguali) ... */}
+        {}
         
         <section className="features-section reveal fade-up">
            {/* ... Contenuto Features ... */}

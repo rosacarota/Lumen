@@ -46,8 +46,7 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
       setErrors({});
     }
   }, [isOpen, currentUser]);
-
-  // ... (useEffect for scroll lock remains same, skipped in replacement content if not targetted) 
+ 
 
   // Prevent scrolling when modal is open
   useEffect(() => {
@@ -138,13 +137,13 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
     setLoading(true);
 
     try {
-      // 1. Attendiamo che il server salvi i dati
+      // Attendiamo che il server salvi i dati
       await updateUserProfile(formData);
 
-      // 2. Chiudiamo SUBITO il modale (così l'utente vede la pagina sotto)
+      // Chiudiamo SUBITO il modale (così l'utente vede la pagina sotto)
       onClose(true);
 
-      // 3. Mostriamo l'alert di successo
+      // Mostriamo l'alert di successo
       Swal.fire({
         icon: 'success',
         title: 'Salvato!',
@@ -237,15 +236,15 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
                 className="avatar-image1"
                 style={{ objectFit: 'cover' }}
               />
-            </div> {/* <--- Il div si chiude qui, subito dopo l'immagine */}
+            </div> {}
 
-            {/* 2. I testi sono ora FUORI dal cerchio, quindi si vedranno sotto */}
+            {/* I testi sono ora fuori dal cerchio, quindi si vedranno sotto */}
             <h2 className="preview-name">{formData.nome}</h2>
             <p className="preview-bio">{formData.descrizione || "Nessuna descrizione..."}</p>
           </div>
         </div>
 
-        {/* --- LATO DESTRO (Form) --- */}
+        {/* LATO DESTRO (Form) */}
         <div className="edit-form-panel">
           <div className="form-wrapper">
 
@@ -385,8 +384,8 @@ export default function ModificaProfilo({ isOpen, onClose, currentUser }) {
                 />
               </div>
 
-              {/* --- CAMPO IMMAGINE (FILE UPLOAD) --- */}
-              {/* --- CAMPO IMMAGINE (FILE UPLOAD) --- */}
+              {/* CAMPO IMMAGINE*/}
+              {/* CAMPO IMMAGINE*/}
               <div className="input-group1">
                 <label className="file-upload-label" style={{ display: 'flex', alignItems: 'center', width: '100%', cursor: 'pointer', gap: '10px', justifyContent: 'center' }}>
                   <Camera size={20} color="#087886" />
