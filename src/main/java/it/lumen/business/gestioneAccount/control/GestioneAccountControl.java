@@ -111,30 +111,16 @@ public class GestioneAccountControl {
         }
         utente.setDescrizione(utenteDTO.getDescrizione());
 
-        try {
-            String imageBS64 = utenteDTO.getImmagine();
+        String base64String = utenteDTO.getImmagine();
+        if (base64String != null && !base64String.isEmpty()) {
+            String[] parts = base64String.split(",");
+            String header = parts[0];
 
-            if (imageBS64 != null && !imageBS64.isEmpty()) {
-                String raw = imageBS64.contains(",") ? imageBS64.split(",")[1] : imageBS64;
-
-                byte[] b = java.util.Base64.getDecoder().decode(raw.substring(0, Math.min(raw.length(), 24)));
-                StringBuilder h = new StringBuilder();
-                for (byte x : b) h.append(String.format("%02X", x));
-
-                if (!(h.toString().startsWith("FFD8FF") ||   // JPG
-                        h.toString().startsWith("89504E47") || // PNG
-                        h.toString().startsWith("47494638") || // GIF
-                        (h.toString().startsWith("52494646") && h.toString().substring(16, 24).equals("57454250")))) { // WEBP
-
-                    return new ResponseEntity<>("Formato non valido (ammessi: JPG, PNG, GIF, WEBP)", HttpStatus.BAD_REQUEST);
-                }
-                String pathImmagineSalvata = registrazioneService.salvaImmagine(imageBS64);
-                utente.setImmagine(pathImmagineSalvata);
+            if (!header.contains("image/png") && !header.contains("image/jpeg") && !header.contains("image/jpg") && !header.contains("image/gif")) {
+                return new ResponseEntity<>("Formato immagine non valido", HttpStatus.BAD_REQUEST);
             }
-        } catch (IOException e) {
-            throw new RuntimeException("Errore durante il salvataggio dell'immagine: " + e.getMessage());
+            utente.setImmagine(base64String);
         }
-
         if (indirizzoUtente.getCap() == null || !indirizzoUtente.getCap().matches("^\\d{5}$")){
             return new ResponseEntity<>("Cap non valido", HttpStatus.BAD_REQUEST);
         }
