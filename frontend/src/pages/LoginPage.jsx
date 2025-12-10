@@ -1,6 +1,5 @@
 import { useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-// Aggiungi ArrowLeft alla lista degli import
 import {
   User, Lock, Mail, Building2, Heart, Users, HeartHandshake,
   Pencil, Camera, Eye, EyeOff, Phone, AlertCircle, ArrowLeft
@@ -53,11 +52,11 @@ export default function LoginPage() {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
 
-    // Rimuovi l'errore specifico del campo se esiste
+    // Rimuove l'errore specifico del campo se esiste
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: null }));
     }
-    // Rimuovi errore API generale se l'utente prova a correggere
+    // Rimuove errore API generale se l'utente prova a correggere
     if (apiError) setApiError("");
   };
 
@@ -76,7 +75,7 @@ export default function LoginPage() {
     setUserType(type);
     const formattedRole = type.charAt(0).toUpperCase() + type.slice(1);
     setFormData(prev => ({ ...prev, ruolo: formattedRole }));
-    setErrors({}); // Pulisci errori precedenti
+    setErrors({}); // Pulisce errori precedenti
     setApiError("");
   };
 
@@ -121,8 +120,7 @@ export default function LoginPage() {
       }
 
     } else {
-      // --- REGISTRAZIONE ---
-      // Validiamo lo step corrente (Step 2) o tutto se necessario
+      // REGISTRAZIONE
       const validation = validateForm(formData, false, userType, 2);
       if (!validation.isValid) {
         setErrors(validation.errors);

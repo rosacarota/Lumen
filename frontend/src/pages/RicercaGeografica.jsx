@@ -35,8 +35,7 @@ const RicercaGeografica = () => {
 
     // Filtra i risultati API lato client per il ruolo (l'ambito è già filtrato dal backend)
     const filteredResults = results.filter(user => {
-        // Nota: il backend filtra già per ambito geografico e categoria.
-        // Qui filtriamo solo visivamente per ruolo se l'utente usa i bottoni.
+        //filtriamo solo visivamente per ruolo se l'utente usa i bottoni.
         const matchRole = selectedRole === 'all' ? true : user.ruolo === selectedRole;
         return matchRole;
     });

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-// 1. Importiamo useNavigate
 import { useNavigate } from 'react-router-dom';
 import { CalendarDays, MapPin, Users, Info, UserPlus, UserCheck, Image as ImageIcon } from 'lucide-react';
 import Swal from 'sweetalert2';
@@ -62,11 +61,8 @@ export default function EventCard({ event, showParticipate = true }) {
 
   const displayOrganizerName = getOrganizerName();
 
-  // ---------------------------------------------------------
-  // QUI SONO LE FUNZIONI NUOVE PER L'IMMAGINE
-  // ---------------------------------------------------------
 
-  // 1. Trova la stringa dell'immagine nei dati
+  // Trova la stringa dell'immagine nei dati
   const getOrganizerImage = () => {
     if (event.organizerImage) return event.organizerImage;
     if (event.utente && typeof event.utente === 'object' && event.utente.immagine) {
@@ -78,19 +74,19 @@ export default function EventCard({ event, showParticipate = true }) {
     return null;
   };
 
-  // 2. Costruisce l'URL completo
+  // Costruisce l'URL completo
   const getAvatarUrl = (img) => {
     if (!img) return null;
     if (img.startsWith("http") || img.startsWith("data:")) return img;
     return `${API_BASE_URL}${img.startsWith('/') ? '' : '/'}${img}`;
   };
 
-  // 3. Variabili finali da usare nel return
+  // Variabili finali da usare nel return
   const rawImage = getOrganizerImage();
   const finalAvatarUrl = getAvatarUrl(rawImage);
   const avatarLetter = (displayOrganizerName || "E").charAt(0).toUpperCase();
 
-  // ---------------------------------------------------------
+
 
   const handleEnteClick = (e) => {
     e.stopPropagation();
@@ -100,7 +96,7 @@ export default function EventCard({ event, showParticipate = true }) {
 
   useEffect(() => {
     const initializeCard = async () => {
-      // Usiamo direttamente il localStorage invece di fare una fetch inutile
+      // Usiamo direttamente il localStorage 
       const ruoloFinale = localStorage.getItem("ruolo") || localStorage.getItem("userRole") || "";
       setUserRole(ruoloFinale);
 
@@ -203,7 +199,7 @@ export default function EventCard({ event, showParticipate = true }) {
 
         <div className="event-content">
           <div className="event-header">
-            {/* QUI HO INSERITO IL CODICE JSX PER L'AVATAR */}
+            {/*  CODICE JSX PER L'AVATAR */}
             <div className="event-avatar">
               {finalAvatarUrl ? (
                 <img
@@ -222,7 +218,7 @@ export default function EventCard({ event, showParticipate = true }) {
                 {avatarLetter}
               </span>
             </div>
-            {/* ----------------------------------------------------- */}
+            {}
 
             <div className="event-meta">
               <span

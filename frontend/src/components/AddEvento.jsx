@@ -110,7 +110,6 @@ const AddEvento = ({ onSubmit, onBack, isModal = false, enteId = "ID_ENTE_DEFAUL
       });
       return;
     }
-    // -------------------------------
 
     setIsLoading(true);
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // <--- 1. Importa useNavigate
+import { useNavigate } from 'react-router-dom'; 
 import { X, Users, ArrowLeft } from 'lucide-react';
 import SchedaVolontario from './SchedaVolontario';
 import { fetchPartecipanti } from '../services/PartecipazioneEventoService';
@@ -16,7 +16,7 @@ export default function VisualizzaPartecipantiEvento({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const navigate = useNavigate(); // <--- 2. Inizializza
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     const loadData = async () => {
@@ -41,7 +41,7 @@ export default function VisualizzaPartecipantiEvento({
     loadData();
   }, [idEvento]);
 
-  // Prevent scrolling when modal is open
+
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     return () => {
@@ -49,10 +49,9 @@ export default function VisualizzaPartecipantiEvento({
     };
   }, []);
 
-  // --- 3. Funzione per gestire il click sulla card ---
+  // Funzione per gestire il click sulla card ---
   const handleCardClick = (volontario) => {
-    // Opzionale: Se ti serve sapere CHI hai cliccato nella prossima pagina,
-    // potresti salvare l'email nel localStorage prima di navigare.
+    // salva l'email nel localStorage prima di navigare.
     localStorage.setItem("searchEmail", volontario.email);
 
     navigate('/ProfiloVolontario');
@@ -109,7 +108,7 @@ export default function VisualizzaPartecipantiEvento({
               <SchedaVolontario
                 key={volontario?.email || index}
                 utente={volontario}
-                // 4. Passiamo la funzione onClick
+                // Passiamo la funzione onClick
                 onClick={() => handleCardClick(volontario)}
               />
             ))}

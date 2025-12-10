@@ -2,15 +2,11 @@ import React from 'react';
 import { CalendarRange, Ban } from 'lucide-react';
 import '../stylesheets/RaccoltaFondiCard.css';
 
-// Rimuovi l'import del service da qui, ci pensa il padre (ProfiloEnte)
-// import { terminaRaccolta } from '../services/RaccoltaFondiService'; 
-
 export default function RaccoltaFondiCard({
   id_raccolta,
   titolo,
   descrizione,
   obiettivo = 0,
-  // Supporto sia snake_case (vecchio) che camelCase (backend standard)
   totale_raccolto,
   totaleRaccolto,
   data_apertura,
@@ -20,7 +16,7 @@ export default function RaccoltaFondiCard({
   ente,
   enteFoto,
   isOwner = false,
-  onTerminate // <--- Questa è la funzione che arriva da ProfiloEnte
+  onTerminate // funzione che arriva da ProfiloEnte
 }) {
   // Normalizzazione dati
   const currentTotale = totale_raccolto ?? totaleRaccolto ?? 0;
@@ -30,7 +26,7 @@ export default function RaccoltaFondiCard({
   // Funzione locale semplice che chiama quella del padre
   const handleTerminateClick = () => {
     if (onTerminate) {
-      // Passiamo l'ID al padre, che farà tutto il lavoro e aggiornerà la lista
+      // Passiamo l'ID al padre, farà tutto il lavoro e aggiornerà la lista
       onTerminate(id_raccolta);
     }
   };

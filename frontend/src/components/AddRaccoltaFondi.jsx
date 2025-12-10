@@ -201,7 +201,7 @@ const cssStyles = `
 `;
 
 // --- COMPONENTE PRINCIPALE ---
-// IMPORTANTE: Abbiamo aggiunto 'onClose' alle props per gestire la chiusura dal padre
+// Aggiunto 'onClose' alle props per gestire la chiusura dal padre
 const AddRaccoltaFondi = ({ onSubmit, onBack, onClose, isModal = false }) => {
   const [titolo, setTitolo] = useState("");
   const [descrizione, setDescrizione] = useState("");
@@ -278,14 +278,13 @@ const AddRaccoltaFondi = ({ onSubmit, onBack, onClose, isModal = false }) => {
 
       const responseMessage = await createRaccolta(nuovaRaccoltaPayload);
 
-      // 2. Notifica eventuali handler esterni (opzionale)
+      // Notifica eventuali handler esterni (opzionale)
       if (onSubmit) {
         onSubmit(responseMessage);
       }
 
-      // 3. CHIUSURA E RICARICA
-      // Questa è la parte fondamentale: chiamando onClose (passato dal padre ProfiloEnte)
-      // il padre chiuderà il modale e ricaricherà i dati.
+      // CHIUSURA E RICARICA
+      // chiamando onClose (passato dal padre ProfiloEnte) il padre chiuderà il modale e ricaricherà i dati.
       if (onClose) {
         onClose();
       } else if (onBack) {
