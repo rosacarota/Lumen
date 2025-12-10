@@ -23,13 +23,9 @@
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   position: relative;
   overflow: hidden;
-  
-  /* AGGIUNTO: Configurazione animazione */
-  opacity: 0; /* Parte invisibile */
+  opacity: 0; 
   animation: sr-slideInUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
-
-/* ... (resto del CSS invariato) ... */
 
 /* --- LAYOUT PAGINA --- */
 .sr-page-wrapper {
@@ -109,12 +105,11 @@
   box-shadow: 0 2px 8px rgba(8, 120, 134, 0.3);
 }
 
-/* --- NUOVO WRAPPER BIANCO PER RISULTATI --- */
 .sr-results-wrapper {
   background: white;
   border-radius: 24px;
   padding: 30px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03); /* Ombra delicata per staccarlo dallo sfondo */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03); 
   margin-bottom: 40px;
 }
 
@@ -164,7 +159,7 @@
   transform: translateY(-8px); /* Sale di più */
   /* Ombra più profonda e leggermente colorata */
   box-shadow: 0 20px 40px -5px rgba(8, 120, 134, 0.15); 
-  border-color: #A5F3FC; /* Bordo turchese chiaro */
+  border-color: #A5F3FC; 
 }
 
 /* Header Card */

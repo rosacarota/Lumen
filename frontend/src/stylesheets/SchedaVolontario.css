@@ -34,8 +34,8 @@
   height: 50px;
   border-radius: 50%;
   overflow: hidden;
-  background-color: white; /* O #f1f5f9 */
-  border: 2px solid #087886; /* Teal border come nella foto */
+  background-color: white;
+  border: 2px solid #087886; 
   color: #087886;
   display: flex;
   align-items: center;
@@ -98,7 +98,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;              /* Spazio uniforme tra email e telefono */
-  align-items: flex-end; /* Allinea tutto rigorosamente a DESTRA */
+  align-items: flex-end; /* Allinea tutto  a DESTRA */
   justify-content: center; /* Centra verticalmente rispetto all'avatar */
   min-width: 220px;      /* Dà una larghezza minima per evitare schiacciamenti */
 }
@@ -137,7 +137,7 @@
   flex-shrink: 0; /* L'icona non si deve mai schiacciare */
 }
 
-/* --- RESPONSIVE (Per schermi piccoli diventa verticale) --- */
+/* RESPONSIVE  */
 @media (max-width: 640px) {
   .volunteer-card-horizontal {
     flex-direction: column;

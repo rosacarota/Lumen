@@ -75,7 +75,7 @@
 }
 
 
-/* --- RESPONSIVE MOBILE --- */
+/* RESPONSIVE */
 @media (max-width: 768px) {
   .footer-content {
     flex-direction: column;

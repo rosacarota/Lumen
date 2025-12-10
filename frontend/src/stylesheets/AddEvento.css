@@ -1,4 +1,4 @@
-/* --- ANIMAZIONI (Sincronizzate con Login) --- */
+/* ANIMAZIONI */
 @keyframes ae-fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes ae-slideUp { 
   from { opacity: 0; transform: translateY(20px); } 
@@ -9,7 +9,7 @@
   50% { transform: scale(1.05); } 
 }
 
-/* --- MODALE OVERLAY --- */
+/* MODALE OVERLAY  */
 .ae-modal-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -48,7 +48,7 @@
   margin: auto; 
 }
 
-/* --- PULSANTE INDIETRO/CHIUDI --- */
+/* PULSANTE INDIETRO/CHIUDI */
 .ae-close-back-button {
   position: absolute;
   top: 25px; left: 25px;
@@ -192,7 +192,7 @@
 
 .ae-upload-icon { width: 32px; height: 32px; opacity: 0.8; }
 
-/* --- FOOTER / BUTTONS --- */
+/* FOOTER / BUTTONS  */
 .ae-footer { margin-top: 30px; display: flex; justify-content: center; }
 
 .ae-submit-button {
@@ -211,7 +211,7 @@
   box-shadow: 0 8px 20px rgba(8, 120, 134, 0.4);
 }
 
-/* --- RESPONSIVE FIX (Modificato) --- */
+/* RESPONSIVE */
 @media (max-width: 968px) {
   
   .ae-modal-overlay {
@@ -240,11 +240,11 @@
     box-sizing: border-box; /* Assicura che il padding non sballi la width */
   }
 
-  /* --- FIX CENTRATURA FORM --- */
+  /* CENTRATURA FORM  */
   .ae-form-container {
-    margin: 0 auto; /* Questo centra il blocco del form orizzontalmente */
+    margin: 0 auto; /* centra il blocco del form orizzontalmente */
     width: 100%;    /* Occupa tutto lo spazio disponibile... */
-    max-width: 500px; /* ...fino a un massimo di 500px */
+    max-width: 500px; /* fino a un massimo di 500px */
   }
   
   .ae-close-back-button {

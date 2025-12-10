@@ -1,5 +1,3 @@
-/* Recupera le variabili definite nel file Navbar.css */
-
 .page-wrapper {
   padding-top: 80px;
   background-color: #ffffff; /* Sfondo base bianco */
@@ -13,7 +11,7 @@
   padding: 0 32px;
 }
 
-/* --- ELEMENTI DECORATIVI NUOVI --- */
+/* --- ELEMENTI DECORATIVI --- */
 /* Linea grigia sottile che occupa solo metà pagina */
 .section-separator {
   width: 50%;

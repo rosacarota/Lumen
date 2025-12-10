@@ -182,12 +182,9 @@
 /* --- IL FORM VERO E PROPRIO --- */
 .form-container {
   width: 100%;
-  /* Manteniamo la larghezza elegante che hai scelto */
+  /* Manteniamo la larghezza */
   max-width: 420px !important;
-
-  /* MAGIA: Questo centra Orizzontalmente E Verticalmente nello spazio disponibile */
   margin: auto;
-
   /* Padding interno solo per sicurezza su schermi piccoli */
   padding: 20px;
   box-sizing: border-box;
@@ -197,18 +194,15 @@
 .logo-section {
   display: flex;
   flex-direction: column;
-  /* Rimosso align-items: center e text-align: center */
   margin-bottom: 30px;
   width: 100%;
   text-align: left;
-  /* Opzionale, è il default, ma lo esplicitiamo */
 }
 
 .logo-wrapper {
   display: flex;
   align-items: center;
   /* Mantiene icona e testo allineati verticalmente tra loro */
-  /* Rimosso justify-content: center */
   gap: 10px;
   margin-bottom: 8px;
 }
@@ -346,8 +340,6 @@
   gap: 24px;
   width: 100%;
 }
-
-/* Sostituisci la vecchia classe .back-button1 con questa */
 
 .modern-back-button {
   width: 42px;
