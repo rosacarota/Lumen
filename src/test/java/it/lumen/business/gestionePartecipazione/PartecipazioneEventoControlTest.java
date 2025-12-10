@@ -1,6 +1,7 @@
-package it.lumen.business.gestionePartecipazione.control;
+package it.lumen.business.gestionePartecipazione;
 
 import it.lumen.business.gestioneAutenticazione.service.AutenticazioneService;
+import it.lumen.business.gestionePartecipazione.control.PartecipazioneEventoControl;
 import it.lumen.business.gestionePartecipazione.service.PartecipazioneEventoService;
 import it.lumen.data.entity.Evento;
 import it.lumen.data.entity.Partecipazione;
@@ -17,7 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
