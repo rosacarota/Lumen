@@ -17,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
@@ -32,7 +31,7 @@ import static org.mockito.Mockito.when;
         private GestioneRaccontoService gestioneRaccontoService;
 
         @Mock
-        private JwtUtil jwtUtil;
+        private JwtUtil util;
 
         @Mock
         private AutenticazioneService autenticazioneService;
@@ -58,7 +57,7 @@ import static org.mockito.Mockito.when;
 
 
             // Common Mocks
-            lenient().when(jwtUtil.extractEmail(token)).thenReturn("pasquale@lumen.it");
+            lenient().when(util.extractEmail(token)).thenReturn("pasquale@lumen.it");
             lenient().when(autenticazioneService.getUtente("pasquale@lumen.it")).thenReturn(utente);
 
             // Mocking existence and ownership checks
@@ -87,11 +86,11 @@ import static org.mockito.Mockito.when;
             String titoloLungo= "Vi racconto la storia della mia vita, da quando da giovane lasciai il mio piccolo paese tra le montagne del sud sperando in un futuro migliore, ma non riuscii mai a dimenticare la povertà che divorava la mia terra d’origine, le famiglie senza lavoro, i bambini senza scuole e le strade che cadevano a pezzi mentre lottavo per cambiare il destino della mia gente.";
             racconto.setTitolo(titoloLungo);
 
-            ResponseEntity<Racconto> response = gestioneRaccontoControl.aggiuntaRacconto(racconto, token);
+            ResponseEntity<?> response = gestioneRaccontoControl.aggiuntaRacconto(racconto, token);
 
             // Oracle: La modifica non va a buon fine
             assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-           // assertTrue(response.getBody().get("message").contains("La password non è abbastanza lunga"));
+
         }
 
         // TC_1.2.1_3 (Variant): Titolo vuoto
