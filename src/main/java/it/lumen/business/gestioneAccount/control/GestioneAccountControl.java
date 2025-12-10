@@ -98,7 +98,7 @@ public class GestioneAccountControl {
             return new ResponseEntity<>("Nome non valido", HttpStatus.BAD_REQUEST);
         }
 
-        if(utenteDTO.getRuolo() != Utente.Ruolo.Ente && (utenteDTO.getCognome() != null || utenteDTO.getCognome().length() <= 100)){
+        if(utenteDTO.getRuolo() != Utente.Ruolo.Ente && (utenteDTO.getCognome() != null && utenteDTO.getCognome().length() <= 100)){
             utente.setCognome(utenteDTO.getCognome());
         } else {
             return new ResponseEntity<>("Cognome non valido", HttpStatus.BAD_REQUEST);
@@ -117,7 +117,7 @@ public class GestioneAccountControl {
             String header = parts[0];
 
             if (!header.contains("image/png") && !header.contains("image/jpeg") && !header.contains("image/jpg") && !header.contains("image/gif")) {
-                return new ResponseEntity<>("Formato immagine non valido", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("Formato non valido (ammessi: JPG, PNG, GIF, WEBP)", HttpStatus.BAD_REQUEST);
             }
             utente.setImmagine(base64String);
         }
