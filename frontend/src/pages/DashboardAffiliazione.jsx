@@ -189,7 +189,7 @@ export default function DashboardAffiliazione() {
   const ultimeRichieste = richiesteOrdinate.slice(0, 2);
 
   return (
-    <div className="dashaff-page">
+    <div className="dashaff-page page-enter-animation">
 
 
       <div className="dashaff-container">

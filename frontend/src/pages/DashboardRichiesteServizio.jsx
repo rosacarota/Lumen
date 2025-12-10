@@ -149,7 +149,7 @@ export default function DashboardRichiesteServizio() {
   };
 
   return (
-    <div className="dash-req-page">
+    <div className="dash-req-page page-enter-animation">
 
 
       <div className="dash-req-container">

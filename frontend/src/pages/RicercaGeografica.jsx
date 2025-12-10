@@ -42,7 +42,7 @@ const RicercaGeografica = () => {
     });
 
     return (
-        <div className="geo-page">
+        <div className="geo-page page-enter-animation">
 
 
             <div className="geo-hero">

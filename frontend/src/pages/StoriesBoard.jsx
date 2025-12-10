@@ -110,7 +110,7 @@ const StoriesBoard = () => {
 
 
   return (
-    <>
+    <div className="page-enter-animation">
 
 
       <div className="stories-page" id="storie">
@@ -331,7 +331,7 @@ const StoriesBoard = () => {
       )}
 
 
-    </>
+    </div>
   );
 };
 
