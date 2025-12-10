@@ -16,9 +16,31 @@ jobs:
     runs-on: ubuntu-latest
     name: Build, Test and Build WAR with Java 17
 
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: lumen
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: lumen
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+
+    - name: Initialize Database
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y postgresql-client
+        export PGPASSWORD=lumen
+        psql -h localhost -U postgres -d lumen -f db/lumen.sql
 
     - name: Set up JDK 17
       uses: actions/setup-java@v4
