@@ -4,23 +4,16 @@ import { CalendarDays, MapPin, Users, Info, UserPlus, UserCheck, Image as ImageI
 import Swal from 'sweetalert2';
 import '../stylesheets/EventCard.css';
 
-// MODALI
-import DettagliEvento from './DettagliEvento';
-import VisualizzaPartecipantiEvento from './VisualizzaPartecipantiEvento';
-import ModifyEvento from './ModifyEvento';
-
 import {
   iscrivitiEvento,
   rimuoviIscrizione,
   checkUserParticipation
 } from '../services/PartecipazioneEventoService';
 
-import { rimuoviEvento } from '../services/EventoService';
-
 // DEFINIZIONE URL BACKEND
 const API_BASE_URL = "http://localhost:8080";
 
-export default function EventCard({ event, showParticipate = true }) {
+export default function EventCard({ event, showParticipate = true, onOpenDetails }) {
 
   const navigate = useNavigate();
 
@@ -39,7 +32,6 @@ export default function EventCard({ event, showParticipate = true }) {
   const [participationId, setParticipationId] = useState(null);
   const [loadingBtn, setLoadingBtn] = useState(false);
   const [userRole, setUserRole] = useState("");
-  const [activeModal, setActiveModal] = useState(null);
 
   const fullDate = startDate
     ? new Date(startDate).toLocaleDateString('it-IT', { day: 'numeric', month: 'short', year: 'numeric' })
@@ -111,25 +103,6 @@ export default function EventCard({ event, showParticipate = true }) {
     if (safeId) initializeCard();
   }, [safeId, showParticipate]);
 
-  const handleOpenModifica = () => {
-    setActiveModal('edit');
-  };
-
-  const handleUpdateSuccess = () => {
-    setActiveModal(null);
-    window.location.reload();
-  };
-
-  const handleEliminaEvento = async () => {
-    if (window.confirm(`Sei sicuro di voler eliminare l'evento "${title}"?`)) {
-      try {
-        await rimuoviEvento(safeId);
-        window.location.reload();
-      } catch (error) {
-        alert("Errore: " + error.message);
-      }
-    }
-  };
 
   const handleToggleParticipation = async (e) => {
     e.stopPropagation();
@@ -260,7 +233,7 @@ export default function EventCard({ event, showParticipate = true }) {
           </div>
 
           <div className="event-footer">
-            <button className="event-btn btn-secondary" onClick={() => setActiveModal('details')}>
+            <button className="event-btn btn-secondary" onClick={onOpenDetails}>
               <Info size={18} />
               Dettagli
             </button>
@@ -282,35 +255,6 @@ export default function EventCard({ event, showParticipate = true }) {
           </div>
         </div>
       </div>
-
-      {/* MODALI */}
-      {activeModal === 'details' && (
-        <DettagliEvento
-          evento={event.raw || event}
-          onClose={() => setActiveModal(null)}
-          onOpenParticipants={() => setActiveModal('participants')}
-          onElimina={handleEliminaEvento}
-          onModifica={handleOpenModifica}
-        />
-      )}
-
-      {activeModal === 'participants' && (
-        <VisualizzaPartecipantiEvento
-          idEvento={safeId}
-          titoloEvento={title}
-          onClose={() => setActiveModal(null)}
-          onBack={() => setActiveModal('details')}
-        />
-      )}
-
-      {activeModal === 'edit' && (
-        <ModifyEvento
-          isOpen={true}
-          onClose={() => setActiveModal('details')}
-          eventToEdit={event.raw || event}
-          onUpdate={handleUpdateSuccess}
-        />
-      )}
     </>
   );
 }

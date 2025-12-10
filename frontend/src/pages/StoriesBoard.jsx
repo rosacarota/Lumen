@@ -110,10 +110,10 @@ const StoriesBoard = () => {
 
 
   return (
-    <div className="page-enter-animation">
+    <>
 
 
-      <div className="stories-page" id="storie">
+      <div className="stories-page page-enter-animation" id="storie">
         <div className="stories-container">
           <header className="stories-hero">
             <div className="stories-hero-left">
@@ -331,7 +331,7 @@ const StoriesBoard = () => {
       )}
 
 
-    </div>
+    </>
   );
 };
 
