@@ -57,7 +57,7 @@ public class GestioneRaccontoControl {
             if (email == null) {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
-            if (racconto.getTitolo() == null || racconto.getDescrizione() == null) {
+            if (racconto.getTitolo() == null || racconto.getDescrizione() == null || racconto.getTitolo().length()>255) {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
 
@@ -178,10 +178,10 @@ try {
 
 
     /**
-     * Visualizzazione dei racconti di un utente autenticato tramite token.
+     * Visualizzazione da parte di un utente autenticato tramite token dei racconti nella bacheca dei racconti di un utente.
      *
      * @param emailParam Mappa contenente l'email dell'utente che ha pubblicato i racconti.
-     * @param token Il token JWT dell'utente per verificare l'identità dell'utente.
+     * @param token Il token JWT dell'utente loggato per verificare l'identità dell'utente.
      * @return Una ResponseEntity contenente la lista dei racconti dell'utente.
      */
     @PostMapping("/visualizza")
