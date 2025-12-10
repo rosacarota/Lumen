@@ -37,7 +37,7 @@ export default function EventsPage() {
 
   return (
     // USIAMO LA CLASSE DEL NUOVO CSS
-    <div className="events-page-wrapper">
+    <div className="events-page-wrapper page-enter-animation">
 
 
       <div className="main-container">
