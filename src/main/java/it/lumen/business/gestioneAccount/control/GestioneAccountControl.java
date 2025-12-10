@@ -3,6 +3,7 @@ package it.lumen.business.gestioneAccount.control;
 import it.lumen.business.gestioneAccount.service.GestioneAccountService;
 import it.lumen.business.gestioneRegistrazione.service.RegistrazioneService;
 import it.lumen.business.gestioneAutenticazione.service.AutenticazioneService;
+import it.lumen.data.entity.Indirizzo;
 import it.lumen.data.entity.Utente;
 import it.lumen.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.io.IOException;
 
 /**
@@ -81,21 +83,33 @@ public class GestioneAccountControl {
         if (!email.equals(utenteDTO.getEmail())) {
             return new ResponseEntity<>("Puoi modificare solo il tuo account", HttpStatus.BAD_REQUEST);
         }
+
+        Indirizzo indirizzoUtente = utenteDTO.getIndirizzo();
+
         if (utenteDTO.getAmbito().length()>100){
             return new ResponseEntity<>("Ambito non valido", HttpStatus.BAD_REQUEST);
         }
 
         Utente utente = autenticazioneService.getUtente(email);
 
-        if (utenteDTO.getNome() != null) {
+        if (utenteDTO.getNome() != null && utenteDTO.getNome().length() <= 100) {
             utente.setNome(utenteDTO.getNome());
+        } else {
+            return new ResponseEntity<>("Nome non valido", HttpStatus.BAD_REQUEST);
         }
 
-        utente.setCognome(utenteDTO.getCognome());
+        if(utenteDTO.getRuolo() != Utente.Ruolo.Ente && (utenteDTO.getCognome() != null || utenteDTO.getCognome().length() <= 100)){
+            utente.setCognome(utenteDTO.getCognome());
+        } else {
+            return new ResponseEntity<>("Cognome non valido", HttpStatus.BAD_REQUEST);
+        }
 
+        if(utenteDTO.getRecapitoTelefonico() != null && utenteDTO.getRecapitoTelefonico().matches("^\\d{10}$")) {
+            utente.setRecapitoTelefonico(utenteDTO.getRecapitoTelefonico());
+        } else {
+            return new ResponseEntity<>("Numero di telefono non valido", HttpStatus.BAD_REQUEST);
+        }
         utente.setDescrizione(utenteDTO.getDescrizione());
-
-        utente.setRecapitoTelefonico(utenteDTO.getRecapitoTelefonico());
 
         try {
             String imageBS64 = utenteDTO.getImmagine();
@@ -120,6 +134,27 @@ public class GestioneAccountControl {
         } catch (IOException e) {
             throw new RuntimeException("Errore durante il salvataggio dell'immagine: " + e.getMessage());
         }
+
+        if (indirizzoUtente.getCap() == null || !indirizzoUtente.getCap().matches("^\\d{5}$")){
+            return new ResponseEntity<>("Cap non valido", HttpStatus.BAD_REQUEST);
+        }
+
+        if(indirizzoUtente.getProvincia().length()>50){
+            return new ResponseEntity<>("Provincia non valida", HttpStatus.BAD_REQUEST);
+        }
+
+        if (indirizzoUtente.getCitta().length()>100) {
+            return new ResponseEntity<>("Citta non valida", HttpStatus.BAD_REQUEST);
+        }
+
+        if (indirizzoUtente.getStrada().length()>255){
+            return new ResponseEntity<>("Strada non valida", HttpStatus.BAD_REQUEST);
+        }
+
+        if (indirizzoUtente.getNCivico() == null || indirizzoUtente.getNCivico() < 0){
+            return new ResponseEntity<>("Numero civico non valido", HttpStatus.BAD_REQUEST);
+        }
+
 
         utente.setIndirizzo(utenteDTO.getIndirizzo());
 
