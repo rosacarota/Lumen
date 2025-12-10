@@ -14,7 +14,7 @@ permissions:
 jobs:
   build-test:
     runs-on: ubuntu-latest
-    name: Build, Test and Build WAR with Java 17
+    name: Test with Maven
 
     services:
       postgres:
@@ -57,16 +57,3 @@ jobs:
 
     - name: Run tests
       run: mvn clean test
-
-
-    - name: Build WAR application
-      run: mvn package
-
-    - name: Upload WAR artifact
-      uses: actions/upload-artifact@v4
-      if: success()
-      with:
-        name: backend-${{ github.sha }}
-        path: target/*.war
-        retention-days: 30
-        
