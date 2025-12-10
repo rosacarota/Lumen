@@ -81,6 +81,9 @@ public class GestioneAccountControl {
         if (!email.equals(utenteDTO.getEmail())) {
             return new ResponseEntity<>("Puoi modificare solo il tuo account", HttpStatus.BAD_REQUEST);
         }
+        if (utenteDTO.getAmbito().length()>100){
+            return new ResponseEntity<>("Ambito non valido", HttpStatus.BAD_REQUEST);
+        }
 
         Utente utente = autenticazioneService.getUtente(email);
 
