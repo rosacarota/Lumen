@@ -24,11 +24,20 @@ const LoadingFallback = () => (
   </div>
 );
 
-const ProtectedRoute = ({ children }) => {
+const ProtectedRoute = ({ children, allowedRoles }) => {
   const token = localStorage.getItem('token');
+  const userRole = localStorage.getItem('ruolo');
+
   if (!token) {
     return <Navigate to="/login" state={{ message: "Devi prima accedere per visualizzare questa pagina" }} replace />;
   }
+
+  // Se sono specificati dei ruoli permessi, controlliamo che l'utente ne abbia uno
+  if (allowedRoles && !allowedRoles.includes(userRole)) {
+    // Se il ruolo non è autorizzato, rimanda alla home (o una pagina 403)
+    return <Navigate to="/home" replace />;
+  }
+
   return children;
 };
 
@@ -47,11 +56,13 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/chisiamo" element={<ChiSiamo />} />
 
-          {/* Rotte Protette */}
+          {/* Rotte Protette per utenti loggati*/}
           <Route path="/storie" element={<ProtectedRoute><StoriesBoard /></ProtectedRoute>} />
           <Route path="/eventi" element={<ProtectedRoute><EventsPage /></ProtectedRoute>} />
-          <Route path="/DashboardAffiliazione" element={<ProtectedRoute><DashboardAffiliazione /></ProtectedRoute>} />
-          <Route path="/DashboardRichiesteServizio" element={<ProtectedRoute><DashboardRichiesteServizio /></ProtectedRoute>} />
+          
+          {/* Rotte Protette solo per ENTE */}
+          <Route path="/DashboardAffiliazione" element={<ProtectedRoute allowedRoles={['ente']}><DashboardAffiliazione /></ProtectedRoute>} />
+          <Route path="/DashboardRichiesteServizio" element={<ProtectedRoute allowedRoles={['ente']}><DashboardRichiesteServizio /></ProtectedRoute>} />
 
           {/* Rotte Profili */}
           <Route path="/profiloente" element={<ProtectedRoute><ProfiloEnte /></ProtectedRoute>} />
