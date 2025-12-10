@@ -95,11 +95,25 @@ public class GestioneAccountControl {
         utente.setRecapitoTelefonico(utenteDTO.getRecapitoTelefonico());
 
         try {
+            String imageBS64 = utenteDTO.getImmagine();
 
-            String pathImmagineSalvata = registrazioneService.salvaImmagine(utenteDTO.getImmagine());
+            if (imageBS64 != null && !imageBS64.isEmpty()) {
+                String raw = imageBS64.contains(",") ? imageBS64.split(",")[1] : imageBS64;
 
-            utente.setImmagine(pathImmagineSalvata);
+                byte[] b = java.util.Base64.getDecoder().decode(raw.substring(0, Math.min(raw.length(), 24)));
+                StringBuilder h = new StringBuilder();
+                for (byte x : b) h.append(String.format("%02X", x));
 
+                if (!(h.toString().startsWith("FFD8FF") ||   // JPG
+                        h.toString().startsWith("89504E47") || // PNG
+                        h.toString().startsWith("47494638") || // GIF
+                        (h.toString().startsWith("52494646") && h.toString().substring(16, 24).equals("57454250")))) { // WEBP
+
+                    return new ResponseEntity<>("Formato non valido (ammessi: JPG, PNG, GIF, WEBP)", HttpStatus.BAD_REQUEST);
+                }
+                String pathImmagineSalvata = registrazioneService.salvaImmagine(imageBS64);
+                utente.setImmagine(pathImmagineSalvata);
+            }
         } catch (IOException e) {
             throw new RuntimeException("Errore durante il salvataggio dell'immagine: " + e.getMessage());
         }
