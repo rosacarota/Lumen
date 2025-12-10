@@ -242,6 +242,9 @@ public class GestioneEventoServiceImpl implements GestioneEventoService {
         } else if (header.contains("image/gif")) {
             extension = ".gif";
         }
+        else {
+            throw new IllegalArgumentException("Formato file non supportato. Sono ammesse solo immagini (PNG, JPEG, GIF).");
+        }
 
         byte[] imageBytes = Base64.getDecoder().decode(content);
 

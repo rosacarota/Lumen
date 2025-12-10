@@ -77,7 +77,12 @@ public class GestioneEventoControl {
 
                 return new ResponseEntity<>("Si è verificato un errore nell'aggiunta dell'evento.", HttpStatus.BAD_REQUEST);
             }
-        } catch (Exception e) {
+        }
+        catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+
+        }
+        catch (Exception e) {
 
             return new ResponseEntity<>("Errore interno del server " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -293,7 +298,9 @@ public class GestioneEventoControl {
         } else if (header.contains("image/gif")) {
             extension = ".gif";
         }
-
+        else {
+            throw new IllegalArgumentException("Formato file non supportato. Sono ammesse solo immagini (PNG, JPEG, GIF).");
+        }
         byte[] imageBytes = Base64.getDecoder().decode(content);
 
         String fileName = UUID.randomUUID().toString() + extension;
