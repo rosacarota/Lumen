@@ -157,7 +157,7 @@ export default function DettagliEvento({
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-container" onClick={(e) => e.stopPropagation()}>
 
-        {/* 1. IMMAGINE DI COPERTINA */}
+        {/* IMMAGINE DI COPERTINA */}
         {/* Aggiungiamo una classe dinamica 'landscape-mode' se l'immagine è larga */}
         <div
           className={`modal-top-image ${isLandscape ? 'landscape-mode' : ''}`}
@@ -187,7 +187,7 @@ export default function DettagliEvento({
           </div>
         </div>
 
-        {/* 2. CONTENUTO */}
+        {/* CONTENUTO */}
         <div className="modal-content-scrollable">
 
           <div className="modal-header">

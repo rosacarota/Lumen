@@ -8,7 +8,7 @@ import {
 // Importiamo SweetAlert2
 import Swal from 'sweetalert2';
 
-// Importiamo le funzioni dal tuo Service
+// Importiamo le funzioni dal Service
 import {
   getRichiesteServizio,
   accettaRichiestaServizio,
@@ -43,7 +43,7 @@ export default function DashboardRichiesteServizio() {
     fetchData();
   }, []);
 
-  // --- GESTIONE TERMINA (ex Accetta) CON SWEETALERT ---
+  // --- GESTIONE TERMINA CON SWEETALERT ---
   const handleTermina = async (req) => {
     // 1. Chiediamo conferma
     const result = await Swal.fire({
@@ -51,15 +51,15 @@ export default function DashboardRichiesteServizio() {
       text: `Confermi di aver risolto la richiesta per ${req.beneficiario?.nome || 'questo utente'}?`,
       icon: 'question',
       showCancelButton: true,
-      confirmButtonColor: '#087886', // Il tuo colore Turchese
-      cancelButtonColor: '#6b7280',  // Grigio
+      confirmButtonColor: '#087886', 
+      cancelButtonColor: '#6b7280', 
       confirmButtonText: 'Sì, termina',
       cancelButtonText: 'Annulla'
     });
 
     if (result.isConfirmed) {
       try {
-        // Mostriamo un caricamento mentre chiamiamo l'API
+        // caricamento mentre chiamiamo l'API
         Swal.fire({
           title: 'Elaborazione...',
           text: 'Sto chiudendo la richiesta',
@@ -69,7 +69,7 @@ export default function DashboardRichiesteServizio() {
           }
         });
 
-        // Chiamata API (Usiamo la funzione di accettazione per confermare/chiudere)
+        // Chiamata API (si usa la funzione di accettazione per confermare/chiudere)
         await accettaRichiestaServizio(req);
 
         // Aggiorniamo stato locale (Rimuove la card dalla lista)
@@ -81,7 +81,7 @@ export default function DashboardRichiesteServizio() {
           title: 'Ottimo lavoro!',
           text: 'Complimenti hai risolto la richiesta',
           confirmButtonColor: '#087886',
-          timer: 3000 // Si chiude dopo 3 secondi
+          timer: 3000 // chiusura dopo 3 secondi
         });
 
       } catch (err) {
@@ -103,7 +103,7 @@ export default function DashboardRichiesteServizio() {
       text: "Questa azione non può essere annullata.",
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#ef4444', // Rosso pericolo
+      confirmButtonColor: '#ef4444', 
       cancelButtonColor: '#6b7280',
       confirmButtonText: 'Sì, rifiuta',
       cancelButtonText: 'Annulla'
@@ -149,7 +149,7 @@ export default function DashboardRichiesteServizio() {
   };
 
   return (
-    <div className="dash-req-page">
+    <div className="dash-req-page page-enter-animation">
 
 
       <div className="dash-req-container">
@@ -238,7 +238,7 @@ export default function DashboardRichiesteServizio() {
                     </button>
                     {/* Bottone modificato in TERMINA */}
                     <button className="btn-accept" onClick={() => handleTermina(req)}>
-                      <Check size={18} /> Accetta
+                      <Check size={18} /> Termina Richiesta
                     </button>
                   </div>
                 </div>

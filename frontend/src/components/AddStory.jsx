@@ -1,12 +1,10 @@
 ﻿import { useState, useRef, useEffect } from "react";
 import { Image, FileText, SendHorizontal, ArrowLeft } from "lucide-react";
-// Assicurati che il percorso del CSS sia corretto
 import "../stylesheets/AddStory.css";
 
 import { addStory, editStory } from "../services/StoriesService";
 
-// FIX: Usiamo 'onBack' per la chiusura e 'storyToEdit' per la modifica
-// onSubmit ora funge da callback di successo (refresh lista storie)
+
 const AddStory = ({ onSubmit, onBack, storyToEdit }) => {
   const [storyType, setStoryType] = useState("text");
   const [title, setTitle] = useState("");
@@ -14,7 +12,7 @@ const AddStory = ({ onSubmit, onBack, storyToEdit }) => {
   const [file, setFile] = useState(null);
   const fileInputRef = useRef(null);
 
-  // --- Funzione per convertire file in Base64 ---
+  // Funzione per convertire file in Base64 
   const toBase64 = (file) =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -23,7 +21,7 @@ const AddStory = ({ onSubmit, onBack, storyToEdit }) => {
       reader.onerror = (error) => reject(error);
     });
 
-  // --- Se esiste un racconto da modificare, inizializzo il form ---
+  //Se esiste un racconto da modificare, inizializzo il form 
   useEffect(() => {
     if (storyToEdit) {
       setStoryType(storyToEdit.type || "text");
@@ -33,7 +31,7 @@ const AddStory = ({ onSubmit, onBack, storyToEdit }) => {
     }
   }, [storyToEdit]);
 
-  // Prevent scrolling when modal is open
+  
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     return () => {

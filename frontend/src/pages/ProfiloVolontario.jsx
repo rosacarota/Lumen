@@ -125,25 +125,25 @@ const ProfiloVolontario = () => {
                 </section>
                 <div className="voluntary-split-layout">
                     <section className="voluntary-left-sidebar">
-                        {affiliante && (
-                            <div
-                                onClick={() => handleAffiliateClick(affiliante.email)}
-                                style={{
-                                    backgroundColor: '#fff',
-                                    borderRadius: '20px',
-                                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
-                                    marginBottom: '24px',
-                                    overflow: 'hidden',
-                                    cursor: 'pointer',
-                                    transition: 'transform 0.2s',
-                                }}
-                                onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
-                                onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-                            >
-                                <div className="affiliation-header">
-                                    <h3>Affiliazione</h3>
-                                </div>
-                                <div style={{ padding: '20px' }}>
+                        <div
+                            onClick={() => affiliante ? handleAffiliateClick(affiliante.email) : null}
+                            style={{
+                                backgroundColor: '#fff',
+                                borderRadius: '20px',
+                                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
+                                marginBottom: '24px',
+                                overflow: 'hidden',
+                                cursor: affiliante ? 'pointer' : 'default',
+                                transition: 'transform 0.2s',
+                            }}
+                            onMouseEnter={(e) => affiliante && (e.currentTarget.style.transform = 'translateY(-2px)')}
+                            onMouseLeave={(e) => affiliante && (e.currentTarget.style.transform = 'translateY(0)')}
+                        >
+                            <div className="affiliation-header">
+                                <h3>Affiliazione</h3>
+                            </div>
+                            <div style={{ padding: '20px' }}>
+                                {affiliante ? (
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                                         <div style={{
                                             width: '48px',
@@ -162,9 +162,18 @@ const ProfiloVolontario = () => {
                                             <p style={{ margin: 0, fontSize: '0.9rem', color: '#6B7280' }}>{affiliante.email}</p>
                                         </div>
                                     </div>
-                                </div>
+                                ) : (
+                                    <div style={{ textAlign: 'center', color: '#6B7280' }}>
+                                        <p style={{ margin: 0 }}>
+                                            {isOwner 
+                                                ? "Non sei ancora affiliato a nessun ente." 
+                                                : `${profileData?.nome || 'L\'utente'} non è ancora affiliato a nessun ente.`
+                                            }
+                                        </p>
+                                    </div>
+                                )}
                             </div>
-                        )}
+                        </div>
                     </section>
                     <section className="voluntary-stories-section">
                         <BachecaRacconti
@@ -173,7 +182,7 @@ const ProfiloVolontario = () => {
                         />
                     </section>
                     <section className="voluntary-events-section">
-                        <CronologiaEventi />
+                                <CronologiaEventi />
                     </section>
                 </div>
             </div>

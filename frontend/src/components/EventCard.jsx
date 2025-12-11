@@ -1,14 +1,8 @@
 import React, { useState, useEffect } from 'react';
-// 1. Importiamo useNavigate
 import { useNavigate } from 'react-router-dom';
 import { CalendarDays, MapPin, Users, Info, UserPlus, UserCheck, Image as ImageIcon } from 'lucide-react';
 import Swal from 'sweetalert2';
 import '../stylesheets/EventCard.css';
-
-// MODALI
-import DettagliEvento from './DettagliEvento';
-import VisualizzaPartecipantiEvento from './VisualizzaPartecipantiEvento';
-import ModifyEvento from './ModifyEvento';
 
 import {
   iscrivitiEvento,
@@ -16,12 +10,10 @@ import {
   checkUserParticipation
 } from '../services/PartecipazioneEventoService';
 
-import { rimuoviEvento } from '../services/EventoService';
-
 // DEFINIZIONE URL BACKEND
 const API_BASE_URL = "http://localhost:8080";
 
-export default function EventCard({ event, showParticipate = true }) {
+export default function EventCard({ event, showParticipate = true, onOpenDetails }) {
 
   const navigate = useNavigate();
 
@@ -40,7 +32,6 @@ export default function EventCard({ event, showParticipate = true }) {
   const [participationId, setParticipationId] = useState(null);
   const [loadingBtn, setLoadingBtn] = useState(false);
   const [userRole, setUserRole] = useState("");
-  const [activeModal, setActiveModal] = useState(null);
 
   const fullDate = startDate
     ? new Date(startDate).toLocaleDateString('it-IT', { day: 'numeric', month: 'short', year: 'numeric' })
@@ -62,11 +53,8 @@ export default function EventCard({ event, showParticipate = true }) {
 
   const displayOrganizerName = getOrganizerName();
 
-  // ---------------------------------------------------------
-  // QUI SONO LE FUNZIONI NUOVE PER L'IMMAGINE
-  // ---------------------------------------------------------
 
-  // 1. Trova la stringa dell'immagine nei dati
+  // Trova la stringa dell'immagine nei dati
   const getOrganizerImage = () => {
     if (event.organizerImage) return event.organizerImage;
     if (event.utente && typeof event.utente === 'object' && event.utente.immagine) {
@@ -78,19 +66,19 @@ export default function EventCard({ event, showParticipate = true }) {
     return null;
   };
 
-  // 2. Costruisce l'URL completo
+  // Costruisce l'URL completo
   const getAvatarUrl = (img) => {
     if (!img) return null;
     if (img.startsWith("http") || img.startsWith("data:")) return img;
     return `${API_BASE_URL}${img.startsWith('/') ? '' : '/'}${img}`;
   };
 
-  // 3. Variabili finali da usare nel return
+  // Variabili finali da usare nel return
   const rawImage = getOrganizerImage();
   const finalAvatarUrl = getAvatarUrl(rawImage);
   const avatarLetter = (displayOrganizerName || "E").charAt(0).toUpperCase();
 
-  // ---------------------------------------------------------
+
 
   const handleEnteClick = (e) => {
     e.stopPropagation();
@@ -100,7 +88,7 @@ export default function EventCard({ event, showParticipate = true }) {
 
   useEffect(() => {
     const initializeCard = async () => {
-      // Usiamo direttamente il localStorage invece di fare una fetch inutile
+      // Usiamo direttamente il localStorage 
       const ruoloFinale = localStorage.getItem("ruolo") || localStorage.getItem("userRole") || "";
       setUserRole(ruoloFinale);
 
@@ -115,25 +103,6 @@ export default function EventCard({ event, showParticipate = true }) {
     if (safeId) initializeCard();
   }, [safeId, showParticipate]);
 
-  const handleOpenModifica = () => {
-    setActiveModal('edit');
-  };
-
-  const handleUpdateSuccess = () => {
-    setActiveModal(null);
-    window.location.reload();
-  };
-
-  const handleEliminaEvento = async () => {
-    if (window.confirm(`Sei sicuro di voler eliminare l'evento "${title}"?`)) {
-      try {
-        await rimuoviEvento(safeId);
-        window.location.reload();
-      } catch (error) {
-        alert("Errore: " + error.message);
-      }
-    }
-  };
 
   const handleToggleParticipation = async (e) => {
     e.stopPropagation();
@@ -203,7 +172,7 @@ export default function EventCard({ event, showParticipate = true }) {
 
         <div className="event-content">
           <div className="event-header">
-            {/* QUI HO INSERITO IL CODICE JSX PER L'AVATAR */}
+            {/*  CODICE JSX PER L'AVATAR */}
             <div className="event-avatar">
               {finalAvatarUrl ? (
                 <img
@@ -222,7 +191,7 @@ export default function EventCard({ event, showParticipate = true }) {
                 {avatarLetter}
               </span>
             </div>
-            {/* ----------------------------------------------------- */}
+            {}
 
             <div className="event-meta">
               <span
@@ -264,7 +233,7 @@ export default function EventCard({ event, showParticipate = true }) {
           </div>
 
           <div className="event-footer">
-            <button className="event-btn btn-secondary" onClick={() => setActiveModal('details')}>
+            <button className="event-btn btn-secondary" onClick={onOpenDetails}>
               <Info size={18} />
               Dettagli
             </button>
@@ -286,35 +255,6 @@ export default function EventCard({ event, showParticipate = true }) {
           </div>
         </div>
       </div>
-
-      {/* MODALI */}
-      {activeModal === 'details' && (
-        <DettagliEvento
-          evento={event.raw || event}
-          onClose={() => setActiveModal(null)}
-          onOpenParticipants={() => setActiveModal('participants')}
-          onElimina={handleEliminaEvento}
-          onModifica={handleOpenModifica}
-        />
-      )}
-
-      {activeModal === 'participants' && (
-        <VisualizzaPartecipantiEvento
-          idEvento={safeId}
-          titoloEvento={title}
-          onClose={() => setActiveModal(null)}
-          onBack={() => setActiveModal('details')}
-        />
-      )}
-
-      {activeModal === 'edit' && (
-        <ModifyEvento
-          isOpen={true}
-          onClose={() => setActiveModal('details')}
-          eventToEdit={event.raw || event}
-          onUpdate={handleUpdateSuccess}
-        />
-      )}
     </>
   );
 }

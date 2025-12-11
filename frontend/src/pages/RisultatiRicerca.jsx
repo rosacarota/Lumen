@@ -69,7 +69,7 @@ const SearchResults = () => {
   };
 
   return (
-    <div className="sr-page-wrapper">
+    <div className="sr-page-wrapper page-enter-animation">
 
 
       <main className="sr-main-content">

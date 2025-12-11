@@ -113,7 +113,7 @@ const StoriesBoard = () => {
     <>
 
 
-      <div className="stories-page" id="storie">
+      <div className="stories-page page-enter-animation" id="storie">
         <div className="stories-container">
           <header className="stories-hero">
             <div className="stories-hero-left">
@@ -123,7 +123,7 @@ const StoriesBoard = () => {
               </p>
             </div>
             <div className="stories-hero-right">
-              {/* Tasto nuovo racconto visibile se siamo loggati */}
+              {/* Tasto racconto visibile se si è loggati */}
               {currentUserEmail && (
                 <button
                   className="stories-add-button"

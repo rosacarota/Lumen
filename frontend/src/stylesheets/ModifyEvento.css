@@ -1,7 +1,3 @@
-/* =========================================
-   MODIFY EVENTO STYLESHEET (me-)
-   Style: Matched with Login/Edit System
-   ========================================= */
 
 /* --- ANIMATIONS --- */
 @keyframes me-fadeInUp {
@@ -28,7 +24,7 @@
 
 .me-page-modal {
   position: fixed; inset: 0; z-index: 20000;
-  background: rgba(8, 120, 134, 0.2); /* Tinted backdrop */
+  background: rgba(8, 120, 134, 0.2); 
   backdrop-filter: blur(8px);
   padding: 20px;
   display: flex;
@@ -74,9 +70,7 @@
   color: #7CCE6B;
 }
 
-/* =========================================
-   LATO SINISTRO (FORM)
-   ========================================= */
+/*LATO SINISTRO (FORM)*/
 .me-left-panel-form {
   flex: 1.3;
   background: white;
@@ -194,12 +188,9 @@
   box-shadow: 0 8px 20px rgba(8, 120, 134, 0.4);
 }
 
-/* =========================================
-   LATO DESTRO (DECORATIVO)
-   ========================================= */
+/*LATO DESTRO (DECORATIVO) */
 .me-right-panel-decor {
   flex: 1; 
-  /* Gradiente ufficiale del tema */
   background: linear-gradient(135deg, #087886 0%, #4AAFB8 50%, #7CCE6B 100%);
   position: relative;
   overflow: hidden;
@@ -246,9 +237,7 @@
   opacity: 0.95; margin-bottom: 0; 
 }
 
-/* =========================================
-   RESPONSIVE
-   ========================================= */
+/*RESPONSIVE*/
 @media (max-width: 900px) {
   .me-container { 
     flex-direction: column;

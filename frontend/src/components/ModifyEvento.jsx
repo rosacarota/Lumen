@@ -32,7 +32,7 @@ const ModifyEvento = ({ isOpen, onClose, eventToEdit, onUpdate }) => {
       setTitolo(eventToEdit.titolo || "");
       setDescrizione(eventToEdit.descrizione || "");
 
-      // FIX DATE: Prendo solo la parte YYYY-MM-DD se c'è l'ora (T)
+      // Prendo solo la parte YYYY-MM-DD se c'è l'ora (T)
       const safeDate = (dateStr) => {
         if (!dateStr) return "";
         return dateStr.includes('T') ? dateStr.split('T')[0] : dateStr;
@@ -52,7 +52,7 @@ const ModifyEvento = ({ isOpen, onClose, eventToEdit, onUpdate }) => {
         setExistingImageBase64(null);
       }
 
-      // FIX INDIRIZZO: Controllo più varianti per il civico
+      // INDIRIZZO: Controllo più varianti per il civico
       if (eventToEdit.indirizzo) {
         const addr = eventToEdit.indirizzo;
         setIndirizzo({
@@ -113,7 +113,7 @@ const ModifyEvento = ({ isOpen, onClose, eventToEdit, onUpdate }) => {
         immagineBase64: immagineFinale,
         indirizzo: {
           ...indirizzo,
-          // Assicuriamoci di mandare nCivico se il backend lo vuole CamelCase
+          // mandare nCivico se il backend lo vuole CamelCase
           nCivico: indirizzo.ncivico
         }
       };
