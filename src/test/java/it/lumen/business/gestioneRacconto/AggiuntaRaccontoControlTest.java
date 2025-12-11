@@ -56,47 +56,33 @@ import static org.mockito.Mockito.when;
             racconto.setImmagine("data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==");
 
 
-            // Common Mocks
+
             lenient().when(util.extractEmail(token)).thenReturn("pasquale@lumen.it");
             lenient().when(autenticazioneService.getUtente("pasquale@lumen.it")).thenReturn(utente);
 
-            // Mocking existence and ownership checks
+
             lenient().when(gestioneRaccontoService.checkId(idRacconto)).thenReturn(true);
             lenient().when(gestioneRaccontoService.getByIdRaccontoRaw(idRacconto)).thenReturn(racconto);
         }
 
+
         // TC_1.2.1_1: Titolo troppo lungo
         @Test
-        void testAggiuntaRacconto_TitoloTroppoLungo_SenzaImmagine() {
-            racconto.setImmagine(null);
-            String titoloLungo= "Vi racconto la storia della mia vita, da quando da giovane lasciai il mio piccolo paese tra le montagne del sud sperando in un futuro migliore, ma non riuscii mai a dimenticare la povertà che divorava la mia terra d’origine, le famiglie senza lavoro, i bambini senza scuole e le strade che cadevano a pezzi mentre lottavo per cambiare il destino della mia gente.";
-            racconto.setTitolo(titoloLungo);
+        void testAggiuntaRacconto_TitoloTroppoLungo() {
 
-            ResponseEntity<Racconto> response = gestioneRaccontoControl.aggiuntaRacconto(racconto, token);
-
-            // Oracle: La modifica non va a buon fine
-            assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        }
-
-        // TC_1.2.1_2: Titolo troppo lungo
-        @Test
-        void testAggiuntaRacconto_TitoloTroppoLungo_ConImmagine() {
-
-            // immagine di default
             String titoloLungo= "Vi racconto la storia della mia vita, da quando da giovane lasciai il mio piccolo paese tra le montagne del sud sperando in un futuro migliore, ma non riuscii mai a dimenticare la povertà che divorava la mia terra d’origine, le famiglie senza lavoro, i bambini senza scuole e le strade che cadevano a pezzi mentre lottavo per cambiare il destino della mia gente.";
             racconto.setTitolo(titoloLungo);
 
             ResponseEntity<?> response = gestioneRaccontoControl.aggiuntaRacconto(racconto, token);
 
-            // Oracle: La modifica non va a buon fine
             assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 
         }
 
-        // TC_1.2.1_3 (Variant): Titolo vuoto
+        // TC_1.2.1_2 (Variant): Titolo vuoto
         @Test
-        void testAggiuntaRacconto_TitoloVuoto_SenzaImmagine() {
-            racconto.setImmagine(null);
+        void testAggiuntaRacconto_TitoloVuoto() {
+
             racconto.setTitolo("");
 
             ResponseEntity<Racconto> response = gestioneRaccontoControl.aggiuntaRacconto(racconto, token);
@@ -104,12 +90,11 @@ import static org.mockito.Mockito.when;
             assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         }
 
-        // TC_1.2.1_4 (Variant): Titolo vuoto
+        // TC_1.2.1_3 (Variant): Descrizione vuota
         @Test
-        void testAggiuntaRacconto_TitoloVuoto_ConImmagine() {
+        void testAggiuntaRacconto_DescrizioneVuota() {
 
-            // immagine di default
-            racconto.setTitolo("");
+            racconto.setDescrizione("");
 
             ResponseEntity<Racconto> response = gestioneRaccontoControl.aggiuntaRacconto(racconto, token);
 
@@ -117,7 +102,7 @@ import static org.mockito.Mockito.when;
         }
 
 
-        // TC_1.2.1_5: Immagine formato non valido
+        // TC_1.2.1_4: Immagine formato non valido
         @Test
         void testModificaEvento_ImmagineFormatoErrato() {
             String mp4Base64 = "data:video/mp4;base64,AAAAHGZ0eXBNU";
@@ -129,7 +114,7 @@ import static org.mockito.Mockito.when;
             assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         }
 
-        // TC_1.3.3_6: Racconto valido
+        // TC_1.3.3_5: Racconto valido
         @Test
         void testModificaEvento_RaccontoValido() {
             // immagine valida jpg set in setUp
