@@ -3,7 +3,6 @@ package it.lumen.business.gestioneAccount;
 import it.lumen.business.gestioneAccount.control.GestioneAccountControl;
 import it.lumen.business.gestioneAccount.service.GestioneAccountService;
 import it.lumen.business.gestioneAutenticazione.service.AutenticazioneService;
-import it.lumen.business.gestioneRegistrazione.service.RegistrazioneService;
 import it.lumen.data.entity.Indirizzo;
 import it.lumen.data.entity.Utente;
 import it.lumen.security.JwtUtil;
@@ -22,7 +21,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class GestioneAccountControlTest {
+public class ModificaProfiloTest {
 
     @InjectMocks
     private GestioneAccountControl gestioneAccountControl;

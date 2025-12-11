@@ -20,7 +20,7 @@ import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
     @ExtendWith(MockitoExtension.class)
-    public class AggiuntaRaccontoControlTest {
+    public class AggiuntaRaccontoTest {
 
         @InjectMocks
         private GestioneRaccontoControl gestioneRaccontoControl;

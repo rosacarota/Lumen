@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class RegistrazioneControlTest {
+public class RegistraUtenteTest {
 
     @InjectMocks
     private RegistrazioneControl registrazioneControl;

@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class AffiliazioneControlTest {
+public class AccettaAffiliazioneTest {
 
     @InjectMocks
     private AffiliazioneControl affiliazioneControl;
