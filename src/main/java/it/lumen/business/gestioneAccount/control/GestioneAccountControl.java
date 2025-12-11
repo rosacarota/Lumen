@@ -59,6 +59,9 @@ public class GestioneAccountControl {
 
         Utente utente = autenticazioneService.getUtente(email);
 
+        if (utente == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Utente non autenticato");
+        }
         try {
             utente.setImmagine(autenticazioneService.recuperaImmagine(utente.getImmagine()));
         } catch (IOException e) {
