@@ -1,7 +1,10 @@
 package it.lumen.business.gestioneEvento.service;
 
+import it.lumen.business.gestioneAutenticazione.service.AutenticazioneService;
 import it.lumen.data.dao.EventoDAO;
 import it.lumen.data.entity.Evento;
+import it.lumen.data.entity.Utente;
+import jakarta.validation.constraints.Email;
 import org.springframework.stereotype.Service;
 
 import java.io.FileNotFoundException;
@@ -13,39 +16,98 @@ import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import jakarta.transaction.Transactional;
 
+import javax.validation.Valid;
+
+/**
+ * Implementazione del servizio di gestione degli Eventi.
+ * Fornisce le funzionalità per aggiungere, modificare, eliminare e visualizzare gli eventi degli Enti.
+ */
 @Service
 public class GestioneEventoServiceImpl implements GestioneEventoService {
 
-
     private final EventoDAO eventoDAO;
+    private final AutenticazioneService autenticazioneService;
 
+    /**
+     * Costruttore per l'iniezione delle dipendenze.
+     *
+     * @param eventoDAO Il DAO per l'accesso ai dati degli Eventi
+     * @param autenticazioneService L'interfaccia per i servizi di autenticazione degli Utenti
+     */
     @Autowired
-    public GestioneEventoServiceImpl(EventoDAO eventoDAO) {
+    public GestioneEventoServiceImpl(EventoDAO eventoDAO, AutenticazioneService autenticazioneService) {
         this.eventoDAO = eventoDAO;
+        this.autenticazioneService = autenticazioneService;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
-    public Evento aggiungiEvento(Evento evento) {
+    public Evento aggiungiEvento(@Valid Evento evento) {
 
         return eventoDAO.save(evento);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
-    public Evento modificaEvento(Evento evento) {
+    public Evento modificaEvento(@Valid Evento evento) {
+
+        try {
+            String path = salvaImmagine(evento.getImmagine());
+            evento.setImmagine(path);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        Evento existingEvento = eventoDAO.getEventoByIdEvento(evento.getIdEvento());
+        if (existingEvento != null) {
+            existingEvento.setTitolo(evento.getTitolo());
+            existingEvento.setDescrizione(evento.getDescrizione());
+            existingEvento.setDataInizio(evento.getDataInizio());
+            existingEvento.setDataFine(evento.getDataFine());
+            existingEvento.setMaxPartecipanti(evento.getMaxPartecipanti());
+            existingEvento.setImmagine(evento.getImmagine());
+            existingEvento.setUtente(evento.getUtente());
+
+            if (existingEvento.getIndirizzo() != null && evento.getIndirizzo() != null) {
+                existingEvento.getIndirizzo().setCitta(evento.getIndirizzo().getCitta());
+                existingEvento.getIndirizzo().setProvincia(evento.getIndirizzo().getProvincia());
+                existingEvento.getIndirizzo().setCap(evento.getIndirizzo().getCap());
+                existingEvento.getIndirizzo().setStrada(evento.getIndirizzo().getStrada());
+                existingEvento.getIndirizzo().setNCivico(evento.getIndirizzo().getNCivico());
+            } else if (evento.getIndirizzo() != null) {
+                existingEvento.setIndirizzo(evento.getIndirizzo());
+            }
+
+            return eventoDAO.save(existingEvento);
+        }
+
         return eventoDAO.save(evento);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
     public void eliminaEvento(int idEvento) {
         eventoDAO.removeEventoByIdEvento(idEvento);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean checkId(int idEvento) {
 
@@ -53,10 +115,13 @@ public class GestioneEventoServiceImpl implements GestioneEventoService {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Evento getEventoById(int idEvento){
+    public Evento getEventoById(int idEvento) {
 
-       Evento evento = eventoDAO.getEventoByIdEvento(idEvento);
+        Evento evento = eventoDAO.getEventoByIdEvento(idEvento);
         try {
             evento.setImmagine(recuperaImmagine(evento.getImmagine()));
         } catch (IOException e) {
@@ -65,10 +130,12 @@ public class GestioneEventoServiceImpl implements GestioneEventoService {
         return evento;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public List<Evento> cronologiaEventi(String email, String stato) {
+    public List<Evento> cronologiaEventi(@Email(message = "Email non valida") String email, String stato) {
         Date oggi = new Date();
-
 
         if (stato == null)
             stato = "";
@@ -76,11 +143,16 @@ public class GestioneEventoServiceImpl implements GestioneEventoService {
         switch (stato.toLowerCase()) {
             case "attivi":
 
-                return eventoDAO.findAllByUtente_EmailAndDataInizioLessThanEqualAndDataFineGreaterThanEqual(email, oggi, oggi);
+                return eventoDAO.findAllByUtente_EmailAndDataInizioLessThanEqualAndDataFineGreaterThanEqual(email, oggi,
+                        oggi);
 
             case "terminati":
 
                 return eventoDAO.findAllByUtente_EmailAndDataFineBefore(email, oggi);
+
+            case "futuri":
+
+                return eventoDAO.findAllByUtente_EmailAndDataInizioAfter(email, oggi);
 
             default:
 
@@ -88,13 +160,36 @@ public class GestioneEventoServiceImpl implements GestioneEventoService {
         }
     }
 
-    public List<Evento> tuttiGliEventi(){
-        return eventoDAO.findAll();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Evento> tuttiGliEventi() {
+        List<Evento> eventList = eventoDAO.findAll();
+
+        eventList.stream().map(evento -> {
+            Utente utente = evento.getUtente();
+            try {
+                utente.setImmagine(autenticazioneService.recuperaImmagine(utente.getImmagine()));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            return evento;
+        }).collect(Collectors.toList());
+        return eventList;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String recuperaImmagine(String pathImmagine) throws IOException {
 
-        if (pathImmagine == null || pathImmagine.trim().isEmpty()) {
+        if (pathImmagine == null || !(pathImmagine.endsWith("jpg") || pathImmagine.endsWith("jpeg")
+                || pathImmagine.endsWith("png") || pathImmagine.endsWith("gif") || pathImmagine.endsWith("webp"))) {
+            return pathImmagine;
+        }
+        if (pathImmagine.trim().isEmpty()) {
             return null;
         }
 
@@ -104,7 +199,7 @@ public class GestioneEventoServiceImpl implements GestioneEventoService {
             throw new IllegalArgumentException("Nome file non valido estratto dal percorso: " + pathImmagine);
         }
 
-        String UPLOAD_DIR = "uploads/profile_images/";
+        String UPLOAD_DIR = "uploads/stories/";
         Path filePath = Paths.get(UPLOAD_DIR).resolve(fileName);
 
         if (!Files.exists(filePath)) {
@@ -120,10 +215,52 @@ public class GestioneEventoServiceImpl implements GestioneEventoService {
         byte[] imageBytes = Files.readAllBytes(filePath);
 
         String mimeType = "image/jpeg";
-        if (fileName.toLowerCase().endsWith(".png")) mimeType = "image/png";
-        else if (fileName.toLowerCase().endsWith(".gif")) mimeType = "image/gif";
+        if (fileName.toLowerCase().endsWith(".png"))
+            mimeType = "image/png";
+        else if (fileName.toLowerCase().endsWith(".gif"))
+            mimeType = "image/gif";
 
         String base64Content = Base64.getEncoder().encodeToString(imageBytes);
         return "data:" + mimeType + ";base64," + base64Content;
+    }
+
+    public String salvaImmagine(String base64String) throws IOException {
+
+        if (base64String == null || base64String.trim().isEmpty()) {
+            return null;
+        }
+
+        String[] parts = base64String.split(",");
+        String header = parts[0];
+        String content = parts[1];
+
+        String extension = ".jpg";
+        if (header.contains("image/png")) {
+            extension = ".png";
+        } else if (header.contains("image/jpeg") || header.contains("image/jpg")) {
+            extension = ".jpg";
+        } else if (header.contains("image/gif")) {
+            extension = ".gif";
+        }
+        else {
+            throw new IllegalArgumentException("Formato file non supportato. Sono ammesse solo immagini (PNG, JPEG, GIF).");
+        }
+
+        byte[] imageBytes = Base64.getDecoder().decode(content);
+
+        String fileName = UUID.randomUUID().toString() + extension;
+
+        String UPLOAD_DIR = "uploads/stories/";
+        Path uploadPath = Paths.get(UPLOAD_DIR);
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+
+        Path filePath = uploadPath.resolve(fileName);
+
+        Files.write(filePath, imageBytes);
+
+        return "/stories/" + fileName;
+
     }
 }

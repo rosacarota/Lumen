@@ -3,9 +3,10 @@ package it.lumen.business.gestioneRegistrazione.service;
 import it.lumen.data.dao.UtenteDAO;
 import it.lumen.data.entity.Utente;
 import it.lumen.security.Encrypter;
+import jakarta.validation.constraints.Email;
 import org.springframework.stereotype.Service;
 
-
+import javax.validation.Valid;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,22 +14,38 @@ import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.UUID;
 
+/**
+ * Implementazione del servizio di registrazione.
+ * Gestisce la logica di registrazione utente, inclusa la cifratura della
+ * password e il salvataggio delle immagini.
+ */
 @Service
 public class RegistrazioneServiceImpl implements RegistrazioneService {
 
     private final UtenteDAO utenteDAO;
 
+    /**
+     * Costruttore per l'iniezione delle dipendenze.
+     *
+     * @param utenteDAO Il DAO per l'accesso ai dati utente.
+     */
     public RegistrazioneServiceImpl(UtenteDAO utenteDAO) {
         this.utenteDAO = utenteDAO;
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public boolean checkEmail(String email) {
+    public boolean checkEmail(@Email(message = "Email non valida") String email) {
         return utenteDAO.existsByEmail(email);
     }
 
-    public void registraUtente(Utente utente) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void registraUtente(@Valid Utente utente) {
 
         if (checkEmail(utente.getEmail())) {
             throw new IllegalArgumentException("Email già registrata");
@@ -53,7 +70,15 @@ public class RegistrazioneServiceImpl implements RegistrazioneService {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String salvaImmagine(String base64String) throws IOException {
+
+        if (base64String == null || base64String.isEmpty()) {
+            return null;
+        }
 
         String[] parts = base64String.split(",");
         String header = parts[0];
@@ -82,12 +107,8 @@ public class RegistrazioneServiceImpl implements RegistrazioneService {
 
         Files.write(filePath, imageBytes);
 
-
         return "/profile_images/" + fileName;
 
-
     }
-
-
 
 }

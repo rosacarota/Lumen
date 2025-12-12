@@ -23,6 +23,7 @@ out/
 *.class
 mvnw
 mvnw.cmd
+uploads/
 
 # Node/React
 node_modules/
@@ -50,3 +51,4 @@ lerna-debug.log*
 *.njsproj
 *.sln
 *.sw?
+uploads/

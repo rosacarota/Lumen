@@ -2,51 +2,80 @@ package it.lumen.data.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.sql.Date;
 
 @Entity
-@Table(name="Evento")
+@Table(name = "Evento")
+@ToString
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+/**
+ * Entity che rappresenta un evento organizzato da un ente o utente.
+ */
 public class Evento {
 
+    /**
+     * Identificativo univoco dell'evento.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="IDEvento")
+    @Column(name = "IDEvento")
     private Integer idEvento;
 
-    @Column(name="titolo", nullable= false, length=255)
+    /**
+     * Titolo dell'evento.
+     */
+    @Column(name = "titolo", nullable = false, length = 255)
     private String titolo;
 
-    @Column(name="descrizione", nullable= true)
+    /**
+     * Descrizione dettagliata dell'evento.
+     */
+    @Column(name = "descrizione", nullable = true)
     private String descrizione;
 
-    @ManyToOne
-    @JoinColumn(name = "Luogo")
+    /**
+     * Indirizzo dove si svolge l'evento.
+     */
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "Luogo", nullable = false)
     private Indirizzo indirizzo;
 
-    @Column(name="datainizio", nullable= false)
+    /**
+     * Data di inizio dell'evento.
+     */
+    @Column(name = "datainizio", nullable = false)
     private Date dataInizio;
 
-    @Column(name="datafine", nullable= false)
+    /**
+     * Data di fine dell'evento.
+     */
+    @Column(name = "datafine", nullable = false)
     private Date dataFine;
 
-    @Column(name="maxpartecipanti", nullable= true)
+    /**
+     * Numero massimo di partecipanti ammessi.
+     */
+    @Column(name = "maxpartecipanti", nullable = true)
     private int maxPartecipanti;
 
-    @Column(name="immagine", nullable= true, length=255)
+    /**
+     * Percorso o URL dell'immagine associata all'evento.
+     */
+    @Column(name = "immagine", nullable = true)
     private String immagine;
 
+    /**
+     * L'utente (tipicamente Ente) che ha creato l'evento.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Ente")
-    @JsonIgnoreProperties({"nome", "cognome", "password", "ambito", "descrizione", "indirizzo", "recapitoTelefonico", "immagine", "ruolo", "hibernateLazyInitializer"})
+    @JsonIgnoreProperties({ "cognome", "password", "ambito", "descrizione", "indirizzo", "recapitoTelefonico", "ruolo",
+            "hibernateLazyInitializer" })
     private Utente utente;
 
 }

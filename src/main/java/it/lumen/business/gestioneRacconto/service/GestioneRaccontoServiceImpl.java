@@ -5,9 +5,10 @@ import it.lumen.data.dao.RaccontoDAO;
 import it.lumen.data.entity.Racconto;
 import it.lumen.data.entity.Utente;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.Email;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import javax.validation.Valid;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
@@ -18,29 +19,37 @@ import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Implementazione del servizio di gestione dei racconti.
+ * Fornisce le funzionalità per aggiungere, modificare, eliminare e visualizzare i racconti degli utenti.
+ */
 @Service
 public class GestioneRaccontoServiceImpl implements GestioneRaccontoService {
 
     private final RaccontoDAO raccontoDAO;
-    private final AutenticazioneService autenticazioneService;
     private static final String UPLOAD_DIR = Paths.get("uploads/stories").toAbsolutePath().toString();
 
-
+    /**
+     * Costruttore per l'iniezione delle dipendenze.
+     *
+     * @param raccontoDAO Il DAO per l'accesso ai dati dei racconti.
+     */
     @Autowired
-    public GestioneRaccontoServiceImpl(RaccontoDAO raccontoDAO, AutenticazioneService autenticazioneService) {
+    public GestioneRaccontoServiceImpl(RaccontoDAO raccontoDAO) {
         this.raccontoDAO = raccontoDAO;
-        this.autenticazioneService = autenticazioneService;
+
     }
 
-    // ========================= CRUD =========================
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
-    public Racconto aggiungiRacconto(Racconto racconto) {
+    public Racconto aggiungiRacconto(@Valid Racconto racconto) {
         if (racconto.getImmagine() != null && !racconto.getImmagine().isEmpty()) {
             try {
                 String fileName = salvaImmagine(racconto.getImmagine());
-                racconto.setImmagine(fileName); // salvo solo il nome del file
+                racconto.setImmagine(fileName);
             } catch (IOException e) {
                 throw new RuntimeException("Errore durante il salvataggio dell'immagine: " + e.getMessage());
             }
@@ -48,18 +57,20 @@ public class GestioneRaccontoServiceImpl implements GestioneRaccontoService {
         return raccontoDAO.save(racconto);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
-    public Racconto modificaRacconto(Racconto nuovoRacconto) {
-        // Recupera il racconto esistente dal DB
+    public Racconto modificaRacconto(@Valid Racconto nuovoRacconto) {
+
         Racconto vecchioRacconto = raccontoDAO.getRaccontoByIdRacconto(nuovoRacconto.getIdRacconto());
         if (vecchioRacconto == null) {
             throw new RuntimeException("Racconto non trovato con id: " + nuovoRacconto.getIdRacconto());
         }
 
-        // Mantieni vecchia immagine se non viene inviata una nuova
         if (nuovoRacconto.getImmagine() == null || nuovoRacconto.getImmagine().isEmpty()) {
-            nuovoRacconto.setImmagine(vecchioRacconto.getImmagine());
+            nuovoRacconto.setImmagine(null);
         } else {
             try {
                 // Salva nuova immagine
@@ -70,17 +81,17 @@ public class GestioneRaccontoServiceImpl implements GestioneRaccontoService {
             }
         }
 
-        // Mantieni data pubblicazione originale
         nuovoRacconto.setDataPubblicazione(vecchioRacconto.getDataPubblicazione());
 
-        // Mantieni l’utente originale
+
         nuovoRacconto.setUtente(vecchioRacconto.getUtente());
 
-        // Salva modifiche
         return raccontoDAO.save(nuovoRacconto);
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
     public void eliminaRacconto(Integer idRacconto) {
@@ -90,54 +101,37 @@ public class GestioneRaccontoServiceImpl implements GestioneRaccontoService {
             return;
         }
 
-        /*
-        // elimina immagine se presente
-        if (racconto.getImmagine() != null && !racconto.getImmagine().trim().isEmpty()) {
-            boolean deleted = eliminaImmagine(racconto.getImmagine());
-            System.out.println("File eliminato immagine: " + deleted + " -> " + racconto.getImmagine());
-        }
-        */
-
-
         raccontoDAO.removeByIdRacconto(idRacconto);
     }
 
-    @Override
-    public Racconto getByIdRacconto(int idRacconto) {
-        Racconto racconto = raccontoDAO.getRaccontoByIdRacconto(idRacconto);
-        if (racconto != null && racconto.getImmagine() != null) {
-            try {
-                racconto.setImmagine(recuperaImmagine(racconto.getImmagine()));
-            } catch (IOException e) {
-                System.out.println("Errore nel recupero immagine: " + e.getMessage());
-            }
-        }
-        return racconto;
-    }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Racconto getByIdRaccontoRaw(int idRacconto) {
         return raccontoDAO.getRaccontoByIdRacconto(idRacconto);
     }
 
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean checkId(int idRacconto) {
         return raccontoDAO.existsById(idRacconto);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public List<Racconto> listaRaccontiUtente(String email) {
+    public List<Racconto> listaRaccontiUtente(@Email(message = "Email non valida") String email) {
         List<Racconto> racconti = raccontoDAO.findAllByUtente_Email(email);
         for (Racconto racconto : racconti) {
 
             try {
                 racconto.setImmagine(recuperaImmagine(racconto.getImmagine()));
-                Utente utente=racconto.getUtente();
-
-
-               // utente.setImmagine(autenticazioneService.recuperaImmagine(utente.getImmagine()));
-               // racconto.setUtente(utente);
 
             } catch (IOException e) {
                 System.out.println("Errore nel recupero immagine: " + e.getMessage());
@@ -147,7 +141,21 @@ public class GestioneRaccontoServiceImpl implements GestioneRaccontoService {
         return racconti;
     }
 
-    // ========================= IMMAGINI =========================
+    /**
+     * {@inheritDoc}
+     */
+    public List<Racconto> listaRacconti() {
+        List<Racconto> racconti = raccontoDAO.findAll();
+        for (Racconto r : racconti) {
+            try {
+                r.setImmagine(recuperaImmagine(r.getImmagine()));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return racconti;
+    }
 
     public String salvaImmagine(String base64) throws IOException {
         String[] parts = base64.split(",");
@@ -166,12 +174,15 @@ public class GestioneRaccontoServiceImpl implements GestioneRaccontoService {
 
         Files.write(uploadPath.resolve(fileName), bytes);
 
-        return fileName; // salvo solo il nome
+        return fileName;
     }
 
     public String recuperaImmagine(String pathImmagine) throws IOException {
 
-        if (pathImmagine == null || pathImmagine.trim().isEmpty()) {
+        if(pathImmagine == null || !(pathImmagine.endsWith("jpg") ||  pathImmagine.endsWith("jpeg") || pathImmagine.endsWith("png") || pathImmagine.endsWith("gif") ||  pathImmagine.endsWith("webp"))) {
+            return pathImmagine;
+        }
+        if (pathImmagine.trim().isEmpty()) {
             return null;
         }
 
@@ -204,28 +215,6 @@ public class GestioneRaccontoServiceImpl implements GestioneRaccontoService {
         return "data:" + mimeType + ";base64," + base64Content;
     }
 
-    /*
-    public boolean eliminaImmagine(String fileName) {
-        if (fileName == null || fileName.trim().isEmpty()) return false;
-
-        Path path = Paths.get(UPLOAD_DIR, fileName).toAbsolutePath();
-        System.out.println("Provo a eliminare file: " + path);
-
-        if (!Files.exists(path)) {
-            System.out.println("File non trovato: " + path);
-            return false;
-        }
-
-        try {
-            boolean deleted = Files.deleteIfExists(path);
-            System.out.println("File eliminato: " + deleted);
-            return deleted;
-        } catch (IOException e) {
-            System.out.println("Errore eliminazione file: " + e.getMessage());
-            return false;
-        }
-    }
-    */
 
 
 

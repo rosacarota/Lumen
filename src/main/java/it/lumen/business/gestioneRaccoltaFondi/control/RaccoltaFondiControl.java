@@ -11,7 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -32,7 +33,7 @@ public class RaccoltaFondiControl {
 
     @PostMapping("/avviaRaccoltaFondi")
     public ResponseEntity<String> avvioRaccoltaFondi(
-             @RequestBody RaccoltaFondi raccoltaFondi,
+            @RequestBody RaccoltaFondi raccoltaFondi,
             BindingResult result,
             @RequestParam String token) {
 
@@ -44,6 +45,12 @@ public class RaccoltaFondiControl {
             result.getAllErrors().forEach(error -> errorMsg.append(error.getDefaultMessage()).append("; "));
             System.out.println("Errore: " + errorMsg);
             return ResponseEntity.badRequest().body(errorMsg.toString());
+        }
+
+        raccoltaFondi.setDataApertura(Date.valueOf(LocalDate.now()));
+
+        if(raccoltaFondi.getDataChiusura().toLocalDate().isBefore(raccoltaFondi.getDataApertura().toLocalDate())){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("La data di avvio deve precedere la data di fine");
         }
 
         String email = null;
@@ -80,9 +87,8 @@ public class RaccoltaFondiControl {
         return ResponseEntity.ok("Raccolta fondi " + raccoltaFondi.getTitolo() + " avviata con successo");
     }
 
-    @PostMapping("/terminaRaccoltaFondi")
-    public ResponseEntity<String> terminaRaccoltaFondi(@Valid @RequestBody RaccoltaFondi raccoltaFondi, BindingResult result, @RequestParam String token) {
-        if (result.hasErrors()) return ResponseEntity.badRequest().body("Dati non validi");
+    @GetMapping("/terminaRaccoltaFondi")
+    public ResponseEntity<String> terminaRaccoltaFondi(@RequestParam int idRaccolta, @RequestParam String token) {
 
         String email = jwtUtil.extractEmail(token);
         if (email == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token non valido");
@@ -92,9 +98,10 @@ public class RaccoltaFondiControl {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Non autorizzato");
         }
 
-        raccoltaFondiService.terminaRaccoltaFondi(raccoltaFondi);
+        raccoltaFondiService.terminaRaccoltaFondi(idRaccolta);
         return ResponseEntity.ok("Raccolta terminata");
     }
+
 
     @GetMapping("/ottieniRaccolteDiEnte")
     public ResponseEntity<?> ottieniRaccolteDiEnte(@RequestParam String token) {
@@ -103,6 +110,15 @@ public class RaccoltaFondiControl {
 
         Utente utente = autenticazioneService.getUtente(email);
         if (utente == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Utente non trovato");
+
+        return ResponseEntity.ok(raccoltaFondiService.ottieniRaccolteDiEnte(utente));
+    }
+
+    @GetMapping("/ottieniRaccolteDiEnteEsterno")
+    public ResponseEntity<?> ottieniRaccolteDiEnteEsterno(@RequestParam String email) {
+        if (email == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("utente non trovato");
+
+        Utente utente = autenticazioneService.getUtente(email);
 
         return ResponseEntity.ok(raccoltaFondiService.ottieniRaccolteDiEnte(utente));
     }

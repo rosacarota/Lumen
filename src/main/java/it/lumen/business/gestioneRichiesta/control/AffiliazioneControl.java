@@ -20,6 +20,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Controller REST per la gestione delle richieste di affiliazione.
+ * Espone endpoint per inviare richieste, accettarle, rifiutarle e visualizzare
+ * lo stato delle affiliazioni.
+ */
 @RestController
 @RequestMapping("/affiliazione")
 public class AffiliazioneControl {
@@ -28,15 +33,31 @@ public class AffiliazioneControl {
     private final JwtUtil jwtUtil;
     private final AutenticazioneService autenticazioneService;
 
+    /**
+     * Costruttore per l'iniezione delle dipendenze.
+     *
+     * @param affiliazioneService   Servizio per la gestione delle affiliazioni.
+     * @param jwtUtil               Utility per la gestione dei token JWT.
+     * @param autenticazioneService Servizio per l'autenticazione e il recupero dati
+     *                              utente.
+     */
     @Autowired
-    public AffiliazioneControl(AffiliazioneService affiliazioneService, JwtUtil jwtUtil, AutenticazioneService autenticazioneService) {
+    public AffiliazioneControl(AffiliazioneService affiliazioneService, JwtUtil jwtUtil,
+            AutenticazioneService autenticazioneService) {
         this.affiliazioneService = affiliazioneService;
         this.jwtUtil = jwtUtil;
         this.autenticazioneService = autenticazioneService;
     }
 
+    /**
+     * Controlla se esiste una richiesta di affiliazione per il volontario
+     * autenticato.
+     *
+     * @param token Il token JWT dell'utente.
+     * @return true se l'affiliazione esiste, false altrimenti.
+     */
     @GetMapping("/check")
-    public ResponseEntity<Boolean> checkAffiliazione(@RequestParam String emailEnte, @RequestParam String token) {
+    public ResponseEntity<Boolean> checkAffiliazione(@RequestParam String token) {
 
         String emailVolontario = jwtUtil.extractEmail(token);
 
@@ -44,11 +65,21 @@ public class AffiliazioneControl {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
         }
 
-         return ResponseEntity.status(HttpStatus.OK).body( affiliazioneService.checkAffiliazione(emailEnte, emailVolontario));
+        return ResponseEntity.status(HttpStatus.OK).body(affiliazioneService.checkAffiliazione(emailVolontario));
     }
 
+    /**
+     * Invia una nuova richiesta di affiliazione da parte di un volontario verso un
+     * ente.
+     *
+     * @param affiliazione Oggetto contenente i dettagli della richiesta (es. ente e
+     *                     descrizione).
+     * @param token        Il token JWT del volontario richiedente.
+     * @return Un messaggio di conferma o errore.
+     */
     @PostMapping("/richiedi")
-    public ResponseEntity<String> richiediAffiliazione(@RequestBody Affiliazione affiliazione, @RequestParam String token) {
+    public ResponseEntity<String> richiediAffiliazione(@RequestBody Affiliazione affiliazione,
+            @RequestParam String token) {
         String email = jwtUtil.extractEmail(token);
         if (email == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token non valido");
@@ -60,7 +91,8 @@ public class AffiliazioneControl {
         }
 
         if (richiedente.getRuolo() != Utente.Ruolo.Volontario) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Solo i volontari possono richiedere l'affiliazione");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("Solo i volontari possono richiedere l'affiliazione");
         }
 
         affiliazione.setVolontario(richiedente);
@@ -75,9 +107,13 @@ public class AffiliazioneControl {
         String emailEnte = affiliazione.getEnte().getEmail();
         Utente ente = autenticazioneService.getUtente(emailEnte);
 
+        if (ente.getRuolo() != Utente.Ruolo.Ente) {
+            return ResponseEntity.badRequest().body("Puoi fare la richiesta solo ad un ente");
+        }
+
         affiliazione.setEnte(ente);
 
-        if(affiliazioneService.checkAffiliazione(emailEnte, email)){
+        if (affiliazioneService.checkAffiliazione(email)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("la richiesta è già presente");
         }
 
@@ -85,13 +121,23 @@ public class AffiliazioneControl {
             affiliazioneService.richiediAffiliazione(affiliazione);
             return ResponseEntity.ok("Richiesta di affiliazione inviata con successo");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Errore durante la creazione: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Errore durante la creazione: " + e.getMessage());
         }
     }
 
-
+    /**
+     * Accetta una richiesta di affiliazione pendente.
+     * Può essere invocata dall'ente destinatario o dal volontario coinvolto (anche
+     * se logicamente è l'ente che accetta).
+     *
+     * @param idAffiliazione ID della richiesta da accettare.
+     * @param token          Il token JWT dell'utente che esegue l'operazione.
+     * @return Messaggio di esito.
+     */
     @GetMapping("/accetta")
-    public ResponseEntity<String> accettaAffiliazione(@RequestParam Integer idAffiliazione, @RequestParam String token) {
+    public ResponseEntity<String> accettaAffiliazione(@RequestParam Integer idAffiliazione,
+            @RequestParam String token) {
         String email = jwtUtil.extractEmail(token);
         Utente utenteLoggato = autenticazioneService.getUtente(email);
 
@@ -109,19 +155,29 @@ public class AffiliazioneControl {
                     utenteLoggato.getEmail().equals(affiliazione.getVolontario().getEmail());
 
             if (!isCoinvolto) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Non hai i permessi per accettare questa richiesta");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body("Non hai i permessi per accettare questa richiesta");
             }
 
             affiliazioneService.accettaAffiliazione(idAffiliazione);
             return ResponseEntity.ok("Affiliazione accettata con successo");
 
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Errore nell'accettazione: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Errore nell'accettazione: " + e.getMessage());
         }
     }
 
+    /**
+     * Rifiuta una richiesta di affiliazione pendente.
+     *
+     * @param idAffiliazione ID della richiesta da rifiutare (ed eliminare).
+     * @param token          Il token JWT dell'utente che esegue l'operazione.
+     * @return Messaggio di esito.
+     */
     @GetMapping("/rifiuta")
-    public ResponseEntity<String> rifiutaAffiliazione(@RequestParam Integer idAffiliazione, @RequestParam String token) {
+    public ResponseEntity<String> rifiutaAffiliazione(@RequestParam Integer idAffiliazione,
+            @RequestParam String token) {
         String email = jwtUtil.extractEmail(token);
         Utente utenteLoggato = autenticazioneService.getUtente(email);
 
@@ -139,27 +195,40 @@ public class AffiliazioneControl {
                     utenteLoggato.getEmail().equals(affiliazione.getVolontario().getEmail());
 
             if (!isCoinvolto) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Non hai i permessi per gestire questa richiesta");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body("Non hai i permessi per gestire questa richiesta");
             }
 
             affiliazioneService.rifiutaAffiliazione(idAffiliazione);
             return ResponseEntity.ok("Richiesta rifiutata ed eliminata con successo");
 
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Errore nel rifiuto: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Errore nel rifiuto: " + e.getMessage());
         }
     }
 
+    /**
+     * Restituisce la lista dei volontari affiliati (accettati) per l'ente
+     * autenticato.
+     *
+     * @param token Il token JWT dell'ente.
+     * @return Una lista di oggetti {@link UtenteDTO} rappresentanti i volontari
+     *         affiliati.
+     */
     @GetMapping("/listaAffiliati")
     public ResponseEntity<?> getListaAffiliati(@RequestParam String token) {
         String email = jwtUtil.extractEmail(token);
-        if (email == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token non valido");
+        if (email == null)
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token non valido");
 
         Utente ente = autenticazioneService.getUtente(email);
-        if (ente == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Utente non trovato");
+        if (ente == null)
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Utente non trovato");
 
         if (ente.getRuolo() != Utente.Ruolo.Ente) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Solo gli Enti possono visualizzare i propri affiliati");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("Solo gli Enti possono visualizzare i propri affiliati");
         }
 
         try {
@@ -190,6 +259,14 @@ public class AffiliazioneControl {
         }
     }
 
+    /**
+     * Restituisce la lista delle richieste di affiliazione in attesa per l'ente
+     * autenticato.
+     *
+     * @param token Il token JWT dell'ente.
+     * @return Una lista di mappe contenenti i dettagli della richiesta e del
+     *         volontario richiedente.
+     */
     @GetMapping("/richiesteInAttesa")
     public ResponseEntity<?> getRichiesteInAttesa(@RequestParam String token) {
         String email = jwtUtil.extractEmail(token);
@@ -238,9 +315,15 @@ public class AffiliazioneControl {
             return ResponseEntity.ok(rispostaCompleta);
 
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Errore nel recupero richieste: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Errore nel recupero richieste: " + e.getMessage());
         }
     }
-
-
+    @GetMapping("/getAffiliante")
+    public ResponseEntity<?> getAffiliante(@RequestParam String email) {
+        if (email == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Utente non trovato");
+        }
+        return ResponseEntity.ok(affiliazioneService.getAffiliante(email));
+    }
 }

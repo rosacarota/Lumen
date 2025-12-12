@@ -3,37 +3,40 @@ package it.lumen.data.dto;
 import it.lumen.data.entity.RichiestaServizio;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.sql.Date;
 
+/**
+ * Data Transfer Object (DTO) per le richieste di servizio.
+ * Contiene informazioni sul contenuto della richiesta, la data, lo stato e gli
+ * utenti coinvolti.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 public class RichiestaServizioDTO {
 
-    @NotNull(message = "Un id è obbligatorio")
+    /** Identificativo univoco della richiesta di servizio. */
     private Integer idRichiestaServizio;
 
-    @NotBlank(message = "Il messaggio della richiesta è obbligatorio")
+    /** Testo descrittivo della richiesta. */
     private String testo;
 
-    @NotNull(message = "La data della creazione della richiesta è obbligatoria")
+    /** Data in cui è stata effettuata la richiesta. */
     @JsonFormat(pattern = "dd-MM-yyyy")
     private Date dataRichiesta;
 
-    @NotBlank(message = "Lo stato della richiesta è obbligatorio")
+    /** Stato corrente della richiesta (es. APERTA, CHIUSA, IN_LAVORAZIONE). */
     private RichiestaServizio.StatoRichiestaServizio stato;
 
-    @NotBlank(message = "L'email del beneficiario è obbligatoria")
+    /** Email dell'utente beneficiario del servizio. */
     @Email(message = "Email del beneficiario non valida")
     private String beneficiario;
 
-    @NotBlank(message = "L'email del destinatario è obbligatoria")
+    /** Email dell'ente o volontario destinatario della richiesta. */
     @Email(message = "Email del destinatario non valida")
     private String enteVolontario;
 }
