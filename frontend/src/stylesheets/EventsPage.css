@@ -1,0 +1,88 @@
+.events-page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f7f8f700;
+  font-family: 'Inter', sans-serif;
+}
+
+.main-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+  justify-content: center;
+  flex: 1;
+  
+  /* Spinge il footer in basso */
+}
+
+/* --- IL RIQUADRO BIANCO (Il "Container" dello screenshot) --- */
+.content-box {
+  background-color: white;
+  width: 100%;
+  border-radius: 28px;
+  /* Angoli molto arrotondati */
+  padding: 40px;
+  box-shadow: 0 18px 50px rgba(8, 120, 134, 0.18);
+}
+
+/* --- INTESTAZIONE (Titolo + Bottone) --- */
+.box-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  border-bottom: 1px solid #f3f4f6;
+  padding-bottom: 20px;
+}
+
+.header-text h1 {
+  font-size: 2rem;
+  color: #0e7490;
+  /* Teal Scuro */
+  margin: 0 0 8px 0;
+  font-weight: 700;
+}
+
+.header-text p {
+  color: #6b7280;
+  /* Grigio testo */
+  margin: 0;
+  font-size: 1rem;
+}
+
+.btn-new:hover {
+  background-color: #059669;
+  transform: translateY(-2px);
+}
+
+/* --- GRIGLIA DELLE CARD --- */
+.events-grid {
+  display: grid;
+  /* Crea colonne che sono MINIMO 320px e si allargano in proporzione (1fr) */
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 30px;
+
+  /* Questo allinea le card in alto */
+  align-items: start;
+
+  /* FONDAMENTALE: Occupa tutta la larghezza del contenitore */
+  width: 100%;
+}
+
+/* Adattamento per cellulari */
+@media (max-width: 768px) {
+  .content-box {
+    padding: 20px;
+  }
+
+  .box-header {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+    align-items: center;
+  }
+}

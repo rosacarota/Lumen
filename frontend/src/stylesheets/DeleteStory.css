@@ -1,0 +1,260 @@
+/* Overlay scuro */
+.delete-story-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    background: rgba(8, 120, 134, 0.2);
+    display: flex;
+    align-items: center; /*centrare il pop up*/
+    justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(3px);
+    overflow-y: auto;
+    animation: fadeIn 0.3s ease-out;
+  }
+  
+  /* Card principale */
+  .delete-story-modal {
+    background: #ffffff;
+    border-radius: 24px;
+    width: 100%;
+    max-width: 950px; /*aumento grandezza pop up*/
+    min-height: 350px;
+    box-shadow: 0 20px 60px rgba(8, 120, 134, 0.25);
+    display: flex;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.45s ease-out forwards;
+  }
+  
+  /* X chiusura stile AddStory */
+  .delete-close-button {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    border: none;
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.14);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    z-index: 2;
+  }
+  
+  .delete-close-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Colonna sinistra: gradiente come AddStory */
+  .delete-left-panel {
+    flex: 1;
+    background: linear-gradient(135deg, #087886 0%, #4aafb8 50%, #7cce6b 100%);
+    position: relative;
+    overflow: hidden;
+    padding: 40px 36px;
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+.delete-title,
+.delete-subtitle,
+.delete-meta-box {
+  position: relative;
+  z-index: 1;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+  
+  .delete-left-panel::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(8, 120, 134, 0.8) 0%,
+      rgba(74, 175, 184, 0.6) 50%,
+      rgba(124, 206, 107, 0.4) 100%
+    );
+  }
+  
+  .delete-left-panel > * {
+    position: relative;
+    z-index: 1;
+  }
+  
+  .delete-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 0 12px;
+    color: #ffffff;
+  }
+
+
+  
+  .delete-subtitle {
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 0 0 18px;
+    color: #e5f7f9;
+  }
+  
+  .delete-meta-box {
+    margin-top: 8px;
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid #e5e7eb;
+  }
+  
+  .delete-meta-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    margin: 2px 0;
+  }
+  
+  .delete-meta-label {
+    color: #6b7280;
+    font-weight: 500;
+  }
+  
+  .delete-meta-value {
+    color: #111827;
+    font-weight: 600;
+  }
+  
+  /* Colonna destra */
+  .delete-right-panel {
+    flex: 1;
+    background: #ffffff;
+    padding: 40px 36px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  .delete-logo-section {
+    margin-bottom: 20px;
+  }
+  
+  .delete-logo-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  
+  .delete-logo-icon {
+    width: 26px;
+    height: 26px;
+    color: #b91c1c;
+  }
+  
+  .delete-logo-text {
+    font-size: 18px;
+    font-weight: 700;
+    color: #b91c1c;
+  }
+  
+  .delete-logo-subtitle {
+    font-size: 14px;
+    color: #4b5563;
+    margin: 0;
+  }
+  
+  /* Box warning */
+  .delete-warning-box {
+    margin-top: 8px;
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+  }
+  
+  .delete-warning-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #b91c1c;
+    margin: 0 0 4px;
+  }
+  
+  .delete-warning-text {
+    font-size: 13px;
+    color: #7f1d1d;
+    margin: 0;
+  }
+  
+  /* Footer bottoni */
+  .delete-footer {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  
+  .delete-cancel-button {
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    background: #f3f4f6;
+    color: #374151;
+    transition: all 0.2s ease;
+  }
+  
+  .delete-cancel-button:hover {
+    background: #e5e7eb;
+  }
+  
+  .delete-confirm-button {
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    background: #b91c1c;
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 4px 10px rgba(185, 28, 28, 0.35);
+    transition: all 0.2s ease;
+  }
+  
+  .delete-confirm-button:hover {
+    background: #991b1b;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(185, 28, 28, 0.5);
+  }
+  
+  .delete-confirm-icon {
+    width: 16px;
+    height: 16px;
+  }
+  
+  /* Responsive */
+  @media (max-width: 880px) {
+    .delete-story-modal {
+      flex-direction: column;
+    }
+  
+    .delete-left-panel,
+    .delete-right-panel {
+      padding: 28px 24px;
+    }
+  }
+  

@@ -1,0 +1,237 @@
+/* Sfondo scuro */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(5px);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* Contenitore Modale (Stile Verticale) */
+.modal-container {
+  background-color: white;
+  width: 100%;
+  max-width: 600px; 
+  height: 90vh; /* Quasi tutta l'altezza */
+  border-radius: 24px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column; 
+  overflow: hidden;
+  position: relative;
+  animation: scaleUp 0.3s ease-out;
+}
+
+.modal-top-image {
+  width: 100%;
+  height: 250px;
+  flex-shrink: 0;
+  position: relative;
+  background-color: #f1f5f9;
+  
+  /* Sfondo sfocato */
+  background-position: center;
+  background-size: cover;
+  overflow: hidden;
+}
+
+/* Velo sfocato */
+.modal-top-image::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(15px);
+  z-index: 1;
+}
+
+/* contine l'immagine (per non tagliare le verticali) */
+.modal-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; 
+  position: relative;
+  z-index: 2; 
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3));
+  transition: all 0.3s ease;
+}
+
+/* MODALITÀ LANDSCAPE (ORIZZONTALE)*/
+/* Se JS rileva che è larga, applichiamo questa classe */
+.modal-top-image.landscape-mode .modal-image {
+  object-fit: cover; /* RIEMPI TUTTO, niente strisce */
+  filter: none; /* Niente ombra perché riempie i bordi */
+}
+
+/* Nascondiamo lo sfondo sfocato se è landscape (non serve) */
+.modal-top-image.landscape-mode::before {
+  display: none;
+}
+
+
+.modal-placeholder {
+  width: 100%; height: 100%; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 10px;
+  color: #94a3b8; background-color: #f1f5f9; position: relative; z-index: 2;
+}
+
+.modal-ente-badge, .btn-close-absolute { z-index: 10; }
+
+/* Badge Ente (Sovrapposto all'immagine in basso a sinistra) */
+.modal-ente-badge {
+  position: absolute;
+  bottom: 15px;
+  left: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  color: #087886;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+/* Tasto Chiudi (Cerchio bianco in alto a destra) */
+.btn-close-absolute {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 36px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s, background-color 0.2s;
+  z-index: 10;
+}
+.btn-close-absolute:hover { background-color: white; transform: scale(1.1); color: #ef4444; }
+
+/* PARTE INFERIORE: CONTENUTO */
+.modal-content-scrollable {
+  flex: 1; /* Occupa tutto lo spazio rimanente */
+  overflow-y: auto; /* Scrolla se il testo è lungo */
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header { 
+  margin-bottom: 20px; 
+  /* MODIFICA: Allinea a sinistra invece che al centro */
+  text-align: left; 
+}
+
+.modal-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin: 0;
+  line-height: 1.2;
+}
+
+/* Griglia Info */
+.modal-grid-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 25px;
+  background-color: #f8fafc;
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px solid #f1f5f9;
+}
+
+.info-item { display: flex; gap: 10px; align-items: flex-start; }
+.info-icon { color: #087886; margin-top: 2px; flex-shrink: 0; }
+.label { font-size: 0.7rem; color: #64748b; text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 2px;}
+.info-item p { margin: 0; color: #334155; font-weight: 600; font-size: 0.9rem; }
+
+/* Descrizione */
+.modal-description { 
+  flex: 1; 
+  margin-bottom: 25px;
+  
+  /* NUOVO STILE RIQUADRO (Uguale a quello delle date) */
+  background-color: #f8fafc;
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px solid #f1f5f9;
+}
+
+.modal-description h3 { 
+  font-size: 0.85rem; /* Un po' più piccolo, stile etichetta */
+  margin-bottom: 10px; 
+  color: #64748b; /* Grigio come le label delle date */
+  text-transform: uppercase; 
+  letter-spacing: 0.5px; 
+  font-weight: 700;
+}
+
+.modal-description p { 
+  color: #334155; /* Testo più scuro per leggibilità */
+  line-height: 1.6; 
+  white-space: pre-wrap; 
+  font-size: 0.95rem; 
+  font-weight: 500;
+  margin: 0;
+}
+/* Footer */
+.modal-footer {
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.partecipanti-stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #64748b;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.modal-actions { display: flex; gap: 10px; }
+
+/* Bottoni */
+.btn-primary, .btn-secondary, .btn-danger, .btn-edit {
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: transform 0.1s;
+}
+.btn-primary { background-color: #087886; color: white; }
+.btn-primary:hover { background-color: #0e7490; }
+
+.btn-secondary { background-color: #f1f5f9; color: #334155; }
+.btn-secondary:hover { background-color: #e2e8f0; }
+
+.btn-danger { border: 1px solid #ef4444; background-color: white; color: #ef4444; }
+.btn-danger:hover { background-color: #ef4444; color: white; }
+
+.btn-edit { border: 1px solid #64748b; background-color: white; color: #334155; }
+.btn-edit:hover { background-color: #f1f5f9; }
+
+/* Animazioni */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes scaleUp { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
