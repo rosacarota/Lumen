@@ -22,6 +22,7 @@ public interface GestioneRaccontoService {
      * Modifica di un Racconto pubblicato da un Utente.
      *
      * @param nuovoRacconto L'oggetto Racconto con i dati aggiornati.
+     * @return L'oggetto Racconto con i dati correttamenti aggiornati.
      */
     Racconto modificaRacconto(Racconto nuovoRacconto);
 

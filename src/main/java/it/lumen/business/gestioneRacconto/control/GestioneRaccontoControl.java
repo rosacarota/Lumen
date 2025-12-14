@@ -25,20 +25,19 @@ public class GestioneRaccontoControl {
     private final GestioneRaccontoService gestioneRaccontoService;
     private final JwtUtil util;
     private final AutenticazioneService autenticazioneService;
-    private final JwtUtil jwtUtil;
 
     /**
      * Costruttore per l'iniezione delle dipendenze.
      *
      * @param gestioneRaccontoService  Servizio per la gestione dei racconti.
-     * @param jwtUtil                Utility per la gestione dei JWT.
+     * @param util                Utility per la gestione dei JWT.
      * @param autenticazioneService Servizio per la gestione dell'autenticazione.
      */
-    public GestioneRaccontoControl(GestioneRaccontoService gestioneRaccontoService, JwtUtil util, AutenticazioneService autenticazioneService, JwtUtil jwtUtil) {
+    public GestioneRaccontoControl(GestioneRaccontoService gestioneRaccontoService, JwtUtil util, AutenticazioneService autenticazioneService) {
             this.gestioneRaccontoService = gestioneRaccontoService;
             this.util = util;
             this.autenticazioneService = autenticazioneService;
-        this.jwtUtil = jwtUtil;
+
     }
 
     /**
@@ -216,11 +215,12 @@ try {
     /**
      * Visualizzazione da parte di un utente di tutti i racconti.
      * @param token Il token JWT dell'utente per verificare l'identità dell'utente.
+     * @return Una ResponseEntity contenente la lista di tutti i racconti.
      */
     @GetMapping("/visualizzaTutti")
     public ResponseEntity<List<Racconto>>  visualizzaTuttiRacconti(@RequestParam String token) {
 
-        if(jwtUtil.extractEmail(token) == null) {
+        if(util.extractEmail(token) == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         List<Racconto> lista = gestioneRaccontoService.listaRacconti();
